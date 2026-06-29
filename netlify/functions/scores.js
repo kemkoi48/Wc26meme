@@ -1,17 +1,8 @@
 exports.handler = async (event) => {
-  const API_KEY = "1230f8e9327d5bca1f61884e9b47848d";
-  const round = event.queryStringParameters?.round || "Round of 32";
-
   try {
-    const res = await fetch(
-      `https://v3.football.api-sports.io/fixtures?league=1&season=2026&round=${encodeURIComponent(round)}`,
-      {
-        headers: {
-          "x-rapidapi-key": API_KEY,
-          "x-rapidapi-host": "v3.football.api-sports.io",
-        },
-      }
-    );
+    // Free open-source WC 2026 API — no key required
+    // Returns all matches with live scores, status, homeScore, awayScore
+    const res = await fetch("https://worldcup26.ir/get/games");
     const data = await res.json();
     return {
       statusCode: 200,

@@ -121,6 +121,27 @@ is denied — this bot only talks to Robinhood.
 Inspect `audit.jsonl` after any run to see exactly what was proposed, allowed,
 and denied, with reasons.
 
+## Backtesting the rule (`backtest.py`)
+
+The live agent is an LLM reasoning over Robinhood's tools — it can't be replayed
+deterministically. But the **moving-average trend rule** the strategy is based on
+can be validated offline before you trust it live:
+
+```bash
+python backtest.py --demo                 # synthetic data, zero setup
+python backtest.py --csv AAPL.csv         # your own date,close history
+python backtest.py --csv AAPL.csv --short 20 --long 50 --fee-bps 1
+```
+
+It simulates long/flat, one symbol, no leverage (matching the cautious live
+posture) and reports total vs buy-and-hold return, annualized return, max
+drawdown, trade count, win rate, and Sharpe. Use it to pick sane symbols and
+SMA windows — then reflect that choice in `config.yaml`'s `strategy:` and
+`symbol_allowlist`. Pure standard library; CSV is a header row plus `date,close`.
+
+Past performance doesn't predict future results, and a good backtest is not a
+guarantee — treat it as a filter for obviously-bad ideas, not a green light.
+
 ## Safety checklist before going live
 
 - [ ] You ran in dry-run and reviewed `audit.jsonl` — the proposed trades look sane.

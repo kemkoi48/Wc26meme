@@ -33,6 +33,7 @@ _NOTIONAL_KEYS = (
     "value",
 )
 _PRICE_KEYS = ("price", "limit_price", "estimated_price", "last_price", "quote")
+_ACCOUNT_KEYS = ("account_number", "account", "account_id", "rhs_account_number")
 
 
 @dataclass
@@ -144,6 +145,9 @@ class RiskGuard:
                 return Decision(False, "Cancels are disabled (risk.allow_cancel=false).")
             if not self.live:
                 return Decision(False, "Dry run: cancels are not executed.")
+            acct_ok = self._account_ok(input_data)
+            if acct_ok is not None:
+                return acct_ok
             return Decision(True, "cancel allowed")
 
         # kind == "order"
@@ -154,7 +158,26 @@ class RiskGuard:
                 "place and continue without placing it.",
             )
 
+        acct_ok = self._account_ok(input_data)
+        if acct_ok is not None:
+            return acct_ok
         return self._check_order(input_data)
+
+    def _account_ok(self, input_data: dict[str, Any]) -> Decision | None:
+        """Enforce the configured account. Returns a Deny decision on a problem,
+        or None if the account check passes / is not configured."""
+        if not self.cfg.account_number:
+            return None  # not configured -> rely on symbol/notional limits
+        supplied = _first(input_data, _ACCOUNT_KEYS)
+        if supplied is None:
+            return Decision(False, "Order specifies no account; denied (fail-closed).")
+        if str(supplied).strip() != self.cfg.account_number:
+            return Decision(
+                False,
+                f"Order targets account {supplied}, not the configured "
+                f"agentic account; denied.",
+            )
+        return None
 
     def _check_order(self, input_data: dict[str, Any]) -> Decision:
         r = self.cfg.risk

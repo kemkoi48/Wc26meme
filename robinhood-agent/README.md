@@ -53,11 +53,18 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
 cp .env.example .env
-# edit .env and set ROBINHOOD_ACCESS_TOKEN (and ANTHROPIC_API_KEY if not already set)
+# edit .env and set ROBINHOOD_ACCESS_TOKEN, ROBINHOOD_ACCOUNT_NUMBER (your
+# agentic account), and ANTHROPIC_API_KEY if not already set
 
-# review and edit the strategy + risk limits
+# review and edit the strategy + risk limits. Two equivalent formats ship:
+#   config.yaml  — commented, the documented default
+#   config.json  — right-sized for a small (~$28) balance; pass --config config.json
 $EDITOR config.yaml
 ```
+
+The config loader accepts YAML or JSON (by file extension). `config.json` is a
+ready-to-run JSON profile sized for a small cash balance (per-order cap $5, one
+order per run). Run it with `python run.py --config config.json`.
 
 ### Getting a Robinhood token
 
@@ -100,6 +107,7 @@ Every limit below is enforced in `risk.py`, in code, before an order is allowed:
 | `max_orders_per_day` | Max orders per calendar day (persisted in `state.json`, UTC). |
 | `allow_buy` / `allow_sell` | Enable/disable each side independently. |
 | `allow_cancel` | Whether the agent may cancel existing orders. |
+| account pinning | If `ROBINHOOD_ACCOUNT_NUMBER` is set, every order/cancel must target that exact account or it is denied. Orders with no account are denied (fail-closed). Only an account with `agentic_allowed=true` can actually be traded. |
 
 **Fail-closed by design:** if the guard sees an order-shaped tool call it cannot
 confidently parse and price (unknown fields, missing quantity/notional), it
@@ -158,8 +166,9 @@ robinhood-agent/
 ├── run.py          # entrypoint + scheduler (--once / --interval / --live)
 ├── agent.py        # builds the Agent SDK options and runs one cycle
 ├── risk.py         # RiskGuard: the deterministic can_use_tool gate + audit log
-├── config.py       # loads and validates config.yaml
-├── config.yaml     # strategy prompt + risk limits (edit this)
+├── config.py       # loads and validates config.yaml OR config.json
+├── config.yaml     # strategy prompt + risk limits (commented default)
+├── config.json     # equivalent JSON profile, sized for a small balance
 ├── requirements.txt
 ├── .env.example
 └── .gitignore

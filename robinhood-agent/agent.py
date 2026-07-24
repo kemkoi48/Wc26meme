@@ -20,10 +20,17 @@ def _system_prompt(cfg: Config, live: bool) -> str:
     r = cfg.risk
     mode = "LIVE — approved orders will execute for real" if live else "DRY RUN — no orders will be placed"
     allowlist = ", ".join(r.symbol_allowlist) if r.symbol_allowlist else "(none configured — all orders will be denied)"
+    account_line = (
+        f"Account: {cfg.account_number} — operate ONLY on this account; pass this "
+        f"account_number to every account-scoped tool.\n"
+        if cfg.account_number
+        else "Account: NOT configured — set ROBINHOOD_ACCOUNT_NUMBER; orders will be denied.\n"
+    )
     return (
         f"{cfg.strategy}\n\n"
         "--- Operating context (enforced in code, not negotiable) ---\n"
         f"Mode: {mode}.\n"
+        f"{account_line}"
         f"Tradable symbols: {allowlist}.\n"
         f"Per-order limit: ${r.max_order_notional_usd:,.2f}. "
         f"Max orders per run: {r.max_orders_per_run}. Max per day: {r.max_orders_per_day}.\n"

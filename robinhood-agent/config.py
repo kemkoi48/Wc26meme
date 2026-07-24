@@ -1,7 +1,9 @@
-"""Load and validate config.yaml into typed dataclasses."""
+"""Load and validate config (YAML or JSON) into typed dataclasses."""
 
 from __future__ import annotations
 
+import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -33,22 +35,42 @@ class Config:
     strategy: str
     risk: RiskConfig
     tool_classification: ToolClassification
+    # The brokerage account the bot is allowed to act on. Resolved from the
+    # ROBINHOOD_ACCOUNT_NUMBER env var (preferred) or the config file. When set,
+    # the risk guard denies any order/cancel aimed at a different account.
+    account_number: str | None = None
+
+
+def _read_raw(path: Path) -> dict:
+    text = path.read_text()
+    if path.suffix.lower() == ".json":
+        raw = json.loads(text)
+    else:
+        raw = yaml.safe_load(text)
+    if not isinstance(raw, dict):
+        raise ValueError(f"{path} did not parse to a mapping")
+    return raw
 
 
 def load_config(path: str | Path = "config.yaml") -> Config:
-    raw = yaml.safe_load(Path(path).read_text())
-    if not isinstance(raw, dict):
-        raise ValueError(f"{path} did not parse to a mapping")
+    path = Path(path)
+    raw = _read_raw(path)
 
     mcp = raw.get("mcp", {}) or {}
     risk = raw.get("risk", {}) or {}
     tc = raw.get("tool_classification", {}) or {}
 
+    # Account number: env var wins so the real value never has to live in a
+    # committed config file.
+    account_number = os.environ.get("ROBINHOOD_ACCOUNT_NUMBER") or raw.get("account_number")
+    account_number = str(account_number).strip() if account_number else None
+
     cfg = Config(
         model=raw.get("model", "claude-opus-4-8"),
         mcp_server_name=mcp.get("server_name", "robinhood"),
         mcp_url=mcp.get("url", "https://agent.robinhood.com/mcp/trading"),
-        strategy=raw.get("strategy", "").strip(),
+        strategy=str(raw.get("strategy", "")).strip(),
+        account_number=account_number,
         risk=RiskConfig(
             symbol_allowlist=[str(s).upper() for s in (risk.get("symbol_allowlist") or [])],
             max_order_notional_usd=float(risk.get("max_order_notional_usd", 100.0)),
@@ -65,7 +87,7 @@ def load_config(path: str | Path = "config.yaml") -> Config:
     )
 
     if not cfg.strategy:
-        raise ValueError("config.yaml: `strategy` must not be empty")
+        raise ValueError(f"{path}: `strategy` must not be empty")
     if cfg.risk.max_order_notional_usd <= 0:
-        raise ValueError("config.yaml: risk.max_order_notional_usd must be > 0")
+        raise ValueError(f"{path}: risk.max_order_notional_usd must be > 0")
     return cfg

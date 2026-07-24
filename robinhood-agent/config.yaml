@@ -67,14 +67,19 @@ risk:
 
 # How the guard classifies Robinhood tools by name (substring match, case
 # insensitive). Tools not matching either list are treated as read-only.
-# Adjust if Robinhood's tool names differ from these defaults.
+# These match the real Robinhood MCP tool names (place_equity_order,
+# place_option_order, cancel_equity_order, cancel_option_order). "place" and
+# "cancel" are deliberately broad so future placement/cancel tools are caught
+# too; the extra generic entries are harmless future-proofing. Do NOT add
+# "order" or "trade" here — they also appear in read-only tools like
+# get_equity_orders and get_pnl_trade_history, which would then be wrongly
+# blocked. "review_*_order" tools only preview an order and stay read-only.
 tool_classification:
   order_patterns:
-    - place_order
+    - place          # place_equity_order, place_option_order
     - submit_order
     - create_order
     - buy
     - sell
-    - trade
   cancel_patterns:
-    - cancel
+    - cancel         # cancel_equity_order, cancel_option_order

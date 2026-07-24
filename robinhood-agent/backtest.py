@@ -203,6 +203,59 @@ def _print_report(r: Result, *, short: int, long: int, label: str) -> None:
           "validates the rule, not the live LLM agent.")
 
 
+def _parse_int_list(spec: str) -> list[int]:
+    return [int(x) for x in spec.split(",") if x.strip()]
+
+
+def sweep(
+    prices: list[tuple[str, float]],
+    *,
+    shorts: list[int],
+    longs: list[int],
+    start_cash: float,
+    fee_bps: float,
+    rank: str,
+    top: int,
+    label: str,
+) -> None:
+    key = {
+        "sharpe": lambda r: r.sharpe,
+        "return": lambda r: r.total_return_pct,
+        "annualized": lambda r: r.annualized_pct,
+    }[rank]
+
+    rows: list[tuple[int, int, Result]] = []
+    for s in shorts:
+        for l in longs:
+            if s >= l:
+                continue
+            try:
+                res = backtest(prices, short=s, long=l, start_cash=start_cash, fee_bps=fee_bps)
+            except ValueError:
+                continue
+            rows.append((s, l, res))
+
+    if not rows:
+        print("No valid (short < long) combinations to test.")
+        return
+
+    rows.sort(key=lambda t: key(t[2]), reverse=True)
+    bh = rows[0][2].buy_hold_return_pct
+
+    print(f"Parameter sweep — {label}   (ranked by {rank}, {len(rows)} combos)")
+    print(f"Buy & hold return: {bh:+.2f}%")
+    print("-" * 62)
+    print(f"{'short':>5} {'long':>5} {'return%':>9} {'ann%':>8} {'maxDD%':>7} {'trades':>7} {'sharpe':>7}")
+    print("-" * 62)
+    for s, l, r in rows[: max(1, top)]:
+        print(f"{s:>5} {l:>5} {r.total_return_pct:>9.2f} {r.annualized_pct:>8.2f} "
+              f"{r.max_drawdown_pct:>7.2f} {r.n_trades:>7} {r.sharpe:>7.2f}")
+    print("-" * 62)
+    print("Beware overfitting: the top row is the best fit to THIS history, not a\n"
+          "promise about the future. Prefer windows that are strong across a range\n"
+          "of neighbors, not a lone spike.")
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description="Backtest the SMA trend rule.")
     src = p.add_mutually_exclusive_group(required=True)
@@ -212,6 +265,13 @@ def main() -> None:
     p.add_argument("--long", type=int, default=50, help="Long SMA window.")
     p.add_argument("--cash", type=float, default=10_000.0, help="Starting cash.")
     p.add_argument("--fee-bps", type=float, default=1.0, help="Per-trade fee in bps.")
+    # Sweep mode.
+    p.add_argument("--sweep", action="store_true", help="Grid-search SMA windows and rank them.")
+    p.add_argument("--shorts", default="5,10,15,20,30", help="Comma list of short windows (sweep).")
+    p.add_argument("--longs", default="30,50,100,150,200", help="Comma list of long windows (sweep).")
+    p.add_argument("--rank", choices=["sharpe", "return", "annualized"], default="sharpe",
+                   help="Metric to rank sweep results by.")
+    p.add_argument("--top", type=int, default=15, help="How many sweep rows to show.")
     args = p.parse_args()
 
     if args.demo:
@@ -220,6 +280,19 @@ def main() -> None:
     else:
         prices = load_prices(args.csv)
         label = args.csv
+
+    if args.sweep:
+        sweep(
+            prices,
+            shorts=_parse_int_list(args.shorts),
+            longs=_parse_int_list(args.longs),
+            start_cash=args.cash,
+            fee_bps=args.fee_bps,
+            rank=args.rank,
+            top=args.top,
+            label=label,
+        )
+        return
 
     result = backtest(
         prices,

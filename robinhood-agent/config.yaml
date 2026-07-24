@@ -1,0 +1,65 @@
+# robinhood-agent configuration.
+# Every value under `risk:` is enforced deterministically in risk.py before any
+# order is allowed to reach Robinhood. Read the README before editing.
+
+# Claude model driving the agent. Opus 4.8 is the most capable default.
+model: claude-opus-4-8
+
+mcp:
+  server_name: robinhood
+  url: https://agent.robinhood.com/mcp/trading
+
+# The strategy the agent follows each cycle. Be explicit. The agent can only act
+# through the Robinhood MCP tools, and only within the risk limits below — it
+# cannot exceed them no matter what this prompt says.
+strategy: |
+  You are a conservative, risk-aware trading assistant operating an agentic
+  Robinhood account.
+
+  Each cycle:
+  1. Use read-only tools to review the account: current positions, buying power,
+     and recent quotes for the symbols you are allowed to trade.
+  2. Decide whether any action is warranted this cycle. Doing nothing is a valid
+     and common outcome — only trade when you have a clear, stated reason.
+  3. If you decide to trade, place small orders within the configured limits.
+     State your reasoning for each order before placing it.
+
+  Rules:
+  - Only trade symbols on the allowlist. Never attempt to trade anything else.
+  - Prefer small position sizes. Do not try to maximize turnover.
+  - If a tool call is denied by the risk guard, DO NOT try to work around it.
+    Report the denial and the reason, then stop for this cycle.
+  - At the end of the cycle, give a short plain-language summary: what you
+    observed, what you did (or why you did nothing), and any denials.
+
+risk:
+  # Symbols the agent may trade. EMPTY LIST = deny all orders (fail-closed).
+  # Set this to the specific symbols you actually want traded.
+  symbol_allowlist: []
+
+  # Maximum dollar notional of a single order. Orders the guard cannot price
+  # (no dollar amount and no quantity*price it can compute) are denied.
+  max_order_notional_usd: 100
+
+  # Caps on how many orders the agent may place.
+  max_orders_per_run: 3
+  max_orders_per_day: 10
+
+  # Enable/disable each side and cancels independently.
+  allow_buy: true
+  allow_sell: true
+  allow_cancel: false
+
+# How the guard classifies Robinhood tools by name (substring match, case
+# insensitive). Tools not matching either list are treated as read-only.
+# Adjust if Robinhood's tool names differ from these defaults.
+tool_classification:
+  order_patterns:
+    - place_order
+    - submit_order
+    - create_order
+    - buy
+    - sell
+    - trade
+  cancel_patterns:
+    - cancel

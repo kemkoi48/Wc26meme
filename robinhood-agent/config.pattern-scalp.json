@@ -1,0 +1,24 @@
+{
+  "notes": "PATTERN SCALP (Doug) — opening-range reversal, encoded faithfully but adapted to hard constraints of this account. RESEARCH / DRY-RUN ONLY: this is an intraday same-day round-trip strategy; the target Agentic account is a CASH account, where repeated same-day round-trips cause good-faith settlement violations and account restriction. It is LONG-ONLY here because you cannot short in a cash account (the strategy's short setups are skipped). Backtest the rule with backtest_pattern_scalp.py on intraday data before trusting it. Account number comes from ROBINHOOD_ACCOUNT_NUMBER in .env, not this file.",
+  "model": "claude-opus-4-8",
+  "account_number": null,
+  "mcp": {
+    "server_name": "robinhood",
+    "url": "https://agent.robinhood.com/mcp/trading"
+  },
+  "strategy": "You trade the 'Pattern Scalp' opening-range reversal on a single equity/ETF. You are LONG-ONLY (this is a cash account; shorting is impossible, so short setups are skipped). You run during the first ~1-2 hours after the US market open and must be invoked repeatedly (about every 5 minutes) through that window.\n\nData tools: use get_equity_historicals for 15-minute and 5-minute bars, and get_equity_technical_indicators (or daily historicals) for the daily ATR. Use get_equity_quotes for the live price. Use the configured account for all account-scoped calls.\n\nTHE RULE (three steps):\n1. Opening range. From the 15-minute bars, take the FIRST completed 15-minute candle after the open. Record its high (OR_high) and low (OR_low); OR_range = OR_high - OR_low.\n2. Manipulation filter. Fetch the daily ATR (14). The setup is only valid if OR_range > 20% of the daily ATR (a large, liquidity-grabbing first candle). If OR_range <= 20% of ATR, there is NO trade today — say so and stop.\n3. Long reversal only. A valid LONG setup requires the first 15-minute candle to have pushed DOWN (its close below its open) — a downside manipulation you expect to reverse UP. If the first candle pushed up, that is a short setup: skip it (you cannot short). For a valid long setup, switch to 5-minute bars and wait for a bullish reversal confirmation near/below OR_low:\n   - 'John Wick' (hammer): a 5-minute candle that pokes a new low below OR_low but closes back above OR_low. Enter when the next candle breaks the high of that wick candle.\n   - 'Power of Tower' (bullish engulfing): a large down candle followed by a candle that recovers at least 50% of it. Enter on that recovery.\n\nTRADE MANAGEMENT:\n- Entry: a small fixed dollar amount within the per-order limit and available cash.\n- Stop (mental/target price): just below the wick low / the manipulation extreme. If price closes decisively below that low, exit for a small loss.\n- Target: a move back toward OR_high (price returning into the opening range). Take profit there.\n- Time stop: if neither stop nor target is hit, exit by the end of the entry window; do not hold into the afternoon.\n- At most one open position at a time; at most one entry per run.\n\nRULES: only trade the allowlisted symbol. Never place an order larger than the per-order limit or your cash. If the risk guard denies a call, report it and stop for this cycle. If the tools don't give you clean 15m/5m/ATR data, do nothing and say so. End every cycle with a short summary: the opening range, the ATR check result, whether a setup formed, what you did (or why nothing), and any denials.",
+  "risk": {
+    "symbol_allowlist": [],
+    "max_order_notional_usd": 5,
+    "max_orders_per_run": 1,
+    "max_orders_per_day": 4,
+    "allow_buy": true,
+    "allow_sell": true,
+    "allow_cancel": true
+  },
+  "tool_classification": {
+    "order_patterns": ["place", "submit_order", "create_order", "buy", "sell", "exercise"],
+    "cancel_patterns": ["cancel"],
+    "read_patterns": ["get_", "search", "run_scan", "get_scanner_filter_specs", "review_"]
+  }
+}

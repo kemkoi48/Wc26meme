@@ -150,6 +150,32 @@ SMA windows — then reflect that choice in `config.yaml`'s `strategy:` and
 Past performance doesn't predict future results, and a good backtest is not a
 guarantee — treat it as a filter for obviously-bad ideas, not a green light.
 
+## Pattern Scalp strategy (opening-range reversal)
+
+`config.pattern-scalp.json` encodes the "Pattern Scalp" opening-range reversal:
+after the first 15-minute candle, if its range exceeds 20% of the daily ATR (a
+"manipulation" candle), fade the move back toward the opening range on a
+5-minute reversal trigger. `backtest_pattern_scalp.py` tests the rule on
+intraday data.
+
+```bash
+python backtest_pattern_scalp.py --demo                 # synthetic intraday
+python backtest_pattern_scalp.py --csv SPY_5min.csv     # your own 5-min bars
+```
+
+CSV format: `timestamp,open,high,low,close` with ISO timestamps, regular-session
+5-minute bars across many days.
+
+**Read this before using it live — it is shipped as research / dry-run:**
+- It is a **same-day day-trade**. The Agentic account is a **cash account**,
+  where repeated same-day round-trips cause good-faith settlement violations and
+  can get the account restricted. Don't run this `--live` on a cash account.
+- It is **long-only** here: the strategy's short setups (upside manipulation) are
+  skipped because you can't short in a cash account.
+- The backtester's 5-minute entry ("John Wick" / engulfing) is **approximated**
+  by an opening-range-low reclaim — indicative, not a candle-exact reproduction.
+- A profitable backtest is a reason to test further, not to trade real money.
+
 ## Safety checklist before going live
 
 - [ ] You ran in dry-run and reviewed `audit.jsonl` — the proposed trades look sane.

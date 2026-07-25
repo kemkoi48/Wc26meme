@@ -17,7 +17,8 @@
     "allow_cancel": false
   },
   "tool_classification": {
-    "order_patterns": ["place", "submit_order", "create_order", "buy", "sell"],
-    "cancel_patterns": ["cancel"]
+    "order_patterns": ["place", "submit_order", "create_order", "buy", "sell", "exercise"],
+    "cancel_patterns": ["cancel"],
+    "read_patterns": ["get_", "search", "run_scan", "get_scanner_filter_specs", "review_"]
   }
 }

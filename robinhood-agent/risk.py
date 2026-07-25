@@ -75,7 +75,12 @@ class RiskGuard:
     # ---- classification -------------------------------------------------
 
     def classify(self, tool_name: str) -> str:
-        """Return 'order', 'cancel', 'read', or 'foreign'."""
+        """Return 'order', 'cancel', 'read', 'unknown', or 'foreign'.
+
+        Fail-closed: a tool that matches neither an order/cancel pattern nor an
+        explicit read pattern is 'unknown' and gets denied — so an unanticipated
+        write tool (e.g. exercise_option) can never slip through as read-only.
+        """
         if not tool_name.startswith(self._server_prefix):
             return "foreign"
         bare = tool_name[len(self._server_prefix) :].lower()
@@ -84,7 +89,9 @@ class RiskGuard:
             return "cancel"
         if any(p in bare for p in tc.order_patterns):
             return "order"
-        return "read"
+        if any(p in bare for p in tc.read_patterns):
+            return "read"
+        return "unknown"
 
     # ---- daily counter persistence -------------------------------------
 
@@ -138,6 +145,14 @@ class RiskGuard:
 
         if kind == "read":
             return Decision(True, "read-only")
+
+        if kind == "unknown":
+            return Decision(
+                False,
+                "Unrecognized tool (not a known read, order, or cancel); denied "
+                "(fail-closed). Add it to read_patterns only if it is truly "
+                "read-only.",
+            )
 
         # From here down: order or cancel — the risky operations.
         if kind == "cancel":

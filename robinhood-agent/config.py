@@ -25,6 +25,7 @@ class RiskConfig:
 class ToolClassification:
     order_patterns: list[str] = field(default_factory=list)
     cancel_patterns: list[str] = field(default_factory=list)
+    read_patterns: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -83,6 +84,7 @@ def load_config(path: str | Path = "config.yaml") -> Config:
         tool_classification=ToolClassification(
             order_patterns=[str(p).lower() for p in (tc.get("order_patterns") or [])],
             cancel_patterns=[str(p).lower() for p in (tc.get("cancel_patterns") or [])],
+            read_patterns=[str(p).lower() for p in (tc.get("read_patterns") or [])],
         ),
     )
 

@@ -81,5 +81,15 @@ tool_classification:
     - create_order
     - buy
     - sell
+    - exercise       # exercise_option (a write action; gated then fail-closed)
   cancel_patterns:
-    - cancel         # cancel_equity_order, cancel_option_order
+    - cancel         # cancel_equity_order, cancel_option_order, cancel_option_exercise
+  # Explicit read allowlist. ANYTHING not matched here or above is treated as an
+  # unknown tool and DENIED (fail-closed) — so an unanticipated write tool can
+  # never be allowed as read-only. Add a tool here only if it is truly read-only.
+  read_patterns:
+    - get_           # all get_* tools (positions, quotes, portfolio, historicals, ...)
+    - search
+    - run_scan
+    - get_scanner_filter_specs
+    - review_        # review_equity_order / review_option_order preview only

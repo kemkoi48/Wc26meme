@@ -185,6 +185,29 @@ CSV format: `timestamp,open,high,low,close` with ISO timestamps, regular-session
 - [ ] You understand you may not be able to stop it mid-order once live.
 - [ ] The account holds only capital you can afford to lose.
 
+## Deploying (Mode B — unattended)
+
+The bot is a plain Python process; something must keep it running. Two supported
+shapes, both shipped in `deploy/`:
+
+- **systemd** (`deploy/robinhood-agent.service`) — for the daily trend strategy
+  as an always-on `--interval` loop. Copy to `/etc/systemd/system/`, edit paths
+  and user, `systemctl enable --now robinhood-agent`. Ships in dry-run;
+  add `--live` to `ExecStart` only after reviewing `audit.jsonl`.
+- **cron** (`deploy/crontab.example`) — one-shot cycles on a market-hours
+  schedule. This is the right shape for the Pattern Scalp (fires every 5 min
+  during the opening window only). Mind the UTC/DST notes in the file.
+
+Host checklist: Python 3.10+, Node 18+ (the Agent SDK drives a Node runtime),
+the repo at a stable path (e.g. `/opt/robinhood-agent`) with a venv, and `.env`
+populated (`ROBINHOOD_ACCESS_TOKEN`, `ROBINHOOD_ACCOUNT_NUMBER`,
+`ANTHROPIC_API_KEY`). Tokens expire — when runs start failing with `needs-auth`
+in the logs, re-authorize with Robinhood and update `.env`.
+
+Operate it like a deployment, not a fire-and-forget script: check `audit.jsonl`
+and the run logs daily at first, and keep `--live` off until the dry-run record
+looks right for several sessions.
+
 ## Layout
 
 ```

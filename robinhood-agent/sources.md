@@ -23,14 +23,20 @@ high-impact events" or "this week's calendar" before acting on a signal.
 
 ## Reuters Markets
 `https://www.reuters.com/markets/`
-**Status: Blocked.**
+**Status: Blocked (confirmed).**
 
-Direct WebFetch fails outright ("unable to fetch from www.reuters.com") —
-this looks like a bot-block on Reuters' side, not a paywall message. High
-reputational quality as a source, but not usable as a direct-check tool right
-now. Reuters-sourced content sometimes still surfaces through a general web
-search (which indexes the page rather than fetching it live), so it's not
-fully unreachable — just not a page I can browse directly.
+Direct WebFetch fails outright ("unable to fetch from reuters.com") — tested
+2026-08-06 across four variants (`www.reuters.com/markets/`,
+`reuters.com/markets/` without www, `www.reuters.com/markets/us/`, and a
+retry of the original URL): all four failed identically. This is a
+domain-wide block on Reuters' side, not a one-off glitch or a paywall
+message. High reputational quality as a source, but not usable as a direct-
+check tool. Don't keep retrying variants — this is settled.
+
+Workaround: Reuters-sourced content sometimes still surfaces through a
+general web search (which indexes the page rather than fetching it live). If
+you have a specific Reuters article you want analyzed, paste its text
+directly and I can work with that.
 
 ## Investing.com Academy — "Stay Updated on the Stock Market"
 `https://www.investing.com/academy/trading/stay-updated-on-the-stock-market/`

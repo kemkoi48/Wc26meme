@@ -61,6 +61,43 @@ source of current headlines itself.
 
 ---
 
+## Stocktwits (connector)
+**Status: Live, connected, verified.**
+
+Tested 2026-08-06: `whoami` confirms an authenticated session (real user
+account); `get_trending_symbols` returns real live top-movers with price, %
+change, intraday sparkline, watcher count, and extended-hours pricing (e.g.
+SOUN, SNDK, IONQ, RDW, DKNG at test time). `get_symbol_pulse` and
+`get_sentiment` return real aggregate sentiment for a symbol (bull/bear %, a
+0-100 score, a label like "EXTREMELY_BULLISH") plus message-volume metrics
+across multiple timeframes (now/15m/1D/1W/1M/3M/6M/1Y/ALL). Tested against
+AAPL: price $313.07, sentiment 82/100 "EXTREMELY_BULLISH", 987,224 watchers.
+
+Other available tools (not yet tested): `get_symbol_messages`,
+`get_message_volume`(+`_history`), `get_sentiment_history`,
+`get_following_feed`, `get_watchlist_feed`, `get_user_messages`,
+`get_symbol`.
+
+**Caveat — read before surfacing raw posts to a user:** the "top posts" in
+`get_symbol_pulse` is unmoderated, real user-generated content. In testing,
+AAPL's feed included off-topic, low-quality, and offensive material mixed in
+with genuine stock chatter. **The aggregate metrics (sentiment score, message
+volume, watcher count) are the reliable signal — don't relay raw post text
+without screening it first.**
+
+## Robinhood connector — no dedicated news tool
+Confirmed via tool search: none of the Robinhood tools is a `get_news` /
+article-feed endpoint. Closest equivalents are `get_earnings_calendar` /
+`get_earnings_results` / `get_financials` / `get_equity_fundamentals` —
+fundamentals and earnings data, not news articles. For actual news-adjacent
+signal, use Stocktwits sentiment/chatter (above) or a general web search.
+
+## Yahoo Finance — not actually connected
+User mentioned adding a Yahoo Finance connector alongside Stocktwits, but
+only Stocktwits tools appeared in the session (checked via tool search — no
+match). If a Yahoo Finance connector gets added later, re-check and log it
+here; don't assume it's present just because it was mentioned.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

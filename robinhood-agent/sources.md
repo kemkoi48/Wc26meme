@@ -98,6 +98,47 @@ only Stocktwits tools appeared in the session (checked via tool search — no
 match). If a Yahoo Finance connector gets added later, re-check and log it
 here; don't assume it's present just because it was mentioned.
 
+## Stocklake (connector)
+**Status: Live, connected, verified — free tier.**
+
+Tested 2026-08-06. 17 tools total; account is on the **free tier** (200
+calls/day, 8 non-AI tools). Two tools require **Pro** ($20/mo, 7-day trial,
+5000 calls/day) and returned `pro_required` errors when tested:
+`get_news_feed` (market-wide AI-flagged news briefing) and `get_signals`
+(AI-screened trade signals with conviction/rationale). Both gave a useful
+`preview` of a few symbols even on free tier.
+
+**Confirmed working on free tier:**
+- `get_market_pulse` — VIX, Fear & Greed, market breadth (RSI distribution),
+  SPY/QQQ/IWM + RSI, TLT/GLD. One call, no AI cost. Real live data verified.
+- `get_market_movers` — gainers/losers/most-active with price, volume, RSI,
+  ATR%, market cap. Real live data verified.
+- `get_stock_news` — per-symbol news (docs say "1 article" on free tier;
+  observed 5 articles per call in testing — better than documented, but
+  don't rely on the discrepancy holding).
+- `get_screener` — most filters (RSI/SMA/MACD/performance/volume/market cap/
+  analyst rating) work on free tier; `min_flag_score` and the `high_conviction`
+  preset are Pro-only (silently ignored on free tier per its own docs).
+- `get_stock` — price/fundamentals/raw indicators on free tier; the four
+  *interpreted* blocks (rating, signals, stance_signals, ai overview) are Pro.
+
+**Not yet tested:** `get_earnings_calendar`, `get_earnings_intelligence`,
+`get_indicator_history`, `get_insider_activity`, `get_market_assessment`,
+`get_sector_intelligence`, `get_stock_history`, `get_stock_research`,
+`get_stocks`, `get_watchlist`.
+
+**Real finding worth remembering:** cross-referencing Stocklake's mover list
+against Stocktwits trending caught a data-quality issue. Two names on
+Stocklake's gainers list (CLBK +126.6%, VSCO +69.6%) had no same-day news
+that explained a move that size, AND neither appeared on Stocktwits
+trending at all. A third name, IOVA (+38.99% on Stocklake, +38.36% on
+Stocktwits independently), had same-day news (8-K filing + a same-morning
+article) and showed up on both platforms — that agreement is what makes it
+trustworthy. **Lesson: an extreme single-source % move with no matching
+same-day news and no cross-platform attention is a reason for suspicion, not
+excitement — verify large movers against a second source before treating
+them as real.**
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

@@ -39,7 +39,7 @@ Windows). Fill in the three lines:
 
 ```
 ROBINHOOD_ACCESS_TOKEN=paste-your-token-here
-ROBINHOOD_ACCOUNT_NUMBER=432805174
+ROBINHOOD_ACCOUNT_NUMBER=paste-your-agentic-account-number-here
 ANTHROPIC_API_KEY=paste-your-anthropic-key-here
 ```
 

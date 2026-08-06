@@ -48,21 +48,25 @@ ANTHROPIC_API_KEY=paste-your-anthropic-key-here
 - The **account number** is your "Agentic" account (the one agents may trade).
 - The **Anthropic key** comes from https://platform.claude.com (API keys).
 
-**File 2: `config.json`** — find the line
+**File 2: `config.json`** — you can skip this step. `config.json` already
+picks symbols **automatically every day** (see "Automatic symbol picking"
+below) from a starter list of well-known stocks/ETFs. If you'd rather choose
+the symbols yourself instead, find the `"screening"` section near the bottom
+and set `"auto_screen": false` in the `"risk"` section just above it — then
+put your own symbols in `"symbol_allowlist": []`.
+
+## Step 4 — Pick today's symbols (automatic)
 
 ```
-"symbol_allowlist": [],
+bash screen.sh
 ```
 
-and put the stock symbols you allow between the brackets, in quotes:
+This looks at a short list of well-known stocks/ETFs and picks a few based on
+real trading data — not opinion. It's read-only: it cannot place any order,
+it can only research. Run this once each morning before Step 5. (You can skip
+this entirely if you turned `auto_screen` off in Step 3.)
 
-```
-"symbol_allowlist": ["AAPL", "VOO"],
-```
-
-(Leave it empty and the bot refuses every trade — that's a safety feature.)
-
-## Step 4 — Test it (safe — cannot place real orders)
+## Step 5 — Test it (safe — cannot place real orders)
 
 ```
 bash start.sh
@@ -73,9 +77,10 @@ it *would* do, but every real order is blocked. Read what it prints. A file
 called `audit.jsonl` appears, listing every action it attempted and whether the
 safety guard allowed it.
 
-Do this a few days in a row. Only continue when what it proposes looks sane.
+Do this a few days in a row (run `bash screen.sh` then `bash start.sh` each
+morning). Only continue when what it proposes looks sane.
 
-## Step 5 — Going live (real money — read this twice)
+## Step 6 — Going live (real money — read this twice)
 
 ```
 bash start.sh live

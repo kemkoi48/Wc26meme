@@ -65,6 +65,27 @@ risk:
   allow_sell: true
   allow_cancel: false
 
+  # If true, a same-day daily_allowlist.json (written by `bash screen.sh` /
+  # screener.py) REPLACES symbol_allowlist above for this run. No valid
+  # same-day file -> symbol_allowlist above is used unchanged (fail-closed).
+  # See the `screening:` section below and README's "Automatic daily symbol
+  # screening" for how the daily list is produced.
+  auto_screen: false
+
+# Controls screener.py (`bash screen.sh`), the OPTIONAL daily symbol screener.
+# It uses Claude with READ-ONLY tools to research candidate_universe, but a
+# symbol only gets selected if it clears these hard numeric thresholds in
+# code — Claude's research informs the pick, code decides it. Only takes
+# effect if risk.auto_screen is true above.
+screening:
+  candidate_universe: []       # e.g. [AAPL, MSFT, NVDA, SPY, QQQ]
+  min_avg_dollar_volume: 10000000   # liquidity floor
+  min_atr_pct: 1.0             # volatility floor (ATR as % of price)
+  max_atr_pct: 8.0             # volatility ceiling — avoid the wildest names
+  min_price: 1.0                # avoid penny stocks
+  max_price: 2000.0
+  top_n: 3                      # how many symbols to select each day
+
 # How the guard classifies Robinhood tools by name (substring match, case
 # insensitive). Tools not matching either list are treated as read-only.
 # These match the real Robinhood MCP tool names (place_equity_order,

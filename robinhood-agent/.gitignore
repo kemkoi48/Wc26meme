@@ -2,6 +2,7 @@
 .env
 state.json
 audit.jsonl
+daily_allowlist.json
 
 # Python
 .venv/

@@ -133,6 +133,42 @@ is denied — this bot only talks to Robinhood.
 Inspect `audit.jsonl` after any run to see exactly what was proposed, allowed,
 and denied, with reasons.
 
+## Automatic daily symbol screening (`screener.py`)
+
+By default `symbol_allowlist` is a fixed list you edit by hand. If you'd
+rather it update itself each day, `config.json` ships with `risk.auto_screen:
+true` and a `screening:` section wired up.
+
+**How it stays safe:** the screener is a separate step from trading, and it
+only *researches* — Claude has read-only tools (no `place_*`/`cancel_*`/
+`exercise_*` tool is even offered to it, not just denied). What actually gets
+selected is decided by hard numeric thresholds in plain Python
+(`apply_filters_and_rank` in `screener.py`): minimum liquidity
+(`min_avg_dollar_volume`), a volatility band (`min_atr_pct`/`max_atr_pct`),
+and a price range (`min_price`/`max_price`), applied to a candidate universe
+you configure (`screening.candidate_universe`). Claude's job is only to fetch
+the numbers; code decides who makes the cut. This is the same principle as
+`risk.py`: the model can inform a decision, it never makes the risk-relevant
+decision itself.
+
+Run it once each morning, before your trading schedule:
+
+```bash
+bash screen.sh              # writes daily_allowlist.json
+```
+
+The trading agent then picks this up automatically on its next run (via
+`config.py`'s `load_daily_allowlist`) — **only if the file is from today**.
+A stale, missing, or malformed file is ignored and the bot falls back to the
+static `symbol_allowlist` (which is empty by default = deny all). It never
+silently reuses yesterday's picks or opens up to an unreviewed universe.
+
+To automate this too, add `bash screen.sh` (or the `screener.py` line in
+`deploy/crontab.example`) to run **before** your trading cron job/service.
+
+To go back to a fixed, hand-picked list: set `risk.auto_screen: false` and
+fill in `risk.symbol_allowlist` yourself.
+
 ## Backtesting the rule (`backtest.py`)
 
 The live agent is an LLM reasoning over Robinhood's tools — it can't be replayed

@@ -4,6 +4,11 @@
 # adjust if your host runs in another timezone or for DST (these use EDT,
 # UTC-4; during EST winter months shift hours by +1).
 
+# --- Daily symbol screener (only needed if risk.auto_screen: true) ---------
+# Runs BEFORE the market opens so the trading run below has a fresh list.
+# 9:00 ET = 13:00 UTC in EDT. Writes daily_allowlist.json.
+0 13 * * 1-5  cd /opt/robinhood-agent && .venv/bin/python screener.py --config config.json >> cron.log 2>&1
+
 # --- Daily trend strategy (config.json) -------------------------------------
 # One cycle per weekday, 30 min after the open (10:00 ET = 14:00 UTC in EDT).
 # DRY RUN — add --live only after reviewing audit.jsonl.

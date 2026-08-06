@@ -1,5 +1,9 @@
 # robinhood-agent
 
+> **New to Python / the command line?** Read **[QUICKSTART.md](QUICKSTART.md)**
+> instead — it walks through everything with copy-paste commands
+> (`bash setup.sh`, then `bash start.sh`). This README is the full reference.
+
 An **autonomous agentic trading bot** that connects Claude (via the
 [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk)) to Robinhood's
 official Agentic Trading MCP endpoint (`https://agent.robinhood.com/mcp/trading`),

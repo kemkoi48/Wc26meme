@@ -1,0 +1,10 @@
+# Secrets and local state — never commit these.
+.env
+state.json
+audit.jsonl
+daily_allowlist.json
+
+# Python
+.venv/
+__pycache__/
+*.pyc

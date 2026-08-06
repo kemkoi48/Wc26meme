@@ -1,0 +1,116 @@
+# robinhood-agent configuration.
+# Every value under `risk:` is enforced deterministically in risk.py before any
+# order is allowed to reach Robinhood. Read the README before editing.
+
+# Claude model driving the agent. Opus 4.8 is the most capable default.
+model: claude-opus-4-8
+
+mcp:
+  server_name: robinhood
+  url: https://agent.robinhood.com/mcp/trading
+
+# The strategy the agent follows each cycle. Be explicit. The agent can only act
+# through the Robinhood MCP tools, and only within the risk limits below — it
+# cannot exceed them no matter what this prompt says.
+strategy: |
+  You are a conservative, trend-following trading assistant operating an agentic
+  Robinhood account. Your edge is patience and small size, not frequency.
+
+  The rule you follow (a simple moving-average trend filter):
+  - For each allowlisted symbol, look at its recent price trend using whatever
+    historical/quote data the available tools provide.
+  - Treat a symbol as being in an UPTREND when its shorter-term average price is
+    above its longer-term average price (e.g. ~20-day above ~50-day). Treat it as
+    a DOWNTREND otherwise.
+  - Only BUY a symbol you do not already hold when it is in an uptrend, and only
+    in a small fixed dollar amount within the per-order limit.
+  - Only SELL a symbol you hold when it has turned to a downtrend.
+  - When neither condition is met, do nothing. Most cycles should be no-ops.
+
+  Each cycle:
+  1. Use read-only tools to review the account: current positions, buying power,
+     and recent price history/quotes for the allowlisted symbols.
+  2. Apply the rule above to each symbol and decide on at most a few actions.
+  3. Before each order, state the symbol, side, dollar size, and the trend
+     reading that justifies it.
+
+  Rules:
+  - Only trade symbols on the allowlist. Never attempt to trade anything else.
+  - Prefer small position sizes. Do not chase; do not try to maximize turnover.
+  - If a tool call is denied by the risk guard, DO NOT try to work around it.
+    Report the denial and the reason, then stop for this cycle.
+  - If the tools don't give you enough data to read the trend confidently, do
+    nothing and say so.
+  - At the end of the cycle, give a short plain-language summary: what you
+    observed, what you did (or why you did nothing), and any denials.
+
+  Note: this same moving-average rule can be validated offline on historical
+  data with backtest.py before you trust it live.
+
+risk:
+  # Symbols the agent may trade. EMPTY LIST = deny all orders (fail-closed).
+  # Set this to the specific symbols you actually want traded.
+  symbol_allowlist: []
+
+  # Maximum dollar notional of a single order. Orders the guard cannot price
+  # (no dollar amount and no quantity*price it can compute) are denied.
+  max_order_notional_usd: 100
+
+  # Caps on how many orders the agent may place.
+  max_orders_per_run: 3
+  max_orders_per_day: 10
+
+  # Enable/disable each side and cancels independently.
+  allow_buy: true
+  allow_sell: true
+  allow_cancel: false
+
+  # If true, a same-day daily_allowlist.json (written by `bash screen.sh` /
+  # screener.py) REPLACES symbol_allowlist above for this run. No valid
+  # same-day file -> symbol_allowlist above is used unchanged (fail-closed).
+  # See the `screening:` section below and README's "Automatic daily symbol
+  # screening" for how the daily list is produced.
+  auto_screen: false
+
+# Controls screener.py (`bash screen.sh`), the OPTIONAL daily symbol screener.
+# It uses Claude with READ-ONLY tools to research candidate_universe, but a
+# symbol only gets selected if it clears these hard numeric thresholds in
+# code — Claude's research informs the pick, code decides it. Only takes
+# effect if risk.auto_screen is true above.
+screening:
+  candidate_universe: []       # e.g. [AAPL, MSFT, NVDA, SPY, QQQ]
+  min_avg_dollar_volume: 10000000   # liquidity floor
+  min_atr_pct: 1.0             # volatility floor (ATR as % of price)
+  max_atr_pct: 8.0             # volatility ceiling — avoid the wildest names
+  min_price: 1.0                # avoid penny stocks
+  max_price: 2000.0
+  top_n: 3                      # how many symbols to select each day
+
+# How the guard classifies Robinhood tools by name (substring match, case
+# insensitive). Tools not matching either list are treated as read-only.
+# These match the real Robinhood MCP tool names (place_equity_order,
+# place_option_order, cancel_equity_order, cancel_option_order). "place" and
+# "cancel" are deliberately broad so future placement/cancel tools are caught
+# too; the extra generic entries are harmless future-proofing. Do NOT add
+# "order" or "trade" here — they also appear in read-only tools like
+# get_equity_orders and get_pnl_trade_history, which would then be wrongly
+# blocked. "review_*_order" tools only preview an order and stay read-only.
+tool_classification:
+  order_patterns:
+    - place          # place_equity_order, place_option_order
+    - submit_order
+    - create_order
+    - buy
+    - sell
+    - exercise       # exercise_option (a write action; gated then fail-closed)
+  cancel_patterns:
+    - cancel         # cancel_equity_order, cancel_option_order, cancel_option_exercise
+  # Explicit read allowlist. ANYTHING not matched here or above is treated as an
+  # unknown tool and DENIED (fail-closed) — so an unanticipated write tool can
+  # never be allowed as read-only. Add a tool here only if it is truly read-only.
+  read_patterns:
+    - get_           # all get_* tools (positions, quotes, portfolio, historicals, ...)
+    - search
+    - run_scan
+    - get_scanner_filter_specs
+    - review_        # review_equity_order / review_option_order preview only

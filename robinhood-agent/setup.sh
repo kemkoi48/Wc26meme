@@ -35,9 +35,23 @@ echo "    found: node $(node --version)"
 say "Creating an isolated Python environment (.venv)..."
 [ -d .venv ] || "$PY" -m venv .venv
 
+# Windows' python venv module creates .venv/Scripts/ (even inside Git Bash);
+# Mac/Linux create .venv/bin/. Detect which one actually exists.
+if [ -f .venv/bin/pip ]; then
+  VENV_PIP=.venv/bin/pip
+  VENV_PY=.venv/bin/python
+elif [ -f .venv/Scripts/pip.exe ]; then
+  VENV_PIP=.venv/Scripts/pip.exe
+  VENV_PY=.venv/Scripts/python.exe
+else
+  echo "The virtual environment didn't create correctly."
+  echo "Try deleting the .venv folder and running 'bash setup.sh' again."
+  exit 1
+fi
+
 say "Installing the required packages..."
-./.venv/bin/pip install --quiet --upgrade pip
-./.venv/bin/pip install --quiet -r requirements.txt
+"$VENV_PIP" install --quiet --upgrade pip
+"$VENV_PIP" install --quiet -r requirements.txt
 
 say "Creating your .env settings file..."
 if [ -f .env ]; then

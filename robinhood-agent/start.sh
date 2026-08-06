@@ -20,6 +20,16 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
+# Same bin/ vs Scripts/ detection as setup.sh (Mac/Linux vs Windows venv layout).
+if [ -f .venv/bin/python ]; then
+  VENV_PY=.venv/bin/python
+elif [ -f .venv/Scripts/python.exe ]; then
+  VENV_PY=.venv/Scripts/python.exe
+else
+  echo "The virtual environment looks broken - run:  bash setup.sh   again."
+  exit 1
+fi
+
 ARGS=(--config config.json)
 MODE="DRY RUN (no real orders)"
 for a in "$@"; do
@@ -36,4 +46,4 @@ if [[ "$MODE" == LIVE* ]]; then
   [ "$ok" = "YES" ] || { echo "Cancelled."; exit 1; }
 fi
 
-exec ./.venv/bin/python run.py "${ARGS[@]}"
+exec "$VENV_PY" run.py "${ARGS[@]}"

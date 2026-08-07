@@ -139,6 +139,27 @@ same-day news and no cross-platform attention is a reason for suspicion, not
 excitement — verify large movers against a second source before treating
 them as real.**
 
+## Robinhood native scanner (`get_scans` / `run_scan`) — covers names Stocklake misses
+**Status: Live, verified — and catches a real gap.**
+
+Tested 2026-08-06: the account has saved scans including "Daily gainers"
+(294 matches, all Robinhood-tradable stocks, sorted % change desc).
+`run_scan` on it surfaced **WYHG at +540%** (a $10.2M market-cap ADS) —
+a move that **never appeared in Stocklake's `get_market_movers` gainers
+list** (top Stocklake gainer at the same moment was CLBK at 126.6%, not
+close). WYHG had zero news (`get_stock_news` returned empty) and classic
+retail-hype-driven chatter with no informational catalyst — textbook thin/
+low-float momentum spike, not a real opportunity, but the point stands
+regardless of that stock's quality: **Stocklake's ~3,300-name tracked
+universe does not cover everything Robinhood's own scanner does.**
+
+**Process lesson: check both `get_market_movers` (Stocklake) AND
+`run_scan` on Robinhood's "Daily gainers" (or equivalent) when looking for
+"what's moving today" — they cover different universes and can each miss
+names the other catches.** `run_scan` results can be large (200+ rows) and
+overflow the tool-result limit; save to file and extract with
+`python3`/`jq` rather than reading inline.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

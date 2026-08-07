@@ -160,6 +160,31 @@ names the other catches.** `run_scan` results can be large (200+ rows) and
 overflow the tool-result limit; save to file and extract with
 `python3`/`jq` rather than reading inline.
 
+## Robinhood consumer app — "Short interest" / "Trading Trends" panels
+**Status: Blocked — app-only, no MCP tool exposes it.**
+
+Confirmed 2026-08-07: the Robinhood mobile app's stock-detail screen has a
+"Short interest" chart (short interest in shares + short float %, ~2 months
+trailing) and a "Trading Trends" chart (net buy/sell % by Robinhood retail /
+Hedge funds / Insiders, weekly). Checked the full `Robinhood` MCP tool list
+(`get_equity_fundamentals`, `get_financials`, `get_equity_technical_indicators`,
+etc.) — none of them return short interest, short float, or ownership-flow
+data. This is because the connected server is the narrower **Agentic Trading
+API** (`agent.robinhood.com/mcp/trading`), not the full consumer-app backend;
+`get_equity_fundamentals` gives float/shares outstanding but stops there.
+
+**Workaround: read the values directly off a user-provided screenshot of the
+app screen** — no live fetch is possible, but a pasted image can be
+transcribed manually. Example (TSLA, screenshot dated through Aug 6 2026):
+short interest ran ~75–79M shares (2.8–3.0% of float) from early June through
+mid/late July, then dropped sharply ~Jul 25–28 to ~67–70M shares (2.4–2.6%
+float) and held there — a short-covering signal, not something any connected
+tool surfaced independently. Robinhood retail net-buy/sell trend for the same
+symbol was net-positive overall Jul 8–Aug 3 with two sharp sell days.
+
+If a dedicated short-interest data connector (e.g. Ortex, S3 Partners, or a
+FINRA short-interest feed) gets added later, re-check and replace this entry.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

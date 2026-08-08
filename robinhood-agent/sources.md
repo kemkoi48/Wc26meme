@@ -185,6 +185,65 @@ symbol was net-positive overall Jul 8–Aug 3 with two sharp sell days.
 If a dedicated short-interest data connector (e.g. Ortex, S3 Partners, or a
 FINRA short-interest feed) gets added later, re-check and replace this entry.
 
+## Warrior Trading — "Small Account Challenge" momentum strategy (YouTube + PDFs)
+**Status: Educational, not a feed. Incompatible with this repo's cash account for live use.**
+
+Reviewed 2026-08-08: a Ross Cameron / Warrior Trading YouTube class plus three
+companion PDFs (strategy guide, sample trading-plan worksheet, blank trade-log
+worksheet). This is promotional content for a paid course (PDF upsells, "check
+out my class" links) — the $600→$20M / $2K→$65K-in-30-days figures are the
+marketing hook; treat as a strategy description, not a performance claim.
+
+**The strategy — 5 steps:**
+1. **Stock selection** (scanner-driven): relative volume ≥5x (ideally ≥20x)
+   50-day average, high total volume, gapping/up ≥10% intraday, price in a
+   narrow band (video: $2–20; the trading-plan worksheet narrows this to
+   **$5–10** as the small-account "sweet spot"), float **<20M shares in a hot
+   market / <10M in a cold market** (lower = better). News preferred, not
+   required if other criteria are strong.
+2. **Entry — "first pullback" pattern**: buy the first candle to make a new
+   high after a pullback that (a) retraces ≤50% of the prior move, (b) shows
+   heavier volume on green than red candles, (c) holds above VWAP, (d) holds
+   above the 9 EMA. Stop-loss = low of the pullback.
+3. **Level 2 / tape** for entry timing and confirmation around psychological
+   price levels (half-dollar/whole-dollar).
+4. **Exit on indicators, not fixed targets**: a large resting sell wall, a
+   suspected iceberg/hidden seller, a burst of red tape, a topping-tail /
+   "jackknife rejection" candle, MACD crossing its signal line, or buying
+   visibly slowing.
+5. **Journal every trade** and mine the log for leaks (e.g. time-of-day
+   win-rate) — the log template tracks P/L, accuracy, float, relative volume,
+   news, hold time, and candlestick pattern per trade.
+
+**Concrete risk rules from the worksheets** (not stated in the video):
+7:00–11:00am ET trading window; risk ~5% of account per trade, profit target
+~10% (2:1 reward:risk); daily max loss 10% of account; **3 consecutive losers
+= stop for the day**; accuracy/P&L progression benchmarks from 40–50%
+accuracy / 0.5–1.0 P/L ratio (novice) up to 70%+ / 1.0+ P/L ratio sustained
+over 5+ weeks (pro).
+
+**Why this doesn't map onto this repo:**
+- It requires multiple same-day round trips (buy and sell the same low-float
+  stock within minutes) on a **cash account** — this causes good-faith
+  settlement violations regardless of the 2024 T+1 settlement change (T+1
+  speeds up when capital becomes available again, it does not permit same-day
+  round trips). Same restriction already documented for Pattern Scalp in the
+  README — this strategy has the identical conflict, more so (it's designed
+  around several round trips per session, not one).
+- Exit logic depends on reading Level 2 order flow and tape **in real time,
+  continuously** (spotting an iceberg seller, a burst of red tape). The
+  Robinhood connector's `get_equity_price_book` returns a real Level 2
+  snapshot, but only on-demand — a polling/interval-based bot cannot watch
+  continuous tick-by-tick order flow the way this strategy requires.
+- The target stock profile (float <20M, extreme relative volume, sometimes no
+  news) is exactly the profile already flagged as suspicious in the WYHG
+  entry above (extreme single-source move, no news, no cross-platform
+  confirmation = reason for caution, not excitement in that entry). This
+  strategy treats that same profile as the *goal* — the two takeaways only
+  don't contradict each other because Warrior Trading's edge depends on
+  discretionary skill/speed to tell a real squeeze from a pump, which isn't
+  something this bot's tools or architecture can replicate safely.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

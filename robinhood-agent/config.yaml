@@ -114,3 +114,21 @@ tool_classification:
     - run_scan
     - get_scanner_filter_specs
     - review_        # review_equity_order / review_option_order preview only
+
+# Controls momentum_scanner.py (`bash scan_momentum.sh`), the OPTIONAL
+# read-only momentum scanner (Warrior-Trading-style "5 pillars" stock
+# selection -- see sources.md). Claude uses Robinhood's native market scanner
+# plus fundamentals to research today's biggest movers, but a symbol only
+# appears in the report if it clears these hard numeric thresholds in code
+# (apply_filters_and_rank in momentum_scanner.py). This is a RESEARCH REPORT
+# ONLY: it writes momentum_candidates.json, a file nothing else in this repo
+# reads. It is never wired into symbol_allowlist or run.py -- the strategy it
+# surfaces needs same-day round trips a cash account can't do safely, and
+# real-time tape-reading this bot's interval-polling architecture can't do.
+momentum_scan:
+  min_relative_volume: 5.0     # today's volume / 50-day avg volume, minimum
+  min_pct_change: 10.0         # minimum % gain on the day
+  min_price: 2.0
+  max_price: 20.0
+  max_float: 20000000          # shares available to trade, maximum
+  top_n: 10                     # how many candidates to report

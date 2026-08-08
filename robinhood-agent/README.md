@@ -169,6 +169,41 @@ To automate this too, add `bash screen.sh` (or the `screener.py` line in
 To go back to a fixed, hand-picked list: set `risk.auto_screen: false` and
 fill in `risk.symbol_allowlist` yourself.
 
+## Momentum scanner (`momentum_scanner.py`) — research report only
+
+`bash scan_momentum.sh` runs a read-only, market-wide scan for today's
+strongest movers, using the "5 pillars" of momentum stock selection (relative
+volume, % gain, price range, and float — see `sources.md`'s "Warrior Trading"
+entry for the strategy this mirrors). Claude uses Robinhood's native scanner
+tools (`get_scans`/`run_scan`/`create_scan`) plus `get_equity_fundamentals` to
+gather data on today's top movers; which symbols actually get reported is
+decided by hard numeric thresholds in code (`apply_filters_and_rank` in
+`momentum_scanner.py`), the same model this repo uses everywhere else: the
+model researches, code decides.
+
+```bash
+bash scan_momentum.sh              # writes momentum_candidates.json
+```
+
+**This is deliberately not wired into trading.** It writes
+`momentum_candidates.json`, a file nothing else in this repo reads — it is
+not an allowlist, and `run.py` never touches it. Two structural reasons this
+strategy cannot run live on this account, both already documented in
+`sources.md`:
+- It requires multiple same-day round trips on low-float names, which trips
+  good-faith violations on this account's cash-account settlement (same
+  restriction that keeps Pattern Scalp research/dry-run-only, below).
+- Its exit logic depends on reading Level 2 order flow and tape
+  continuously, in real time. `get_equity_price_book` can return a Level 2
+  snapshot on request, but an interval-polling bot has no way to watch
+  tick-by-tick order flow the way the strategy needs.
+
+Only 4 of the "5 pillars" are enforced as numeric filters — relative volume,
+% change, price range, float. The 5th (a real news catalyst) has no
+connected data source to verify it against, so it's surfaced as free-text
+`notes` for you to read, never a pass/fail gate a fake or malformed report
+could satisfy.
+
 ## Backtesting the rule (`backtest.py`)
 
 The live agent is an LLM reasoning over Robinhood's tools — it can't be replayed
@@ -258,6 +293,7 @@ robinhood-agent/
 ├── config.py       # loads and validates config.yaml OR config.json
 ├── config.yaml     # strategy prompt + risk limits (commented default)
 ├── config.json     # equivalent JSON profile, sized for a small balance
+├── momentum_scanner.py  # read-only momentum scanner (research report only)
 ├── requirements.txt
 ├── .env.example
 └── .gitignore

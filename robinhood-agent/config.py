@@ -45,6 +45,25 @@ class ScreeningConfig:
 
 
 @dataclass
+class MomentumScanConfig:
+    """Controls momentum_scanner.py, the read-only Warrior-Trading-style
+    momentum scanner (see sources.md for the strategy this mirrors).
+
+    This is a RESEARCH report only -- momentum_scanner.py never writes
+    daily_allowlist.json and is never read by run.py. That's deliberate: the
+    strategy this scans for requires same-day round trips that trip
+    good-faith violations on this account's cash-account settlement, so it
+    is not wired into anything that can place an order.
+    """
+    min_relative_volume: float = 5.0
+    min_pct_change: float = 10.0
+    min_price: float = 2.0
+    max_price: float = 20.0
+    max_float: float = 20_000_000.0
+    top_n: int = 10
+
+
+@dataclass
 class ToolClassification:
     order_patterns: list[str] = field(default_factory=list)
     cancel_patterns: list[str] = field(default_factory=list)
@@ -60,6 +79,7 @@ class Config:
     risk: RiskConfig
     tool_classification: ToolClassification
     screening: ScreeningConfig
+    momentum_scan: MomentumScanConfig
     # The brokerage account the bot is allowed to act on. Resolved from the
     # ROBINHOOD_ACCOUNT_NUMBER env var (preferred) or the config file. When set,
     # the risk guard denies any order/cancel aimed at a different account.
@@ -106,6 +126,7 @@ def load_config(path: str | Path = "config.yaml") -> Config:
     risk = raw.get("risk", {}) or {}
     tc = raw.get("tool_classification", {}) or {}
     sc = raw.get("screening", {}) or {}
+    ms = raw.get("momentum_scan", {}) or {}
 
     # Account number: env var wins so the real value never has to live in a
     # committed config file.
@@ -141,6 +162,14 @@ def load_config(path: str | Path = "config.yaml") -> Config:
             min_price=float(sc.get("min_price", 1.0)),
             max_price=float(sc.get("max_price", 2000.0)),
             top_n=int(sc.get("top_n", 3)),
+        ),
+        momentum_scan=MomentumScanConfig(
+            min_relative_volume=float(ms.get("min_relative_volume", 5.0)),
+            min_pct_change=float(ms.get("min_pct_change", 10.0)),
+            min_price=float(ms.get("min_price", 2.0)),
+            max_price=float(ms.get("max_price", 20.0)),
+            max_float=float(ms.get("max_float", 20_000_000.0)),
+            top_n=int(ms.get("top_n", 10)),
         ),
     )
 

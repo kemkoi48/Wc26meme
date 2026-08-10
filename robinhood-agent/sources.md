@@ -246,21 +246,71 @@ over 5+ weeks (pro).
 
 ## Warrior Trading — warriortrading.com/momentum-day-trading-strategy
 `https://www.warriortrading.com/momentum-day-trading-strategy/`
-**Status: Blocked (content truncated).**
+**Status: Live via the AMP URL. Canonical URL is blocked (truncates).**
 
-Tested 2026-08-10, twice, with different extraction prompts. WebFetch returns
-only the page title ("Momentum Day Trading Strategies for Beginners") followed
-by "[Content truncated due to length...]" — no article body reaches the
-extraction step either time. Unlike the Reuters block (a hard fetch failure),
-this looks like the page's real content sitting past whatever nav/ad/header
-markup consumes the fetch's content window. Don't treat this as equivalent to
-the YouTube-class Warrior Trading entry above (which *did* return full
-content) — this specific URL has not been read. If asked about this page's
-contents specifically, say so rather than reusing the unrelated YouTube-class
-summary.
+**Use `https://www.warriortrading.com/amp/momentum-day-trading-strategy/`.**
+The canonical URL was tested twice on 2026-08-10 with different extraction
+prompts and both times returned only the page title followed by "[Content
+truncated due to length...]" — the body sits past nav/ad markup that eats the
+fetch window. The AMP copy strips that markup and returned the **complete,
+untruncated article** on the first try. Generalize this: for any content site
+that truncates, try `/amp/` before declaring it blocked.
 
-Workaround untried: pasting the article text directly, or a search-indexed
-excerpt via WebSearch, the same fallback documented for Reuters above.
+**Correction — an earlier WebSearch summary of this page got several numbers
+wrong.** Before the AMP read, a search-engine summary was logged claiming
+$1–10 price / <10M float / ≥5% change / 5x rel. volume. The actual article
+says none of those things except approximately the float ideal. Lesson: a
+search summary of a page is *not* a read of the page — label it as such and
+replace it once the real text is obtained. Do not cite those figures.
+
+**What the article actually says (read directly, 2026-08-10):**
+
+*Selection:* float **under 100M shares**, with **under 20M ideal**; relative
+volume **at least 2x** average; stocks moving **20–30%+** on the day; on the
+daily chart, price above its moving averages with **no nearby resistance**; a
+fundamental catalyst — PR, earnings, FDA news, activist investor, breaking
+news.
+
+*Entry patterns (named):* **Bull Flag** — buy the first candle to make a new
+high after the breakout — and **Flat Top Breakout**, where resistance forms
+across several candles before an explosive move.
+
+*Exits:* sell **half** the position at the first profit target; **the first
+candle to close red is an exit indicator**; exit into extension bars (spikes
+of $200–400+).
+
+*Risk:* **2:1 profit/loss ratio** required. Max stop distance **20 cents** —
+if the technical stop is further away, stop out at −20¢ anyway. Position size
+falls out of that: `shares = max_risk ÷ stop_distance` (their example: $500
+risk ÷ $0.20 = 2,500 shares).
+
+**The finding that matters most here: a hard time window of 9:30–11:30am ET,
+with the first hour called optimal, and 5-minute charts only after 11:30am.**
+
+This reframes a result from live testing the same day. Two scanner runs at
+**12:43pm and 1:07pm ET** — both more than an hour past this strategy's own
+cutoff — found that every "building" name from the earlier run had flipped to
+fading 24 minutes later, none breaking to a new high (WFF 20.9x→0.16x, VERU
+3.4x→0.26x, GLBS 1.9x→0.34x, HKIT 2.5x→0.34x). That was recorded as a
+weakness of the acceleration signal. Per this article it is at least partly
+the expected behavior of the *market* in that window, not only a defect in the
+metric: the strategy does not claim to work at 1pm. **Any future test of an
+intraday momentum signal should run inside 9:30–11:30am ET before its decay is
+attributed to the signal itself.**
+
+*Not from this page:* a "switch from Top Gainer to a High of Day Momentum
+Scanner as the day progresses" workflow appeared in search results, but the
+article text does not mention it — it belongs to Warrior's separate scanner
+pages (`/day-trading-scanners/`, `/how-to-use-stock-scanners/`), unread as of
+this entry. Worth reading before building a high-of-day strategy on it.
+
+**Where this conflicts with config.json** (which encodes the YouTube-class
+numbers — $2–20 price, <20M float, ≥10% change, ≥5x rel. volume): this page is
+looser on relative volume (2x vs 5x) and float (<100M vs <20M), and much
+tighter on the move size (20–30% vs 10%). It states no price band at all.
+These are two different write-ups of the same house strategy and they do not
+agree; treat neither as authoritative and keep config.json's numbers unless
+there's a reason to change them.
 
 ## Also available (not from a user-provided link)
 

@@ -244,6 +244,24 @@ over 5+ weeks (pro).
   discretionary skill/speed to tell a real squeeze from a pump, which isn't
   something this bot's tools or architecture can replicate safely.
 
+## Warrior Trading — warriortrading.com/momentum-day-trading-strategy
+`https://www.warriortrading.com/momentum-day-trading-strategy/`
+**Status: Blocked (content truncated).**
+
+Tested 2026-08-10, twice, with different extraction prompts. WebFetch returns
+only the page title ("Momentum Day Trading Strategies for Beginners") followed
+by "[Content truncated due to length...]" — no article body reaches the
+extraction step either time. Unlike the Reuters block (a hard fetch failure),
+this looks like the page's real content sitting past whatever nav/ad/header
+markup consumes the fetch's content window. Don't treat this as equivalent to
+the YouTube-class Warrior Trading entry above (which *did* return full
+content) — this specific URL has not been read. If asked about this page's
+contents specifically, say so rather than reusing the unrelated YouTube-class
+summary.
+
+Workaround untried: pasting the article text directly, or a search-indexed
+excerpt via WebSearch, the same fallback documented for Reuters above.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

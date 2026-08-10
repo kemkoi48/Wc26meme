@@ -3,6 +3,7 @@
 state.json
 audit.jsonl
 daily_allowlist.json
+momentum_candidates.json
 
 # Python
 .venv/

@@ -50,12 +50,37 @@ SPY vs its own 20/50/200 SMA.
 | **Trending up, low vol** | VIX < 20, SPY above 50 & 200 SMA, breadth neutral-positive | **S1 Trend Follow** | Today (2026-08-11) was this: VIX 15.35, 90.7% of names neutral RSI |
 | **Trending up, high vol** | VIX > 25, wide daily ranges, breadth extended | **S3 Momentum Scan** (research) | The regime the low-float scan is actually built for |
 | **Volatile open, no daily trend** | Large first-15m range vs ATR | **S2 Opening Range Reversal** | BLOCKED — needs same-day round trip |
-| **Range-bound / choppy** | SPY oscillating around 20 SMA, VIX mid, no breadth extreme | **none yet** | Uncovered. Pivot-point mean reversion is the obvious candidate (daytrading.com) |
+| **Range-bound / choppy** | **7/20/65 SMA filter NOT aligned** (see below), VIX mid, no breadth extreme | **S5 Range Trade** | DRAFT |
 | **Trending down** | SPY below 50 SMA, breadth negative | **none possible** | Long-only. Correct action is sit out |
 | **Event day** | High-impact econ release, VIX spike | **sit out** | Investing.com calendar check pre-open |
 
 **Two of six regimes have a runnable strategy.** That is the honest coverage
 number, and the down-day gap is structural rather than something to build.
+
+### The trend/range test — 7/20/65 SMA alignment
+
+From the DailyFX range guide, and the most useful thing in it. A concrete,
+computable answer to "is this a trending or a ranging market," which the
+regime table above otherwise hand-waves:
+
+- **Uptrend:** 7 SMA > 20 SMA > 65 SMA
+- **Downtrend:** 7 SMA < 20 SMA < 65 SMA
+- **Neither (ranging):** any other ordering
+
+> "The importance of the three-SMA filter does not lie in the specific SMA
+> values, but rather in the interplay of the short-, intermediate- and
+> long-term price trends."
+
+So the alignment test is the point, not the periods — the periods are
+tunable by Miner's procedure. Two independent uses:
+
+1. **Aligned → trend regime.** Run S1/S4. Do **not** range trade; that is
+   the guide's central warning.
+2. **Not aligned → range regime.** S5 is eligible.
+
+Applies to the index (SPY) for market regime and to an individual symbol for
+per-name eligibility. `get_equity_technical_indicators` computes SMA at any
+period, so this is three calls and no new infrastructure.
 
 ---
 
@@ -222,11 +247,81 @@ addresses S1's weakness: S1 has no concept of *when* within a trend to enter.
 
 ---
 
+## S5 — Range Trade  ·  **DRAFT, never run**
+
+Fills the range-bound regime, previously uncovered. Source: DailyFX/FXCM
+*Range Trade Guide*. **That guide is about forex, and a large part of it does
+not transfer** — see the exclusions at the end of this section.
+
+- **Regime:** range-bound. Eligibility test is the 7/20/65 SMA filter
+  **not** aligned, on both SPY and the symbol.
+- **Range definition:** price makes a significant high, retests and fails to
+  break it, makes a significant low, retests and fails to break it. Both
+  failures are required — one touch does not establish a level. "The longer
+  the indecision point remains, the more significant the support or
+  resistance level."
+- **Setup (long only on this account):** price at/near established support
+  with RSI oversold.
+- **Entry:** **RSI(14) crossing back up through 30** — the cross, not the
+  reading. The guide is explicit that RSI can sit oversold for many periods
+  in a trend, so the cross is what makes it an entry. This is the same
+  confirmation principle as Miner's trailing-one-bar entry: require the
+  market to move your way first.
+- **Stop:** below the swing low, plus slippage room. (Guide uses 10 pips in
+  FX; the equity analogue is a small fixed buffer or a fraction of ATR, to be
+  set — do not copy "10 points" literally, the units are not comparable.)
+- **Target:** RSI reaching overbought (70), or price reaching the top of the
+  established range. The short half of the guide's cycle (sell at resistance)
+  is unusable here — long-only.
+- **Size:** house 3% risk rule. Range stops are tight, so this permits a
+  larger share count than S1 would; the notional cap still binds.
+
+**Two rules from this guide that are more valuable than the strategy itself**
+
+1. **"Only Take One Stop."** When a range breaks, take one loss and do not
+   re-enter. Re-entering a broken range to "get it back" is how the strategy
+   turns a small loss into an account event. This is an explicit
+   anti-martingale rule and we have nothing else like it written down.
+2. **Stops are non-negotiable here specifically.** Range trading is
+   profitable right up until the breakout, and breakouts out of long
+   consolidations are violent — the guide's own example ranged for 11 months
+   then broke hard. The strategy's entire risk is concentrated in the one
+   event that ends it.
+
+**Indicator calibration rule** (a concrete test, same spirit as Miner's):
+for Bollinger Bands used on a range, the band should hold the *second*,
+higher low. If that second low pierces the lower band, the moving average is
+**too short**; if it stays well above, **too long**.
+
+**Avoid trading into scheduled news.** Guide's window for North America is
+**8–10am ET**. Our own equivalent is the Investing.com economic calendar
+check already logged in `sources.md` — same idea, better source for equities.
+
+### What does NOT transfer from this guide
+The whole instrument-selection half is forex-specific and should not be
+adapted by analogy:
+- Avoid-the-majors / trade-the-crosses. Rests on the dollar being one side
+  of ~90% of FX transactions. **No equity analogue exists.**
+- Interest-rate differentials predicting range width. Meaningless for a
+  single stock.
+- Tick volume as a support/resistance proxy — exists because FX has no
+  central volume. Equities have real volume; use it directly.
+- DailyFX's proprietary reports and their Range Breakout Barometer.
+
+**The open question this leaves:** the guide's core selection insight is
+"trade the instrument that has no dominant trending driver." What the equity
+analogue is — low beta? no upcoming earnings? no active catalyst? — is
+genuinely unanswered, and inventing one and attributing it to this guide
+would be false. Needs its own testing before S5 is more than a draft.
+
+---
+
 ## What to build next, in order
 
-1. **Regime classifier** — one `get_market_pulse` + SPY MA call, outputs the
-   table above. Makes every strategy better by saying when not to run it.
-   Highest value per line of code.
+1. **Regime classifier** — `get_market_pulse` plus the **7/20/65 SMA
+   alignment test** on SPY, outputs the table above. The SMA filter is what
+   makes this concrete rather than a judgment call, and it is three
+   indicator calls. Highest value per line of code.
 2. **A stop for S1** — the only live strategy is missing the one thing every
    source agrees on.
 3. **Trade log** — Miner: no successful trader lacks one. Also the only way

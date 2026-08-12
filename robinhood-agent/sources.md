@@ -312,6 +312,69 @@ These are two different write-ups of the same house strategy and they do not
 agree; treat neither as authoritative and keep config.json's numbers unless
 there's a reason to change them.
 
+## daytrading.com — Strategies overview
+`https://www.daytrading.com/strategies`
+**Status: Live, fetchable.**
+
+Tested 2026-08-11 — full page fetched cleanly, no truncation. A survey
+article naming six strategies plus a general risk-management section.
+Shallower than the Warrior Trading source (a few sentences per strategy, not
+a full walkthrough), but two pieces are concretely new and worth carrying
+forward.
+
+**The six strategies, briefly:**
+1. **Breakout** — close above resistance = long bias, close below support =
+   short bias; price target from the average size of recent swings. No
+   numeric thresholds given.
+2. **Scalping** — sell the instant a trade is profitable; needs a broker that
+   explicitly permits it (worth checking on the Robinhood Agentic account
+   before ever building toward this).
+3. **Momentum** — "there is always at least one stock that moves 20-30% each
+   day"; enter on news + high volume, exit on reversal signs or volume
+   drying up. This is the same shape as momentum_scanner.py's Strategy 1,
+   just without numeric filters — doesn't add anything config.json doesn't
+   already have more precisely.
+4. **Reversal / mean reversion** — trade pullbacks against the trend;
+   flagged in the article itself as needing more experience than the others.
+5. **Pivot points** — classic floor-trader formula: `P = (H+L+C)/3`,
+   `R1 = 2P-L`, `S1 = 2P-H`, `R2 = P+(R1-S1)`, `S2 = P-(R1-S1)`. Session
+   range often runs between P and the first support/resistance. More a
+   forex/futures tool per the article; untested against any of this repo's
+   equity candidates so far.
+6. **Moving average crossover** — three SMAs (20/60/100 period); buy when
+   the 20 crosses above the 60, sell on the cross below; the 100-period line
+   sets trend bias (price above it = uptrend context, below = downtrend).
+   **This is a direct, more specific version of the trend rule already coded
+   into `run.py`'s strategy prompt** (20-day above 50-day = uptrend) — same
+   idea, different period pair and an added third line for regime context.
+   Worth testing 20/60/100 against the existing 20/50 pair before assuming
+   either is better.
+
+**The two genuinely new things, not present anywhere else in this repo:**
+
+- **Position sizing formula, stated generally (1% risk convention, not
+  specific to any one strategy):** `position_size = max_risk ÷ (entry_price
+  − stop_price)`, with max_risk itself capped at ~1% of account equity per
+  trade (their example: £27,500 account → £275 max risk). This is a
+  *relative* (% of equity) sizing rule. config.json's
+  `risk.max_order_notional_usd` is a flat dollar cap (currently $5) —
+  fundamentally different logic (fixed dollar ceiling vs. stop-distance-based
+  sizing that shrinks or grows the share count with volatility). Not
+  contradictory, just a different risk model; worth deciding deliberately
+  which one this repo wants rather than defaulting to the flat-dollar one by
+  omission.
+- **Two-tier stop-loss:** a mental stop at the point the entry thesis breaks
+  (exit criteria, not a price), plus a hard physical stop at the maximum
+  tolerable dollar loss. Nothing in this repo currently encodes an exit rule
+  tied to *thesis invalidation* rather than price — every stop discussed so
+  far (Warrior Trading's 20¢, the momentum scan's pass/fail) is price- or
+  filter-based only.
+
+**Not tested against this session's actual data** (WXM, PLAG, GRI, etc.) —
+this was a read of the source, not yet an application of pivot points or the
+MA crossover to today's candidates. If asked to re-evaluate today's names
+against this framework, that's a separate step.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

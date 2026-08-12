@@ -647,6 +647,50 @@ discretionary chart-reading methods. None of it has been tested against this
 session's data, and the connected tools expose no Fibonacci or wave
 analysis. Logged as read, not adopted.
 
+## WebSearch — cheap-option / catalyst-mismatch research (2026-08-12)
+
+The account asked specifically about buying cheap (sub-$2, sometimes
+sub-$0.10) option contracts ahead of a known catalyst. Researched via
+WebSearch rather than a user-provided book; cross-checked several
+independent sources rather than trusting one, per the "beware of wrong
+learning material" instruction. Findings written into S7 in
+`strategies.md`, not duplicated here — this entry is the source list.
+
+- **Expected-move mechanics**: ATM straddle price × 0.85 ≈ market's priced
+  expected move to expiry; equivalently `price × IV × sqrt(DTE/365)`.
+  [tradealgo.com](https://www.tradealgo.com/trading-guides/options/expected-move-calculator),
+  [MenthorQ](https://menthorq.com/guide/from-straddle-price-to-expected-move/),
+  [optionspilot.app](https://optionspilot.app/blog/expected-move-calculation-implied-volatility)
+- **IV Rank / IV Percentile** as the actual "cheap vs. expensive" metric —
+  compares current IV to its own 12-month range, not to a dollar price.
+  [Yahoo Finance](https://finance.yahoo.com/news/implied-volatility-rank-percentile-better-133416799.html),
+  [projectfinance](https://www.projectfinance.com/iv-rank-percentile/),
+  [MenthorQ](https://menthorq.com/guide/iv-rank-vs-percentile/)
+- **IV crush around earnings**: IV peaks the day before the event and
+  collapses (often 30-40%+) right after, independent of whether the
+  directional call was correct.
+  [EBC Financial Group](https://www.ebc.com/forex/implied-volatility-before-earnings-are-options-too-cheap),
+  [MenthorQ](https://menthorq.com/guide/iv-crush-understanding-the-earnings-driven-volatility-spike-and-how-to-capitalize-on-it/),
+  [Schwab](https://www.schwab.com/learn/story/trading-options-around-earnings-announcements)
+- **"Lotto ticket" base rate**: far-OTM option buyers lose roughly 91% of
+  the time on average — the honest floor under this whole category of
+  trade, independent of any individual mismatch read.
+  [Banyan Hill](https://banyanhill.com/losing-investors-trading-options-like-lottery-tickets/),
+  [greeks.live](https://learn.greeks.live/path/what-is-a-lotto-ticket-trade-in-the-context-of-options-trading/)
+- **Options Industry Council** (optionseducation.org) — free, non-commercial
+  options education body; confirmed as a credible baseline for IV/earnings
+  mechanics rather than relying solely on trading-blog summaries.
+  [optionseducation.org](https://www.optionseducation.org/)
+
+**Live verification, not just theory:** pulled ENVX's real option chain the
+same session (reports after today's close) and confirmed the pattern by
+hand — IV ~280-305% across strikes, ATM straddle pricing a ~15% expected
+move, and a 36%-OTM call at $0.04-0.07 that *looks* like the pattern being
+asked about but is actually IV correctly pricing in an earnings-sized
+move, not a mismatch. See S7 in `strategies.md` for the worked numbers.
+This is the standard applied going forward: a claimed mismatch needs a live
+chain pull to confirm, not just a price that looks cheap.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

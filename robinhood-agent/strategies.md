@@ -461,7 +461,7 @@ the momentum scanner is.
 
 ---
 
-## S7 — Options (long calls / long puts)  ·  **BLOCKED, then DRAFT**
+## S7 — Options (long calls / long puts)  ·  **DRAFT — not yet traded live**
 
 Source: Dan Passarelli, *Trading Options Greeks* (Bloomberg Financial
 Series). A Greeks-first options text — deltas, theta, vega, spread
@@ -471,16 +471,16 @@ adopted.
 
 ### Two blockers, checked directly rather than assumed
 
-1. **The Agentic account has no options approval.** `get_accounts` shows
-   `option_level: ""` for account 432805174. Nothing options-related can be
-   placed until this is upgraded. Upgrade link:
-   `https://applink.robinhood.com/upgrade_options?account_number=432805174`
-   — per the upgrade tool, `option_level_2` unlocks long calls/puts, covered
-   calls, and cash-secured puts; `option_level_3` adds spreads.
-2. **Multi-leg orders are not supported by this MCP connector, even after
-   upgrading to level 3.** Per the tool's own description: *"multi-leg
-   orders are not yet supported here."* This is a hard tooling limit, not an
-   approval-level problem, and it doesn't get fixed by upgrading further.
+1. **Corrected 2026-08-12: this is NOT blocked.** `get_accounts` now shows
+   `option_level: "option_level_2"` for account 432805174 — the account was
+   already approved (or was upgraded since the note below was written; the
+   point is it was checked live, not assumed). `option_level_2` covers long
+   calls, long puts, covered calls, and cash-secured puts, which is exactly
+   what survives blocker 2 below. No upgrade action needed.
+2. **Multi-leg orders are not supported by this MCP connector, even at
+   level 3.** Per the tool's own description: *"multi-leg orders are not yet
+   supported here."* This is a hard tooling limit, not an approval-level
+   problem, and it doesn't get fixed by upgrading further.
 
 **Consequence: most of this book's content is not executable on this
 account through these tools, regardless of approval level or funding.**
@@ -539,6 +539,79 @@ Worth knowing, not worth pretending it's the same trade.
   play out — commonly discussed in the 2–6 week range rather than the
   final days, where decay is steepest and a stalled setup has the least
   room to recover before theta erases it.
+
+### Cheap-contract catalyst plays — the mismatch has to be in IV, not in dollars
+
+Added 2026-08-12 after the account asked specifically about buying
+sub-$2 (sometimes sub-$0.10) contracts ahead of a catalyst, on the theory
+that a real move is coming and the market hasn't caught up. That pattern
+is real and has a name (sources below call it a "lotto ticket" or
+"catalyst play"), but it has one failure mode that swallows most attempts
+at it: **a contract can be cheap in dollars for two completely different
+reasons, and only one of them is an edge.**
+
+- Cheap because it's far OTM and **IV is normal** — the market hasn't
+  priced in unusual movement, so if a real under-the-radar catalyst sits in
+  the expiry window, the option is genuinely underpriced. This is the real
+  version of the strategy.
+- Cheap because it's far OTM and **IV is already elevated** into a known
+  event (earnings, a scheduled catalyst) — the market has priced in a big
+  move, the option's dollar price just looks small because delta is low.
+  This is not a mismatch. It looks identical to the first case by price
+  alone; only the IV number tells them apart.
+
+**How to actually tell them apart — the expected move.** ATM straddle
+price × 0.85 ≈ the market's expected move by expiry (the 0.85 corrects for
+the straddle including extra time value beyond the pure expected range).
+Equivalently: `stock_price × IV × sqrt(days_to_expiry / 365)`. Compare that
+expected move to the stock's own historical earnings-day (or catalyst-day)
+moves via `get_earnings_results` / `get_equity_historicals`:
+  - Priced move noticeably **below** the stock's own history on comparable
+    events → possible genuine mismatch, options may be cheap relative to
+    what this name actually tends to do.
+  - Priced move at or **above** history → no mismatch. IV is doing its job.
+  - No dated catalyst in the window at all, IV still low → far OTM decay
+    risk with nothing to catalyze it into the money. The bad kind of cheap.
+
+**Live worked example (not a mismatch) — ENVX, 2026-08-12, reports after
+today's close:**
+
+| Contract (exp 2026-08-14) | Price | IV | Delta |
+| --- | --- | --- | --- |
+| $4.50 call (ATM) | $0.54×$0.61 | 293% | 0.65 |
+| $4.50 put (ATM) | $0.26×$0.28 | 279% | -0.35 |
+| $6.50 call (36% OTM) | $0.04×$0.07 | 305% | 0.12 |
+| $3.50 put (27% OTM) | $0.02×$0.05 | 303% | -0.07 |
+
+Stock $4.785. ATM straddle mid ≈ $0.575 + $0.27 = $0.845 → expected move ≈
+$0.845 × 0.85 ≈ **$0.72, ~15% by Friday**. The $6.50 call *looks* like
+exactly the pattern being asked about — a few cents, real catalyst hours
+away — but IV is 305%, not suppressed, and the 15% priced-in move is the
+market correctly anticipating an earnings-sized swing on a name that
+moves this much on earnings. Buying this because it's "cheap" is buying
+into a move the market has already paid for; if ENVX moves less than 15%,
+or the wrong direction, this expires near worthless regardless of being a
+correct catalyst call. **This is what a non-mismatch looks like** — the
+pattern to screen out, not screen for.
+
+**The honest base rate.** Multiple sources checked this session
+independently report that retail investors buying far-OTM options lose
+roughly 91% of the time on average. That number is for the category as a
+whole, undifferentiated by IV mismatch — it is the reason position sizing
+for this strategy should assume most individual tickets go to zero and
+should be sized as a batch of small bets, not evaluated ticket-by-ticket
+on hope.
+
+**Screening implication for this repo:** a "cheap mismatch" scanner would
+need, per candidate: (1) a dated catalyst inside the expiry window
+(`get_earnings_calendar`, or a manually-noted event since most catalysts
+aren't earnings), (2) the ATM-straddle expected move, (3) that stock's own
+historical move on comparable past events, (4) IV rank/percentile to
+confirm IV hasn't already re-rated up for the event. Nothing here can
+verify a catalyst automatically — same unsolved problem as S3's 5th
+pillar — so this stays a manual/notes-driven check, not a fully automated
+filter, at least until Stocklake Pro's insider/news signals are evaluated.
+Not yet built as code; this section is the research basis for building it.
 
 ### What this changes about the existing playbook
 Nothing about S1–S6 changes. This is an execution-layer option once the

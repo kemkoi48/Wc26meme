@@ -381,27 +381,67 @@ Uploaded as EPUB 2026-08-11 (ISBN 1440511861). ~281K chars, read in full.
 source logged so far — and it contradicts this repo's current setup in two
 places that matter.**
 
-### THE BLOCKER: Pattern Day Trader rule vs. a ~$28 account
+### ~~THE BLOCKER: Pattern Day Trader rule~~ — OBSOLETE, see correction
 
-**"If you make more than four day trades within five business days, you will
-be designated as a pattern day trader"** — and a PDT designation requires a
-**$25,000 minimum account balance**. Penalty for breaching it without the
-balance: the account can be **frozen for ninety days**.
+The book's PDT chapter (>4 day trades in 5 business days ⇒ $25,000 minimum
+equity, 90-day freeze as penalty) **is no longer current law.** Verified by
+web search 2026-08-11:
 
-config.json documents this account as a **~$28 cash balance**. That is three
-orders of magnitude below the PDT threshold. Concretely: this account can
-make **at most 3 day trades per rolling 5 business days**, full stop —
-which is incompatible with the every-30-minutes scan-and-trade cadence the
-momentum work has been oriented toward. `risk.max_orders_per_day: 2` happens
-to keep a single day under the line, but nothing in the repo tracks the
-**rolling 5-day count**, which is what the rule actually measures.
+- **2026-04-14** — SEC approved FINRA's amendments to Rule 4210.
+- **2026-06-04** — rule took effect. The **$25,000 minimum equity requirement
+  and the "pattern day trader" designation itself are both eliminated**; day
+  trades are no longer counted.
+- Replaced by **proportional margin requirements** — equity must be
+  proportional to actual intraday market exposure during the session, rather
+  than a flat account-size gate.
+- **Brokerages have until 2026-10-20 (18 months) to implement.** So whether
+  the new framework is live *at Robinhood specifically* is a separate
+  question from whether it is law. Worth confirming before relying on it.
 
-This stacks on top of the cash-account good-faith-settlement problem already
-documented in the Warrior Trading entry above. Two independent structural
-limits now point the same way: **this account cannot day trade in the sense
-the momentum strategies assume.** The scanners remain useful as research;
-the gap is between "found a candidate" and "could actually trade it
-repeatedly," and that gap is regulatory, not technical.
+**Two corrections to my own earlier analysis, not just the book's:**
+
+1. Sincere's book is 2011. Its regulatory content is 15 years stale and
+   should not be treated as current on *any* rule — check anything
+   regulatory against a live source before acting on it. (I initially logged
+   the PDT constraint as a live blocker; that was wrong.)
+2. More fundamentally: **PDT applied to margin accounts. This is documented
+   as a cash account.** So PDT was likely never the operative constraint here
+   even before the repeal — I conflated it with the real one.
+
+**The constraint that does still apply, and is unaffected by this change:**
+cash-account settlement. Same-day round trips on unsettled funds cause
+good-faith violations regardless of PDT — that limit comes from Reg T
+settlement mechanics, not Rule 4210, and is already documented in the
+Warrior Trading entry above. The 2024 move to T+1 speeds up when capital
+frees up; it does not permit same-day round trips.
+
+### The cheap/illiquid question — separate the regulation from the mechanics
+
+The PDT correction above does **not** transfer to the book's penny-stock
+advice, because the two are different kinds of claim. PDT was a *rule*, and
+rules get repealed. Bid/ask spread and halt risk are *market mechanics* —
+they don't have an effective date.
+
+That said, the book's "under $3" line is a 2011 heuristic and shouldn't be
+treated as a threshold either. The defensible version is the mechanism, and
+this session produced direct evidence for it rather than needing the book:
+
+- **WXM halted 9:44am and PLAG halted ~11:25am on 2026-08-11** — both were
+  full scanner passes, both sub-$10, neither had any confirmed news.
+- **TISI quoted $21.55 bid / $22.55 ask** — a ~4.5% spread on a $22 stock.
+  On a $28 account that spread is a larger cost than most realistic edges.
+
+So the actionable takeaway is not "avoid stocks under $3" — it's **measure
+spread and halt exposure directly instead of proxying them with a price
+floor.** A max-spread-percent filter does that honestly; `min_price: 2.0`
+only does it by accident, and (per the PLAG entry) also silently excluded a
+name that ran while it was below the floor.
+
+One open question raised by the new margin framework: it ties requirements
+to **intraday exposure** rather than account size, which in principle could
+make volatile, wide-spread names *more* expensive to hold than they were
+under the flat-$25K regime. Unverified — worth checking against Robinhood's
+actual implementation before assuming either direction.
 
 ### THE CONFLICT: the book says avoid exactly what our scanner surfaces
 

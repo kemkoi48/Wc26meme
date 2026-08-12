@@ -584,15 +584,37 @@ today's close:**
 | $3.50 put (27% OTM) | $0.02×$0.05 | 303% | -0.07 |
 
 Stock $4.785. ATM straddle mid ≈ $0.575 + $0.27 = $0.845 → expected move ≈
-$0.845 × 0.85 ≈ **$0.72, ~15% by Friday**. The $6.50 call *looks* like
-exactly the pattern being asked about — a few cents, real catalyst hours
-away — but IV is 305%, not suppressed, and the 15% priced-in move is the
-market correctly anticipating an earnings-sized swing on a name that
-moves this much on earnings. Buying this because it's "cheap" is buying
-into a move the market has already paid for; if ENVX moves less than 15%,
-or the wrong direction, this expires near worthless regardless of being a
-correct catalyst call. **This is what a non-mismatch looks like** — the
-pattern to screen out, not screen for.
+$0.845 × 0.85 ≈ **$0.72, ~15% by Friday**.
+
+Now the half that actually decides it — **what ENVX really does on
+earnings.** Its last six reports were all `pm`, so each move landed the
+next session. Close-to-close, computed from daily bars:
+
+| Report | Move next session |
+| --- | --- |
+| 2025-02-19 | +2.55% |
+| 2025-04-30 | −8.36% |
+| 2025-07-31 | −20.11% |
+| 2025-11-05 | −20.23% |
+| 2026-02-25 | −3.25% |
+| 2026-05-13 | −13.58% |
+
+**Median absolute move: 10.97%.** Market is pricing **15.01%**.
+
+**Mismatch ratio = 15.01 / 10.97 = 1.37.** The options are *rich* — the
+market is pricing 37% MORE movement than this name typically delivers.
+Buying that $6.50 call is paying above the historical rate for a move,
+then needing a 36% rally on top of it. **This is what a non-mismatch looks
+like** — the pattern to screen out, not screen for.
+
+Worth flagging how this conclusion was reached, because the first version
+of this section got there by the wrong route: it argued "IV is 305%, so
+it's not cheap." High IV alone does not prove that — a high-IV name that
+historically moves *even more* would still be underpriced. The verdict
+only became sound after pulling the six real historical moves. A draft of
+the regression test that used invented-but-plausible historical numbers
+flipped the verdict to "genuine mismatch." **The historical leg is not
+optional, and it must be looked up, never assumed.**
 
 **The honest base rate.** Multiple sources checked this session
 independently report that retail investors buying far-OTM options lose
@@ -602,16 +624,51 @@ for this strategy should assume most individual tickets go to zero and
 should be sized as a batch of small bets, not evaluated ticket-by-ticket
 on hope.
 
-**Screening implication for this repo:** a "cheap mismatch" scanner would
-need, per candidate: (1) a dated catalyst inside the expiry window
-(`get_earnings_calendar`, or a manually-noted event since most catalysts
-aren't earnings), (2) the ATM-straddle expected move, (3) that stock's own
-historical move on comparable past events, (4) IV rank/percentile to
-confirm IV hasn't already re-rated up for the event. Nothing here can
-verify a catalyst automatically — same unsolved problem as S3's 5th
-pillar — so this stays a manual/notes-driven check, not a fully automated
-filter, at least until Stocklake Pro's insider/news signals are evaluated.
-Not yet built as code; this section is the research basis for building it.
+### The screener — `option_scanner.py` + `option_math.py`  ·  **RESEARCH ONLY**
+
+Built 2026-08-12. Same structure as the other scanners: a read-only
+gathering session with **no order tool present at all**, and selection done
+afterward by a pure function in code, not by model judgment. Writes
+`option_candidates.json`, which nothing else reads — it is not an allowlist
+and never feeds `run.py`.
+
+The math lives in `option_math.py` with no SDK import, so it is testable
+standalone (`python3 test_option_math.py`, 48 assertions). Its central
+regression test replays the real ENVX chain above and **asserts the screen
+rejects it** — with every tradability gate loosened, so the rejection has
+to come from the edge test itself, not from the wide spread. A screen that
+can't reject ENVX would be worthless.
+
+**Gates, in the order they bind:**
+
+| Gate | Default | Why |
+| --- | --- | --- |
+| Expiry clears the catalyst | ≥1 day past the effective move date | A `pm` report on D moves the stock on **D+1**; an option expiring D is structurally worthless. Unknown timing is treated as `pm` (the conservative read) |
+| 0DTE | excluded outright | Separate rule, so relaxing the catalyst buffer can't open a back door into it |
+| Premium | ≤ $50/contract | Premium *is* max loss on a long option, so this is a true risk cap. The house 3% rule still applies on top; smaller binds |
+| Spread | ≤15% | Far looser than the stock scanner's 1% — a $0.01 tick is 20% of a $0.05 mid. Calibrated on the live ENVX chain: admits the ATM strikes, excludes the deep-OTM pennies |
+| Open interest / volume | ≥100 / ≥10 | Thin-contract exclusion, same instinct as the GSIW/BNR stock rejections |
+| \|Delta\| | 0.10–0.55 | Below the floor is a pure lottery ticket (~91% base-rate loser); above it the leverage is gone and stock is the better expression |
+| **Mismatch ratio** | **≤0.85** | The actual edge test. Demands a real margin, not a rounding error |
+| Historical sample | ≥2 usable moves | One past move is an anecdote; treating it as a base rate manufactures false confidence |
+
+Ranked by mismatch ratio ascending. **Rejections are reported with reasons,
+never silently dropped** — "nothing passed" and "the data was malformed"
+look identical otherwise, and on this repo's history (BNR, GSIW, PLAG) that
+difference has mattered.
+
+**What it still cannot do:** verify that a catalyst is real. Earnings dates
+are confirmable via `get_earnings_calendar`; everything else the account
+raised as a signal — news, sentiment, insider activity, a stock "about to
+break" — is not machine-verifiable here. Same unsolved gap as S3's 5th
+pillar. Those go in `notes` for a human to read and are **never** a
+pass/fail gate. A perfect mismatch ratio on an imagined catalyst is still a
+losing trade. Stocklake Pro ($20/mo) would partly close this; not yet
+evaluated.
+
+**Expect it to return nothing most days.** A genuine volatility mismatch is
+rare, and the screen is built to say no. An empty result is the screen
+working, not the screen failing.
 
 ### What this changes about the existing playbook
 Nothing about S1–S6 changes. This is an execution-layer option once the

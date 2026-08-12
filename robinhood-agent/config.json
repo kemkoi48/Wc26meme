@@ -60,5 +60,19 @@
     "max_float": 100000000,
     "max_spread_pct": 1.0,
     "top_n": 10
+  },
+  "option_scan": {
+    "max_premium_usd": 50.0,
+    "max_spread_pct": 15.0,
+    "min_open_interest": 100,
+    "min_volume": 10,
+    "min_delta": 0.10,
+    "max_delta": 0.55,
+    "max_mismatch_ratio": 0.85,
+    "min_days_after_catalyst": 1,
+    "max_days_to_expiry": 45,
+    "min_underlying_price": 2.0,
+    "max_underlying_price": 100.0,
+    "top_n": 10
   }
 }

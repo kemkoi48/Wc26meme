@@ -10,6 +10,8 @@ from pathlib import Path
 
 import yaml
 
+from option_math import OptionScanConfig
+
 
 @dataclass
 class RiskConfig:
@@ -92,6 +94,12 @@ class Config:
     # ROBINHOOD_ACCOUNT_NUMBER env var (preferred) or the config file. When set,
     # the risk guard denies any order/cancel aimed at a different account.
     account_number: str | None = None
+    # Controls option_scanner.py (S7 catalyst-mispricing screen). Defaults
+    # come from OptionScanConfig itself, so a config file with no
+    # option_scan block still runs at documented defaults. Like
+    # momentum_scan, this is a RESEARCH report -- option_scanner.py never
+    # writes daily_allowlist.json and is never read by run.py.
+    option_scan: OptionScanConfig = field(default_factory=OptionScanConfig)
 
 
 def load_daily_allowlist(path: str | Path = "daily_allowlist.json") -> list[str] | None:
@@ -135,6 +143,7 @@ def load_config(path: str | Path = "config.yaml") -> Config:
     tc = raw.get("tool_classification", {}) or {}
     sc = raw.get("screening", {}) or {}
     ms = raw.get("momentum_scan", {}) or {}
+    os_raw = raw.get("option_scan", {}) or {}
 
     # Account number: env var wins so the real value never has to live in a
     # committed config file.
@@ -179,6 +188,16 @@ def load_config(path: str | Path = "config.yaml") -> Config:
             max_float=float(ms.get("max_float", 20_000_000.0)),
             max_spread_pct=float(ms.get("max_spread_pct", 1.0)),
             top_n=int(ms.get("top_n", 10)),
+        ),
+        # Unknown keys are dropped rather than raising: an option_scan block
+        # carrying a stale key should not take down the equity side of the
+        # config, which is what run.py actually depends on.
+        option_scan=OptionScanConfig(
+            **{
+                k: v
+                for k, v in os_raw.items()
+                if k in OptionScanConfig.__dataclass_fields__
+            }
         ),
     )
 

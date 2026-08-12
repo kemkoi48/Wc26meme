@@ -1,0 +1,450 @@
+"""Option mispricing math -- the S7 "cheap contract before a catalyst" screen.
+
+The question this answers: a contract costs $0.06. Is it cheap because the
+market has not priced in a catalyst (an edge), or cheap because it is far
+out-of-the-money and implied volatility is ALREADY elevated for a known
+event (no edge, just low delta)? Those look identical by price. Only the
+volatility number separates them.
+
+  expected move  =  what the option market is currently pricing in
+  historical move =  what this stock actually does on comparable events
+  mismatch ratio  =  expected / historical
+
+A ratio below 1.0 means the market is pricing LESS movement than this name
+has historically delivered -- the only version of "cheap" that is an edge.
+A ratio at or above 1.0 means implied volatility is doing its job and the
+low dollar price is just low delta.
+
+Worked live example that motivated this module (ENVX, 2026-08-12, earnings
+that evening): the $6.50 call quoted $0.04 x $0.07 -- textbook "cheap
+contract, real catalyst hours away" -- but carried 305% IV, and the ATM
+straddle priced a ~15% move by Friday. Nothing was mispriced; the market
+had already paid for an earnings-sized swing. See strategies.md S7.
+
+Everything here is a PURE FUNCTION over numbers. No network, no SDK import,
+so it is directly unit-testable -- same posture as regime.py, and the
+reason the math does not live inside option_scanner.py.
+
+Fail-closed throughout: malformed, missing, or nonsensical input returns
+None (an unusable reading) rather than a number that looks authoritative.
+Callers must treat None as exclusion, never as "assume fine".
+"""
+
+from __future__ import annotations
+
+import datetime as dt
+import statistics
+from dataclasses import dataclass
+from typing import Any, Optional, Sequence
+
+# The ATM straddle overprices the expected move slightly, because it carries
+# time value beyond the pure expected range. ~0.85 is the standard haircut.
+STRADDLE_TO_EXPECTED_MOVE = 0.85
+
+DAYS_PER_YEAR = 365.0
+
+
+def _as_float(value: Any) -> Optional[float]:
+    """Coerce to float, or None. Rejects bools (True would become 1.0) and
+    non-finite values, both of which would otherwise poison downstream math."""
+    if isinstance(value, bool):
+        return None
+    try:
+        out = float(value)
+    except (TypeError, ValueError):
+        return None
+    if out != out or out in (float("inf"), float("-inf")):  # NaN / inf
+        return None
+    return out
+
+
+def _as_date(value: Any) -> Optional[dt.date]:
+    """Parse a YYYY-MM-DD string (or pass through a date). None if unusable."""
+    if isinstance(value, dt.datetime):
+        return value.date()
+    if isinstance(value, dt.date):
+        return value
+    if not isinstance(value, str):
+        return None
+    try:
+        return dt.date.fromisoformat(value.strip()[:10])
+    except ValueError:
+        return None
+
+
+def mid_price(bid: Any, ask: Any) -> Optional[float]:
+    """Midpoint of a quote. None when either side is missing or crossed.
+
+    A zero bid is real and common on far-OTM contracts -- it means nobody is
+    willing to buy it at any price, which is exactly the untradable condition
+    worth excluding, so it is rejected rather than treated as $0.00.
+    """
+    b, a = _as_float(bid), _as_float(ask)
+    if b is None or a is None:
+        return None
+    if b <= 0 or a <= 0 or a < b:
+        return None
+    return (a + b) / 2.0
+
+
+def spread_pct(bid: Any, ask: Any) -> Optional[float]:
+    """Quoted spread as a percent of the midpoint.
+
+    Cheap options structurally show large PERCENTAGE spreads: the $0.01
+    minimum tick is 20% of a $0.05 midpoint before anyone is being greedy.
+    That is a genuine round-trip cost the trader eats, not a data artifact,
+    which is why this is not papered over with an absolute-dollar escape
+    hatch. It does mean the threshold for options has to be far looser than
+    the 1% used for stocks in momentum_scanner.py -- comparing the two
+    numbers directly is a category error.
+    """
+    b, a = _as_float(bid), _as_float(ask)
+    m = mid_price(bid, ask)
+    if m is None or b is None or a is None:
+        return None
+    return (a - b) / m * 100.0
+
+
+def expected_move_from_straddle(
+    call_mid: Any, put_mid: Any, multiplier: float = STRADDLE_TO_EXPECTED_MOVE
+) -> Optional[float]:
+    """Expected move in DOLLARS, from the at-the-money straddle price.
+
+    This is the market-based read: what it costs to bet on a move in either
+    direction, haircut for the straddle's extra time value.
+    """
+    c, p = _as_float(call_mid), _as_float(put_mid)
+    mult = _as_float(multiplier)
+    if c is None or p is None or mult is None:
+        return None
+    if c <= 0 or p <= 0 or mult <= 0:
+        return None
+    return (c + p) * mult
+
+
+def expected_move_from_iv(
+    underlying_price: Any, iv: Any, days_to_expiry: Any
+) -> Optional[float]:
+    """Expected move in DOLLARS, from implied volatility.
+
+    price x IV x sqrt(DTE / 365). IV is annualized, hence the time scaling.
+    Independent of the straddle calculation -- when the two disagree badly,
+    that is a data-quality signal worth surfacing, not averaging away.
+
+    `iv` is a decimal fraction (2.93 == 293%), matching what the Robinhood
+    option quote returns.
+    """
+    price = _as_float(underlying_price)
+    vol = _as_float(iv)
+    dte = _as_float(days_to_expiry)
+    if price is None or vol is None or dte is None:
+        return None
+    if price <= 0 or vol <= 0 or dte <= 0:
+        return None
+    return price * vol * ((dte / DAYS_PER_YEAR) ** 0.5)
+
+
+def as_pct_of(move_usd: Any, underlying_price: Any) -> Optional[float]:
+    """Convert a dollar move to a percent of the underlying price."""
+    move = _as_float(move_usd)
+    price = _as_float(underlying_price)
+    if move is None or price is None or price <= 0 or move < 0:
+        return None
+    return move / price * 100.0
+
+
+def historical_move_pct(moves: Sequence[Any]) -> Optional[float]:
+    """Median ABSOLUTE percent move across past comparable catalyst events.
+
+    Median rather than mean: one outlier gap (a buyout rumor, a halt) would
+    drag a mean upward and make every option look underpriced by comparison,
+    which is the exact false positive this whole module exists to prevent.
+
+    Direction is discarded (abs) because the expected move is direction-less
+    too -- the straddle prices magnitude, not sign. Requires at least two
+    usable observations; a single past earnings move is an anecdote, and
+    treating it as a base rate is how a screen manufactures false confidence.
+    """
+    if not moves:
+        return None
+    usable = []
+    for m in moves:
+        v = _as_float(m)
+        if v is None:
+            continue
+        usable.append(abs(v))
+    if len(usable) < 2:
+        return None
+    return statistics.median(usable)
+
+
+def mismatch_ratio(
+    expected_move_pct: Any, historical_move_pct_value: Any
+) -> Optional[float]:
+    """expected / historical. THE metric this module exists to produce.
+
+      < 1.0  options price LESS movement than this name historically makes
+             -> the genuine "cheap" case, worth a look
+      ~ 1.0  market is pricing roughly what history suggests -> no edge
+      > 1.0  market is pricing MORE than history -> options are rich, and a
+             correct directional call can still lose to the post-event IV
+             collapse
+
+    Note the asymmetry: a low ratio is necessary but nowhere near sufficient.
+    It says the option is cheap relative to this stock's own past behaviour;
+    it says nothing about direction, and nothing about whether the upcoming
+    catalyst resembles the past ones the historical figure was built from.
+    """
+    exp = _as_float(expected_move_pct)
+    hist = _as_float(historical_move_pct_value)
+    if exp is None or hist is None:
+        return None
+    if exp < 0 or hist <= 0:
+        return None
+    return exp / hist
+
+
+def catalyst_effective_date(
+    catalyst_date: Any, timing: Any = None
+) -> Optional[dt.date]:
+    """The first date the underlying can actually move on the catalyst.
+
+    Earnings released AFTER the close ('pm') move the stock the NEXT session,
+    so a contract expiring on the report date itself expires before the move
+    it was bought for. This function encodes that off-by-one, which is the
+    single easiest way to buy a structurally worthless option.
+
+    Unknown/missing timing is treated as 'pm' -- the conservative reading,
+    since assuming 'am' would wave through contracts that expire too early.
+
+    Weekends are NOT adjusted for here: expiry comparison is against a real
+    expiration date, which is always a trading day, so a Saturday effective
+    date still correctly excludes a Friday expiry.
+    """
+    d = _as_date(catalyst_date)
+    if d is None:
+        return None
+    t = str(timing).strip().lower() if timing is not None else ""
+    if t == "am":
+        return d
+    return d + dt.timedelta(days=1)
+
+
+@dataclass(frozen=True)
+class OptionScanConfig:
+    """Thresholds for apply_filters_and_rank. Mirrors the option_scan block
+    in config.json; kept here as a frozen dataclass so the pure math module
+    has no dependency on the YAML/JSON loader."""
+
+    # Max premium per contract in dollars (price x 100). The account's 3%
+    # house risk rule still applies on top -- both caps apply and the
+    # smaller one binds. Premium IS the max loss on a long option, so this
+    # is a true risk cap, not a notional cap.
+    max_premium_usd: float = 50.0
+    # See spread_pct() on why this is far looser than the stock scanner's 1%.
+    # 15% admits the ATM contracts and excludes the deep-OTM penny strikes,
+    # calibrated against the live ENVX chain on 2026-08-12.
+    max_spread_pct: float = 15.0
+    min_open_interest: float = 100.0
+    min_volume: float = 10.0
+    # Delta band. Below the floor is a pure lottery ticket whose base rate
+    # (~91% of far-OTM buyers lose, per sources.md) is not worth screening
+    # for; above the ceiling the leverage that makes this strategy work is
+    # gone and buying the stock is usually the better expression.
+    min_delta: float = 0.10
+    max_delta: float = 0.55
+    # The actual edge test. Below 1.0 means underpriced vs. this name's own
+    # history; 0.85 demands a real margin rather than a rounding error.
+    max_mismatch_ratio: float = 0.85
+    # Expiry must clear the catalyst by at least this many days. 0 permits an
+    # expiry on the effective move date itself (razor thin); 1+ buys room.
+    min_days_after_catalyst: int = 1
+    max_days_to_expiry: int = 45
+    min_underlying_price: float = 2.0
+    max_underlying_price: float = 100.0
+    top_n: int = 10
+
+
+def evaluate_candidate(
+    c: dict[str, Any], cfg: OptionScanConfig, today: Optional[dt.date] = None
+) -> tuple[Optional[dict[str, Any]], str]:
+    """Evaluate ONE candidate contract. Returns (result, reason).
+
+    On a pass, result is the enriched candidate and reason is "". On a
+    rejection, result is None and reason names the failing gate -- rejections
+    are reported, not silently dropped, because "everything was filtered out"
+    and "the data was malformed" look identical otherwise, and on this repo's
+    history (BNR, GSIW, PLAG) the difference mattered.
+    """
+    today = today or dt.date.today()
+
+    symbol = str(c.get("symbol", "")).upper().strip()
+    if not symbol:
+        return None, "missing symbol"
+
+    underlying = _as_float(c.get("underlying_price"))
+    if underlying is None or underlying <= 0:
+        return None, "unusable underlying price"
+    if not (cfg.min_underlying_price <= underlying <= cfg.max_underlying_price):
+        return None, f"underlying ${underlying:.2f} outside price band"
+
+    # --- structural: does this contract survive to see the catalyst? ---
+    effective = catalyst_effective_date(c.get("catalyst_date"), c.get("catalyst_timing"))
+    if effective is None:
+        return None, "missing or malformed catalyst date"
+    expiry = _as_date(c.get("expiration_date"))
+    if expiry is None:
+        return None, "missing or malformed expiration date"
+    required = effective + dt.timedelta(days=cfg.min_days_after_catalyst)
+    if expiry < required:
+        return None, (
+            f"expiry {expiry} does not clear catalyst (needs >= {required}); "
+            "contract would expire before or too close to the move"
+        )
+    days_to_expiry = (expiry - today).days
+    if days_to_expiry < 0:
+        return None, f"expiry {expiry} has already passed"
+    if days_to_expiry == 0:
+        # Excluded deliberately, not incidentally. On expiration day the
+        # contract still trades, but theta is at its most violent and the
+        # position has no room to recover from being early -- a different
+        # game with a different skill set. This screen is for buying a
+        # catalyst with time to work, so 0DTE is out regardless of how good
+        # the mismatch ratio looks.
+        return None, f"expires today ({expiry}); 0DTE is excluded by design"
+    if days_to_expiry > cfg.max_days_to_expiry:
+        return None, f"{days_to_expiry}d to expiry exceeds max {cfg.max_days_to_expiry}d"
+
+    # --- tradability ---
+    bid, ask = c.get("bid"), c.get("ask")
+    contract_mid = mid_price(bid, ask)
+    if contract_mid is None:
+        return None, "no usable two-sided quote on the contract"
+    sp = spread_pct(bid, ask)
+    if sp is None:
+        return None, "spread not computable"
+    if sp > cfg.max_spread_pct:
+        return None, f"spread {sp:.1f}% exceeds max {cfg.max_spread_pct:.1f}%"
+
+    ask_f = _as_float(ask)
+    if ask_f is None:
+        return None, "unusable ask"
+    premium_usd = ask_f * 100.0
+    if premium_usd > cfg.max_premium_usd:
+        return None, (
+            f"premium ${premium_usd:.0f}/contract exceeds max "
+            f"${cfg.max_premium_usd:.0f}"
+        )
+
+    oi = _as_float(c.get("open_interest"))
+    vol = _as_float(c.get("volume"))
+    if oi is None or vol is None:
+        return None, "missing open interest or volume"
+    if oi < cfg.min_open_interest:
+        return None, f"open interest {oi:.0f} below min {cfg.min_open_interest:.0f}"
+    if vol < cfg.min_volume:
+        return None, f"volume {vol:.0f} below min {cfg.min_volume:.0f}"
+
+    delta = _as_float(c.get("delta"))
+    if delta is None:
+        return None, "missing delta"
+    abs_delta = abs(delta)
+    if not (cfg.min_delta <= abs_delta <= cfg.max_delta):
+        return None, (
+            f"|delta| {abs_delta:.2f} outside band "
+            f"[{cfg.min_delta:.2f}, {cfg.max_delta:.2f}]"
+        )
+
+    # --- the edge test ---
+    em_usd = expected_move_from_straddle(c.get("atm_call_mid"), c.get("atm_put_mid"))
+    if em_usd is None:
+        return None, "ATM straddle not usable; expected move not computable"
+    em_pct = as_pct_of(em_usd, underlying)
+    if em_pct is None:
+        return None, "expected move percent not computable"
+
+    hist_pct = historical_move_pct(c.get("historical_moves") or [])
+    if hist_pct is None:
+        return None, (
+            "fewer than 2 usable historical catalyst moves; no base rate to "
+            "compare against"
+        )
+
+    ratio = mismatch_ratio(em_pct, hist_pct)
+    if ratio is None:
+        return None, "mismatch ratio not computable"
+    if ratio > cfg.max_mismatch_ratio:
+        return None, (
+            f"mismatch ratio {ratio:.2f} > {cfg.max_mismatch_ratio:.2f} -- "
+            f"market prices a {em_pct:.1f}% move vs {hist_pct:.1f}% history; "
+            "not underpriced"
+        )
+
+    # Cross-check the straddle read against the IV read. Not a gate -- the
+    # two legitimately differ -- but a large gap means one of the inputs is
+    # stale, and a human should see that before risking money on it.
+    em_iv_usd = expected_move_from_iv(underlying, c.get("iv"), days_to_expiry)
+    em_iv_pct = as_pct_of(em_iv_usd, underlying) if em_iv_usd is not None else None
+    iv_disagreement = None
+    if em_iv_pct is not None and em_pct > 0:
+        iv_disagreement = abs(em_iv_pct - em_pct) / em_pct * 100.0
+
+    return {
+        "symbol": symbol,
+        "underlying_price": underlying,
+        "strike": _as_float(c.get("strike")),
+        "type": str(c.get("type", "")).lower().strip(),
+        "expiration_date": expiry.isoformat(),
+        "days_to_expiry": days_to_expiry,
+        "catalyst_date": str(c.get("catalyst_date")),
+        "catalyst_type": str(c.get("catalyst_type", "unspecified")),
+        "catalyst_effective_date": effective.isoformat(),
+        "bid": _as_float(bid),
+        "ask": ask_f,
+        "premium_usd": premium_usd,
+        "spread_pct": sp,
+        "delta": delta,
+        "iv": _as_float(c.get("iv")),
+        "open_interest": oi,
+        "volume": vol,
+        "expected_move_pct": em_pct,
+        "historical_move_pct": hist_pct,
+        "mismatch_ratio": ratio,
+        "expected_move_pct_from_iv": em_iv_pct,
+        "iv_disagreement_pct": iv_disagreement,
+        "notes": str(c.get("notes", ""))[:400],
+    }, ""
+
+
+def apply_filters_and_rank(
+    candidates: Sequence[dict[str, Any]],
+    cfg: OptionScanConfig,
+    today: Optional[dt.date] = None,
+) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """THE safety-critical function. Reported numbers are UNTRUSTED input.
+
+    Returns (passed, rejected). Survivors are ranked by mismatch ratio
+    ascending -- most underpriced relative to the name's own history first --
+    and capped at top_n.
+
+    What this function deliberately does NOT do: judge the catalyst. Whether
+    a real, dated, market-moving event exists is not verifiable by any
+    connected tool (the same unsolved gap as S3's 5th pillar), so it stays in
+    `notes` for a human to read and is never a pass/fail gate here. A perfect
+    mismatch ratio on an imaginary catalyst is still a losing trade.
+    """
+    passed: list[dict[str, Any]] = []
+    rejected: list[dict[str, str]] = []
+    for c in candidates:
+        if not isinstance(c, dict):
+            rejected.append({"symbol": "?", "reason": "not a mapping"})
+            continue
+        result, reason = evaluate_candidate(c, cfg, today=today)
+        if result is None:
+            rejected.append(
+                {"symbol": str(c.get("symbol", "?")).upper(), "reason": reason}
+            )
+            continue
+        passed.append(result)
+    passed.sort(key=lambda r: r["mismatch_ratio"])
+    return passed[: max(0, cfg.top_n)], rejected

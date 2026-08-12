@@ -66,13 +66,16 @@ SPY vs its own 20/50/200 SMA.
 | --- | --- | --- | --- |
 | **Trending up, low vol** | VIX < 20, SPY above 50 & 200 SMA, breadth neutral-positive | **S1 Trend Follow** | Today (2026-08-11) was this: VIX 15.35, 90.7% of names neutral RSI |
 | **Trending up, high vol** | VIX > 25, wide daily ranges, breadth extended | **S3 Momentum Scan** (research) | The regime the low-float scan is actually built for |
-| **Volatile open, no daily trend** | Large first-15m range vs ATR | **S2 Opening Range Reversal** | BLOCKED — needs same-day round trip |
 | **Range-bound / choppy** | **7/20/65 SMA filter NOT aligned** (see below), VIX mid, no breadth extreme | **S5 Range Trade** | DRAFT |
-| **Trending down** | SPY below 50 SMA, breadth negative | **none possible** | Long-only. Correct action is sit out |
-| **Event day** | High-impact econ release, VIX spike | **sit out** | Investing.com calendar check pre-open |
+| **Trending down** | SPY below 50 SMA, breadth negative | **none from the daily-trend branch** | Long-only; S1/S3/S5 sit out, but see S2 row below |
+| **Event day** | High-impact econ release, VIX spike | **sit out** | Investing.com calendar check pre-open. Overrides S2 too |
+| **Volatile open (any daily regime)** | First completed 15m candle's range > 20% of ATR(14) | **S2 Opening Range Reversal** | **Fixed 2026-08-12** — `regime.py` now folds S2 in independent of trend/vol, per its own trigger. Stacks with whatever the trend branch above already allows (e.g. an uptrend-low-vol day with a volatile open returns both S1 and S2) |
 
-**Two of six regimes have a runnable strategy.** That is the honest coverage
-number, and the down-day gap is structural rather than something to build.
+**Two of five daily-trend regimes have a runnable strategy, plus S2 which
+stacks on top of any of them** when the opening range is volatile enough.
+That is the honest coverage number, and the down-day gap for S1/S3/S5 is
+structural rather than something to build — S2 is the one that can still
+fire on a down day.
 
 ### The trend/range test — 7/20/65 SMA alignment
 

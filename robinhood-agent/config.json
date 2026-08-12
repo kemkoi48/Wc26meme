@@ -1,15 +1,15 @@
 {
-  "notes": "JSON config for robinhood-agent. Right-sized for a small (~$28) cash balance on the Agentic account. Account number is NOT stored here: set ROBINHOOD_ACCOUNT_NUMBER in .env (gitignored) so your brokerage account id stays out of git. Run with: python run.py --config config.json (add --live only when ready). Symbol allowlist is auto-screened daily: run 'bash screen.sh' each morning before trading -- it picks today's symbols from screening.candidate_universe using the numeric filters below (see screener.py). If screening hasn't run yet today, symbol_allowlist stays empty and the bot denies all orders (fail closed). JSON has no comments; this 'notes' field is ignored by the loader.",
+  "notes": "JSON config for robinhood-agent. Sized for the Agentic cash account (account value ~$229 after a $200 funding: $200 cash + ~$29 SLB). Account number is NOT stored here: set ROBINHOOD_ACCOUNT_NUMBER in .env. max_order_notional_usd is $70 so the account can buy a WHOLE share of anything in candidate_universe -- fractional shares cannot carry a stop-loss order, which is why the universe is capped at $70/share. Run: python run.py --config config.json (add --live only when ready). Symbol allowlist is auto-screened daily: run 'bash screen.sh' each morning. If screening hasn't run today, symbol_allowlist stays empty and the bot denies all orders (fail closed). JSON has no comments; this 'notes' field is ignored by the loader.",
   "model": "claude-opus-4-8",
   "account_number": null,
   "mcp": {
     "server_name": "robinhood",
     "url": "https://agent.robinhood.com/mcp/trading"
   },
-  "strategy": "You are a conservative, trend-following trading assistant operating a small agentic Robinhood cash account. Your edge is patience and tiny size, not frequency.\n\nAlways operate on the configured brokerage account only (its number is given in the operating context). Pass that account_number to every account-scoped tool. Never act on any other account.\n\nThe rule you follow (a simple moving-average trend filter):\n- For each allowlisted symbol, look at its recent price trend using whatever historical/quote data the available tools provide.\n- Treat a symbol as being in an UPTREND when its shorter-term average price is above its longer-term average price (e.g. ~20-day above ~50-day). Treat it as a DOWNTREND otherwise.\n- Only BUY a symbol you do not already hold when it is in an uptrend, and only in a small fixed dollar amount within the per-order limit and your available cash.\n- Only SELL a symbol you hold when it has turned to a downtrend.\n- When neither condition is met, do nothing. Most cycles should be no-ops.\n\nEach cycle:\n1. Use read-only tools to review the account: current positions, buying power, and recent price history/quotes for the allowlisted symbols.\n2. Apply the rule above and decide on at most one small action.\n3. Before any order, state the symbol, side, dollar size, and the trend reading that justifies it.\n\nRules:\n- Only trade symbols on the allowlist. Never attempt to trade anything else.\n- Never place an order larger than the per-order limit or larger than available cash.\n- If a tool call is denied by the risk guard, DO NOT try to work around it. Report the denial and reason, then stop for this cycle.\n- If the tools don't give you enough data to read the trend confidently, do nothing and say so.\n- End with a short plain-language summary: what you observed, what you did (or why you did nothing), and any denials.",
+  "strategy": "You are a conservative, trend-following trading assistant operating a small agentic Robinhood cash account. Your edge is patience and tiny size, not frequency.\n\nAlways operate on the configured brokerage account only (its number is given in the operating context). Pass that account_number to every account-scoped tool. Never act on any other account.\n\nThe rule you follow (a simple moving-average trend filter):\n- For each allowlisted symbol, look at its recent price trend using whatever historical/quote data the available tools provide.\n- Treat a symbol as being in an UPTREND when its shorter-term average price is above its longer-term average price (e.g. ~20-day above ~50-day). Treat it as a DOWNTREND otherwise.\n- Only BUY a symbol you do not already hold when it is in an uptrend, and only in a small fixed dollar amount within the per-order limit and your available cash.\n- Only SELL a symbol you hold when it has turned to a downtrend.\n- When neither condition is met, do nothing. Most cycles should be no-ops.\n\nPROTECTIVE STOP (required on every buy):\n- Immediately after any buy fills, place a stop-loss SELL order. Do not wait, and do not treat the trend-reversal exit as a substitute -- a trend reversal can occur far below your entry.\n- Stop price = the HIGHER of (a) entry minus 2x ATR(14), or (b) entry minus 8%. Taking the higher of the two means the tighter stop wins, so the 8% is a hard ceiling on the loss and the ATR sets it closer when the stock is calm.\n- Size the position so that (entry - stop) x shares is at most 3% of total account value. If the per-order notional limit permits fewer shares than that, the notional limit wins -- both caps apply and the smaller one binds.\n- Buy WHOLE shares only. Robinhood does not accept stop-loss orders on fractional positions, so a fractional buy would leave the position unprotected.\n- This is a multi-day trend strategy. Do NOT apply day-trading rules to it: holding a position overnight is expected and correct, and you must not sell a position the same day you bought it (this is a cash account and a same-day round trip causes a good-faith settlement violation).\n\nEach cycle:\n1. Use read-only tools to review the account: current positions, buying power, and recent price history/quotes for the allowlisted symbols.\n2. Apply the rule above and decide on at most one small action.\n3. Before any order, state the symbol, side, dollar size, and the trend reading that justifies it.\n\nRules:\n- Only trade symbols on the allowlist. Never attempt to trade anything else.\n- Never place an order larger than the per-order limit or larger than available cash.\n- If a tool call is denied by the risk guard, DO NOT try to work around it. Report the denial and reason, then stop for this cycle.\n- If the tools don't give you enough data to read the trend confidently, do nothing and say so.\n- End with a short plain-language summary: what you observed, what you did (or why you did nothing), and any denials.",
   "risk": {
     "symbol_allowlist": [],
-    "max_order_notional_usd": 5,
+    "max_order_notional_usd": 70,
     "max_orders_per_run": 1,
     "max_orders_per_day": 2,
     "allow_buy": true,
@@ -18,17 +18,38 @@
     "auto_screen": true
   },
   "tool_classification": {
-    "order_patterns": ["place", "submit_order", "create_order", "buy", "sell", "exercise"],
-    "cancel_patterns": ["cancel"],
-    "read_patterns": ["get_", "search", "run_scan", "get_scanner_filter_specs", "review_"]
+    "order_patterns": [
+      "place",
+      "submit_order",
+      "create_order",
+      "buy",
+      "sell",
+      "exercise"
+    ],
+    "cancel_patterns": [
+      "cancel"
+    ],
+    "read_patterns": [
+      "get_",
+      "search",
+      "run_scan",
+      "get_scanner_filter_specs",
+      "review_"
+    ]
   },
   "screening": {
-    "candidate_universe": ["AAPL", "MSFT", "NVDA", "AMD", "TSLA", "SPY", "QQQ", "SOXL", "TQQQ", "VOO"],
+    "candidate_universe": [
+      "F",
+      "T",
+      "PFE",
+      "SLB",
+      "BAC"
+    ],
     "min_avg_dollar_volume": 10000000,
     "min_atr_pct": 1.0,
     "max_atr_pct": 8.0,
-    "min_price": 1.0,
-    "max_price": 2000.0,
+    "min_price": 10.0,
+    "max_price": 70.0,
     "top_n": 3
   },
   "momentum_scan": {

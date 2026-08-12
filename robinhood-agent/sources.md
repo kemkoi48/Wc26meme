@@ -514,6 +514,139 @@ testing on 2026-08-11 (WXM and PLAG both halted; PLAG then reopened +71%).
 Its "avoid penny stocks" guidance points away from the names that halt, but
 it offers no framework for what to do when one is already in play.
 
+## Robert C. Miner — *High Probability Trading Strategies* (Wiley, 2009)
+Google Drive link supplied 2026-08-11. **The Drive `/view` page is a login
+wall and WebFetch cannot read it** — but the public direct-download endpoint
+works and returns the file:
+`curl -L "https://drive.google.com/uc?export=download&id=<FILE_ID>&resourcekey=<RK>"`
+290pp, 467K chars, text extracts cleanly (PyMuPDF; note `pypdf` fails in
+this container — broken system `cryptography`/`_cffi_backend`).
+**Status: Educational, not a feed. The most rigorous of the three trading
+sources logged, and it contradicts the other two in specific places.**
+
+### The core method: Dual Time Frame Momentum
+
+The organizing idea is that a setup requires **two timeframes of momentum
+agreeing**, and the rules are a 2x2 on the higher timeframe's state. Works
+with any oscillator that has overbought/oversold zones (he uses DTosc, shows
+the identical table for Stochastic), and for any timeframe pair "from
+weekly/daily to 15m/5m":
+
+| Higher TF momentum | Action on smaller TF |
+| --- | --- |
+| Bull, not OB | **Long** after a smaller-TF bullish reversal, provided that reversal happens *below* the OB zone |
+| Bull, **OB** | No new longs. Possible short after a smaller-TF bearish reversal |
+| Bear, not OS | **Short** after a smaller-TF bearish reversal, provided it happens *above* the OS zone |
+| Bear, **OS** | No new shorts. Possible long after a smaller-TF bullish reversal |
+
+Critical framing he repeats: **these are setup conditions, not execution
+signals.** The higher timeframe sets direction; the lower timeframe reversal
+is the filter. Execution is a separate step (below).
+
+Also: a higher-timeframe OB reading is *not* a reason to exit an existing
+long — only a reason not to open a new one.
+
+### Two entry strategies — both require confirmation, never a target price
+
+> "Never buy or sell at a target price. Always require the market to move in
+> the direction of the anticipated trend to execute a trade."
+
+1. **Trailing One-Bar entry (Tr-1BH/L):** buy-stop one tick above the
+   trailing one-bar high (mirror for shorts). Trade doesn't execute unless
+   the market takes out that bar high — smallest capital exposure of the two.
+2. **Swing entry (SE):** buy-stop one tick above the prior swing high. Wider
+   stop, therefore larger exposure, but a stronger confirmation.
+
+**"Stops are always placed at the exact price that will void the setup."**
+Because entry and stop are both defined by the setup, **capital exposure is
+known before the trade is placed** — which is what makes the position-size
+math below possible at all.
+
+### Position sizing — concrete, and different from what config.json does
+
+- **3% maximum capital exposure on any one trade; 6% across all open
+  trades.** He calls this "the accepted standard, and it is a good one."
+- `Maximum Position Size = (Available Capital × 3%) ÷ Capital Exposure per Unit`
+- Gann's old 10%-per-trade rule: "way too much" — he says he learned that
+  expensively.
+- **Circuit breaker: if closed trades draw the account down 10% in under a
+  month, stop trading for the rest of the month.** Nothing in this repo has
+  a drawdown-triggered halt of any kind.
+- Drawdown asymmetry as the justification: a 20% drawdown needs a 25% gain
+  to recover; 50% needs 100%.
+
+**How this sits against config.json:** `max_order_notional_usd: 5` on a ~$28
+account is ~18% of capital per order — but that is *notional*, not *risk*.
+Miner's 3% is risk (entry-to-stop distance), which on a stop a few percent
+wide would permit a much larger notional than $5. The two numbers are not
+comparable, and the repo currently has no concept of the one Miner cares
+about. **Adding stop-distance-based exposure would be a real change, not a
+retuning of the existing cap.**
+
+### Where Miner and Sincere directly disagree — do not silently merge them
+
+**Risk/reward ratios.** Sincere: minimum 1:2, "1:3 is even better." Miner
+devotes a section to calling the idea "basically a bogus idea":
+
+> "Most professional traders don't pay much attention to a risk/reward
+> ratio... it is only a best guess... avoid any trading educators who claim
+> they teach you how to only take trades with some minimum risk/reward
+> ratio."
+
+His replacement: "Focus on positive and logical trade management and the
+risk/reward will take care of itself," and a warning about "paralysis of
+analysis" from pre-trade ratio math. Both authors are credible; this is a
+genuine disagreement about method, not one of them being wrong on a fact.
+**Logged as a conflict; not resolved here.** Note the asymmetry that makes
+it decidable in principle: a minimum-ratio rule is testable against a trade
+log, and Miner's position is the one that predicts the filter adds nothing.
+
+**Indicator settings.** Sincere gives defaults (RSI 14/70/30, MACD 12-26-9).
+Miner explicitly rejects fixed settings: the right lookback varies by market
+*and* timeframe *and* changes over time. His selection procedure is concrete
+and worth stealing — test a few lookbacks over 2-3 different periods and
+pick the one where (1) the indicator reaches OB/OS at most reversals,
+(2) reversals land within a bar or two of the actual swing high/low, and
+(3) there are no false reversals mid-range. His worked example landed on 13
+over 8 (too many whipsaws) and 21 (too laggy, never reached OB/OS).
+
+### Expectations, stated plainly
+
+- **"If you get good at trading, you will have around a 30 to 40% win
+  percentage."** Better than 50% over time = "trader elite."
+- "The best professional traders rarely have a greater than 50% win record."
+
+This is a materially different claim from the accuracy benchmarks in the
+Warrior Trading worksheets logged above (40-50% novice rising to 70%+ pro).
+Worth holding both loosely; Miner's is the more conservative and comes with
+his position-sizing math attached, which only makes sense if most trades
+lose.
+
+### The one thing he says guarantees failure
+
+> "I believe there is one primary reason traders are not successful: They
+> lack a trade plan. All consistently successful traders have a written trade
+> plan... A trade plan does not guarantee success, but lack of one guarantees
+> failure."
+
+Paired with record-keeping: every successful trader he knows has a
+trade-record system; "a lack of it does ensure failure." Minimum contents of
+a plan per Miner: the conditions that must be met to *consider* a trade,
+objective entry strategies, and narrow guidelines for managing the trade
+through exit.
+
+**Relevance to this repo:** momentum_scanner.py implements the first third
+(conditions to consider) and nothing of the other two. That is a fair
+description of the actual gap — the scanner finds candidates; there is no
+written entry strategy, no stop rule, no exit rule, and no trade log.
+
+### Not applicable / untested here
+Chapters 3-5 (Elliott-pattern recognition, Fibonacci price retracements and
+projections, time-cycle projections) are the bulk of the book and are
+discretionary chart-reading methods. None of it has been tested against this
+session's data, and the connected tools expose no Fibonacci or wave
+analysis. Logged as read, not adopted.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

@@ -670,6 +670,46 @@ evaluated.
 rare, and the screen is built to say no. An empty result is the screen
 working, not the screen failing.
 
+### First live run — 2026-08-12, 11 contracts, 0 passed
+
+Hand-run against the real earnings calendar as an end-to-end check. 14
+names cleared the $2–100 price band; 5 with liquid chains were carried
+through in full (ONDS, STNE, LUNR, WOLF, NKTR), all on the 2026-08-21
+expiry, which clears every one of their catalysts.
+
+| Symbol | Priced move | Historical median | Ratio | Read |
+| --- | --- | --- | --- | --- |
+| ONDS | 13.90% | 13.70% (n=6) | 1.01 | Fairly priced |
+| STNE | 7.80% | 8.89% (n=6) | 0.88 | Near-miss; just above the 0.85 gate |
+| WOLF | 16.93% | 17.61% (n=3) | 0.96 | Fairly priced, thin sample |
+| NKTR | 6.91% | 2.94% (n=6) | 2.35 | Rich |
+| LUNR | 14.46% | 4.35% (n=6) | 3.32 | Very rich |
+
+Nothing passed. Contract-level gates also did real work independently:
+LUNR's ATM call was $151/contract (premium cap), and STNE/WOLF/NKTR all
+quoted 20–36% spreads (spread cap) — the same round-trip friction the
+stock scanner's 1% rule catches, at the scale options actually trade at.
+
+**A real defect this run exposed.** WOLF's first pass showed three
+earnings moves of exactly +0.0%, which is not a plausible reading.
+`get_equity_historicals` returned **169 synthesized bars out of 331** —
+`interpolated: true`, volume 0, flat at $1.54 — the pre-reorganization
+stub from its Chapter 11. Half the price history was fabricated, and it
+made a violently volatile name look calm. Recomputed with those bars
+discarded, WOLF's median move is 17.61% across the 3 surviving reports,
+not 4.85%. `option_scanner.py`'s prompt now requires discarding
+`interpolated`/zero-volume bars before computing anything, and requires
+skipping reports whose surrounding bars were discarded rather than
+measuring a "move" across a months-long hole. **Nothing in the repo
+checked this flag before; the momentum side may have the same exposure
+and has not been audited for it.**
+
+Two honest caveats on the run itself: WOLF passes the ≥2-observation
+minimum with only 3, and all 3 are post-reorganization, so it is
+arguably a different company than the ticker's earlier history; and
+STNE at 0.88 is close enough to the 0.85 gate that the threshold — not
+the market — is what excluded it.
+
 ### What this changes about the existing playbook
 Nothing about S1–S6 changes. This is an execution-layer option once the
 account is approved: the same regime call and the same candidate list can be

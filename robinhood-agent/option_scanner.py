@@ -155,11 +155,23 @@ Process:
       outside roughly $2-$100.
    b. get_earnings_results to get PAST report dates AND their am/pm timing.
    c. get_equity_historicals (interval=day) covering those past reports.
-      Compute each past move as the close-to-close percent change from the
-      report date's close to the NEXT session's close for a 'pm' report, or
-      from the prior session's close to the report date's close for 'am'.
+      DISCARD any bar with interpolated=true or volume=0 BEFORE computing
+      anything. Those bars are synthesized to fill gaps and carry no
+      information -- a delisting, halt, or post-bankruptcy reorganization
+      leaves long runs of them at a flat price, which produce a string of
+      fake 0.0% moves and make the stock look far calmer than it is. This
+      is not hypothetical: on 2026-08-12 WOLF returned 169 synthesized bars
+      out of 331, flat at $1.54 with zero volume, which silently turned
+      three of its six earnings moves into 0.0%.
+      Then compute each past move as the close-to-close percent change from
+      the report date's close to the NEXT session's close for a 'pm'
+      report, or from the prior session's close to the report date's close
+      for 'am'. Skip any report whose surrounding bars were discarded
+      rather than reaching across the gap -- a move measured across a
+      months-long hole is not a move.
       You need at least two such moves; if you cannot compute two, record
       the candidate anyway with what you have and the code will exclude it.
+      Say in `notes` how many reports you had to skip and why.
    d. get_option_chains, then get_option_instruments for the first
       expiration that falls AFTER the catalyst moves the stock. For a 'pm'
       report on date D the move happens on D+1, so an expiry on D is

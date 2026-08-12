@@ -375,6 +375,105 @@ this was a read of the source, not yet an application of pivot points or the
 MA crossover to today's candidates. If asked to re-evaluate today's names
 against this framework, that's a separate step.
 
+## Michael Sincere — *Start Day Trading Now* (Adams Media, 2011)
+Uploaded as EPUB 2026-08-11 (ISBN 1440511861). ~281K chars, read in full.
+**Status: Educational, not a feed. The most directly relevant book-length
+source logged so far — and it contradicts this repo's current setup in two
+places that matter.**
+
+### THE BLOCKER: Pattern Day Trader rule vs. a ~$28 account
+
+**"If you make more than four day trades within five business days, you will
+be designated as a pattern day trader"** — and a PDT designation requires a
+**$25,000 minimum account balance**. Penalty for breaching it without the
+balance: the account can be **frozen for ninety days**.
+
+config.json documents this account as a **~$28 cash balance**. That is three
+orders of magnitude below the PDT threshold. Concretely: this account can
+make **at most 3 day trades per rolling 5 business days**, full stop —
+which is incompatible with the every-30-minutes scan-and-trade cadence the
+momentum work has been oriented toward. `risk.max_orders_per_day: 2` happens
+to keep a single day under the line, but nothing in the repo tracks the
+**rolling 5-day count**, which is what the rule actually measures.
+
+This stacks on top of the cash-account good-faith-settlement problem already
+documented in the Warrior Trading entry above. Two independent structural
+limits now point the same way: **this account cannot day trade in the sense
+the momentum strategies assume.** The scanners remain useful as research;
+the gap is between "found a candidate" and "could actually trade it
+repeatedly," and that gap is regulatory, not technical.
+
+### THE CONFLICT: the book says avoid exactly what our scanner surfaces
+
+> "When looking for stocks to buy, avoid the cheap or illiquid stocks."
+> "If you see a wide spread, you're either in the after-hours market or
+> you're looking at a **penny stock trading for under $3**. As a day trader,
+> you need liquid stocks, which is why you want to **avoid most penny
+> stocks**."
+
+config.json's `momentum_scan.min_price` is **$2.00**. Every full pass the
+scanner produced on 2026-08-11 sat in or near the band this book tells you
+to avoid — PLAG $2.57, GRI $2.13, WXM $8.01 (thin 577K float), and the
+near-misses WAFU $1.74 / AIHS $1.79 were rejected *only* for being too
+cheap. Two of those (WXM, PLAG) halted the same session.
+
+The book also gives the diagnostic that would have flagged this
+independently: **a wide bid/ask spread is the tell for illiquidity.** Live
+example from the same session — TISI quoted **$21.55 bid / $22.55 ask, a
+$1.00 spread on a $22 stock (~4.5%)**. Nothing in momentum_scanner.py looks
+at spread at all; `get_equity_quotes` returns bid/ask and it is currently
+ignored. **Cheapest available improvement to the scanner: add a
+max-spread-percent filter.** It is a better liquidity proxy than either the
+price floor or the volume minimum, and it is one field away.
+
+Sincere's own target profile is different from Warrior Trading's: stocks
+that move **2-5% intraday** (he names APC, AIG, TTWO, BCSI as examples) —
+*not* the 20-30%+ low-float movers. Both books are "momentum day trading";
+they disagree about what to point it at.
+
+### Rules worth adopting regardless of the above
+
+*Risk:* minimum **1:2 risk-reward, 1:3 better** — with the honest caveat
+"as a day trader this may not always be realistic." Before entry, **the most
+important calculation is what to do if you're wrong** (position size follows
+from the stop, not the other way round). Never hold a losing stock overnight
+hoping it recovers. **Do not carry a hard stop overnight** — gap-down risk
+fills it far below the stop.
+
+*Orders:* limit orders, not market orders — a market order in a fast tape can
+fill "10, 15, or 20 points lower than you anticipated." Scale in (buy half,
+add the rest only if it works). One pro (Kurisko) uses a conditional order
+that won't trigger **until the market has been open at least 10 minutes**,
+avoiding the opening auction — relevant given the 9:35am scan runs.
+Toni Turner: place the protective stop **immediately on entry**, not later.
+
+*Exits:* "When in doubt, get out" — the moment you first think about selling
+is the signal. Trailing stop: after a 2-point gain, move the stop to +1 to
+lock profit, then raise in ~$0.50 increments. **Cockroach theory** — one bad
+piece of news about a position implies more you can't see yet.
+
+*Indicators (defaults he teaches):* RSI 14-period, >70 overbought / <30
+oversold, with 9-period and even 2-period as day-trading variants; explicitly
+"guidelines, not fixed rules." MACD = 12/26 EMA difference with a 9-period
+signal line; buy on cross above signal or above zero. Bollinger Bands default
+(20, 2); band squeeze = low volatility, expansion = high; piercing a band is
+"pay attention," *not* an actionable trade by itself. MA crossover: 8-day
+above 13-day as a buy signal; on intraday charts use *period* not *day*
+(20-period, 50-period). Timeframes: 5/15/30/60-minute intraday; one pro
+deliberately uses an **8-minute** chart to "get off the fives" where everyone
+else is looking.
+
+*Expectations:* **"No more than 5 percent of people who try make a
+consistently profitable living as a day trader."** And the Jim Rogers quote
+he closes on — do nothing until there is something to do.
+
+### What this does NOT resolve
+The book predates (2011) the current market structure and says nothing about
+trading halts, which is the single most consequential thing observed in live
+testing on 2026-08-11 (WXM and PLAG both halted; PLAG then reopened +71%).
+Its "avoid penny stocks" guidance points away from the names that halt, but
+it offers no framework for what to do when one is already in play.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

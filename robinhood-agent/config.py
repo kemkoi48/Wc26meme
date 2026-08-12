@@ -60,6 +60,14 @@ class MomentumScanConfig:
     min_price: float = 2.0
     max_price: float = 20.0
     max_float: float = 20_000_000.0
+    # Max quoted bid/ask spread as a percent of the midpoint. This is a
+    # DIRECT liquidity measure -- unlike min_price, which only proxies
+    # liquidity by assuming cheap == illiquid (an assumption that both misses
+    # wide-spread expensive stocks and excludes tight-spread cheap ones; see
+    # sources.md, Sincere entry). Live example: TISI quoted 21.55 x 22.55 on
+    # 2026-08-11 == 4.54% spread, a bigger round-trip cost than most
+    # realistic intraday edges on a small account.
+    max_spread_pct: float = 1.0
     top_n: int = 10
 
 
@@ -169,6 +177,7 @@ def load_config(path: str | Path = "config.yaml") -> Config:
             min_price=float(ms.get("min_price", 2.0)),
             max_price=float(ms.get("max_price", 20.0)),
             max_float=float(ms.get("max_float", 20_000_000.0)),
+            max_spread_pct=float(ms.get("max_spread_pct", 1.0)),
             top_n=int(ms.get("top_n", 10)),
         ),
     )

@@ -65,6 +65,12 @@ def _make_recorder_server():
             "volume": float,
             "avg_volume": float,
             "float_shares": float,
+            # Live quote from get_equity_quotes. Report both, even when the
+            # spread looks bad -- the exclusion is code's job, not yours.
+            # Report 0 for either only if the quote genuinely has no bid or
+            # ask; that is treated as unusable data and excluded.
+            "bid": float,
+            "ask": float,
             "notes": str,
         },
     )
@@ -82,11 +88,22 @@ def apply_filters_and_rank(
 ) -> list[dict[str, Any]]:
     """THE safety-critical function. Claude's reported numbers are untrusted
     input: anything malformed, or outside the configured thresholds, is
-    excluded. Only 4 of the "5 pillars" are enforced numerically here --
-    relative volume, % change, price range, float -- because no connected
-    tool can verify a news catalyst; that stays in `notes` for a human to
-    read, never a pass/fail gate. Survivors are ranked by relative volume
-    (the strongest demand/supply imbalance) and capped at top_n."""
+    excluded. Only the numerically-verifiable pillars are enforced here --
+    relative volume, % change, price range, float, and quoted spread --
+    because no connected tool can verify a news catalyst; that stays in
+    `notes` for a human to read, never a pass/fail gate. Survivors are ranked
+    by relative volume (the strongest demand/supply imbalance) and capped at
+    top_n.
+
+    On spread: enforced as (ask - bid) / midpoint, the standard quoted-spread
+    percentage. A missing, zero, or crossed (bid > ask) quote is treated as
+    unusable and excluded -- same fail-closed posture as every other field.
+    A candidate sitting exactly on max_spread_pct may fall either side of the
+    line depending on float representation; that is acceptable for a research
+    filter and not worth an epsilon, but don't read the boundary as exact.
+    This is the one filter that measures tradability rather than momentum: a
+    name can pass all four momentum pillars and still be untradable, which is
+    exactly what price-floor filtering fails to catch."""
     passed: list[dict[str, Any]] = []
     for c in candidates:
         try:
@@ -96,9 +113,16 @@ def apply_filters_and_rank(
             volume = float(c["volume"])
             avg_volume = float(c["avg_volume"])
             float_shares = float(c["float_shares"])
+            bid = float(c["bid"])
+            ask = float(c["ask"])
         except (KeyError, TypeError, ValueError):
             continue  # malformed report -> exclude, fail closed
         if not symbol or avg_volume <= 0 or float_shares <= 0:
+            continue
+        if bid <= 0 or ask <= 0 or ask < bid:
+            continue  # no/crossed quote -> not tradable, fail closed
+        spread_pct = (ask - bid) / ((ask + bid) / 2.0) * 100.0
+        if spread_pct > cfg.max_spread_pct:
             continue
         relative_volume = volume / avg_volume
         if relative_volume < cfg.min_relative_volume:
@@ -115,6 +139,7 @@ def apply_filters_and_rank(
             "pct_change": pct_change,
             "relative_volume": relative_volume,
             "float_shares": float_shares,
+            "spread_pct": spread_pct,
             "notes": str(c.get("notes", ""))[:300],
         })
     passed.sort(key=lambda c: c["relative_volume"], reverse=True)
@@ -180,10 +205,15 @@ async def run_scan(cfg: Config) -> None:
         "with run_scan. Otherwise use create_scan or update_scan_filters to "
         "build one sorted by percentage change descending, then run_scan it.\n"
         "3. Take up to the top 25 rows from the scan result.\n"
-        "4. For each of those symbols, call get_equity_fundamentals (and "
-        "get_equity_quotes if you need today's % change) to get: current "
-        "price, % change on the day, today's volume, average daily volume, "
-        "and float (shares available to trade).\n"
+        "4. For each of those symbols, call get_equity_fundamentals to get: "
+        "current price, % change on the day, today's volume, average daily "
+        "volume, and float (shares available to trade). Then ALSO call "
+        "get_equity_quotes for the same symbols to get the live bid and ask "
+        "-- these are required, and a wide bid/ask spread is how an "
+        "untradable stock is detected regardless of how good its momentum "
+        "looks. Report bid and ask as quoted; do not skip a symbol because "
+        "its spread looks bad, and do not substitute the last trade price "
+        "for a missing bid or ask (report 0 instead).\n"
         "5. Call record_momentum_candidate exactly once per symbol you "
         "examined, even ones that look weak -- the actual selection is made "
         "afterward by fixed numeric rules in code, not by your judgment. Put "
@@ -230,8 +260,8 @@ async def run_scan(cfg: Config) -> None:
     _write_report(selected, len(_collected))
     if not selected:
         print("[momentum_scanner] No candidate passed the configured filters "
-              "(relative volume / % change / price range / float). Wrote an "
-              "empty report to momentum_candidates.json.")
+              "(relative volume / % change / price range / float / spread). "
+              "Wrote an empty report to momentum_candidates.json.")
         return
 
     print(f"[momentum_scanner] Top candidates (research only, not tradable "
@@ -239,7 +269,8 @@ async def run_scan(cfg: Config) -> None:
     for c in selected:
         print(f"    {c['symbol']}: ${c['price']:.2f}  +{c['pct_change']:.1f}%  "
               f"rel.vol {c['relative_volume']:.1f}x  float "
-              f"{c['float_shares']:,.0f}  -- {c['notes']}")
+              f"{c['float_shares']:,.0f}  spread {c['spread_pct']:.2f}%"
+              f"  -- {c['notes']}")
     print("[momentum_scanner] Wrote momentum_candidates.json")
 
 

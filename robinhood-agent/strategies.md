@@ -25,14 +25,31 @@ categories of setup:
 1. **Long-only.** Cash account; shorting is impossible. Half of Miner's
    dual-timeframe 2x2 (both short rows) is permanently unusable, as is every
    bearish pattern in every source.
-2. **No same-day round trips.** Cash settlement causes good-faith violations.
-   T+1 changed when capital frees up, not this. Any strategy that buys and
-   sells the same name the same day is blocked regardless of merit.
-   (PDT is *not* the constraint — that rule was eliminated 2026-06-04; see
-   `sources.md`. Settlement is.)
-3. **~$28 balance, $5 per-order cap.** Spreads and commissions are large
-   relative to position size, which is why the spread filter matters more
-   here than it would on a larger account.
+2. **Day trading IS allowed — with settled funds.** *(Corrected 2026-08-12;
+   an earlier version of this file said "no same-day round trips," which was
+   wrong and blocked S2 for no reason.)*
+
+   A **good-faith violation** happens only when you buy with **unsettled**
+   funds and sell before the original funds settle. Buying with settled cash
+   and selling the same day is not a violation. Per current guidance: *"You
+   can make unlimited day trades in a cash account as long as you use fully
+   settled funds."* PDT never applied to cash accounts and was eliminated
+   2026-06-04 regardless.
+
+   **The real constraint is capital recycling speed.** Sale proceeds settle
+   T+1. So each day you get roughly one pass through your settled balance:
+   deploy $300 of settled cash, close the trade, and those proceeds are
+   unusable until the next business day. Two $150 trades from settled cash
+   are fine; re-trading the proceeds of the first is what trips a GFV.
+
+   **Penalty ladder:** 3 GFVs in a rolling 12 months → account restricted to
+   settled-cash-only for 90 days. That is the thing to avoid, and it takes
+   three mistakes, not one.
+
+3. **~$329 balance ($300 funded + ~$29 SLB), $150 per-order cap.** Spreads
+   are large relative to position size, which is why the spread filter
+   matters more here than on a bigger account. Whole shares are required —
+   Robinhood will not place a stop-loss on a fractional position.
 
 ---
 
@@ -169,10 +186,16 @@ The only strategy on this account that can currently place an order.
 
 ---
 
-## S2 — Opening Range Reversal (Pattern Scalp)  ·  **BLOCKED**
+## S2 — Opening Range Reversal (Pattern Scalp)  ·  **VIABLE** — top priority
 
-The most complete plan in the repo — and it cannot run. Kept because the
-blocker is account structure, not strategy quality.
+**Status changed 2026-08-12.** Previously marked BLOCKED on a mistaken
+reading of cash-account settlement (see constraint 2). It is not blocked:
+one round trip per day from settled funds is exactly what this strategy
+needs, and it is **the only strategy in this repo with a complete plan** —
+entry trigger, stop, target, and time stop all specified.
+
+Given the stated aim is day trading, **this is the strategy to run**, not
+S1. S1 is a multi-day trend strategy and was never the right fit.
 
 - **Regime:** volatile open.
 - **Setup:** first completed 15m candle sets OR_high / OR_low. Valid only if
@@ -185,7 +208,10 @@ blocker is account structure, not strategy quality.
 - **Stop:** just below the wick low / manipulation extreme.
 - **Target:** return toward OR_high.
 - **Time stop:** exit by end of the entry window; never hold into afternoon.
-- **Blocker:** requires a same-day round trip → good-faith violation.
+- **Capital:** uses settled cash for one round trip per day. At ~$329 with a
+  $150 order cap that is one or two positions, closed same day.
+- **Config:** `config.pattern-scalp.json` — needs its risk block updated to
+  match the $300 funding (still carries the old $5 cap).
 
 ---
 

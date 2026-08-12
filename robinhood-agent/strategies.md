@@ -316,6 +316,120 @@ would be false. Needs its own testing before S5 is more than a draft.
 
 ---
 
+## S6 — Tony Oz scan family  ·  **DRAFT** (four scans, directly scannable)
+
+Source: Tony Oz, *The Stock Trader: How I Make a Living Trading Stocks*
+(Goldman Brown, 2000). Unlike every other source logged, Oz publishes
+**literal scan formulas**, which is exactly what this repo needs. Read this
+section as scanner specs, not as reading notes.
+
+**Read the caveats before implementing any threshold.** This is a 2000 book
+and two of its numbers are not portable.
+
+### The four scans, as published
+
+| Scan | Avg volume | Rel. volume | Net change | Price | Extra condition |
+| --- | --- | --- | --- | --- | --- |
+| **Volume Spike** | > 750,000 | > 1.5× | ≥ 5/8 | $40–200 | — |
+| **Breakout** | > 400,000 | > 1.7× | ≥ 5/8 | $40–200 | last trade = **4-week high** |
+| **Pullback Swing** | > 750,000 | — | — | $40–200 | down 3 days, trading above yesterday's low |
+| **Power** | > 350,000 | > 1.5× | ≥ 5/8 | $40–200 | last trade in **top 13% of day's range** |
+
+### Pullback Swing — exact formula as printed in the text
+
+The only one for which the book prints the raw formula syntax:
+
+```
+VolAvg20    > 350,000
+Last        > P Low          # last trade above yesterday's low
+P1Close     < P2Close        # three consecutive
+P2Close     < P3Close        #   lower closes
+P3Close     < P4Close
+```
+`VolAvg20` = 20-day average volume; `P Low` = previous day's low;
+`P1Close` = previous close, `P2Close` the day before, etc.
+
+**Discrepancy — flagged, not silently resolved.** The in-text formula
+(Chapter 2, the scan he actually ran that day) uses **VolAvg20 > 350,000**.
+The Appendix version of the same scan says **"more than 750,000 shares on
+average"** and adds the $40–200 price band, which the in-text formula does
+not contain. Both are in the same book. The Appendix notes its formulas
+"were published in the book, *Stock Trading Wizard*" — a different, later
+title — so the likeliest explanation is that the Appendix is a revised
+version. **Do not treat either as canonical.** If implemented, pick one
+deliberately and record which.
+
+### Portability caveats — two numbers do NOT transfer
+
+1. **"Net change of 5/8" is a fraction, not a percentage.** The book predates
+   decimalization (2001). 5/8 = **$0.625**. On a $40–200 stock that is
+   0.3%–1.5% — a much weaker move requirement than it looks. It is an
+   absolute dollar move, and it is not comparable to our `min_pct_change`
+   of 10%.
+2. **The $40–200 price band is 2000-era pricing** and would need inflation
+   and market-structure adjustment before use. Do not copy the numbers
+   literally; the *intent* — liquid, higher-priced, institutionally traded
+   names — is what carries.
+
+Obsolete and ignored: the book's Level II / SOES / SelectNet material
+describes a market structure that no longer exists.
+
+### The genuinely new scannable idea: close strength
+
+**"Last trade in the top 13% of the day's trading range."** Computable
+directly:
+
+```
+(last - low) / (high - low) >= 0.87
+```
+
+This measures *where in its range a stock is closing* — a name finishing at
+its high is under accumulation; one finishing mid-range is not. **We have no
+equivalent filter.** It is cheap to compute from `get_equity_fundamentals`
+(which already returns today's high, low, and last) and it is a genuinely
+different axis from anything currently in `momentum_scanner.py`, which
+measures size of move and volume but never *quality of close*.
+
+Same for the **4-week high** condition and the **three-consecutive-lower-
+closes** pullback pattern — both computable from `get_equity_historicals`
+daily bars, neither currently implemented.
+
+### The convergence worth acting on
+
+Three independent sources now point away from this repo's current scan
+universe, and our own live data agrees with them:
+
+| Source | On price / liquidity |
+| --- | --- |
+| Oz (2000) | $40–200, avg volume 350K–750K minimum |
+| Sincere (2011) | avoid stocks under $3; "you need liquid stocks" |
+| **Our data (2026-08-11)** | every extreme-relvol cheap pass halted or faded; TISI 4.5% spread |
+
+`config.json` currently scans **$2–20, float ≤20M, rel. vol ≥5×** — the
+opposite universe on every axis. That is not automatically wrong; low-float
+momentum is a real strategy and Warrior Trading targets exactly it. But it
+should be a **deliberate choice between two coherent universes**, not an
+unexamined default. The spread filter added 2026-08-11 is the first step
+toward measuring which universe we are actually in.
+
+### Structural note from Oz worth more than the scans
+
+He states that **most of his trades came from a curated "Constant watch
+list" of 35 stocks he follows daily**, not from scans — scans are the
+supplementary source, and he says explicitly that in a trending bull market
+they generate more of his trades. He also warns: *"You will get numerous
+candidates using each one of these scans... not every result is a high
+probability candidate. You must study the charts."*
+
+That is the same structure we arrived at independently: the scan produces
+candidates; a human/judgment pass (our 5th pillar) decides. It also suggests
+a piece we do not have — a **stable curated watchlist as the primary
+source**, with scans as the secondary one. `screener.py` builds a daily
+allowlist from a fixed `candidate_universe`, which is closer to this than
+the momentum scanner is.
+
+---
+
 ## What to build next, in order
 
 1. **Regime classifier** — `get_market_pulse` plus the **7/20/65 SMA
@@ -327,5 +441,11 @@ would be false. Needs its own testing before S5 is more than a draft.
 3. **Trade log** — Miner: no successful trader lacks one. Also the only way
    to settle the risk/reward conflict above with our own data.
 4. **10% monthly drawdown halt** in `risk.py`.
-5. Only then: S4 as running code, or a range-bound strategy for the
-   uncovered regime.
+5. **Close-strength filter** `(last−low)/(high−low)` from Oz's Power scan —
+   cheapest genuinely new scan axis available. Every field needed is already
+   returned by `get_equity_fundamentals`; no new data source.
+6. **Decide the scan universe deliberately** — low-float momentum ($2–20,
+   float ≤20M) or liquid higher-priced (Oz/Sincere). Currently the former by
+   default rather than by decision, and three sources plus our own halt data
+   argue for at least testing the latter.
+7. Only then: S4/S5/S6 as running code.

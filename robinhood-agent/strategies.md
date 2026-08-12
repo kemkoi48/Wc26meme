@@ -456,6 +456,98 @@ the momentum scanner is.
 
 ---
 
+---
+
+## S7 — Options (long calls / long puts)  ·  **BLOCKED, then DRAFT**
+
+Source: Dan Passarelli, *Trading Options Greeks* (Bloomberg Financial
+Series). A Greeks-first options text — deltas, theta, vega, spread
+construction, volatility trading. Read the parts relevant to what this
+account can actually execute; the rest is logged as out of scope, not
+adopted.
+
+### Two blockers, checked directly rather than assumed
+
+1. **The Agentic account has no options approval.** `get_accounts` shows
+   `option_level: ""` for account 432805174. Nothing options-related can be
+   placed until this is upgraded. Upgrade link:
+   `https://applink.robinhood.com/upgrade_options?account_number=432805174`
+   — per the upgrade tool, `option_level_2` unlocks long calls/puts, covered
+   calls, and cash-secured puts; `option_level_3` adds spreads.
+2. **Multi-leg orders are not supported by this MCP connector, even after
+   upgrading to level 3.** Per the tool's own description: *"multi-leg
+   orders are not yet supported here."* This is a hard tooling limit, not an
+   approval-level problem, and it doesn't get fixed by upgrading further.
+
+**Consequence: most of this book's content is not executable on this
+account through these tools, regardless of approval level or funding.**
+Verticals (Ch. 9), wing spreads / condors / butterflies (Ch. 10), calendars
+and diagonals (Ch. 11), ratio spreads (Ch. 16) all require several legs
+filled as one order. **Logged as read, not adopted** — same treatment as
+Miner's Elliott/Fibonacci chapters. If this connector ever supports
+multi-leg orders, or if manual multi-leg entry becomes available, this
+section should be revisited; the strategies themselves are sound, the
+blocker is purely mechanical.
+
+**What survives the two blockers:** single-leg long options — long calls,
+long puts. These need only `option_level_2` and one order. A long straddle
+or strangle *can* be approximated as two separate single-leg buys (a call
+and a put), but that is two fills at two prices, not one simultaneous spread
+fill — real legging risk that the book's straddle chapter assumes away.
+Worth knowing, not worth pretending it's the same trade.
+
+### S7 mechanics — long calls/puts only, adapted to this account
+
+- **Direction comes from the existing regime/momentum signals** (S1's trend
+  read, S3/S6's scan output, the catalyst check). Options here are a
+  different *instrument* for the same directional read, not a new signal
+  source.
+- **Moneyness is a lever, not a free choice:**
+  - **ATM** — most balanced exposure to price movement vs. time decay;
+    roughly even mix of delta, theta, and vega risk. Reasonable default.
+  - **OTM** — cheaper premium, more leverage per dollar, but decays faster
+    and needs a bigger move to pay off. Higher variance, matches this
+    account's small size only if position sizing accounts for a higher
+    probability of the premium going to zero.
+  - **ITM** — pricier, behaves more like the underlying stock, slower decay.
+    Lower leverage; not obviously suited to a small account's capital limit.
+- **Delta doubles as a rough odds estimate.** A ~0.20 delta option is
+  loosely read as ~20% odds of finishing in-the-money; ~0.75 delta as ~75%.
+  Approximate, not exact, but useful for sizing intuition alongside the
+  house 3%-risk rule (the risk here is the full premium if held to a
+  worthless expiry, not a stop-defined loss).
+- **Theta accelerates as expiration nears, fastest for at-the-money
+  options.** For a day-trade approach (in and out same day or within a few
+  days), this cuts the other way from a typical premium-selling book's
+  framing — it doesn't call for staying in through decay, it's the reason
+  **not** to hold a losing long option hoping for a rebound. Same "cockroach
+  theory" instinct as Sincere's stock rule, just faster on options.
+- **Implied vs. realized volatility.** IV is what the market is currently
+  pricing in via supply and demand for the option, not a measure of what the
+  stock has actually done. **Do not buy options into a known IV-elevating
+  event** (earnings, a scheduled catalyst) expecting a directional move to
+  pay for itself — a correct direction call can still lose money if IV
+  collapses after the event (an "IV crush") faster than the stock moves.
+  This is a real risk for a scanner tuned to catalyst-driven names; check
+  whether a candidate has a same-day or next-day earnings date
+  (`get_earnings_calendar`) before choosing options over the underlying.
+- **Expiration choice is a tradeoff the book frames around avoiding the
+  worst of theta decay** while still having enough duration for the setup to
+  play out — commonly discussed in the 2–6 week range rather than the
+  final days, where decay is steepest and a stalled setup has the least
+  room to recover before theta erases it.
+
+### What this changes about the existing playbook
+Nothing about S1–S6 changes. This is an execution-layer option once the
+account is approved: the same regime call and the same candidate list can be
+expressed as stock (defined risk = position size × stop distance) or as a
+long option (defined risk = premium paid, no stop needed since max loss is
+capped by construction) — a genuine alternative, not a replacement. Decide
+per-trade based on IV level and how much leverage the setup's conviction
+justifies.
+
+---
+
 ## What to build next, in order
 
 1. **Regime classifier** — `get_market_pulse` plus the **7/20/65 SMA

@@ -51,6 +51,30 @@ guessed, cross-checked against more than one source before treating a
 claim as fact (see the 2026-08-12 GFV correction — verify regulatory or
 mechanical claims before writing them into a strategy file).
 
+## Stocklake Pro — available, but check coverage before relying on it
+
+Pro tier went live on the account 2026-08-13. Unlocks the AI-pipeline
+tools: `get_stock_research` (full bundle: AI summary, verdict, flag score,
+news sentiment, insider/institutional signal), `get_insider_activity`,
+`get_stock` pro blocks (rating, stance_signals, relative_strength vs
+SPY/QQQ/sector), `get_screener`, `get_indicator_history`. The server is
+connected at the platform level in this session — there is nothing to
+install in this repo, and the bearer token must NEVER be written into any
+committed file. It belongs in `.env` (gitignored) if it is needed at all.
+
+**Coverage limit, verified 2026-08-13, not assumed:** the universe is
+~3,501 symbols and is NOT complete. Both of that day's live positions —
+RSKD and SMWB — returned `symbol_not_found` from `get_stock`,
+`get_stock_research`, AND `get_insider_activity`. AAPL returns full data.
+So Pro covers large/mid caps well and misses exactly the small-cap
+day-trade names our momentum screening actually surfaces.
+
+Consequence: Pro does NOT close S3's 5th-pillar catalyst gap or S7's
+catalyst-verification gap for small caps. Stocktwits + Robinhood
+fundamentals remain the working catalyst check for those. Always try the
+symbol before assuming Pro has it; treat `symbol_not_found` as a routine
+coverage miss, not a tool failure.
+
 ## Verify before writing a conclusion into strategies.md
 
 Two live corrections this repo has already needed: the ENVX

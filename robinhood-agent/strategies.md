@@ -710,6 +710,54 @@ arguably a different company than the ticker's earlier history; and
 STNE at 0.88 is close enough to the 0.85 gate that the threshold — not
 the market — is what excluded it.
 
+### First live run — results (graded 2026-08-13)
+
+ONDS and LUNR both reported `am` on 2026-08-13, so their moves are now
+measurable against what the screen predicted the day before. Baselines are
+the 8/12 closes; "actual" is measured in regular hours on 8/13.
+
+| | 8/12 close | 8/13 | **actual move** | market priced | own history | ratio | screen said |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ONDS | $9.77 | $9.31 | **−4.71%** | 13.90% | 13.70% | 1.01 | "fairly priced, no edge" |
+| LUNR | $16.95 | $17.05 | **+0.60%** | 14.46% | 4.35% | 3.32 | "very rich, AVOID" |
+
+**LUNR: the screen was decisively right.** It flagged the options as very
+rich (ratio 3.32) and refused them. The market priced a 14.46% move; the
+stock moved **0.60%** — the options were overpriced by roughly **24x** the
+realized move. A long call or put bought into that print would have been
+close to a total loss on IV crush alone. This is exactly the failure mode
+S7 exists to prevent, and the mismatch ratio caught it a day early.
+
+**ONDS: right outcome, but for shakier reasons than the ratio implies.**
+The screen said "fairly priced, no edge" and declined to buy — correct, since
+the stock moved 4.71% against a 13.90% priced move, i.e. options were
+overpriced about **3x**. But the ratio only read 1.01 ("fair") because the
+historical median (13.70%) happened to be close to the priced move. The
+stock then moved far less than *either* number. **The ratio understated how
+rich those options were**, and got the no-buy call by luck of the baseline
+rather than by measuring the right thing.
+
+**What this actually teaches, stated carefully:**
+
+1. **Both names' options were overpriced versus the realized move** — 3x and
+   24x. That is one day and two observations, but it is consistent with the
+   IV-crush literature in `sources.md`: buying premium into a scheduled
+   catalyst is structurally hard, and the screen's default posture of
+   rejecting almost everything looks correct rather than merely timid.
+2. **The historical median is a noisy proxy for the coming move.** ONDS has a
+   13.70% median across six prior reports and delivered 4.71%. When realized
+   volatility undershoots a name's own history, the mismatch ratio reads
+   "fair" on options that are in fact very rich. The ratio is a filter
+   against buying, not a valuation.
+3. **This does not validate the ratio as a signal.** Zero contracts passed on
+   2026-08-12, so nothing was risked and nothing was earned. The screen was
+   graded on two rejections, both of which it got right on outcome. A
+   rejection being correct is far weaker evidence than a *selection* being
+   correct, and no selection has yet been made or tested.
+
+STNE and NKTR reported `pm` on 8/13 and are graded separately once their
+moves are visible.
+
 ### What this changes about the existing playbook
 Nothing about S1–S6 changes. This is an execution-layer option once the
 account is approved: the same regime call and the same candidate list can be

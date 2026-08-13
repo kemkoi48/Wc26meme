@@ -75,6 +75,28 @@ fundamentals remain the working catalyst check for those. Always try the
 symbol before assuming Pro has it; treat `symbol_not_found` as a routine
 coverage miss, not a tool failure.
 
+## NEVER trade off get_signals alone — cross-check get_stock_research
+
+Verified 2026-08-13 on MLTX. `get_signals` returned LONG, conviction 9/10,
+flag_score 9/10, sourced from the news pipeline: "Sonelokimab met primary
+endpoint in Phase 3." Same symbol, same day, `get_stock_research` returned
+**verdict BEARISH, near_term BEARISH**, headline "Positive Ph3 data can't
+stop the bleeding — insiders selling, tape rejecting catalysts."
+
+The reconciling facts: the stock FELL 5% on the Phase 3 headline; CEO, CFO
+and CSO sold $6.1M in clustered June-July sales with zero insider buys;
+negative relative performance vs SPY across every window; down 72.5% from
+its 52-week high.
+
+`get_signals` reads a headline and scores the NEWS, not the market's
+response to it. `get_stock_research` adds tape, insider flow, and relative
+strength. When they disagree, the research bundle is the one that
+incorporates whether the catalyst actually worked. Standing rule: any
+candidate sourced from `get_signals` must be cross-checked with
+`get_stock_research` (and insider_trend) before it goes anywhere near a
+trade. A bullish catalyst that the tape is rejecting is a trap, not an
+opportunity.
+
 ## Verify before writing a conclusion into strategies.md
 
 Two live corrections this repo has already needed: the ENVX

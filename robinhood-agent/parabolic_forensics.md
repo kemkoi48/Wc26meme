@@ -102,6 +102,95 @@ today (Robinhood `get_equity_historicals` for volume, Stocktwits
 - Be assumed to generalize. **This is n=1.** One stock, three signals, one
   success. That is an anecdote, not a base rate.
 
+---
+
+## Case 2 — the reverse test (the one that actually matters)
+
+Run 2026-08-13. Case 1 was selected *because* ZTG already ran, so it could
+only ever confirm itself. This is the inverse: define the signal first,
+then measure every occurrence regardless of outcome.
+
+**Universe:** 38 small caps with ≥60 usable daily bars over ~1 year
+(2025-08 → 2026-08), drawn from the saved momentum scans. Interpolated and
+zero-volume bars discarded per the WOLF lesson.
+
+**Signal:** daily volume ≥ 20× the trailing 20-day median **and** absolute
+daily price change < 5% (the "large size, price hasn't moved yet" pattern
+from Case 1).
+
+**Result: 42 occurrences.**
+
+### Raw forward returns vs. a do-nothing baseline
+
+| Horizon | Signal median | Signal mean | win% | ≥+20% | ≤−20% |
+| --- | --- | --- | --- | --- | --- |
+| 1d | −1.1% | +9.4% | 43% | **17%** | 5% |
+| 5d | −1.8% | +10.6% | 48% | 29% | 17% |
+| 10d | −3.6% | +6.0% | 45% | 31% | 33% |
+| 20d | −15.6% | −7.6% | 36% | 12% | 38% |
+
+Baseline (all 7,857 symbol-days, no filter): 1d median −0.3%, mean +1.5%,
+win 45%, ≥+20% **2%**, ≤−20% 1%.
+
+**The one real finding:** at a 1-day horizon the signal produces a ≥20%
+move **17% of the time vs 2% at baseline — about 8.5x.** It genuinely
+identifies stocks about to move violently.
+
+**It does NOT identify direction.** Win rate (43%) is *below* the 45%
+baseline, and the median return is negative at every horizon. By 20 days
+the signal is actively worse than doing nothing (median −15.6% vs −4.8%).
+This is the Case-1 conclusion — volume reveals size, never direction —
+reproduced on 42 events instead of 1.
+
+### With a stop, traded as a day trade (next-session close exit)
+
+| Stop | mean | median | win% | hit ≥20% |
+| --- | --- | --- | --- | --- |
+| 5% | +9.75% | −5.00% | 31% | 14% |
+| 8% | +9.03% | −2.91% | 33% | 14% |
+| 12% | +9.03% | −1.52% | 40% | 14% |
+
+### Why the +9% mean is not trustworthy
+
+| | n | mean | median |
+| --- | --- | --- | --- |
+| All | 42 | +9.03% | −2.91% |
+| minus top 2 | 40 | +0.77% | −3.91% |
+| minus top 5 | 37 | **−2.35%** | −5.49% |
+
+**BOXL +205.8% and SPRC +142.9% alone are 92% of total profit.** The top
+five are 123% of it — i.e. the other 37 trades collectively lose money.
+
+Simulated on $300 at ~50% of account per trade, taking all 42 in
+chronological order: ends at **$1,122, max drawdown −26%, longest losing
+streak 7 consecutive trades.**
+
+### Honest verdict
+
+A positive-expectancy lottery distribution, **indistinguishable from luck
+at this sample size.** Two events out of 42 carry it. The correct
+conclusion is not "we found an edge" but "we found something worth a
+larger test."
+
+Direction filters looked promising (close in top 30% of range: mean
++13.4%, n=10) but every subgroup is under 25 events — noise, not evidence.
+
+**Known limitations of this test, stated so nobody over-reads it:**
+- n=42 signals is small; subgroups are far smaller
+- The 38-name universe came from *current* scan results, so it is biased
+  toward names active today — not a clean random sample
+- Exit is next-session close; no intraday management, no slippage, no
+  spread cost. Real fills on 20x-volume small caps would be worse.
+- One year, one market regime (VIX ~15, uptrend throughout)
+
+### What this changes: nothing, deliberately
+
+No strategy file, scanner, or config was modified as a result of this.
+S3 in particular stays untouched. This is a research finding with an
+unmeasured-enough base rate that acting on it would be exactly the kind
+of drift the account has asked to avoid. If it is ever revisited, the
+next step is a larger and unbiased universe, not a live trade.
+
 ## Why this is not a strategy (yet)
 
 **Survivorship bias is the whole problem.** ZTG was selected *because it

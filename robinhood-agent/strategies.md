@@ -755,8 +755,52 @@ rather than by measuring the right thing.
    rejection being correct is far weaker evidence than a *selection* being
    correct, and no selection has yet been made or tested.
 
-STNE and NKTR reported `pm` on 8/13 and are graded separately once their
-moves are visible.
+**STNE and NKTR — not yet gradable as of 2026-08-14 00:09 ET.** Both
+reported `pm` on 8/13 (`get_earnings_results`, `verified: true`: STNE
+$0.47 vs $0.46 est.; NKTR −$1.23 vs −$2.04 est.). By this section's own
+rule — a `pm` report on D moves the stock on **D+1** — the move that
+grades them lands in the **8/14 regular session, which has not opened
+yet**. The after-hours tape is not a substitute, and this pair is a clean
+demonstration of why.
+
+**Corrected baselines.** The 8/13 closes are **STNE $10.23** and **NKTR
+$75.92** (`get_equity_quotes` → `close`, `interpolated: false`, source
+`sip-list-exchange-close`). The $10.25 / $75.89 figures in circulation
+are `last_trade_price`, stamped 19:59:59.6Z and 19:59:56.1Z — the last
+prints *before* the bell, not the closing auction. The errors are small
+(+0.20% and −0.04%) but they are the denominator of the realized move,
+so grade against the official closes.
+
+**A known data gotcha recurred.** The 8/13 *daily* bars for both names
+return `interpolated: true`, volume 0, flat at the 8/12 close ($10.00
+STNE, $76.03 NKTR) — the day bar had not settled at pull time. Anything
+differenced off the daily series would have measured a **0.00% move on
+both** and graded the screen against a fabricated number. Same class of
+defect as the WOLF synthesized-bar corruption; `get_equity_quotes`'s
+`close` block is the sound source. **Check `interpolated` before
+differencing anything.**
+
+**Why after-hours cannot settle either name.** STNE's post-session was
+liquid — 1.28M shares in the 4:00pm ET half-hour — but wildly unstable:
+a $9.66 low and a $10.36 high inside that single bar, then a drift back
+to $10.15 by 11:24pm ET. Against the $10.23 close that is anywhere from
+**−5.57%** (spike low) to **−0.78%** (late print), implying the 7.80%
+priced move was overpriced by somewhere between **1.4x and 10x**. A grade
+that swings sevenfold on which timestamp you read is not a grade.
+
+NKTR's post-session is worse and should not be used at all. After the
+4:00pm bar the tape is a 2,000-share print at $71.555, then 200-, 100-
+and 800-share prints near $75.05, with three `interpolated` volume-0 bars
+filling the gaps. The quoted spread is **$73.62 × $77.14 = 4.67%** —
+wider than the entire move being measured (−1.15% from the close). The
+~5.9x-overpriced read after-hours suggests is arithmetically reproducible
+but rests on ~3,100 shares and a spread that swamps the signal.
+
+**Status: both ungraded, pending the 8/14 regular-session close.** The
+8/12 screen's calls (STNE ratio 0.88 → near-miss reject; NKTR ratio 2.35
+→ AVOID) are unchanged by any of the above — the mismatch ratio compares
+priced move to historical median and does not depend on the 8/13
+baseline. Only the realized-move column is waiting.
 
 ### What this changes about the existing playbook
 Nothing about S1–S6 changes. This is an execution-layer option once the

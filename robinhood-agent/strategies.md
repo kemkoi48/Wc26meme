@@ -857,6 +857,91 @@ justifies.
 
 ---
 
+## S8 — Verified Catalyst Momentum  ·  **DRAFT — n=1, not yet proven**
+
+Source: **not a book.** Every rule below was pulled from a trade or a
+rejection that actually happened this week (2026-08-11 through 2026-08-15),
+not from Miner, Sincere, Passarelli, Oz, Warrior Trading, or DailyFX. It
+exists because a gap showed up in the account's own results: four days of
+trading, and every dollar of realized P&L came from the ad hoc day-trade
+equity screen (SMWB/RSKD/LNSR/AIRO, +$10.16) while S1–S7 — the actual
+book-sourced strategies — contributed zero trades between them. S7 racked
+up four rejections and no fills; S2 was flagged top-priority for days and
+turned out to be unrunnable on any major ETF at this account's size before
+it ever placed an order. S8 is an attempt to write down, as a real Miner-
+format plan, what the informal process that's been carrying the account was
+actually doing right, so it can be tested and improved deliberately instead
+of staying implicit.
+
+**Setup.** A verified, named catalyst: a signed/definitive agreement, an
+SEC filing, an FDA action, or a wire-confirmed news item with a source that
+can be checked (Stocktwits linking to a primary source, `get_stock_news`
+with a real article, `get_earnings_results`). Chatter, "partnerships
+coming," unexplained relative volume, and newsletter/promoter picks do not
+count, no matter how clean the numeric pillars look.
+
+**Disqualifier.** Float turnover (day volume ÷ float) above roughly 20–30×
+with no catalyst that clears the bar above. This is the single check that
+separated every name evaluated this week: WETO (62–460×), ONFO (288–561×),
+CGTL (860–1,042×), LBGJ (743×), STKH (41×), SXTC, LFS, AEHL — all rejected,
+and AEHL was later found to be *actively halting* on exactly this pattern.
+HHS, the one name that passed, had no unusual turnover driving it — the
+move was the news, not a pump.
+
+**Entry.** Stop-limit above the pre-move resistance / bar high — never a
+market order, never bought into the target price. Confirmation first, per
+Miner and per what actually filled HHS at $4.37 against a $4.35 breakout
+level.
+
+**Stop.** Below the pre-breakout swing low, placed **the instant the
+position fills**, not on the next scheduled check. This is the one place
+S8 already knows it has a bug: HHS sat naked for 11 minutes between fill
+(10:06am) and stop placement (10:17am) because the entry was conditional
+and got monitored on a timer instead of continuously. A conditional entry
+needs either a bracket/OCO order (if this connector supports one) or
+continuous monitoring through the fill — a scheduled check-in cannot
+deliver "at the moment of entry."
+
+**Exit.** Two different endings depending on the catalyst type, not yet
+both tested:
+- **Capped catalyst** (M&A, tender offer) — target is the deal price itself,
+  discounted for deal risk and consideration type (HHS is cash *and*
+  preferred stock, not all-cash, which is why it trades under $5.00 rather
+  than converging to it). Not an open-ended momentum hold.
+- **Uncapped catalyst** (earnings beat, FDA approval, contract win) — trail
+  the stop up per house rules once a real gain shows. Not yet tested live
+  under S8; no example this week was this type.
+
+**Size.** Unchanged house rule: risk ≤3% of account per trade, ≤6% across
+all open positions, notional ≤$150 per order.
+
+**What is not yet true about this strategy, stated plainly:**
+1. **n=1.** HHS is the only trade run under something resembling these
+   rules, and it was still open (unrealized −$2.81 as of the 8/14 close)
+   when this was written. One trade proves nothing.
+2. **The float-turnover threshold is reverse-engineered from about eight
+   examples**, not tested against a real population the way the FVG check
+   was (`sources.md`, 2026-08-15: 43 bullish FVGs tested, no edge over
+   baseline). It needs the same treatment before it is trusted — pull a
+   larger sample of past momentum-scan candidates and check whether the
+   threshold would actually have separated winners from halts, rather than
+   just fitting the handful that happened to show up this week.
+3. **The ad hoc screen's 4-for-4 record (SMWB/RSKD/LNSR/AIRO) was not run
+   under this exact rule set.** It's the reason S8 exists, but it wasn't
+   S8 — so that record cannot be cited as S8's track record, only as its
+   motivation.
+4. **The exit rule is asymmetric and only half-tested.** Nothing this week
+   exercised the uncapped-catalyst trailing-stop path.
+
+**Status: DRAFT until either (a) the float-turnover threshold is backtested
+against a real sample, or (b) enough live trades accumulate to judge the
+rule set on its own results — whichever comes first. Do not treat this as
+LIVE or as validated by this week's account performance; the account was
+profitable this week because of the process this formalizes, not because
+of this document.**
+
+---
+
 ## What to build next, in order
 
 1. **Regime classifier** — `get_market_pulse` plus the **7/20/65 SMA

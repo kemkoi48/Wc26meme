@@ -691,6 +691,44 @@ move, not a mismatch. See S7 in `strategies.md` for the worked numbers.
 This is the standard applied going forward: a claimed mismatch needs a live
 chain pull to confirm, not just a price that looks cheap.
 
+## "Smart Money Concepts" (ICT) — Fair Value Gap — tested and rejected (2026-08-15)
+
+**Status: own empirical test, not a fetched source.** The user shared a
+social-media chart claiming an "SMT + IDM + FVG + OB = 6RR" setup. FVG (Fair
+Value Gap — a 3-candle price gap where candle 3's low sits above candle 1's
+high) is the only one of those four concepts with a fully mechanical,
+non-subjective definition; OB, IDM, and SMT all require a judgment call
+(what counts as an "obvious" liquidity pool, which correlated pair to use)
+that can't be made objective without just encoding personal bias into the
+test.
+
+**Method:** pulled 1 year of SPY daily bars (2025-08-15 to 2026-08-14, 251
+bars), detected every bullish and bearish FVG ≥$0.30 wide programmatically,
+and measured (a) whether price retraced back into the gap within 20 trading
+days, and (b) given a retest, whether the close 5 trading days later
+continued in the gap's direction — compared against the unconditional base
+rate for the same 5-day-forward move over the same sample.
+
+**Result:**
+
+| | n tested | Retested within 20d | Continuation after retest | Baseline (unconditional) |
+| --- | --- | --- | --- | --- |
+| Bullish FVG | 43 | 79.1% | 67.6% | 60.6% (5d-fwd-up rate) |
+| Bearish FVG | 28 | 100% | 42.9% | 39.4% (5d-fwd-down rate) |
+
+Two-proportion z-test on the bullish result (67.6%, n=34 retested vs.
+60.6%, n=246 baseline): **z ≈ 0.79 — not statistically distinguishable from
+noise.** The bearish side is weaker still. SPY spent this year in a strong
+uptrend (646 → 776); the "edge" bullish FVG appeared to show was mostly the
+trend itself, not the pattern.
+
+**Verdict: no measurable edge found.** OB/IDM/SMT were not tested — see
+above for why they can't be made objective with the tools available here.
+Logged so a future session doesn't re-spend a data pull re-testing FVG from
+scratch. See S8 in `strategies.md` for the standard this sets: a claimed
+pattern needs its own backtest against a real baseline, not just a
+retrospective chart that worked once.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

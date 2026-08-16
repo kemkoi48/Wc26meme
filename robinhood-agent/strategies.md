@@ -243,6 +243,94 @@ rather than silently resolved.
 
 ---
 
+## Trade log — the only source of our own data
+
+`trades.csv` (the record) + `tradelog.py` (the arithmetic). Added
+2026-08-16, seeded from the broker's own order history rather than memory.
+`python3 tradelog.py report` prints per-strategy results;
+`tradelog.py open` prints live risk.
+
+Every fill is tagged with the strategy that produced it. The CSV stores
+only observed facts — entry, qty, initial stop, exit, realized dollars —
+and all derived numbers are computed at read time so the file can never
+carry a stale calculation.
+
+**Results are reported in R, not dollars.** R = realized ÷ planned risk,
+where planned risk is `(entry − initial stop) × qty`. This account funds
+strategies unequally and always will; a $28 legacy position and a $150
+momentum position are incomparable in dollars but directly comparable in R.
+R is the only unit in which S1, S2 and S8 can ever be ranked against
+each other.
+
+### What n=5 already shows (2026-08-16)
+
+| Strategy | n | W | L | Win% | Total $ | Avg R | Total R |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ADHOC | 4 | 3 | 1 | 75% | +10.16 | +0.28 | +1.13 |
+| LEGACY (SLB) | 1 | 1 | 0 | 100% | +0.39 | — | — |
+| **All** | **5** | **4** | **1** | **80%** | **+10.55** | **+0.28** | **+1.13** |
+
+Three findings, none of which needed a big sample:
+
+1. **Expectancy is positive but thin: +0.28R per trade.** The process makes
+   money per unit of risk. It is not broken.
+2. **No trade has reached +1.00R.** Best was LNSR at +0.71R. Every winner
+   was closed for less than the distance it was risking to earn. This is
+   the single largest correctable leak — not entry selection, exits.
+3. **Stop latency is excellent everywhere except S8.** Median 16 seconds
+   from fill to live protective stop across five trades. HHS took **675
+   seconds** (11m15s). The one S8 trade is the one unprotected window, which
+   confirms the structural defect already flagged in S8's own section.
+
+**What this log cannot tell us yet, and won't for a long time.** At roughly
+five closes a month, splitting across three strategies yields ~1.7 trades
+per strategy per month. Separating a 45% from a 55% win rate needs n in the
+hundreds; even detecting a large difference between two strategies needs
+n≈20–30 *each*, i.e. a year or more at this rate. **Do not expect the log to
+rank S1 vs S2 vs S8 on edge this quarter.** What it detects within one to
+three trades is mechanical: does the strategy fire, can it place an order,
+does the stop land, is the cap respected. Fix mechanics first; edge
+comparison is a later, slower payoff.
+
+---
+
+## Capital allocation — what is actually fundable
+
+Account state 2026-08-16: **total $540.50** · equity $292.30 (HHS, AEYE) ·
+**free cash $248.20**.
+
+Open risk right now is **$19.37** (HHS $7.59 + AEYE $11.78) = **3.58% of
+account**. House rules cap total open risk at 6% ($32.43), so **$13.06 of
+risk budget remains**, and the 3%-per-trade cap ($16.22) is not the binding
+constraint — the 6% total is.
+
+**Running S1 + S2 + S8 in parallel is not fundable this week.** Three slots
+at the $150 cap is $450 of notional against $248.20 free, and three new
+positions would need roughly $25–35 of risk against $13.06 remaining. Both
+constraints fail independently. The honest capacity is **one new position**,
+sized to ≤$13.06 of risk.
+
+The way to get parallel data on a small account is *sequential trades,
+consistently tagged* — not simultaneous positions. One slot, filled by
+whichever strategy has a valid setup that day, logged by strategy. Over
+months that accumulates the same comparison without over-leveraging a $540
+account into three concurrent bets.
+
+**Slot priority when a slot is free:**
+
+1. **S8** — the only strategy with a live, verified process and a positive
+   logged expectancy. Gets first claim on a free slot.
+2. **S2** — takes the slot only on days it produces a valid opening-range
+   setup, and only once it has a sub-$100 underlying (see its universe
+   blocker). Intraday, so it returns the capital the same day.
+3. **S1** — **does not get funded until it has a stop rule and a real
+   allowlist.** A stopless multi-day trend position is the one structure on
+   this account that can produce a loss larger than the whole risk budget in
+   a single gap. Parking it is a risk decision, not a verdict on trend
+   following.
+
+---
+
 ## S1 — Trend Follow  ·  **LIVE**
 
 The only strategy on this account that can currently place an order.
@@ -257,7 +345,22 @@ The only strategy on this account that can currently place an order.
 - **Stop: MISSING.** This is the strategy's one real defect — it exits only
   on trend reversal, which can be far below entry. Until a stop exists,
   Miner-style sizing cannot be computed for it.
-- **Size:** currently the flat $5 notional cap.
+- **Size:** `config.json` sets `max_order_notional_usd: 150`. (Corrected
+  2026-08-16 — this file previously claimed a "$5 notional cap", which the
+  config has not carried for some time. Verified by reading the file.)
+
+**Why S1 has never traded — verified 2026-08-16, and it is not the signal.**
+Its universe is `daily_allowlist.json`, written by `screener.py`. **That file
+does not exist in this repo.** S1's universe is therefore empty by
+construction: the loop runs, finds nothing allowlisted, and buys nothing.
+`deploy/crontab.example` is an example — nothing is scheduled, there is no
+service running, and there are no run logs or state files. S1 is not a
+strategy that was tried and failed. It is a strategy that has never been
+invoked. The same is true of S2.
+
+That reframes any comparison against S8: **S8 is not beating S1 and S2 on
+results, it is beating them on having executed at all.** Do not read the
+trade log as evidence about S1's or S2's edge until they have actually run.
 
 **Open questions worth testing rather than guessing**
 - 20/50 vs **20/60/100** (daytrading.com's version, where the 100 sets trend
@@ -292,10 +395,21 @@ S1. S1 is a multi-day trend strategy and was never the right fit.
 - **Stop:** just below the wick low / manipulation extreme.
 - **Target:** return toward OR_high.
 - **Time stop:** exit by end of the entry window; never hold into afternoon.
-- **Capital:** uses settled cash for one round trip per day. At ~$329 with a
-  $150 order cap that is one or two positions, closed same day.
-- **Config:** `config.pattern-scalp.json` — needs its risk block updated to
-  match the $300 funding (still carries the old $5 cap).
+- **Capital:** uses settled cash for one round trip per day. At $540 account
+  value with $248 free and a $150 order cap, that is one position, closed
+  same day.
+- **Config:** `config.pattern-scalp.json` already carries
+  `max_order_notional_usd: 150`. (Corrected 2026-08-16 — this file previously
+  said it "still carries the old $5 cap". It does not; verified by reading it.)
+- **Universe problem, unresolved.** The strategy is written for a single
+  liquid equity/ETF. SPY/QQQ/IWM are all >$150/share, so with a $150 order
+  cap and no fractional-share support on stop orders, **S2 cannot place a
+  single share.** It needs a sub-$100 underlying with a real opening range
+  before it can run at all. This is the blocking defect, not the logic.
+- **Blocker:** nothing invokes it. S2 must be called about every 5 minutes
+  through the open. There is no scheduler; this container is ephemeral and
+  cron dies with the session. In practice the agent has to be the scheduler,
+  run interactively during the 9:30–11:30 window.
 
 ---
 

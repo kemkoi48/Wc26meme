@@ -21,8 +21,8 @@ verification check rather than trusting the first one to re-arm itself.
 
 | ID | Name | Status | Source | Note |
 | --- | --- | --- | --- | --- |
-| S1 | Trend Follow | LIVE | Miner + DailyFX SMA filter | Multi-day, has a protective stop. Wrong fit for the stated day-trade aim. |
-| S2 | Opening Range Reversal | VIABLE, top priority | Sincere / Miner | Day-trade, only strategy with a complete entry/stop/target/time-stop plan. Not yet run live. |
+| S1 | Trend Follow | WIRED BUT NEVER INVOKED | Miner + DailyFX SMA filter | Multi-day. **Has no stop** — that is its real defect, and it must not be funded until it has one. 2026-08-16: verified `daily_allowlist.json` does not exist, so its universe is empty by construction; nothing has ever been scheduled. It has not failed, it has not run. Wrong fit for the stated day-trade aim regardless. |
+| S2 | Opening Range Reversal | VIABLE, blocked on universe | Sincere / Miner | Only strategy with a complete entry/stop/target/time-stop plan. **Cannot place a share:** written for SPY/QQQ/IWM at >$150 against a $150 order cap. Needs a sub-$100 underlying. Also has no scheduler — must be run interactively through the 9:30–11:30 window. |
 | S3 | Low-Float Momentum Scan | RESEARCH ONLY — **do not modify without an explicit request** | Warrior Trading | 5 pillars: relative volume, % change, price range, float, catalyst (non-numeric, hand-checked). `momentum_scanner.py` structurally cannot place an order. Keep separate from ad hoc day-trade screening even when they overlap. |
 | S4 | Dual Timeframe Momentum | DRAFT, never run | Miner | |
 | S5 | Range Trade | DRAFT | DailyFX | |
@@ -32,6 +32,31 @@ verification check rather than trusting the first one to re-arm itself.
 | — | Day-trade equity screening (SMWB/RSKD picks) | Ad hoc, hand-run each time | Saved Robinhood scans + Stocktwits catalyst check | NOT S3. Don't conflate a finding here into a reason to edit S3. This is what S8 is trying to formalize — but S8 is not yet proven, so this ad hoc process stays the working method until S8 earns LIVE status on its own results. |
 
 Read this table before re-deriving a strategy's status from scratch.
+
+## "It doesn't work" vs "it never ran" — check which one first
+
+2026-08-16. The account's entire P&L came from ad hoc screening while S1–S7
+contributed nothing, and the obvious reading was that the formal strategies
+had no edge. That reading was wrong. S1's allowlist file does not exist and
+S2 cannot place a single share of a $600 ETF under a $150 cap — **neither
+has ever placed an order.** Before concluding a strategy underperforms,
+verify it executed: look for its universe file, its state/log artifacts, and
+real fills in the order history. Absence of trades is far more often a
+plumbing failure than a signal failure, and the two call for opposite fixes.
+
+Related: this file's own strategy notes drifted. `strategies.md` claimed
+both S1 and S2 still carried "the old $5 notional cap" when both configs
+have read `max_order_notional_usd: 150` for some time. Re-read the config
+before repeating a number from prose.
+
+## Results go in trades.csv, in R, or they don't count
+
+`trades.csv` + `tradelog.py` (added 2026-08-16, seeded from broker order
+history). Every fill gets logged with the strategy that produced it, and
+comparisons are made in R (realized ÷ planned risk), never in dollars —
+strategies on this account are funded unequally, so dollars cannot rank
+them. Log at entry time, not by reconstruction: the initial stop is what
+makes R computable, and it is the field most easily lost after the fact.
 
 ## Strategies stay separate unless told to merge
 

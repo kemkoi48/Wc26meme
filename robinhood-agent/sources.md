@@ -760,6 +760,63 @@ version of the rule. Single-day, non-independent sample: the next real
 step is repeating this same check on independent future trading days, not
 re-deriving it from the same eleven names.
 
+## 2026-08-16 — Execution audit: the formal strategies never ran
+
+Prompted by "we are not making profit" and a proposal to allocate across S1,
+S2 and S8 in parallel to see which performs best. Before splitting capital,
+audited whether the strategies had ever executed. **Two of the three had
+not.**
+
+- **S1:** its universe is `daily_allowlist.json`, written by `screener.py`.
+  That file does not exist in the repo. The universe is empty by
+  construction — the loop can run and will buy nothing. No state files, no
+  run logs. `deploy/crontab.example` is an example; nothing is scheduled,
+  and this container is ephemeral so cron would not survive the session.
+- **S2:** written for a single liquid equity/ETF, with SPY/QQQ/IWM named.
+  All trade above $150 against a `max_order_notional_usd` of 150, and stop
+  orders are whole-share. It cannot place one share. Also has no scheduler
+  and needs invoking every ~5 minutes through the open.
+- **Doc drift found in passing:** `strategies.md` asserted that S1 used "the
+  flat $5 notional cap" and that `config.pattern-scalp.json` "still carries
+  the old $5 cap." Both configs read `max_order_notional_usd: 150`. The
+  prose was stale in a way that would have misdirected the sizing fix.
+  Corrected in place.
+
+So the premise "the formal strategies underperform the ad hoc screen" was
+false. They never competed. Recorded in `CLAUDE.md` as a standing check:
+distinguish "it doesn't work" from "it never ran" before diagnosing edge.
+
+## 2026-08-16 — Trade log built and seeded from broker records
+
+`trades.csv` + `tradelog.py`. Seeded from `get_pnl_trade_history`,
+`get_equity_orders` (filled **and cancelled** — the cancelled stops are what
+recover each trade's *initial* stop price, without which R is not
+computable). Seven trades: five closed, two open.
+
+Results in R rather than dollars, because this account funds strategies
+unequally and dollar totals cannot rank them.
+
+- **Expectancy +0.28R** per closed trade, n=4 with recorded stops. Positive:
+  the process is not broken.
+- **No trade reached +1.00R** (best LNSR +0.71R, worst AIRO −0.29R). Every
+  winner was closed for less than the risk taken to earn it. Largest
+  correctable leak identified so far, and it is on the exit side, not entry
+  selection.
+- **Stop latency median 16s** across five trades — genuinely good execution
+  discipline — **except HHS at 675s (11m15s)**, the single S8 trade. The one
+  strategy-generated entry is the one that sat unprotected, independently
+  confirming the defect flagged in S8's section.
+- Also surfaced: HHS's protective stop is **GFD**, so it expires at every
+  close and must be re-placed nightly; AEYE's is **GTC** and does not. One
+  missed evening on the GFD leaves the position naked overnight.
+
+Statistical honesty recorded alongside the numbers: at ~5 closes/month,
+splitting across three strategies is ~1.7 trades each per month, and
+ranking edge needs n≈20–30 per arm. The log will not settle S1 vs S2 vs S8
+this quarter. What it settles within 1–3 trades is mechanical — fires/does
+not fire, order accepted/rejected, stop attached/missing — which is exactly
+what the audit above needed and what the next fixes should target.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

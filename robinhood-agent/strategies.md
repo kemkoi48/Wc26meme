@@ -796,11 +796,55 @@ wider than the entire move being measured (−1.15% from the close). The
 ~5.9x-overpriced read after-hours suggests is arithmetically reproducible
 but rests on ~3,100 shares and a spread that swamps the signal.
 
-**Status: both ungraded, pending the 8/14 regular-session close.** The
-8/12 screen's calls (STNE ratio 0.88 → near-miss reject; NKTR ratio 2.35
-→ AVOID) are unchanged by any of the above — the mismatch ratio compares
-priced move to historical median and does not depend on the 8/13
-baseline. Only the realized-move column is waiting.
+**Graded 2026-08-15 against the 8/14 regular session.** Baselines are the
+official 8/13 closes; "actual" is the 8/14 settled close taken from the
+daily bar with `interpolated: false` and real volume (STNE 11,366,249
+shares, NKTR 828,396) — `get_equity_quotes` was still serving the 8/13
+close a full day later, so the quote feed could not be used here.
+
+| | 8/13 close | 8/14 close | **actual move** | market priced | own history | ratio | screen said |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| STNE | $10.23 | $9.55 | **−6.65%** | 7.80% | 8.89% | 0.88 | "near-miss reject" |
+| NKTR | $75.92 | $73.02 | **−3.82%** | 6.91% | 2.94% | 2.35 | "rich, AVOID" |
+
+**Both rejections were correct on outcome** — but by far less than the
+after-hours tape implied. STNE's options were overpriced **1.17x** the
+realized move, NKTR's **1.81x**.
+
+**STNE is the one worth studying, because the margin — not the signal — is
+what saved it.** A ratio of 0.88 means the market priced *below* this
+name's own history (7.80% vs an 8.89% median). Directionally the ratio was
+pointing at "cheap, consider buying"; the only thing that prevented a
+purchase was the requirement to clear **0.85**, rather than merely fall
+under 1.00. The stock then moved 6.65% — less than the priced move *and*
+less than the historical median — so a long option bought there would have
+lost. **Had the gate been 0.90, this screen would have bought and lost
+money.** That is the clearest evidence yet for keeping a real margin on the
+edge test instead of gating at parity.
+
+**NKTR is the case where the ratio measured the right thing.** It priced
+6.91% against a 2.94% median, read 2.35, and the realized 3.82% came in
+slightly *above* the name's own history while still landing far under the
+priced move. Unlike ONDS on 8/13 — which got a correct no-buy from a "fair"
+1.01 reading by luck of the baseline — NKTR's verdict and its mechanism
+agree.
+
+**The after-hours tape was wrong by roughly 3x on both, in the same
+direction.** After-hours suggested ~3.2x (STNE) and ~5.9x (NKTR)
+overpriced; the regular-session answers are 1.17x and 1.81x. The
+overstatement is traceable: STNE's post-session put a $9.66 low and a
+$10.36 high inside a single bar, and NKTR's rested on ~3,100 shares behind
+a 4.67% spread. Refusing to grade off that tape was not excessive caution —
+doing so would have overstated the screen's success threefold.
+
+**Running tally, stated with the same caution as before.** Four contracts
+graded across two days — ONDS 3x, LUNR 24x, STNE 1.17x, NKTR 1.81x — and
+every one had options overpriced relative to the realized move, consistent
+with the IV-crush literature in `sources.md`. But the spread between 1.17x
+and 24x is enormous, and **all four are rejections.** Zero selections have
+been made or tested. A screen that says no to everything scores 4-for-4 on
+a tape where premium was uniformly rich; that is not the same as having an
+edge, and it will not be until a contract passes and is held to a result.
 
 ### What this changes about the existing playbook
 Nothing about S1–S6 changes. This is an execution-layer option once the

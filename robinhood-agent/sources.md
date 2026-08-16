@@ -729,6 +729,37 @@ scratch. See S8 in `strategies.md` for the standard this sets: a claimed
 pattern needs its own backtest against a real baseline, not just a
 retrospective chart that worked once.
 
+## S8 float-turnover disqualifier — backtested and demoted (2026-08-16)
+
+**Status: own empirical test, single day, n=11 — not independent.** S8's
+first draft used float turnover (day volume ÷ float) above ~20–30× as a
+disqualifier, reverse-engineered from about eight names rejected on
+2026-08-14. `run_scan` only evaluates live data and cannot be replayed
+against a past date, and it was the weekend, so no independent second
+sample was available. The test run instead: pull the full 8/14 daily bar
+for those same 11 names and check whether turnover magnitude actually
+predicted how much of the day's gain got given back — the outcome the
+disqualifier is implicitly trying to prevent.
+
+**Result:** no monotonic relationship between turnover and giveback-from-
+high (CGTL ran 1,172× and gave back 18.6%; STKH ran 49× and gave back
+44.1%). Worse, turnover was **lowest on the name that was observed
+actively halting** (AEHL, 2.0×) — halts cap tradeable volume, suppressing
+the exact metric meant to flag danger on the exact name that most needed
+flagging. Meanwhile LFS, at 2.5× turnover (well under any version of the
+threshold), failed just as hard as the high-turnover names — it was caught
+by the catalyst check ("$LFS news??" unanswered), not by any number.
+
+**Verdict: the specific threshold is not supported by this data, and the
+catalyst check — not turnover — is doing the real work.** Turnover was
+demoted in S8 from a co-equal numeric disqualifier to secondary supporting
+evidence. Full table and the one real miss (NMAX) are in S8's own
+"Float-turnover backtest" subsection in `strategies.md` — logged here so a
+future session knows this was tested, not assumed, before trusting either
+version of the rule. Single-day, non-independent sample: the next real
+step is repeating this same check on independent future trading days, not
+re-deriving it from the same eleven names.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

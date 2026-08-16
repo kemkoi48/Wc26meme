@@ -17,6 +17,87 @@ never run).
 
 ---
 
+## Glossary
+
+Every acronym that actually appears in this file, `CLAUDE.md`, or
+`sources.md` — not a general trading dictionary, just what's used here.
+
+**Account & orders**
+- **GFV** — Good-Faith Violation. Buying with unsettled funds and selling
+  before those funds settle, in a cash account.
+- **PDT** — Pattern Day Trader. A FINRA rule capping day trades in *margin*
+  accounts under $25k. Does not apply here — this is a cash account, and
+  the rule was eliminated for cash accounts regardless (see Account
+  constraints below).
+- **T+1** — Trade date plus one business day. How long a sale's proceeds
+  take to settle before they're spendable again.
+- **GTC** — Good-Till-Cancelled. An order stays open until it fills or is
+  manually cancelled.
+- **GFD** — Good-For-Day. An order expires unfilled at that session's close.
+- **OCO** — One-Cancels-the-Other. A bracket order pairing an entry with a
+  stop, where filling one cancels the other — referenced as a possible fix
+  for S8's "naked for 11 minutes" gap, not yet confirmed available on this
+  connector.
+- **FINRA** — Financial Industry Regulatory Authority. Sets the PDT rule.
+- **SEC** — U.S. Securities and Exchange Commission.
+- **SLB** — Not an acronym in the account-value notes; it's the stock
+  ticker for Schlumberger Limited. "$300 funded + ~$29 SLB" means ~$29 of
+  pre-existing SLB share value, not a cash bonus.
+
+**Price action & indicators**
+- **OR** — Opening Range. The high/low of the first completed candle after
+  the market opens (S2's core input).
+- **ATR** — Average True Range. A volatility measure in dollars.
+- **SMA / EMA / MA** — Simple / Exponential / (generic) Moving Average.
+- **RSI** — Relative Strength Index. Momentum oscillator, 0–100.
+- **MACD** — Moving Average Convergence Divergence. Trend/momentum
+  indicator built from two EMAs.
+- **ADX** — Average Directional Index. Measures trend strength (not
+  direction).
+- **VWAP** — Volume-Weighted Average Price.
+- **TF** — Timeframe (e.g. "higher-TF trend").
+- **OB / OS — ambiguous, means two different things in this repo:**
+  - In **S4** (Dual Timeframe Momentum): **Overbought / Oversold** zones on
+    an oscillator.
+  - In **S7/S8** (options, and the "SMT+IDM+FVG+OB" chart tested
+    2026-08-15): **Order Block** — a candle presumed to mark institutional
+    positioning before a strong move. Read the section you're in.
+- **FVG** — Fair Value Gap. A 3-candle price gap (candle 3's low above
+  candle 1's high). Tested against real data 2026-08-15 — see `sources.md`.
+  No measurable edge found.
+- **IDM** — Inducement. A stop-hunt before the "real" move, per the same
+  SMC chart as FVG/OB. Not independently testable with available tools —
+  see `sources.md`.
+- **SMT** — Smart Money Technique/divergence — comparing two correlated
+  instruments for a divergence. Same chart, same caveat as IDM.
+- **HOD** — High Of Day (appears in quoted Stocktwits chatter, not in our
+  own rules).
+
+**Options (S7)**
+- **IV** — Implied Volatility. What the options market is currently pricing
+  in, not a measure of the stock's actual past movement.
+- **ATM / OTM / ITM** — At-the-money / Out-of-the-money / In-the-money.
+- **DTE** — Days To Expiration.
+- **OI** — Open Interest (contracts outstanding).
+
+**Market context**
+- **VIX** — CBOE Volatility Index. The market's overall fear/complacency
+  gauge, used in the regime table.
+- **SKEW** — CBOE SKEW Index. A tail-risk gauge — can run high even while
+  VIX is calm.
+- **MOVE** — ICE BofA MOVE Index. Bond-market equivalent of VIX.
+- **SPY / QQQ / IWM** — ETFs tracking the S&P 500 / Nasdaq-100 / Russell
+  2000, used for regime classification.
+
+**Other**
+- **M&A** — Mergers and Acquisitions (the HHS trade's catalyst type).
+- **FDA** — U.S. Food and Drug Administration.
+- **R:R** — Risk-to-Reward ratio.
+- **MCP** — Model Context Protocol — how this session talks to Robinhood,
+  Stocklake, and Stocktwits.
+
+---
+
 ## Account constraints — these bind every strategy below
 
 Not preferences. Structural facts about this account that eliminate whole
@@ -880,13 +961,14 @@ with a real article, `get_earnings_results`). Chatter, "partnerships
 coming," unexplained relative volume, and newsletter/promoter picks do not
 count, no matter how clean the numeric pillars look.
 
-**Disqualifier.** Float turnover (day volume ÷ float) above roughly 20–30×
-with no catalyst that clears the bar above. This is the single check that
-separated every name evaluated this week: WETO (62–460×), ONFO (288–561×),
-CGTL (860–1,042×), LBGJ (743×), STKH (41×), SXTC, LFS, AEHL — all rejected,
-and AEHL was later found to be *actively halting* on exactly this pattern.
-HHS, the one name that passed, had no unusual turnover driving it — the
-move was the news, not a pump.
+**Disqualifier — revised 2026-08-16 after backtesting the original
+threshold, see below.** Elevated float turnover with no catalyst is a
+*secondary* warning sign, not the numeric gate the first draft made it.
+**The catalyst check is the actual disqualifier; turnover only supports
+it.** The full-day evidence for this correction is in the backtest section
+immediately below — the short version is that turnover magnitude doesn't
+predict outcome severity, and turnover is actively suppressed (and
+therefore misleading) on the exact names that are halting the most.
 
 **Entry.** Stop-limit above the pre-move resistance / bar high — never a
 market order, never bought into the target price. Confirmation first, per
@@ -915,17 +997,79 @@ both tested:
 **Size.** Unchanged house rule: risk ≤3% of account per trade, ≤6% across
 all open positions, notional ≤$150 per order.
 
+### Float-turnover backtest (2026-08-16) — the threshold didn't survive, the catalyst check did
+
+**What was actually available to test.** `run_scan` only evaluates live
+market data — it cannot be replayed against a past date, and it was the
+weekend when this ran, so no fresh independent scan population existed.
+The honest test available with real data: pull the full 8/14 daily bar
+(open/high/low/close, real volume) for the 11 names flagged that day and
+check whether elevated turnover actually predicted what the rule assumes —
+that the move fails to hold. This is **one day, n=11, all names already
+selected by the same screen** — a real test, not a toy, but not an
+independent out-of-sample backtest either. That caveat matters for how
+much weight to put on what follows.
+
+| Symbol | Turnover (day vol ÷ float) | Giveback from day's high | vs. day's open |
+| --- | --- | --- | --- |
+| CGTL | 1,171.6× | −18.6% | −12.3% |
+| LBGJ | 788.0× | −23.7% | −15.9% |
+| ONFO | 731.0× | −57.4% | −4.1% |
+| WETO | 95.8× | −36.5% | −22.8% |
+| STKH | 49.3× | −44.1% | −33.2% |
+| SXTC | 30.2× | −10.9% | −5.9% |
+| AKAN | 26.1× | −25.4% | −17.4% |
+| DFSC | 10.2× | −8.8% | +15.8% |
+| LFS | 2.5× | −41.4% | −0.4% |
+| AEHL | 2.0× | −37.2% | +10.5% |
+| NMAX | 0.8× | −6.2% | +9.9% |
+| **HHS** (kept, real catalyst) | 0.7× | −4.4% | +1.7% |
+
+**Finding 1 — the threshold number is not supported.** Turnover magnitude
+does not predict giveback magnitude. CGTL ran 1,172× its float and gave
+back "only" 18.6%; STKH ran a comparatively modest 49× and gave back
+44.1%. There is no monotonic relationship in this sample, so picking 20×
+vs. 30× vs. 50× as *the* cutoff was arbitrary from the start — it fit the
+eight examples on hand, not a real distribution.
+
+**Finding 2 — turnover is actively unreliable exactly when it matters
+most.** AEHL — the name that was *observed halting live* on Stocktwits —
+shows the second-lowest turnover in the table (2.0×). Halts cap how many
+shares can trade, which suppresses the metric precisely on the riskiest
+names. A rule that goes quiet during a halt is worse than no rule.
+
+**Finding 3 — the catalyst check is the one doing the real work.** LFS
+(2.5× turnover — would not have tripped even the loosest version of the
+threshold) still failed exactly like the high-turnover names: −41.4% from
+its high, finishing the day essentially flat (−0.4% vs. open) despite an
+intraday spike to $4.13. It was caught by "$LFS news??" going unanswered
+on Stocktwits, not by any number. Turnover would have missed it entirely.
+
+**Finding 4 — one real miss, and it's instructive.** NMAX gave back only
+6.2% from its high and finished **up** 9.9% vs. its open — better than
+several names that passed the numeric pillars. It was rejected purely on
+"zero news in 3 days," and the price action didn't clearly vindicate that
+call the way it did for the other nine. Worth remembering the disqualifier
+isn't infallible even on its stronger leg.
+
+**What changed as a result:** the Disqualifier section above now reads
+"catalyst check is the gate, turnover is supporting evidence" instead of
+treating them as two co-equal numeric pillars. This is a demotion, not a
+removal — elevated turnover with no catalyst is still worth noticing, it
+just isn't a number to trust on its own, and it should never substitute
+for the catalyst check the way a bright-line gate might tempt someone to
+use it.
+
 **What is not yet true about this strategy, stated plainly:**
-1. **n=1.** HHS is the only trade run under something resembling these
-   rules, and it was still open (unrealized −$2.81 as of the 8/14 close)
-   when this was written. One trade proves nothing.
-2. **The float-turnover threshold is reverse-engineered from about eight
-   examples**, not tested against a real population the way the FVG check
-   was (`sources.md`, 2026-08-15: 43 bullish FVGs tested, no edge over
-   baseline). It needs the same treatment before it is trusted — pull a
-   larger sample of past momentum-scan candidates and check whether the
-   threshold would actually have separated winners from halts, rather than
-   just fitting the handful that happened to show up this week.
+1. **n=1 on live trades.** HHS is the only trade run under something
+   resembling these rules, and it was still open (unrealized −$2.81 as of
+   the 8/14 close) when this was written. One trade proves nothing.
+2. **The turnover backtest above is one day, not independent samples.**
+   All 11 names came from the same screen on the same day — it cannot rule
+   out that day's specific conditions shaping the result. A durable answer
+   needs this same check repeated on independent future days, accumulated
+   over time, the way the FVG test used a full year of independent daily
+   bars (`sources.md`, 2026-08-15: 43 bullish FVGs, no edge over baseline).
 3. **The ad hoc screen's 4-for-4 record (SMWB/RSKD/LNSR/AIRO) was not run
    under this exact rule set.** It's the reason S8 exists, but it wasn't
    S8 — so that record cannot be cited as S8's track record, only as its
@@ -933,12 +1077,14 @@ all open positions, notional ≤$150 per order.
 4. **The exit rule is asymmetric and only half-tested.** Nothing this week
    exercised the uncapped-catalyst trailing-stop path.
 
-**Status: DRAFT until either (a) the float-turnover threshold is backtested
-against a real sample, or (b) enough live trades accumulate to judge the
-rule set on its own results — whichever comes first. Do not treat this as
-LIVE or as validated by this week's account performance; the account was
-profitable this week because of the process this formalizes, not because
-of this document.**
+**Status: still DRAFT.** The float-turnover threshold has now been tested
+and demoted rather than validated — that is real progress, not a setback,
+since a wrong number sitting in a "gate" position was a bigger risk than
+an honest "we don't fully trust this yet." Promotion to LIVE waits on live
+trades accumulating under the corrected rule set. Do not treat this as
+validated by this week's account performance; the account was profitable
+this week because of the process this formalizes, not because of this
+document.
 
 ---
 

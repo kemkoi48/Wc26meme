@@ -861,6 +861,54 @@ stop all specified. Completeness of specification turned out to be
 uncorrelated with profitability, and the blocker that stopped it trading
 (a $150 cap against $600 shares) was protective, not merely inconvenient.
 
+## 2026-08-16 — Exit analysis: 21% capture, and breakeven stops make it worse
+
+The trade log showed +0.28R expectancy with no trade ever reaching +1.00R,
+and this file had already called that "winners cut short." That phrasing was
+an assumption, not a measurement — a sub-1R average has two possible causes
+with opposite fixes (exits too early, or stops too wide for the move that
+existed). Measured it on real 5-minute bars for the four closed trades with
+recorded initial stops.
+
+**It is exits, not stops.** Average MFE available +1.32R against +0.28R
+captured — **21% capture efficiency**. Three of four trades offered ≥1.0R.
+SMWB was sold 09:34 on 08/13 and peaked at 15:15 the same day (+1.20R
+available, +0.21R taken). RSKD offered +2.21R and returned +0.50R.
+
+Rule simulation with an explicit time stop (so nothing gains from holding
+forever), stop winning within-bar ties: a fixed target anywhere in the
+**1.0–1.5R band roughly doubles expectancy** — +0.68R at 1.0R and +0.74R at
+1.25R with a same-session stop, +0.77R at 1.5R with a next-session stop,
+against +0.28R actual. The optimum moves with the horizon, which is what
+n=4 noise looks like, so the band is the finding and the peak is not.
+
+Two counter-findings that matter more than the headline:
+
+- **Breakeven/trailing stops were worse than doing nothing.** Break-even at
+  +1R then trail 1R returned +0.17R; arming at +0.5R returned −0.03R. Both
+  below the +0.28R hand-exit baseline. Moving the stop to breakeven turns
+  ordinary pullbacks into scratches and taxes precisely the trades that
+  later work. This is standard retail advice and it is the worst rule tested
+  here.
+- **Discretion helped on the loser.** AIRO was hand-closed at −0.29R; every
+  mechanical rule that let it run took −1.00R. So the correct fix is
+  asymmetric — mechanise the upside with a target, keep a same-session time
+  stop on the downside rather than always riding to the price stop.
+
+**Blocking constraint found while specifying the fix:** `place_equity_order`
+has no bracket/OCO — market, limit, stop_market, stop_limit, single-leg
+only. `get_advanced_orders` reads OCO but nothing places one. A resting stop
+and a resting target therefore cannot coexist on the same shares, which is
+precisely why Friday's $7.80 AEYE stop was rejected while the $7.08 GTC stop
+held all 19 shares. The target has to come from a manually-placed app
+bracket, or from intraday agent monitoring (same scheduling gap as S2), or
+be downgraded to a time stop.
+
+Limits: n=4, one week, one regime, one screen. Within-bar sequencing is
+assumed on 5-minute bars. Limit-target fills are realistic; stop fills can
+slip worse than modelled. Re-test at n≥15 before treating 1.0–1.5R as
+settled.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

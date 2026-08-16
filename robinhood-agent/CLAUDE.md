@@ -123,6 +123,22 @@ candidate sourced from `get_signals` must be cross-checked with
 trade. A bullish catalyst that the tape is rejecting is a trap, not an
 opportunity.
 
+## No OCO for equities — a stop and a target cannot both rest
+
+Verified 2026-08-16 against the tool schema. `place_equity_order` offers
+market / limit / stop_market / stop_limit, **single-leg only**. There is a
+`get_advanced_orders` read tool for OCO, but nothing that *places* one. So
+two resting sell orders cannot cover the same shares — whichever lands
+first holds them and the second is rejected.
+
+This already bit us: Friday's attempt to put a $7.80 stop on AEYE failed
+because the older $7.08 GTC stop held all 19 shares. Do not plan any
+strategy around a resting stop-plus-target bracket placed through this
+interface. Either the user places the bracket in the Robinhood app (which
+does support real OCO), or the agent has to monitor intraday and swap
+orders — and monitoring needs the agent invoked during market hours, which
+is the same gap that blocks S2.
+
 ## Verify before writing a conclusion into strategies.md
 
 Two live corrections this repo has already needed: the ENVX

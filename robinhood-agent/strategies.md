@@ -294,6 +294,103 @@ comparison is a later, slower payoff.
 
 ---
 
+## Exits — the measured leak, and what actually fixes it
+
+Tested 2026-08-16 on the four closed trades that have a recorded initial
+stop, using real 5-minute bars. The earlier claim in this file was that
+"winners are being cut short." That needed testing, because a sub-1R average
+has two possible causes with **opposite** fixes: exits taken too early, or
+stops set too wide for the move that was ever available. It is the first.
+
+### Maximum favourable excursion vs what was captured
+
+Walking each trade forward from its fill until its stop would have been hit:
+
+| Trade | Risk/sh | MFE | MFE in R | MFE occurred | Actual | Captured |
+| --- | --- | --- | --- | --- | --- | --- |
+| SMWB | 0.6599 | +0.790 | **+1.20R** | 08/13 15:15 | +0.21R | 18% |
+| RSKD | 0.2899 | +0.640 | **+2.21R** | 08/14 14:40 | +0.50R | 23% |
+| LNSR | 0.5199 | +0.790 | **+1.52R** | 08/14 09:30 | +0.71R | 47% |
+| AIRO | 0.8838 | +0.326 | +0.37R | 08/14 09:30 | −0.29R | — |
+| HHS (open) | 0.2300 | +0.130 | +0.57R | 08/14 10:10 | — | — |
+| AEYE (open) | 0.6199 | +0.490 | +0.79R | 08/14 12:25 | — | — |
+
+**Average MFE available: +1.32R. Average captured: +0.28R. Capture
+efficiency: 21%.** Three of four trades offered ≥1.0R. The move was there
+and the stops were not too wide — the exits gave back four fifths of it.
+SMWB was sold at 09:34 on 08/13; its high came at 15:15 the same day.
+
+### Which exit rule would have captured it
+
+Simulated with an explicit time stop so no rule benefits from holding
+forever. Stop wins within-bar ties (conservative).
+
+| Rule | Same-session stop | Next-session stop |
+| --- | --- | --- |
+| **Actual (hand exit)** | **+0.28R** | **+0.28R** |
+| Target 0.75R | +0.49R | +0.31R |
+| Target 1.0R | +0.68R | +0.50R |
+| Target 1.25R | **+0.74R** | +0.64R |
+| Target 1.5R | +0.56R | **+0.77R** |
+| Target 2.0R | +0.56R | +0.55R |
+| Target 2.5R | +0.56R | +0.55R |
+
+Any fixed target in the **1.0–1.5R band roughly doubles expectancy** under
+either horizon. Do not read the exact peak as the answer — it moves from
+1.25R to 1.5R just by changing the time stop, which is what n=4 noise looks
+like. The band is the finding; the peak is not.
+
+### Two counter-findings worth more than the headline
+
+**1. Breakeven and trailing stops made things actively worse.** Tested with
+a fall-through to end-of-data, so these are directly comparable to each
+other: break-even at +1R then trail 1R gave **+0.17R**, and arming earlier
+at +0.5R gave **−0.03R** — both *below* the +0.28R of doing it by hand.
+Moving the stop to breakeven converts ordinary pullbacks into scratch exits
+and taxes exactly the trades that later work. "Move to breakeven once you're
+up" is common advice; on this sample it is the worst rule tested.
+
+**2. The discretionary exit helped on the loser.** AIRO was closed by hand
+at −0.29R; every mechanical rule that let it run took the full −1.00R. So
+the fix is asymmetric: **mechanise the upside, keep the time stop on the
+downside.** A same-session time stop is what preserves AIRO's −0.29R, and it
+is why the same-session column beats the next-session one at small targets.
+
+### Recommended exit block, and the constraint that shapes it
+
+Stop (already placed well — median 16s from fill) · limit target at
+**~1.25R** · same-session time stop. On this sample: **+0.74R vs +0.28R.**
+
+**The constraint: `place_equity_order` has no bracket or OCO.** Types are
+market / limit / stop_market / stop_limit, single-leg only. There is a
+`get_advanced_orders` *read* tool for OCO, but no placement tool. So a
+resting stop and a resting limit target **cannot coexist on the same
+shares** — whichever is placed first holds them. This is not theoretical:
+it is exactly why Friday's $7.80 AEYE stop was rejected while the older
+$7.08 GTC stop held all 19 shares.
+
+Three ways to run the target given that, in order of preference:
+
+1. **Place the bracket manually in the Robinhood app.** The app supports
+   real OCO; `get_advanced_orders` can then read it back. This is the only
+   option that gives a genuinely *resting* target needing no supervision.
+2. **Agent-monitored target.** Leave the stop resting, and when price
+   reaches the target during a session, cancel the stop and sell with a
+   marketable limit. Requires the agent to be invoked during market hours —
+   the same scheduling gap that blocks S2, so it is not free.
+3. **Time-stop only.** Weakest, but still beats the current hand exit,
+   and needs no intraday presence.
+
+### Limits of this test
+
+n=4 closed trades, one week, one regime, all from the same ad hoc screen.
+Within-bar sequencing on 5-minute bars is assumed, not observed. The target
+side is realistic — limit orders fill at the limit or better — but stop
+fills can slip worse than modelled. Treat the 1.0–1.5R band as a working
+hypothesis to be re-tested at n≥15, not as a settled parameter.
+
+---
+
 ## Capital allocation — what is actually fundable
 
 Account state 2026-08-16: **total $540.50** · equity $292.30 (HHS, AEYE) ·

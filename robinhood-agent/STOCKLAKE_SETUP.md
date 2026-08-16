@@ -1,153 +1,134 @@
-# Stocklake Pro Setup
+# Using Stocklake for Trade Screening
 
-You have access to Stocklake Pro API to verify catalysts and detect insider trading signals. This guide explains how to set it up and use it with the manual on/off toggle.
+Stocklake is available as a connector in this Claude session. No setup needed — authentication is handled at the platform level. This guide explains which tools to use and when.
 
-## 1. Get Your API Key
+## Tool Reference
 
-1. Go to https://stocklake.com and log in with your account
-2. Navigate to **Settings** → **API** → **Pro Tier**
-3. Generate or copy your API key (it starts with `sk_` or similar)
-4. Keep this key private — never commit it to git
+| Tool | Purpose | Cost | Use when |
+| --- | --- | --- | --- |
+| `get_insider_activity(symbol)` | Recent insider buys/sells/exercises | 1 quota | Verifying no distribution before entry |
+| `get_stock_research(symbol)` | Research verdict, tape response, relative strength | 1 quota | Cross-checking headlines (NEVER trade signals alone) |
+| `get_signals(symbol)` | Headline + AI conviction score | 1 quota | Finding catalysts (but always verify with research) |
+| `get_stock(symbol)` | Fundamentals, insider/institutional flags | 1 quota | Quick check of relative strength vs peers |
+| `get_news_feed(symbol)` | Recent news articles | 1 quota | Understanding the catalyst narrative |
+| `get_indicator_history(symbol)` | Technical indicators and history | 1 quota | Rarely needed; tape analysis via research is better |
 
-## 2. Configure Your Environment
+**Quota:** 5000 calls per day, reset at midnight UTC. Last quota burn: ChatGPT screener refreshed every 10 minutes.
 
-Copy the existing `.env.example` to `.env` and add your key:
+## Recommended Workflows
 
-```bash
-cp .env.example .env
-```
+### Pre-market check (every day, ~5 calls)
 
-Edit `.env` and find the line:
-
-```
-STOCKLAKE_API_KEY=
-```
-
-Paste your key:
+Before market open, screen your open positions for insider distribution signals:
 
 ```
-STOCKLAKE_API_KEY=sk_your_actual_key_here_never_commit_this
+get_insider_activity("AEYE")
+get_insider_activity("HHS")
 ```
 
-**Security:** `.env` is in `.gitignore` and will never be committed to the repository.
+Look for **trend: distribution** (insiders selling). If officers are unloading, ask
+"what do they know?" Often precedes halts or reversals in small caps.
 
-## 3. Test the Connection
+### Deep dive (weekly, ~15 calls)
 
-Test cache-only mode (no API calls):
+Once per week, verify research verdicts on candidates:
 
-```bash
-python3 stocklake_screener.py --symbol AAPL --disable
+```
+get_stock_research("AEYE")
+get_stock_research("NEWCANDIDATE")
 ```
 
-You should see either cached results or a message that the cache is empty.
+Compare verdict against your thesis:
+- **BEARISH:** Tape rejecting the catalyst? Insider flow negative? → Pass
+- **BULLISH:** Tape agreeing? Insiders buying? → Worth considering
+- **NEUTRAL:** No edge. Wait for clarity.
 
-Test with API enabled (costs 1 quota call):
+### Emergency check (as needed, ~3 calls)
 
-```bash
-python3 stocklake_screener.py --symbol AAPL --enable
+If a position looks about to reverse or you suspect a halt:
+
+```
+get_stock_research("AEYE")  # Check tape response
+get_insider_activity("AEYE")  # Check if officers are selling
 ```
 
-If successful, you'll see:
-- Recent insider transactions (buys/sells/exercises)
-- Research verdict (BULLISH / BEARISH / NEUTRAL)
-- Latest news catalyst
-- Timestamp of when data was fetched
+Act immediately if you see:
+- Research BEARISH + insider distribution → Exit position, verify with rule 7 (close by bell)
+- Insider distribution spike → This is what stops don't catch; rule 1 is your only defense
 
-## 4. Using the Manual Toggle
+## Interpreting Results
 
-### Recommended workflow:
+### Insider Activity Trends
 
-**Daily check (cache only, no cost):**
-```bash
-# Check your open positions before market open
-python3 stocklake_screener.py --symbols AEYE,HHS --disable
+- **accumulation:** Insiders are buying (bullish)
+- **distribution:** Insiders are selling (bearish, especially on micro-caps)
+- **neutral:** Mixed or ambiguous
+
+**Example:** AEYE shows 3 buys by officers this week vs 0 sells = accumulation. SMWB
+shows CFO selling $50k this week = distribution. One week before SMWB halted, insiders
+were selling. Correlation, not causation, but a useful early warning.
+
+### Research Verdicts
+
+- **BULLISH:** Tape, insider flow, and sentiment align positively. Catalyst worked.
+- **BEARISH:** Insiders selling, tape rejecting headlines, or negative sentiment. The market disagrees.
+- **NEUTRAL:** No clear signal. Wait for clarity.
+
+**Real example (2026-08-13 MLTX):**
+- `get_signals` said LONG: "Sonelokimab met primary endpoint in Phase 3"
+- `get_stock_research` said BEARISH: "Positive Ph3 data can't stop the bleeding — insiders sold $6.1M, tape down 5% on headline, -72.5% from 52-week high"
+- Market fell 5% on the headline. Research was right; the headline was a trap.
+
+**Rule:** Never trade off signals alone. Always cross-check with research first.
+
+## Coverage and Gaps
+
+**Large caps (AAPL, MSFT, QQQ, SPY):**
+- Full data available
+- All fields populated
+- Research verdicts reliable
+
+**Small caps (SMWB, RSKD, AEYE, HHS):**
+- Often missing
+- If you see `symbol_not_found`, that ticker is outside Stocklake's ~3,501-symbol universe
+- Fall back to Stocktwits + Robinhood fundamentals for catalyst verification
+- Insider activity for small caps is harder to verify at the platform level
+
+**Workaround:** Use Robinhood's built-in insider + institutional signal flags as a secondary check. They cover the micro-caps Stocklake misses.
+
+## When NOT to Call Stocklake
+
+- **Auto-refresh.** Never set up a loop calling Stocklake every 10 minutes (this is what burned ChatGPT's quota). Call deliberately: pre-market (once), weekly deep-dive (once), emergency (as needed).
+- **On news headlines alone.** Headlines are the most unreliable signal. A stock can fall 5% on positive news if the tape rejects it.
+- **For technicals.** Stocklake's indicator history exists but doesn't add value here. Tape analysis via research verdict is faster.
+- **To predict halts perfectly.** Insider distribution is a warning sign, not a prediction. Rule 1 (name the news) + rule 3 (place stop within 60s) are your defenses.
+
+## Quota Management
+
+**Daily limit:** 5000 calls. Current usage:
+- Pre-market check (2 symbols): 2 calls
+- Weekly deep-dive (5 symbols × 3 tools): 15 calls
+- Emergency checks: varies
+
+**Safe monthly burn:** ~100–150 calls (well under daily limit). The danger is **automation**: ChatGPT's 10-minute refresh would burn 144 calls per day just to refresh 5 symbols.
+
+**When quota is exhausted:** You'll see an error. Wait until tomorrow UTC for reset. Do not ask for an upgrade mid-month.
+
+## Integration with S8 (Verified Catalyst Momentum)
+
+Before entry:
+1. Name the news (Rule 1)
+2. Check insider activity: any distribution? → risk/reward shifts
+3. Check research verdict: does tape agree? → if BEARISH despite bullish headlines, likely a trap
+4. Log findings in `sources.md`
+
+Example log entry:
+```
+2026-08-16: SMWB — Insider distribution 3 days before halt. get_insider_activity
+showed CFO selling $50k; research was BEARISH (tape rejecting volume spike).
+Verdict: Insider distribution + bearish tape = skip. Rule 1 (name the news)
+would have caught halt risk, but Stocklake gave earlier warning.
 ```
 
-**Weekly deep dive (enable refresh):**
-```bash
-# Update research on all candidates once per week
-python3 stocklake_screener.py --symbols AEYE,HHS,SMWB,RSKD --enable
-```
-
-**On suspicion (emergency check):**
-```bash
-# If a position looks about to reverse, check insider flow immediately
-python3 stocklake_screener.py --symbol AEYE --enable
-```
-
-### Understanding the toggle:
-
-- **`--enable`**: Fetch fresh data from API. Costs 1 quota call per symbol. Use when you want the latest insider activity and news.
-- **`--disable`** (or omit, this is the default): Use cache only. Zero quota cost. Works as long as data is <24h old.
-- **Quota limit**: Stocklake Pro gives you 5000 API calls per day. At 1 call per symbol, that's enough for ~5000 symbols daily. The toggle prevents accidentally burning your quota like ChatGPT was doing (every 10 minutes).
-
-## 5. Interpreting Results
-
-### Insider Activity
-
-Look for a **trend** field in each transaction:
-- `accumulation`: Insiders are buying (bullish signal)
-- `distribution`: Insiders are selling (bearish signal, especially in small caps)
-- `neutral`: Mixed or ambiguous activity
-
-**Rule:** If you see insider `distribution` (selling) on a small-cap candidate, it's often a halt precursor. Rule 1 (name the news) may catch it, but Stocklake gives you an earlier warning.
-
-### Research Verdict
-
-- `BULLISH`: Tape, insider flow, and sentiment align positively
-- `BEARISH`: Red flags (insiders selling, tape rejecting catalyst, negative sentiment)
-- `NEUTRAL`: Mixed or no strong signal
-
-**Example (2026-08-13 MLTX):** get_signals said LONG (Phase 3 positive), but research said BEARISH (insiders sold $6.1M, tape down 5% on the headline, -72.5% from 52-week high). Research was right; the headline was a trap.
-
-### Coverage Notes
-
-- **Large caps** (AAPL, MSFT, QQQ, SPY): Full data, all fields populated
-- **Small caps** (SMWB, RSKD, AEYE, HHS): Often missing. If you see `error: symbol_not_found`, Stocklake doesn't cover that ticker yet. Fall back to Stocktwits and Robinhood fundamentals for catalyst check.
-
-## 6. Common Issues
-
-**"Daily quota exhausted" after a few calls**
-
-This means someone (maybe the ChatGPT screener, or another tool) burned the 5000/day limit. Wait until tomorrow UTC, or ask the account owner to upgrade to a higher quota tier.
-
-**"Symbol not found"**
-
-Stocklake covers ~3,501 symbols (mostly large/mid caps). Our day-trade picks are often micro-caps outside that universe. This is expected; use Stocktwits + Robinhood for catalyst check instead.
-
-**"API key not set in .env"**
-
-Make sure:
-1. `.env` file exists in the `robinhood-agent/` directory
-2. The file contains `STOCKLAKE_API_KEY=sk_...` (not blank)
-3. You ran `cp .env.example .env` and edited it
-
-**Cache older than expected**
-
-Cache is valid for 24 hours. If you see "Cached: 2 days ago", the data is stale. Run with `--enable` to refresh:
-
-```bash
-python3 stocklake_screener.py --symbol AEYE --enable
-```
-
-## 7. Integrating with Trade Screening
-
-Before adding a new candidate to your watch list:
-
-```bash
-# Check if there's insider distribution or negative research
-python3 stocklake_screener.py --symbol NEWCANDIDATE --disable
-```
-
-If you see:
-- Insider `distribution` trend → Risk/reward shifts. Ask "what do insiders know that I don't?"
-- Research `BEARISH` verdict → Usually means tape is rejecting the catalyst, even if news looks good
-- Recent halt or trading halt in notes → This is what stops don't prevent; rule 1 (name the news) is your defense
-
-## 8. Next Steps
-
-Once configured:
-1. Add daily cache-only checks to your pre-market routine
-2. Use `--enable` sparingly (weekly or on suspicion)
-3. Log findings in `sources.md` if you discover a pattern (e.g., "insider distribution always precedes X-day halt")
-4. Report quota issues so the ChatGPT screener can be fixed (it should not be burning 5000/day)
+After 15–20 trades with this check in place, you'll see if insider distribution is
+predictive or noise. Log everything.

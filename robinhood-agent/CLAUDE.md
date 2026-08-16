@@ -101,6 +101,48 @@ fundamentals remain the working catalyst check for those. Always try the
 symbol before assuming Pro has it; treat `symbol_not_found` as a routine
 coverage miss, not a tool failure.
 
+## Stocklake screener — manual toggle for insider activity
+
+Added 2026-08-16: `stocklake_screener.py` is a read-only tool to verify catalysts
+by pulling insider trading signals and research verdicts. It has a **manual on/off
+toggle** to prevent quota burn like the ChatGPT tool was doing (refreshing every
+10 minutes, exhausting 5000/5000 daily calls).
+
+**Setup:**
+1. Copy `.env.example` to `.env` and add your Stocklake API key:
+   ```
+   STOCKLAKE_API_KEY=your_key_here
+   ```
+   The token is gitignored and never committed.
+
+2. Run with explicit toggle:
+   ```
+   # Fetch fresh data from API (costs quota)
+   python3 stocklake_screener.py --symbols AEYE,HHS --enable
+
+   # Use cache only (no API call, no quota cost)
+   python3 stocklake_screener.py --symbols AEYE,HHS --disable
+   ```
+
+**Behavior:**
+- `--enable`: Always fetch fresh data, update cache on success
+- `--disable` (or omit, this is the default): Check cache first; use it if <24h old
+- If quota is exhausted or API key missing: falls back to cache gracefully
+- Results cached to `stocklake_cache.json` (in `.gitignore`)
+
+**For trade screening:** Check current holdings and new candidates before entry:
+```
+# Before adding SMWB to watch
+python3 stocklake_screener.py --symbol SMWB --disable  # cache only
+# If insider_activity is "distribution" or research_verdict is BEARISH, risk/reward flips
+
+# Daily check on open positions (no refresh cost)
+python3 stocklake_screener.py --symbols AEYE,HHS --disable
+```
+
+Call `--enable` sparingly (weekly or on suspicion of reversal). The toggle is
+the firebreak between useful research and quota addiction.
+
 ## NEVER trade off get_signals alone — cross-check get_stock_research
 
 Verified 2026-08-13 on MLTX. `get_signals` returned LONG, conviction 9/10,

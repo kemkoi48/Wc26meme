@@ -817,6 +817,50 @@ this quarter. What it settles within 1–3 trades is mechanical — fires/does
 not fire, order accepted/rejected, stop attached/missing — which is exactly
 what the audit above needed and what the next fixes should target.
 
+## 2026-08-16 — S2 backtested on real bars and rejected
+
+Follow-on from the execution audit. The plan was to unblock S2 by finding a
+sub-$100 underlying it could actually afford. Backtested it first, on the
+principle that the repo tests before it commits — and the result reversed
+the plan entirely.
+
+Setup: `backtest_pattern_scalp.py` against real Robinhood 5-minute bars,
+2026-06-15 → 2026-08-14 (29 trading days with a valid ATR), 12 underlyings
+(SPY, QQQ, IWM, TLT, EEM, ARKK, KRE, SOXL, TQQQ, XLF, SLV, GDX). Zero
+interpolated bars — checked explicitly, per the WOLF precedent.
+
+**Result at default settings: 74 trades, 27% win rate, −20.84R, avg
+−0.28R.** Exits 20 target / 51 stop / 3 time. Only 4 of 12 underlyings
+positive, and SLV's +10.24R rests on n=3 — excluding it, the other 71
+trades total −31.08R. QQQ and TQQQ were each 0-for-8.
+
+Two things made this decisive rather than merely discouraging:
+
+1. **It fails on SPY/QQQ/IWM**, the instruments it was written for. So the
+   sub-$100-underlying hunt was the wrong fix aimed at the wrong problem —
+   a cheaper ticker was never going to rescue it.
+2. **The premise is inverted.** A 5×4 sweep (atr_frac × entry window,
+   pooled across all 12) returned **0 of 20 parameter sets positive**, best
+   −0.25R. More telling than the sign: raising `atr_frac` from 0.20 to 0.40
+   degrades average R from −0.25 to −1.00 *monotonically*. The strategy's
+   thesis is that a larger opening range is a bigger liquidity grab and thus
+   a better reversal; the data says larger ranges reverse worse. The filter
+   meant to select the best setups selects the worst. Tuning cannot repair a
+   backwards premise.
+
+Stated limits: the entry is a reclaim approximation rather than an exact
+hammer/bullish-engulfing match, it is long-only (a real account
+constraint), and 29 days is a single regime with per-symbol n of 3–10. This
+does not prove opening-range reversal never works. It does establish that
+this specification loses at every setting tested.
+
+S2 moved from "VIABLE — top priority" to **do not fund**. Worth recording
+that S2 held top-priority status for four days on the strength of having
+the most complete written plan in the repo — entry, stop, target and time
+stop all specified. Completeness of specification turned out to be
+uncorrelated with profitability, and the blocker that stopped it trading
+(a $150 cap against $600 shares) was protective, not merely inconvenient.
+
 ## Also available (not from a user-provided link)
 
 - **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,

@@ -320,14 +320,13 @@ account into three concurrent bets.
 
 1. **S8** — the only strategy with a live, verified process and a positive
    logged expectancy. Gets first claim on a free slot.
-2. **S2** — takes the slot only on days it produces a valid opening-range
-   setup, and only once it has a sub-$100 underlying (see its universe
-   blocker). Intraday, so it returns the capital the same day.
-3. **S1** — **does not get funded until it has a stop rule and a real
+2. **S1** — **does not get funded until it has a stop rule and a real
    allowlist.** A stopless multi-day trend position is the one structure on
    this account that can produce a loss larger than the whole risk budget in
    a single gap. Parking it is a risk decision, not a verdict on trend
    following.
+3. **S2** — **do not fund. Backtested negative on real data 2026-08-16**
+   (see its section). It is not in the allocation queue.
 
 ---
 
@@ -373,16 +372,88 @@ trade log as evidence about S1's or S2's edge until they have actually run.
 
 ---
 
-## S2 — Opening Range Reversal (Pattern Scalp)  ·  **VIABLE** — top priority
+## S2 — Opening Range Reversal (Pattern Scalp)  ·  **TESTED — NEGATIVE. Do not fund.**
 
-**Status changed 2026-08-12.** Previously marked BLOCKED on a mistaken
-reading of cash-account settlement (see constraint 2). It is not blocked:
-one round trip per day from settled funds is exactly what this strategy
-needs, and it is **the only strategy in this repo with a complete plan** —
-entry trigger, stop, target, and time stop all specified.
+**Status changed 2026-08-16, from "VIABLE — top priority" to do-not-fund.**
+It was never run live, and backtesting it on real bars before funding it is
+the reason no money was lost on it. The full plan below is retained because
+the *specification* is still the best-written one in this repo — the problem
+is that the specification loses money.
 
-Given the stated aim is day trading, **this is the strategy to run**, not
-S1. S1 is a multi-day trend strategy and was never the right fit.
+### The test that killed it
+
+`backtest_pattern_scalp.py` (already in the repo) run against **real
+5-minute Robinhood bars**, 2026-06-15 → 2026-08-14, 29 trading days with a
+valid ATR, across **12 underlyings**: SPY, QQQ, IWM, TLT, EEM, ARKK, KRE,
+SOXL, TQQQ, XLF, SLV, GDX. Zero interpolated bars (checked, per the WOLF
+precedent).
+
+At the strategy's own default settings (OR 15m, ATR-frac 0.20, 90m window):
+
+| Underlying | Trades | Win% | Total R |
+| --- | --- | --- | --- |
+| SLV | 3 | 100% | +10.24 |
+| EEM | 6 | 67% | +1.87 |
+| SPY | 5 | 60% | +1.35 |
+| SOXL | 6 | 33% | +0.44 |
+| XLF | 5 | 40% | −0.37 |
+| TLT | 3 | 33% | −0.84 |
+| KRE | 4 | 25% | −1.70 |
+| IWM | 9 | 22% | −3.81 |
+| ARKK | 7 | 14% | −5.61 |
+| GDX | 10 | 20% | −6.72 |
+| QQQ | 8 | **0%** | −7.69 |
+| TQQQ | 8 | **0%** | −8.00 |
+| **Total** | **74** | **27%** | **−20.84R** |
+
+Exits: 20 target / 51 stop / 3 time. Average **−0.28R per trade**.
+
+Only four of twelve were positive, and SLV's +10.24R came from **three**
+trades — remove it and the remaining 71 trades total −31.08R. QQQ and TQQQ
+went **0-for-8 each**.
+
+### Two findings that make this decisive rather than suggestive
+
+**1. It fails on the instruments it was designed for.** This is not a
+wrong-underlying problem that a cheaper ticker would fix. SPY is marginally
+positive on n=5; QQQ is 0-for-8 and IWM is −3.81R. The search for a sub-$100
+underlying was therefore the wrong fix to the wrong problem.
+
+**2. The core premise is inverted in the data.** A 5×4 sweep of
+`atr_frac` ∈ {0.10, 0.15, 0.20, 0.30, 0.40} × entry window ∈ {30, 60, 90,
+120} min, pooled across all 12 underlyings:
+
+| atr_frac | 30m | 60m | 90m | 120m |
+| --- | --- | --- | --- | --- |
+| 0.10 | −0.29 | −0.33 | −0.31 | −0.29 |
+| 0.15 | −0.28 | −0.31 | −0.29 | −0.28 |
+| 0.20 | **−0.25** | −0.29 | −0.28 | −0.26 |
+| 0.30 | −0.41 | −0.47 | −0.49 | −0.44 |
+| 0.40 | −1.00 | −0.84 | −0.80 | −0.68 |
+
+**0 of 20 parameter combinations is positive.** Best case is −0.25R. And
+note the direction: the strategy's thesis is that a *larger* opening range
+means a *bigger* liquidity grab and therefore a *better* reversal. The data
+says the opposite — raising `atr_frac` from 0.20 to 0.40 degrades average R
+from −0.25 to −1.00, monotonically. The filter that is supposed to select
+the best setups selects the worst ones. That is a premise failure, not a
+tuning failure, and tuning cannot fix it.
+
+### Honest limits of this test
+
+- Entry is a **reclaim approximation** (first 5m bar that trades below
+  OR_low and closes back above), not a candle-by-candle hammer/engulfing
+  match. A faithful pattern implementation could differ.
+- Long-only, which is a real account constraint, so this part is fair.
+- 29 trading days is one regime, and per-symbol n runs 3–10.
+
+What it does *not* prove: that opening-range reversal never works. What it
+does establish: **this specification, on real bars, at every setting tested,
+loses — and its central filter works backwards.** That is more than enough
+to keep it away from a $540 account. Reviving it requires a faithful pattern
+entry and a fresh test, not a new ticker.
+
+### Original plan, retained for reference
 
 - **Regime:** volatile open.
 - **Setup:** first completed 15m candle sets OR_high / OR_low. Valid only if

@@ -1,217 +1,103 @@
-"""Monday morning premarket scanner — top gainers + catalyst check.
+"""Premarket position sizer — enforces the $150 cap and the 6% risk budget.
 
-Run this 7am - 8:30am ET on Monday to build your watch list.
+The screening is done by eye (Rule 1: name the news). This does the arithmetic
+that must not be done by eye: how many shares fit, and whether the trade fits
+in what is left of today's risk budget.
 
 Usage:
-  python3 premarket.py
-  # Outputs: top 5-10 gainers with float, gap %, catalyst summary
-  # Feeds: manual checklist for entry window 8:40-9:15am
+  python3 premarket.py --account 542.25 --open AEYE:19:7.70:7.08 --open HHS:33:4.37:4.14 \
+      --candidate TRUG:1.67:1.45
 
-Focus: Which gainer is "obvious" to most traders? That's your target.
-The hot potato effect means attention flows to the freshest catalyst.
+  --open      SYMBOL:QTY:ENTRY:STOP     (a position already on)
+  --candidate SYMBOL:PRICE:STOP         (something you are thinking about)
+
+Prints remaining risk budget, then for each candidate the largest share count
+that fits both constraints, with its target from Rule 4.
 """
 
 from __future__ import annotations
 
-import datetime as dt
-import json
-from dataclasses import dataclass
+import argparse
 
-try:
-    import requests
-except ImportError:
-    print("requests not installed; install with: pip install requests")
-    exit(1)
+MAX_NOTIONAL_USD = 150.0
+RISK_BUDGET_PCT = 0.06
+TARGET_R_MULTIPLE = 1.25
 
 
-@dataclass
-class Gainer:
-    rank: int
-    symbol: str
-    price: float
-    pct_change: float
-    gap_pct: float
-    float_millions: float
-    catalyst: str
-    news_time: str
-    extended: bool  # True if up >20% from open
+def parse_open(spec: str) -> tuple[str, int, float, float]:
+    symbol, qty, entry, stop = spec.split(":")
+    return symbol.upper(), int(qty), float(entry), float(stop)
 
 
-def print_banner():
-    print("\n" + "=" * 80)
-    print("PREMARKET SCANNER — Monday 8/19/2026")
-    print("Time: " + dt.datetime.now().strftime("%H:%M ET"))
-    print("=" * 80)
+def parse_candidate(spec: str) -> tuple[str, float, float]:
+    symbol, price, stop = spec.split(":")
+    return symbol.upper(), float(price), float(stop)
 
 
-def print_gainers(gainers: list[Gainer]):
-    """Pretty-print top gainers with trading-relevant metadata."""
-    print("\nTop Gainers (Ranked by Obvious Trading Opportunity):\n")
-    for g in gainers:
-        status = "🔴 EXTENDED" if g.extended else "🟢 FRESH"
-        print(f"{g.rank}. {g.symbol:6} | ${g.price:7.2f} | +{g.pct_change:5.1f}% | Gap: {g.gap_pct:+5.1f}%")
-        print(f"   Float: {g.float_millions:.1f}M | {status}")
-        print(f"   Catalyst: {g.catalyst}")
-        print(f"   News time: {g.news_time}")
-        print(f"   Entry window: {g.rank} → {'Watch for pullback' if g.rank == 1 and g.extended else 'Fresh breakout opportunity'}")
-        print()
+def size_position(price: float, stop: float, risk_remaining: float) -> dict:
+    """Largest share count fitting both the notional cap and the risk budget."""
+    risk_per_share = price - stop
+    if risk_per_share <= 0:
+        return {"error": "stop must be below price"}
 
+    qty_by_notional = int(MAX_NOTIONAL_USD // price)
+    qty_by_risk = int(risk_remaining // risk_per_share)
+    qty = min(qty_by_notional, qty_by_risk)
 
-def print_decision_tree():
-    """Print the hot potato decision tree for 8:40am-9:15am window."""
-    print("\n" + "=" * 80)
-    print("ENTRY DECISION TREE (8:40am - 9:15am ET)")
-    print("=" * 80)
-    print("""
-Step 1: Check #1 gainer status
-  ├─ If EXTENDED (up >20%) → Watch for pullback; risky to chase
-  └─ If FRESH (<20%) → Ready to trade
-
-Step 2: Check #2-3 gainers
-  ├─ FRESH catalyst at 7am-8am → HOT POTATO TARGET
-  │   └─ These have trader attention flowing in
-  └─ Already extended → Wait for pullback
-
-Step 3: Pick the "OBVIOUS" one
-  └─ Which one would you see and think "yeah, I want to trade that"?
-     That's the one with the most volume, tightest spread, clearest setup
-     That's your #1 priority
-
-Step 4: Setup entry
-  ├─ Identify support/breakout level
-  ├─ Note float (lower = faster squeezes)
-  ├─ Verify volume (not just gapping, actual trader interest)
-  └─ Pre-calculate stop and target (Rule 4)
-
-Step 5: Enter on breakout OR bounce
-  ├─ On breakout → enter on high of day break with volume
-  └─ On bounce → enter on support hold with volume confirmation
-
-Step 6: Place stop within 60 seconds (Rule 3, GTC)
-
-Step 7: Set exit plan
-  ├─ Target: entry + 1.25 × (entry - stop) [Rule 4]
-  ├─ Time stop: close at bell if not hit target or stop [Rule 7]
-  └─ Manual exit: if stock rolls over AND attention shifts [Rule 5]
-    """)
-
-
-def print_logging_template():
-    """Print the fields to log in trades.csv for this trade."""
-    print("\n" + "=" * 80)
-    print("LOGGING TEMPLATE (Add to trades.csv after exit)")
-    print("=" * 80)
-    print("""
-trade_id, strategy, symbol, entry, qty, stop_initial, exit, realized_usd, \\
-  entry_time, extension_level, float_millions, catalyst_source, notes
-
-Example entry:
-S8_20260819_001, S8, XPON, 4.50, 100, 4.20, 5.15, 65.00, \\
-  09:04, fresh_5%, 2.1M, earnings_surprise, hot_potato_#2_gainer
-    """)
-
-
-def print_risk_zones():
-    """Print time-based risk zones from the video."""
-    print("\n" + "=" * 80)
-    print("RISK ZONES (From Trader Data)")
-    print("=" * 80)
-    print("""
-Safe Entry Window:     8:40am - 9:15am ET (peak liquidity, fresh setups)
-Caution Zone:          9:15am - 10:00am (some winners hit targets; volatility stays high)
-High Risk Zone:        10:00am+ (big losers concentrated here; hot potato effect accelerates)
-
-Strategy:
-  ├─ Enter in safe window only
-  ├─ Exit at target OR stop (Rule 5 + Rule 3)
-  └─ If not hit by 10:00am, close it (Rule 7)
-    """)
+    return {
+        "qty": qty,
+        "binding": "notional cap" if qty_by_notional <= qty_by_risk else "risk budget",
+        "risk_per_share": risk_per_share,
+        "notional": qty * price,
+        "risk_total": qty * risk_per_share,
+        "target": price + TARGET_R_MULTIPLE * risk_per_share,
+    }
 
 
 def main():
-    print_banner()
-    print("\n⏳ Fetching top gainers from market data...")
-    print("   (In production: would call Stocklake get_market_movers() + get_stock_research())")
+    ap = argparse.ArgumentParser(description="Premarket position sizer")
+    ap.add_argument("--account", type=float, required=True, help="Total account value USD")
+    ap.add_argument("--open", action="append", default=[], metavar="SYM:QTY:ENTRY:STOP")
+    ap.add_argument("--candidate", action="append", default=[], metavar="SYM:PRICE:STOP")
+    args = ap.parse_args()
 
-    # For now, print the framework. Monday morning you'll call:
-    # - Stocklake get_market_movers(type='gainers', limit=10)
-    # - For each top 5, call get_stock_research(symbol) to verify catalyst
-    # - For each, call get_stock(symbol) to get float
-    # - Check if gapper or already extended
+    budget = args.account * RISK_BUDGET_PCT
+    print(f"\nAccount ${args.account:,.2f}   risk budget (6%) ${budget:.2f}")
 
-    print("\n📊 Placeholder gainers (replace with live Stocklake call):")
-    placeholder_gainers = [
-        Gainer(
-            rank=1,
-            symbol="WETO",
-            price=8.50,
-            pct_change=+45.2,
-            gap_pct=+35.0,
-            float_millions=1.2,
-            catalyst="Earnings beat",
-            news_time="04:15am",
-            extended=True,
-        ),
-        Gainer(
-            rank=2,
-            symbol="XPON",
-            price=4.80,
-            pct_change=+18.5,
-            gap_pct=+12.0,
-            float_millions=2.1,
-            catalyst="FDA approval news",
-            news_time="07:05am",
-            extended=False,
-        ),
-        Gainer(
-            rank=3,
-            symbol="IPST",
-            price=2.25,
-            pct_change=+22.3,
-            gap_pct=+18.0,
-            float_millions=3.5,
-            catalyst="Partnership deal",
-            news_time="07:35am",
-            extended=False,
-        ),
-        Gainer(
-            rank=4,
-            symbol="AEYE",
-            price=8.20,
-            pct_change=+6.5,
-            gap_pct=+4.0,
-            float_millions=45.0,
-            catalyst="Your current long",
-            news_time="N/A",
-            extended=False,
-        ),
-        Gainer(
-            rank=5,
-            symbol="HHS",
-            price=4.55,
-            pct_change=+4.1,
-            gap_pct=+2.5,
-            float_millions=22.0,
-            catalyst="Your current long",
-            news_time="N/A",
-            extended=False,
-        ),
-    ]
+    committed = 0.0
+    if args.open:
+        print("\nOpen positions")
+        for spec in args.open:
+            symbol, qty, entry, stop = parse_open(spec)
+            risk = qty * (entry - stop)
+            committed += risk
+            target = entry + TARGET_R_MULTIPLE * (entry - stop)
+            print(f"  {symbol:6} {qty:4d} @ ${entry:.2f}  stop ${stop:.2f}  "
+                  f"risk ${risk:6.2f}  target ${target:.2f}")
 
-    print_gainers(placeholder_gainers)
-    print_decision_tree()
-    print_risk_zones()
-    print_logging_template()
+    remaining = budget - committed
+    print(f"\n  committed ${committed:.2f}   remaining ${remaining:.2f}")
 
-    print("\n" + "=" * 80)
-    print("✅ Ready for 8:40am-9:15am entry window")
-    print("=" * 80)
-    print("\nNext steps:")
-    print("  1. Open your premarket checklist (HTML artifact)")
-    print("  2. Monitor top 3 gainers for volume confirmation")
-    print("  3. Enter at breakout or bounce with tightest setup")
-    print("  4. Place stop (GTC) within 60 seconds")
-    print("  5. Log trade with all fields (esp. entry_time, float_millions, catalyst)")
+    if remaining <= 0:
+        print("\n  Risk budget is fully committed. No new position today.\n")
+        return
+
+    if args.candidate:
+        print("\nCandidates")
+        for spec in args.candidate:
+            symbol, price, stop = parse_candidate(spec)
+            r = size_position(price, stop, remaining)
+            if "error" in r:
+                print(f"  {symbol:6} {r['error']}")
+                continue
+            if r["qty"] == 0:
+                print(f"  {symbol:6} does not fit — risk/share ${r['risk_per_share']:.2f} "
+                      f"exceeds ${remaining:.2f} remaining")
+                continue
+            print(f"  {symbol:6} {r['qty']:4d} sh @ ${price:.2f}  stop ${stop:.2f}  "
+                  f"target ${r['target']:.2f}")
+            print(f"         notional ${r['notional']:.2f}   risk ${r['risk_total']:.2f}   "
+                  f"limited by {r['binding']}")
     print()
 
 

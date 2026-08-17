@@ -49,7 +49,7 @@ both S1 and S2 still carried "the old $5 notional cap" when both configs
 have read `max_order_notional_usd: 150` for some time. Re-read the config
 before repeating a number from prose.
 
-## Monday morning plan (2026-08-19) — hot potato strategy
+## Monday morning plan (2026-08-17) — hot potato strategy
 
 This week: test the "hot potato" effect from trader data (see premarket.py). Key insight: when the #1 leading gainer gets extended (up >20%), trader attention flows to #2-3 gainer with fresh catalyst. This is where the cleanest entry happens, 8:40am-9:15am.
 

@@ -916,3 +916,38 @@ settled.
   symbols. Already wired into research; see README.
 - **General WebSearch** — works for "what's happening with X today" style
   queries; quality varies by query specificity.
+
+## 2026-08-17 S7 options screen — ZIM and BULL, both rejected on real numbers
+
+Ran the S7 catalyst-mismatch methodology manually (option_scanner.py's own
+process, executed via direct tool calls rather than the subprocess) against
+the two most promising near-term earnings names from the 14-day calendar.
+
+**ZIM** (reports 2026-08-19 am, Q2): 5 measurable past earnings-day moves
+(close-to-close, am timing) from 2025-05-19 through 2026-05-20: +5.67%,
+-1.41%, 0.0%, +4.67%, -1.53%. Mean |move| 2.66%, median 1.53% — smaller than
+its EPS-surprise reputation suggests; the stock's price doesn't react
+proportionally to trailing EPS beats/misses (freight-rate data likely leaks
+ahead of the print for a shipping name). ATM straddle for the 2026-08-21
+expiry ($29 call mid $0.80 + $29 put mid $0.875) implies a 4.95% expected
+move. Mismatch ratio 1.86 (mean) to 3.24 (median) — both far above the 0.85
+cutoff. IV is already pricing more than the stock's own history supports.
+The $31 OTM call (delta 0.20, inside the 0.10-0.55 band) additionally fails
+on spread: 40% vs the 15% max.
+
+**BULL** (reports 2026-08-19 pm, Q2): 4 measurable past moves (pm timing,
+report-close to next-close) from 2025-08-28 through 2026-05-21: -7.36%,
++0.48%, -5.60%, -6.51%. Mean 4.99%, median 6.06% — genuinely volatile,
+unlike ZIM. But the ATM straddle for 2026-08-21 ($8 call mid $0.415 + $8 put
+mid $0.315, haircut 0.85) implies a 7.66% expected move — still bigger than
+the historical average. Mismatch ratio 1.27 (median) to 1.54 (mean), both
+above 0.85. The $9 OTM call passes every structural filter (10.5% spread,
+12518 OI on the $8 side, delta 0.20) but fails the same edge test. This is
+IV correctly pricing a big mover, not a mismatch.
+
+Conclusion: no options trade today. Two real candidates checked with real
+option-chain data, both rejected on the actual math, not assumed. Matches
+the S7 track record: 0 of 4 prior contracts (ONDS, LUNR, STNE, NKTR) passed
+either; this makes it 0 of 6. The screen is built to say no most days — see
+option_scanner.py's own framing. Did not force a marginal trade to have
+something to report.

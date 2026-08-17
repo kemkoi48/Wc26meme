@@ -49,6 +49,20 @@ both S1 and S2 still carried "the old $5 notional cap" when both configs
 have read `max_order_notional_usd: 150` for some time. Re-read the config
 before repeating a number from prose.
 
+## Monday morning plan (2026-08-19) — hot potato strategy
+
+This week: test the "hot potato" effect from trader data (see premarket.py). Key insight: when the #1 leading gainer gets extended (up >20%), trader attention flows to #2-3 gainer with fresh catalyst. This is where the cleanest entry happens, 8:40am-9:15am.
+
+**Workflow:**
+1. **Sunday evening:** Print premarket-checklist.html, review RULES.md
+2. **7:00am - 8:30am:** Scan top 5 gainers. Fill in the checklist. Identify which one looks "obvious" to most traders.
+3. **8:40am - 9:15am:** Enter on breakout or bounce of freshest gainer (not extended #1)
+4. **Place stop within 60sec (Rule 3).** Pre-calculate target (Rule 4).
+5. **9:15am - 10:00am:** Exit at target or stop (Rule 5/7). Close by bell if no hit.
+6. **10:00am+:** Avoid high-risk zone (trader data shows big losses cluster here)
+
+**Log all fields** in trades.csv, especially: entry_time, extension_level (fresh_5%, extended_20%, etc.), float_millions, catalyst_source. After 10 trades, this data will show whether 8:40-9:15am is real for your method.
+
 ## Results go in trades.csv, in R, or they don't count
 
 `trades.csv` + `tradelog.py` (added 2026-08-16, seeded from broker order

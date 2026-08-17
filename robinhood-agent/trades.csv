@@ -1,4 +1,4 @@
-trade_id,strategy,symbol,open_date,open_time_et,entry,qty,stop_initial,stop_latency_sec,close_date,close_time_et,exit,realized_usd,exit_reason,catalyst,notes
+trade_id,strategy,symbol,open_date,open_time_et,entry,qty,stop_initial,stop_latency_sec,close_date,close_time_et,exit,realized_usd,exit_reason,catalyst,extension_level,float_millions,notes
 1,ADHOC,SMWB,2026-08-12,11:20:51,8.2999,14,7.64,19,2026-08-13,09:34:42,8.4401,1.96,manual,day-trade screen + Stocktwits check,Held overnight. Stop raised 7.64 -> 8.31 on 8/12 14:28 ET. Sold in first 5 min of 8/13.
 2,ADHOC,RSKD,2026-08-12,13:18:15,5.9699,25,5.68,15,2026-08-13,09:35:30,6.1142,3.61,manual,day-trade screen + Stocktwits check,Held overnight. Sold in first 6 min of 8/13.
 3,LEGACY,SLB,,,,0.546492,,,2026-08-13,09:39:12,52.25,0.39,manual,none,Legacy fractional position. Entry predates this log; placed_agent=user. Excluded from R stats.

@@ -1056,3 +1056,64 @@ monitoring N symbols for the 3–4x volume-surge-with-price-breakout
 condition and surfacing it fast, the user pulling the trigger. That plays to
 what each side is actually good at instead of asking either to do the
 other's job badly.
+
+### The scanner built from it — `scalp_signal.py` + `scalp_scan.py` (2026-08-17)
+
+Thresholds derived by measuring 1,530 minute bars from the five symbols the
+user traded that day, NOT by picking round numbers. Entry modelled at the
+signal bar's close (the earliest a scanner can honestly act — a bar must
+finish before its volume is known).
+
+**The negative result came first and is the more useful half.** Volume surge
+alone is worse than random: bars at >=4x median volume had a median 5-bar
+MFE of +0.95% versus a +1.35% all-bars baseline. A volume spike with no
+price response is as often a selling climax as a breakout. The scanner
+enforces this — `detect_entry` reports a 10x-volume flat bar as an explicit
+non-signal, and `test_scalp_signal.py` asserts it.
+
+Volume only earns its place as *confirmation*. At bar return >= 2%:
+
+| filter | median MFE | median MAE | reach +3% |
+| --- | --- | --- | --- |
+| no volume filter | +4.31% | −3.76% | 61% |
+| **+ surge >= 3x** | **+7.52%** | **−2.84%** | **71%** |
+| + surge < 3x (control) | +3.57% | −4.15% | 57% |
+
+**The magnitudes are not trustworthy and the module says so in its own
+docstring.** Simulating the full rule over the 41 signals returns +709%,
+which is not an edge: 28 of 41 lost money, the median outcome is the −2%
+stop, three trades produced 86% of the profit, and +699.6% of the +709.4%
+came from a single symbol (WFF, $4.49 → $10.20 that session). IPST
+contributed +9.2%, OSRH −0.2%. Strip WFF and the rule is flat. One stock's
+trend on one day, caught three times.
+
+What survives is the *shape*: most signals lose a little, a few win a lot —
+the same asymmetry as the user's own day (three losers averaging −3.4%, one
+winner +23.9%).
+
+**Tested and rejected: mechanizing the user's climax exit.** The user sold
+the +23.9% trade at 9.5654 inside the 660k-share vertical bar, within 1% of
+its 9.66 high. The mechanical trailing rule (exit on a close below the prior
+bar's low) instead held through the pullback and exited at **+12.17%** —
+roughly half. Tempting to add "sell into any bar up X%" to close that gap.
+Tested across all 41 signals, it makes things much worse:
+
+| exit rule | total | best trade |
+| --- | --- | --- |
+| **trail only** | **+761.8%** | **+247.6%** |
+| + sell into any bar >= 5% | +186.4% | +50.8% |
+| + sell into any bar >= 10% | +165.9% | +50.8% |
+| + sell into any bar >= 20% | +410.1% | +121.6% |
+
+Every version truncates the fat tail that produces all the profit. **The
+user's discretionary climax read beat the mechanical rule on that one trade
+and would lose to it as a policy** — so it stays out of the code, and the
+judgment stays with the human. This is also why `decide_exit` has no profit
+target at all: this repo's own Rule 4 (target = entry + 1.25R) would have
+exited the user's winner near $8.10 instead of $9.57.
+
+**Live check:** replaying the scanner against the tape as of 10:57 ET fires
+on IPST and only IPST out of the five symbols — the same minute the user
+entered. The regression test in `test_scalp_signal.py` pins both sides: the
+10:57 bar (before the +23.9% winner) must fire, and the 10:31 bar (before
+the −5.6% loser, entered one bar after the surge had passed) must not.

@@ -1,0 +1,168 @@
+"""Tests for scalp_signal.py.  Run: python3 test_scalp_signal.py
+
+The load-bearing tests are the two that replay REAL 2026-08-17 IPST minute
+bars: the 10:57 bar (which preceded the user's +23.9% trade) must fire, and
+the 10:31 bar (which preceded the -5.6% loser, entered one bar after the
+surge had passed) must NOT. A module that cannot tell those two apart has
+learned nothing from the day it was built from.
+"""
+
+from __future__ import annotations
+
+from scalp_signal import (
+    Bar,
+    decide_exit,
+    detect_entry,
+    surge_ratio,
+    bar_return_pct,
+    close_position,
+    to_bars,
+)
+
+failures: list[str] = []
+
+
+def check(name: str, cond: bool, detail: str = "") -> None:
+    if cond:
+        print(f"  ok   {name}")
+    else:
+        print(f"  FAIL {name} {detail}")
+        failures.append(name)
+
+
+def approx(a, b, tol=1e-6) -> bool:
+    return a is not None and b is not None and abs(a - b) < tol
+
+
+def flat(n: int, vol: float = 1000.0, price: float = 10.0) -> list[Bar]:
+    """n quiet baseline bars."""
+    return [Bar(o=price, h=price * 1.001, l=price * 0.999, c=price, v=vol) for _ in range(n)]
+
+
+print("to_bars -- fails closed on unusable input")
+check("interpolated bar dropped",
+      to_bars([{"open_price": 1, "high_price": 1, "low_price": 1,
+                "close_price": 1, "volume": 5, "interpolated": True}]) == [])
+check("zero-volume bar dropped",
+      to_bars([{"open_price": 1, "high_price": 1, "low_price": 1,
+                "close_price": 1, "volume": 0}]) == [])
+check("missing field dropped",
+      to_bars([{"open_price": 1, "high_price": 1, "low_price": 1}]) == [])
+check("high<low dropped",
+      to_bars([{"open_price": 1, "high_price": 0.5, "low_price": 1,
+                "close_price": 1, "volume": 5}]) == [])
+check("good bar kept",
+      len(to_bars([{"open_price": 1, "high_price": 2, "low_price": 0.9,
+                    "close_price": 1.5, "volume": 5}])) == 1)
+
+print("primitives")
+b = Bar(o=10.0, h=11.0, l=9.5, c=10.8, v=5000)
+check("bar_return_pct", approx(bar_return_pct(b), 8.0))
+check("close_position ~0.867", approx(close_position(b), (10.8 - 9.5) / 1.5, 1e-9))
+check("close_position None on zero range", close_position(Bar(5, 5, 5, 5, 10)) is None)
+bars = flat(20) + [Bar(o=10, h=10.5, l=10, c=10.4, v=4000)]
+check("surge_ratio 4x", approx(surge_ratio(bars), 4.0))
+check("surge_ratio None without history", surge_ratio(flat(5)) is None)
+
+print()
+print("detect_entry -- the negative result is enforced, not just documented")
+# Volume surge with NO price response must be reported as a non-signal.
+quiet_surge = flat(20) + [Bar(o=10.0, h=10.05, l=9.95, c=10.0, v=10000)]
+sig = detect_entry(quiet_surge)
+check("10x volume with a flat bar does NOT fire", not sig.fired, sig.reason)
+check("  ...and says why", "without a price response" in sig.reason, sig.reason)
+
+# Price move with no volume confirmation also must not fire.
+lonely_move = flat(20) + [Bar(o=10.0, h=10.4, l=10.0, c=10.35, v=1200)]
+sig = detect_entry(lonely_move)
+check("+3.5% bar on 1.2x volume does NOT fire", not sig.fired, sig.reason)
+check("  ...and says why", "unconfirmed" in sig.reason, sig.reason)
+
+# Both together -> fires.
+both = flat(20) + [Bar(o=10.0, h=10.4, l=10.0, c=10.35, v=4000)]
+sig = detect_entry(both)
+check("surge + move fires", sig.fired, sig.reason)
+check("  stop is 2% under entry", approx(sig.stop_price, 10.35 * 0.98, 1e-9))
+check("  entry hint is the signal bar close", approx(sig.entry_hint, 10.35))
+check("  confidence names the n=41 limit", "n=41" in sig.confidence)
+
+check("insufficient history does not fire", not detect_entry(flat(5)).fired)
+check("down bar does not fire",
+      not detect_entry(flat(20) + [Bar(o=10, h=10.1, l=9.0, c=9.2, v=9000)]).fired)
+
+print()
+print("REGRESSION -- real IPST bars, 2026-08-17")
+# Real volumes from get_equity_historicals, 10:37-10:57 ET, in order.
+# Trailing median of the 20 bars before 10:57 is 62,551*... computed live:
+# the 10:57 bar (vol 251,916, open 7.475 -> close 7.685, +2.81%) is the one
+# the user bought into at 7.7174 and sold 2m08s later at 9.5654 (+23.9%).
+ipst_vols_before_1057 = [
+    79361, 50366, 27008, 95763, 89054, 86295, 45680, 36730, 39176, 33016,
+    39313, 128761, 163110, 96699, 154494, 96697, 76606, 64846, 140137, 62551,
+]
+hist = [Bar(o=7.3, h=7.4, l=7.2, c=7.3, v=v) for v in ipst_vols_before_1057]
+bar_1057 = Bar(o=7.475, h=7.750, l=7.4437, c=7.685, v=251916)
+sig = detect_entry(hist + [bar_1057])
+check("IPST 10:57 surge bar FIRES", sig.fired, sig.reason)
+if sig.fired:
+    print(f"       {sig.reason}")
+    check("  surge ~3.3x", 3.0 <= sig.surge <= 3.6, f"{sig.surge}")
+    check("  bar return ~+2.8%", 2.5 <= sig.bar_return <= 3.1, f"{sig.bar_return}")
+
+# The loser: user bought at 10:31, one bar AFTER the 10:30 surge. The 10:31
+# bar itself was 149,480 on a falling close (7.6338 -> 7.58) -- must not fire.
+vols_before_1031 = [
+    45819, 54565, 117859, 170878, 147059, 161768, 111651, 368036,
+    79361, 50366, 27008, 95763, 89054, 86295, 45680, 36730, 39176, 33016,
+    39313, 128761,
+]
+hist2 = [Bar(o=7.3, h=7.4, l=7.2, c=7.3, v=v) for v in vols_before_1031]
+bar_1031 = Bar(o=7.6338, h=7.660, l=7.4001, c=7.580, v=149480)
+sig2 = detect_entry(hist2 + [bar_1031])
+check("IPST 10:31 (the -5.6% loser's bar) does NOT fire", not sig2.fired, sig2.reason)
+print(f"       {sig2.reason}")
+
+print()
+print("decide_exit -- no profit target, by design")
+entry = 10.0
+check("no bars yet -> hold", not decide_exit(entry, []).exit_now)
+
+d = decide_exit(entry, [Bar(o=10, h=10.1, l=9.75, c=9.8, v=100)])
+check("hard stop fires on the low", d.exit_now and d.kind == "stop", d.reason)
+
+d = decide_exit(entry, [Bar(o=10, h=10.3, l=9.95, c=10.25, v=100)])
+check("first bar up -> hold", not d.exit_now, d.reason)
+
+# close below PRIOR bar's low -> structure broken
+d = decide_exit(entry, [
+    Bar(o=10, h=10.5, l=10.0, c=10.4, v=100),
+    Bar(o=10.4, h=10.45, l=9.9, c=9.95, v=100),
+])
+check("trail fires on close < prior low", d.exit_now and d.kind == "trail", d.reason)
+
+# an ordinary pullback that holds above prior low must NOT exit
+d = decide_exit(entry, [
+    Bar(o=10, h=10.5, l=10.0, c=10.4, v=100),
+    Bar(o=10.4, h=10.5, l=10.05, c=10.1, v=100),
+])
+check("ordinary pullback does NOT exit (this is what lets winners run)",
+      not d.exit_now, d.reason)
+
+# a big winner must be allowed to keep running -- no target anywhere
+running = [Bar(o=10 + i, h=11 + i, l=9.9 + i, c=10.9 + i, v=100) for i in range(6)]
+d = decide_exit(entry, running)
+check("+50% and still holding (no profit target exists)", not d.exit_now, d.reason)
+
+# time stop
+long_hold = [Bar(o=10, h=10.2, l=9.95, c=10.05, v=100) for _ in range(15)]
+d = decide_exit(entry, long_hold)
+check("time stop fires at max_hold", d.exit_now and d.kind == "time", d.reason)
+
+check("stop takes priority over time",
+      decide_exit(entry, [Bar(o=10, h=10.1, l=9.7, c=9.75, v=100)] * 15).kind == "stop")
+
+print()
+if failures:
+    print(f"{len(failures)} FAILURE(S): {failures}")
+    raise SystemExit(1)
+print("all tests passed")

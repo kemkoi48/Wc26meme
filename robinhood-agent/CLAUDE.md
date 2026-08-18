@@ -4,6 +4,35 @@ My own standing instructions for this repo. Separate from `strategies.md`
 (trading content) and `sources.md` (research log) — this file is about how
 I work, not what I trade.
 
+## Scalp scanner is now live-trading authorized — Agentic account only
+
+User, 2026-08-18 ~09:31 ET, verbatim: **"you do your trading in your
+agentic account."** This is a standing authorization, not a one-off: when
+the two-scanner market scan (`scalp_signal.detect_entry`, see
+`scalp_scan.py`) fires — on the core four OR a fresh market-scan
+candidate — place the trade for real in account `432805174` (Agentic,
+`agentic_allowed: true`). Do not just report a fire on the dashboard and
+wait for the user to act; execute it, following the existing risk rules
+in `RULES.md` that aren't strategy-specific:
+
+- **Rule 2 sizing**: max $150 per buy. Checked 2026-08-18: account cash
+  $544.74, zero open positions, so a $150 buy is affordable and leaves
+  room for the 6% total-risk cap across positions.
+- **Rule 3**: GTC stop placed within 60 seconds of the fill, at the
+  signal's `stop_price` (entry − 2%, from `scalp_signal.py`).
+- **No fixed target** — this is the scalp exit, deliberately different
+  from S8's Rule 4/5. Exit on `decide_exit`'s trail trigger (close below
+  the prior bar's low) or the 15-bar time stop. Re-check `decide_exit`
+  each refresh while a scalp position is open.
+- Log every fill to `trades.csv` immediately, same as any other strategy.
+
+Verified same session: a fire that goes stale before it's acted on
+un-fires — SGLY fired at 8:40 ET ($7.44, stop $7.29) and by 9:31 ET had
+fallen to $6.25, well past where the stop would have triggered. Never
+trade a signal off a timestamp older than the refresh that's about to
+place the order; re-run `detect_entry` on fresh bars immediately before
+buying, not on what the dashboard last showed.
+
 ## RULE ZERO — real data, or say nothing. No guessing, ever.
 
 Stated by the user on 2026-08-17 as **the core architecture of this

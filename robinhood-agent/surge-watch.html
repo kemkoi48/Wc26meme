@@ -216,7 +216,7 @@
 
   <div class="legend">
     <span><span class="swatch quiet"></span><b>Quiet</b> = no action</span>
-    <span><span class="swatch fired"></span><b>Fired</b> = real breakout confirmed — buy near the shown price, stop below, no target, get out on the first close below the prior bar's low</span>
+    <span><span class="swatch fired"></span><b>Fired</b> = real breakout confirmed — buy near the shown price, stop below. No fixed target: ride it, but once it's peaked +5%+ a 2%+ pullback from that peak locks in the gain. Also exits on a close below the prior bar's low, or 15 bars with no progress</span>
   </div>
 
   <div class="statusbar">
@@ -353,6 +353,7 @@
         <div class="log-row"><span class="t">10:40 ET</span><span>WFF's stop fired too — closed <b>−0.97R</b> just 54s after entry, a fast whipsaw. Price recovered to $2.63 minutes later. This is the accepted cost of no profit target, not a mistake — the stop worked exactly as designed, same as SXTC. No open position now.</span></div>
         <div class="log-row"><span class="t">10:44 ET</span><span>Scheduled rescan, nothing fired. Session tally: IPST −5.33R (the verification failure), SXTC −1.00R, WFF −0.97R (both textbook). Watching for the next signal.</span></div>
         <div class="log-row"><span class="t">10:49 ET</span><span><b>XOS fired</b> (9.9x volume, +2.84% bar), verified live and tradeable — but the buy order was REJECTED: "not enough buying power." Real finding: this is a cash account, and proceeds from today's three closed trades hadn't settled yet, so buying power was $110.65, not the $524.38 cash balance. By the time this was diagnosed, XOS had fallen to $4.35 from its $4.70 signal — past its stop level — so it was correctly skipped, not chased. Noted in CLAUDE.md for future sizing.</span></div>
+        <div class="log-row"><span class="t">10:59 ET</span><span>User: "we are happy at 5% profit but if the momentum is there sell it at high." Added a profit-lock trail to the exit rule (scalp_signal.decide_exit) — arms once a trade has peaked at +5%+, then exits on a 2%+ pullback from that peak, not a fixed target. A trade that keeps making new highs past +5% keeps running exactly as before; it only locks in gains once it actually turns down from its own high. Neither threshold is independently backtested — the 5% is the user's stated comfort level, the 2% trail reuses the existing stop's distance. Tests added and passing. Applies to every exit check from here forward, including the open-position check on the next scheduled refresh.</span></div>
       </div>
     </div>
   </details>

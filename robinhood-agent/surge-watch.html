@@ -210,8 +210,8 @@
   <!-- THE ANSWER. This is the only thing that has to be read at a glance. -->
   <div class="hero fired" id="hero">
     <div class="hero-label">Right now</div>
-    <div class="hero-main">SXTC fired and bought — stop verified resting</div>
-    <p class="hero-sub">10:30 ET: fresh volume-confirmed breakout (5.8x volume, +3.79% bar) from the market scan. Bought 29 sh at $4.9899. GTC stop placed at $4.89 (−2%) and — learning directly from the IPST failure minutes earlier — its state was checked immediately: <b>confirmed resting</b>, 15 seconds after the fill. No profit target by design; exit is the trail rule or a 15-bar time stop.</p>
+    <div class="hero-main">WFF fired and bought — stop verified resting</div>
+    <p class="hero-sub">10:39 ET: fresh core-four fire (4.0x volume confirming a +2.82% bar). Bought 58 sh at $2.5799, stop confirmed resting at $2.53, 15s after the fill — third trade in a row using the corrected procedure. SXTC (previous trade) already closed on its own verified stop at 10:33 ET: −1.00R exactly, textbook.</p>
   </div>
 
   <div class="legend">
@@ -223,9 +223,9 @@
     <span class="dot open"></span>
     <span>Entry window open (RULES.md) · live-trade authorized</span>
     <span class="sep">·</span>
-    <span>Refreshed <span id="asof">10:30 ET, 18 Aug</span></span>
+    <span>Refreshed <span id="asof">10:39 ET, 18 Aug</span></span>
     <span class="sep">·</span>
-    <span>Open: SXTC (stop verified) · rescanning every 5 min</span>
+    <span>Open: WFF (stop verified) · rescanning every 5 min</span>
   </div>
 
   <section>
@@ -233,32 +233,33 @@
     <div id="watchlist">
       <div class="watchrow" data-sym="WETO">
         <span class="sym">WETO</span>
-        <span class="price">$45.73</span>
+        <span class="price">$50.81</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="WFF">
         <span class="sym">WFF</span>
-        <span class="price">$2.46</span>
-        <span class="pill quiet">quiet</span>
+        <span class="price">$2.58</span>
+        <span class="pill" style="color: var(--fire); background: var(--fire-dim); font-weight: 700;">bought</span>
       </div>
       <div class="watchrow" data-sym="OSRH">
         <span class="sym">OSRH</span>
-        <span class="price">$0.694</span>
+        <span class="price">$0.667</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="IPST">
         <span class="sym">IPST</span>
-        <span class="price">$8.89</span>
+        <span class="price">$9.55</span>
         <span class="pill quiet">quiet</span>
       </div>
     </div>
-    <p class="scan-note" style="margin-top:.5rem">IPST's earlier loss is
-    closed and done (row 9 in trades.csv). It's back to being watched
-    fresh like any other symbol — no open position to protect on it now.</p>
+    <p class="scan-note" style="margin-top:.5rem">WETO up to $50.81 (+4.3%
+    this bar) but volume only 1.5x — unconfirmed, correctly not traded.
+    This is the same "big move, no volume" pattern the tool is built to
+    ignore.</p>
   </section>
 
   <section>
-    <h2>Today's market scan<span class="when" id="scan-time">10:29 ET, 18 Aug — 2 scanners</span></h2>
+    <h2>Today's market scan<span class="when" id="scan-time">10:39 ET, 18 Aug — 2 scanners</span></h2>
     <p class="scan-note">Rescanned every refresh using two of your own
     Robinhood account's saved scanners — "Early Momentum Ignition" (price
     $2-20, float under 20M, 1h relative volume over 3x) plus "Warrior
@@ -275,41 +276,42 @@
     shouldn't trust the size" below), so a new name gets the same rule,
     not a new one invented for it.</p>
     <div id="scan-results">
-      <div class="watchrow" data-sym="SXTC">
-        <span class="sym">SXTC</span>
-        <span class="price">$4.99</span>
-        <span class="pill fired">bought</span>
-      </div>
       <div class="watchrow" data-sym="AIXC">
         <span class="sym">AIXC</span>
-        <span class="price">$2.95</span>
+        <span class="price">$2.59</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="XOS">
         <span class="sym">XOS</span>
-        <span class="price">$4.16</span>
+        <span class="price">$4.17</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="SGLY">
         <span class="sym">SGLY</span>
-        <span class="price">$5.86</span>
+        <span class="price">$5.89</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="SXTC">
+        <span class="sym">SXTC</span>
+        <span class="price">$4.97</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="IPST">
+        <span class="sym">IPST</span>
+        <span class="price">$9.60</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="TJGC">
         <span class="sym">TJGC</span>
-        <span class="price">$5.03</span>
+        <span class="price">$4.50</span>
         <span class="pill quiet">quiet</span>
       </div>
-      <div class="watchrow" data-sym="EJH">
-        <span class="sym">EJH</span>
-        <span class="price">$1.85</span>
-        <span class="pill quiet">quiet</span>
-      </div>
-      <p class="scan-note" style="margin-top:.75rem">14 matches on Early
-      Momentum Ignition, 6 on Warrior Trading Style. <b>SXTC fired</b> — see
-      the log. AIXC and SGLY both moved big but volume didn't confirm
-      (1.8-2.0x, below the 3x threshold) — real examples of the rule
-      correctly staying quiet on unconfirmed moves.</p>
+      <p class="scan-note" style="margin-top:.75rem">16 matches on Early
+      Momentum Ignition, 7 on Warrior Trading Style. SXTC (last cycle's
+      trade) is back in the scan list now that its position is closed —
+      showing quiet, +1.99% but only 1.2x volume, correctly not re-bought.
+      Nothing new fired here this round — WFF's fire came from the core
+      watch instead.</p>
     </div>
   </section>
 
@@ -317,13 +319,13 @@
        Empty when everything's quiet. -->
   <div id="actions">
     <div class="action-card">
-      <h3>SXTC — bought and stop verified, 10:30 ET</h3>
-      <p>29 shares filled at $4.9899 (marketable limit $5.08). GTC stop
-      placed at $4.89 (−2%) — and its state was checked immediately after:
-      confirmed resting, 15 seconds after the fill. This is the corrected
-      procedure after the IPST stop was silently rejected minutes earlier
-      with nobody checking. No profit target by design — exit on the
-      first close below the prior bar's low, or 15 bars with no progress.</p>
+      <h3>WFF — bought and stop verified, 10:39 ET</h3>
+      <p>58 shares filled at $2.5799 (marketable limit $2.62). GTC stop
+      placed at $2.53 (−2%), state checked immediately: confirmed resting,
+      15 seconds after the fill. Third trade in a row with a verified
+      stop since the IPST failure. No profit target by design — exit on
+      the first close below the prior bar's low, or 15 bars with no
+      progress.</p>
     </div>
   </div>
 
@@ -362,6 +364,8 @@
         <div class="log-row"><span class="t">10:23 ET</span><span>User: "ipst is risky asset so make sure to sell it on time." Checked the stop order directly — it had been REJECTED by the broker at 10:20:26 ET, seconds after being placed. No protection existed the entire time. Price had already fallen to $9.87-9.61 by the time this was caught.</span></div>
         <div class="log-row"><span class="t">10:24 ET</span><span>Sold at market, filled $9.6301. Closed <b>-$14.56, -5.33R</b> — over 5x the loss the stop was supposed to cap. Root cause of the rejection not yet diagnosed. New standing rule added to CLAUDE.md: verify a protective order's state after placing it, every time — a submitted order is not a confirmed one.</span></div>
         <div class="log-row"><span class="t">10:30 ET</span><span>Scheduled 5-min rescan. <b>SXTC fired</b> — fresh volume-confirmed breakout (5.8x volume, +3.79% bar). Bought 29 sh at $4.9899. Applied the new rule immediately: placed GTC stop at $4.89, then checked its state — confirmed resting, 15s after the fill. This is what should have happened on IPST.</span></div>
+        <div class="log-row"><span class="t">10:33 ET</span><span>SXTC's stop fired on its own — closed <b>−1.00R exactly</b> ($4.9899 → $4.89), no slippage. This is what a working, verified stop looks like: the loss was capped at precisely what it was designed for.</span></div>
+        <div class="log-row"><span class="t">10:39 ET</span><span>Scheduled 5-min rescan. <b>WFF fired</b> (core watch) — 4.0x volume confirming a +2.82% bar. Bought 58 sh at $2.5799. GTC stop placed at $2.53, state verified immediately — confirmed resting, 15s after the fill. Third straight trade with a verified stop.</span></div>
       </div>
     </div>
   </details>

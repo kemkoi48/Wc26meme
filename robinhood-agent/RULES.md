@@ -6,6 +6,22 @@ If those files ever disagree with this page, this page is what we do.
 
 ---
 
+## Rule 0 — real data or nothing
+
+**No guessing. Not about a price, not about a threshold, not about what a
+stock "usually" does.** Every number we act on gets pulled from a real
+source first. If we don't have it, we say we don't have it and go get it.
+
+This is the foundation, not a nicety — it is the one rule that, when
+broken, silently corrupts every other rule on this page. A stop computed
+from a guessed entry is not a stop.
+
+> Why: an early version of our own option test used invented-but-plausible
+> historical numbers and flipped the verdict from "reject this trade" to
+> "buy it." The numbers looked completely reasonable. They were made up.
+
+---
+
 ## First, what a stop is
 
 A stop is a standing order: **"if the price falls to X, sell me out

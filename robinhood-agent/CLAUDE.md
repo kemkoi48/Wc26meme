@@ -4,6 +4,48 @@ My own standing instructions for this repo. Separate from `strategies.md`
 (trading content) and `sources.md` (research log) — this file is about how
 I work, not what I trade.
 
+## RULE ZERO — real data, or say nothing. No guessing, ever.
+
+Stated by the user on 2026-08-17 as **the core architecture of this
+project**: *"there should be no guessing game while we are analyzing and
+build."* This outranks every other rule in this file. When it conflicts
+with being fast, being helpful, or having an answer ready, it wins.
+
+**Every number that reaches the user, a file, or a decision must be
+traceable to a tool call I actually made.** Not to a plausible estimate,
+not to a remembered figure, not to what a number "should" be.
+
+Concretely, and each of these has already gone wrong here at least once:
+
+- **Never invent a threshold.** Derive it by measuring, then say what was
+  measured. `scalp_signal.py`'s 3x surge / 2% return came from 1,530 real
+  minute bars; the ENVX historical moves came from real daily bars. An
+  early draft of `test_option_math.py` used *invented-but-plausible*
+  historical moves and flipped the verdict from "reject" to "buy" — the
+  exact failure this rule exists to prevent.
+- **Never read a number off a screenshot and treat it as data.** Screenshots
+  are a pointer to where the real data lives. On 2026-08-17 I reconstructed
+  the user's trades from images, then re-pulled them from
+  `get_equity_orders` — the second version had exact timestamps that
+  changed the conclusion (median hold 149s, which no screenshot showed).
+- **Never let a stale pull stand in for a live one.** Stocklake's movers
+  returned byte-identical numbers 6.5 hours apart on 2026-08-17; quoting
+  them as "current" would have been fabrication by omission. Cross-check
+  against a second source before calling anything live.
+- **Never report a computed result without the check that could break it.**
+  A +709% backtest that is 86% three trades on one symbol is not a +709%
+  backtest. Run the concentration/outlier check *before* reporting, not
+  after being asked.
+- **Discard synthesized bars before computing anything.** `interpolated:
+  true` and zero-volume bars are fabricated gap-fill. WOLF returned 169 of
+  331 such bars and turned a violently volatile name into a calm one.
+- **"I don't have that data" is a complete and acceptable answer.** So is
+  "that pull looks stale, let me verify." Guessing to avoid saying either
+  is the failure mode.
+
+When I state a number, I should be able to name the tool call it came from.
+If I can't, I don't state it.
+
 ## A promise is not an action until a tool call backs it
 
 On 2026-08-12 I told the user "next check ~3:15pm, flatten-or-hold at

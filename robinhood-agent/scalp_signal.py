@@ -78,6 +78,19 @@ So: treat the DIRECTION of these rules as evidence-backed and the EXPECTED
 RETURN as unknown. Every signal this module emits carries `confidence`
 saying which parts rest on measurement and which on a single day.
 
+ADDED 2026-08-18, NOT from the backtest above -- a profit-lock trail
+--------------------------------------------------------------------
+The user asked for a rule to bank gains rather than only exit at a loss:
+"happy at 5% profit but if the momentum is there sell it at high." This is
+NOT the fixed-target mistake the analysis above warns against -- it does
+not cap the trade at 5%. It arms a trailing exit once the trade has PEAKED
+at 5%+, then rides that peak up; it only exits once price pulls back a
+further 2% from wherever the peak actually was. A trade that runs to +20%
+and gives back 2% from its OWN high exits near the high, not back at
+breakeven. Both the 5% arm level and the 2% trail distance are the user's
+stated comfort level and the existing stop's distance, respectively --
+neither is independently backtested. See decide_exit's docstring.
+
 Everything here is a pure function over numbers -- no network, no SDK --
 so it is unit-testable standalone (`python3 test_scalp_signal.py`), the same
 posture as option_math.py and regime.py.
@@ -117,6 +130,18 @@ DEFAULT_STOP_PCT = -2.0
 # deliberately NOT tight -- cutting at 2-3 bars truncated the winners that
 # carry the strategy.
 MAX_HOLD_BARS = 15
+
+# Once the PEAK price since entry reaches this much unrealized gain,
+# profit-lock arms. This is NOT a fixed target -- the trade is not sold at
+# 5%, it keeps running. From the moment it arms, a pullback of
+# PROFIT_TRAIL_PCT from that peak triggers an exit. NOT independently
+# backtested: the 5% threshold is the user's own stated comfort level
+# (2026-08-18, "happy at 5% profit but if the momentum is there sell it at
+# high"), and the 2% trail distance reuses the hard stop's distance as a
+# starting point rather than a separately measured number. Revisit once
+# this has fired enough times on real trades to look at outcomes.
+PROFIT_TRIGGER_PCT = 5.0
+PROFIT_TRAIL_PCT = 2.0
 
 
 def _f(value: Any) -> Optional[float]:
@@ -286,19 +311,30 @@ def decide_exit(
     bars_since_entry: Sequence[Bar],
     stop_pct: float = DEFAULT_STOP_PCT,
     max_hold: int = MAX_HOLD_BARS,
+    profit_trigger_pct: float = PROFIT_TRIGGER_PCT,
+    profit_trail_pct: float = PROFIT_TRAIL_PCT,
 ) -> ExitDecision:
-    """Exit logic, checked in priority order. Deliberately has NO profit
+    """Exit logic, checked in priority order. Still has NO fixed profit
     target: on the 2026-08-17 sample every fixed target truncated the small
     number of large winners that produced all of the profit, and the same is
-    true of the user's own +23.9% trade under this repo's Rule 4.
+    true of the user's own +23.9% trade under this repo's Rule 4. What it
+    has instead is a profit-lock TRAIL -- it arms once the trade has been up
+    profit_trigger_pct, and from then on rides the peak rather than the
+    entry, so a still-running trade keeps running and only exits once it
+    actually turns down.
 
     Priority:
       1. Hard stop -- the loss is capped and nothing else matters.
-      2. Trail -- close below the PREVIOUS bar's low means the up-move has
-         structurally broken. This is what lets a winner run: it does not
-         fire on an ordinary pullback, only on a lower close through prior
-         support.
-      3. Time -- the thesis was "this moves now"; after max_hold bars it
+      2. Profit lock -- once the PEAK since entry has reached
+         profit_trigger_pct, a pullback of profit_trail_pct from that peak
+         exits. Armed once, stays armed (the peak only moves up), so a
+         trade that ran to +20% and gave back 2% from ITS high exits near
+         the high, not back at breakeven.
+      3. Trail -- close below the PREVIOUS bar's low means the up-move has
+         structurally broken. Still checked even before profit-lock arms,
+         so an early failed breakout still exits on structure, not just on
+         a raw stop.
+      4. Time -- the thesis was "this moves now"; after max_hold bars it
          did not, so the premise is stale.
     """
     e = _f(entry_price)
@@ -315,6 +351,19 @@ def decide_exit(
         return ExitDecision(
             True, f"hard stop hit: low {cur.l:.4f} <= stop {stop:.4f}", "stop"
         )
+
+    peak = max(b.h for b in bars_since_entry)
+    peak_gain = (peak - e) / e * 100.0
+    if peak_gain >= profit_trigger_pct:
+        drawdown = (peak - cur.c) / peak * 100.0
+        if drawdown >= profit_trail_pct:
+            pnl = (cur.c - e) / e * 100.0
+            return ExitDecision(
+                True,
+                f"profit lock: peak +{peak_gain:.2f}% (${peak:.4f}), pulled "
+                f"back {drawdown:.2f}% to {cur.c:.4f} ({pnl:+.2f}%)",
+                "profit",
+            )
 
     if n >= 2:
         prev = bars_since_entry[-2]
@@ -336,4 +385,7 @@ def decide_exit(
         )
 
     pnl = (cur.c - e) / e * 100.0
-    return ExitDecision(False, f"holding, bar {n}/{max_hold}, {pnl:+.2f}%")
+    return ExitDecision(
+        False,
+        f"holding, bar {n}/{max_hold}, {pnl:+.2f}% (peak +{peak_gain:.2f}%)",
+    )

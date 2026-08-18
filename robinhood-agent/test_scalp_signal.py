@@ -124,7 +124,7 @@ check("IPST 10:31 (the -5.6% loser's bar) does NOT fire", not sig2.fired, sig2.r
 print(f"       {sig2.reason}")
 
 print()
-print("decide_exit -- no profit target, by design")
+print("decide_exit -- no FIXED profit target, but a profit-lock trail")
 entry = 10.0
 check("no bars yet -> hold", not decide_exit(entry, []).exit_now)
 
@@ -134,17 +134,19 @@ check("hard stop fires on the low", d.exit_now and d.kind == "stop", d.reason)
 d = decide_exit(entry, [Bar(o=10, h=10.3, l=9.95, c=10.25, v=100)])
 check("first bar up -> hold", not d.exit_now, d.reason)
 
-# close below PRIOR bar's low -> structure broken
+# close below PRIOR bar's low -> structure broken. Kept under the +5%
+# profit-lock trigger so this isolates the trail rule specifically.
 d = decide_exit(entry, [
-    Bar(o=10, h=10.5, l=10.0, c=10.4, v=100),
-    Bar(o=10.4, h=10.45, l=9.9, c=9.95, v=100),
+    Bar(o=10, h=10.3, l=10.0, c=10.2, v=100),
+    Bar(o=10.2, h=10.25, l=9.9, c=9.95, v=100),
 ])
 check("trail fires on close < prior low", d.exit_now and d.kind == "trail", d.reason)
 
-# an ordinary pullback that holds above prior low must NOT exit
+# an ordinary pullback that holds above prior low, and stays under the
+# profit-lock trigger, must NOT exit
 d = decide_exit(entry, [
-    Bar(o=10, h=10.5, l=10.0, c=10.4, v=100),
-    Bar(o=10.4, h=10.5, l=10.05, c=10.1, v=100),
+    Bar(o=10, h=10.3, l=10.0, c=10.2, v=100),
+    Bar(o=10.2, h=10.3, l=10.05, c=10.15, v=100),
 ])
 check("ordinary pullback does NOT exit (this is what lets winners run)",
       not d.exit_now, d.reason)
@@ -161,6 +163,54 @@ check("time stop fires at max_hold", d.exit_now and d.kind == "time", d.reason)
 
 check("stop takes priority over time",
       decide_exit(entry, [Bar(o=10, h=10.1, l=9.7, c=9.75, v=100)] * 15).kind == "stop")
+
+print()
+print("decide_exit -- profit-lock trail (2026-08-18, user-requested)")
+
+# peak never reaches +5% -> profit lock does not arm, even on a pullback
+d = decide_exit(entry, [
+    Bar(o=10, h=10.3, l=10.2, c=10.25, v=100),   # peak +3%
+    Bar(o=10.25, h=10.28, l=10.05, c=10.1, v=100),  # pulls back, but never armed
+])
+check("pullback below +5% peak does NOT trigger profit lock",
+      not d.exit_now or d.kind != "profit", d.reason)
+
+# peak reaches +5%, then pulls back 2%+ from that peak -> profit lock fires
+d = decide_exit(entry, [
+    Bar(o=10, h=10.6, l=10.4, c=10.55, v=100),   # peak +6%, arms
+    Bar(o=10.55, h=10.58, l=10.2, c=10.35, v=100),  # closes ~2.4% off the $10.6 peak
+])
+check("profit lock fires on pullback from an armed peak",
+      d.exit_now and d.kind == "profit", d.reason)
+check("  ...and the reason cites the real peak, not the entry",
+      "peak +6.00%" in d.reason, d.reason)
+
+# armed, but pullback stays under the trail distance -> keep holding
+d = decide_exit(entry, [
+    Bar(o=10, h=10.6, l=10.4, c=10.55, v=100),   # peak +6%, arms
+    Bar(o=10.55, h=10.57, l=10.45, c=10.5, v=100),  # only ~0.9% off the peak
+])
+check("small pullback under the trail distance does NOT exit",
+      not d.exit_now, d.reason)
+
+# THE POINT: a trade that keeps making new highs keeps running past +5%,
+# same as before -- profit-lock chases the peak, it does not cap it.
+still_running = [
+    Bar(o=10, h=10.6, l=10.4, c=10.55, v=100),    # peak +6%, arms
+    Bar(o=10.55, h=11.5, l=10.5, c=11.4, v=100),  # new high, +15%
+    Bar(o=11.4, h=12.5, l=11.3, c=12.4, v=100),   # new high again, +25%
+]
+d = decide_exit(entry, still_running)
+check("still making new highs past +5% -> keeps running, no cap",
+      not d.exit_now, d.reason)
+
+# hard stop still wins even if the trade was once up past the profit trigger
+d = decide_exit(entry, [
+    Bar(o=10, h=10.6, l=10.4, c=10.55, v=100),   # peak +6%, arms
+    Bar(o=10.55, h=10.55, l=9.7, c=9.75, v=100), # crashes through the -2% stop
+])
+check("hard stop takes priority even after profit-lock armed",
+      d.exit_now and d.kind == "stop", d.reason)
 
 print()
 print("OUT-OF-SAMPLE -- real WETO bars, 2026-08-17, NOT one of the 5 symbols")

@@ -87,6 +87,19 @@ stop level) and was correctly skipped rather than chased — but a faster
 buying-power check would have caught this before the signal went stale,
 not after.
 
+## Profit-lock trail added to `decide_exit` — 2026-08-18
+
+User: "we are happy at 5% profit but if the momentum is there sell it at
+high." `scalp_signal.decide_exit` now arms a trailing exit once a trade
+has PEAKED at +5% or more, then exits on a 2%+ pullback from that peak —
+not a fixed target, still lets a running trade keep running. See the
+module docstring's "ADDED 2026-08-18" section and `PROFIT_TRIGGER_PCT` /
+`PROFIT_TRAIL_PCT` for the numbers, which are the user's stated comfort
+level and the stop's distance, not independently backtested. Tests added
+in `test_scalp_signal.py`; two pre-existing tests were adjusted because
+their bar values happened to cross the new +5% trigger, changing which
+rule fired first — not a regression, the new rule firing there is correct.
+
 ## RULE ZERO — real data, or say nothing. No guessing, ever.
 
 Stated by the user on 2026-08-17 as **the core architecture of this

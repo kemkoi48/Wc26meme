@@ -96,9 +96,10 @@ def main() -> None:
             fired += 1
             print(f"  *** {sym} ***  {sig.reason}")
             print(f"      entry ~${sig.entry_hint:.4f}   stop ${sig.stop_price:.4f} "
-                  f"({args.stop_pct:+.1f}%)   no profit target -- trail out")
+                  f"({args.stop_pct:+.1f}%)   no FIXED profit target")
             print(f"      exit when: a close below the PRIOR bar's low, "
-                  f"or {MAX_HOLD_BARS} bars with no progress")
+                  f"{MAX_HOLD_BARS} bars with no progress, or (once the trade "
+                  f"has been up 5%+) a 2%+ pullback from its peak")
             print(f"      {sig.confidence}\n")
         elif args.show_all:
             print(f"      {sym:<8} no: {sig.reason}")

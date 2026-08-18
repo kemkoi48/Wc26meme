@@ -208,10 +208,10 @@
   </header>
 
   <!-- THE ANSWER. This is the only thing that has to be read at a glance. -->
-  <div class="hero quiet" id="hero">
+  <div class="hero fired" id="hero">
     <div class="hero-label">Right now</div>
-    <div class="hero-main">No signals — nothing to do</div>
-    <p class="hero-sub">SGLY's 8:40 fire is stale and un-fired — it fell to $6.25 by 9:31 ET, well past where the stop would've hit. WETO (−10% this bar) and SGLY are both unwinding their spikes; nothing confirming a fresh move right now. Scanner is now live-trade authorized in the Agentic account (432805174) — the next real fire gets bought automatically, not just posted here.</p>
+    <div class="hero-main">IPST fired and bought — order placed, awaiting fill</div>
+    <p class="hero-sub">10:16 ET: IPST re-confirmed on a fresh bar (+5.65%, 10.3x volume) after its earlier 8:40 fire had already gone stale — this is a new, independent signal. Bought 13 sh, limit $10.85 (marketable against a real $10.76 ask, 1,600-share depth). Order is broker-confirmed but hasn't reported filled yet. Stop goes in within 60 seconds of the fill. WFF also fired this scan but was skipped — its signal had already died (price down 12% from the fire level, past where its stop would sit) before the trade could go in.</p>
   </div>
 
   <div class="legend">
@@ -223,9 +223,9 @@
     <span class="dot open"></span>
     <span>Entry window open (RULES.md) · live-trade authorized</span>
     <span class="sep">·</span>
-    <span>Refreshed <span id="asof">09:30 ET, 18 Aug</span></span>
+    <span>Refreshed <span id="asof">10:16 ET, 18 Aug</span></span>
     <span class="sep">·</span>
-    <span>Watching — no further scheduled refresh set</span>
+    <span>Watching for the IPST fill</span>
   </div>
 
   <section>
@@ -233,7 +233,7 @@
     <div id="watchlist">
       <div class="watchrow" data-sym="WETO">
         <span class="sym">WETO</span>
-        <span class="price">$38.75</span>
+        <span class="price">$41.15</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="WFF">
@@ -243,19 +243,19 @@
       </div>
       <div class="watchrow" data-sym="OSRH">
         <span class="sym">OSRH</span>
-        <span class="price">$0.644</span>
+        <span class="price">$0.683</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="IPST">
         <span class="sym">IPST</span>
-        <span class="price">$7.26</span>
-        <span class="pill quiet">quiet</span>
+        <span class="price">$10.75</span>
+        <span class="pill fired">bought</span>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>Today's market scan<span class="when" id="scan-time">09:30 ET, 18 Aug — 2 scanners</span></h2>
+    <h2>Today's market scan<span class="when" id="scan-time">10:16 ET, 18 Aug — 2 scanners</span></h2>
     <p class="scan-note">Rescanned every refresh using two of your own
     Robinhood account's saved scanners — "Early Momentum Ignition" (price
     $2-20, float under 20M, 1h relative volume over 3x) plus "Warrior
@@ -274,55 +274,73 @@
     <div id="scan-results">
       <div class="watchrow" data-sym="XOS">
         <span class="sym">XOS</span>
-        <span class="price">$4.51</span>
-        <span class="pill quiet">quiet</span>
-      </div>
-      <div class="watchrow" data-sym="SGLY">
-        <span class="sym">SGLY</span>
-        <span class="price">$6.28</span>
-        <span class="pill quiet">quiet</span>
-      </div>
-      <div class="watchrow" data-sym="CDTG">
-        <span class="sym">CDTG</span>
-        <span class="price">$2.90</span>
-        <span class="pill quiet">quiet</span>
-      </div>
-      <div class="watchrow" data-sym="JFU">
-        <span class="sym">JFU</span>
-        <span class="price">$2.40</span>
-        <span class="pill quiet">quiet</span>
-      </div>
-      <div class="watchrow" data-sym="HCWB">
-        <span class="sym">HCWB</span>
-        <span class="price">$2.52</span>
-        <span class="pill quiet">quiet</span>
-      </div>
-      <div class="watchrow" data-sym="GNPX">
-        <span class="sym">GNPX</span>
-        <span class="price">$4.09</span>
+        <span class="price">$4.21</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="EJH">
         <span class="sym">EJH</span>
-        <span class="price">$1.87</span>
+        <span class="price">$2.30</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="SGLY">
+        <span class="sym">SGLY</span>
+        <span class="price">$5.73</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="HAO">
+        <span class="sym">HAO</span>
+        <span class="price">$4.45</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="CDTG">
+        <span class="sym">CDTG</span>
+        <span class="price">$2.95</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="JFU">
+        <span class="sym">JFU</span>
+        <span class="price">$2.26</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="HCWB">
+        <span class="sym">HCWB</span>
+        <span class="price">$2.41</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="GNPX">
+        <span class="sym">GNPX</span>
+        <span class="price">$4.24</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="TRUG">
         <span class="sym">TRUG</span>
-        <span class="price">$1.68</span>
+        <span class="price">$1.24</span>
         <span class="pill quiet">quiet</span>
       </div>
-      <p class="scan-note" style="margin-top:.75rem">9 matches on Early Momentum
-      Ignition (shrunk from 92 at 8:40 — most names cooled off the float/relvol
-      filter), 4 on Warrior Trading Style. SGLY's 8:40 fire is confirmed stale
-      here — down to $6.28, well past its $7.29 stop. Everything quiet, no
-      fresh confirmations.</p>
+      <p class="scan-note" style="margin-top:.75rem">11 matches on Early Momentum
+      Ignition, 4 on Warrior Trading Style. None of these scan candidates
+      fired this round — the real fire came from the core watch (IPST) instead,
+      proof the two sections genuinely feed the same detector rather than
+      being decorative.</p>
     </div>
   </section>
 
   <!-- Action cards go here, one per fired symbol from EITHER section above.
        Empty when everything's quiet. -->
-  <div id="actions"></div>
+  <div id="actions">
+    <div class="action-card">
+      <h3>IPST — bought 10:16 ET</h3>
+      <p>13 shares, limit $10.85 (marketable against a real $10.76 ask,
+      1,600-share depth — not thin). Order is broker-confirmed; fill
+      confirmation was still pending as of this refresh. Stop goes in at
+      ~2% below the actual fill price within 60 seconds of that fill.
+      No profit target by design — exit on the first close below the
+      prior bar's low, or after 15 bars with no progress. This signal
+      re-fired independently at 10:16 after the original 8:40 fire on a
+      different symbol (SGLY) had already gone stale — confirms fires
+      must be checked fresh, not chased off an old dashboard read.</p>
+    </div>
+  </div>
 
   <details>
     <summary>What each one did yesterday (read once, not every check)</summary>
@@ -354,6 +372,7 @@
         <div class="log-row"><span class="t">07:00 ET</span><span>First real premarket refresh. Both scanners ran live: 94 matches (Early Momentum Ignition) + 9 (Warrior Trading Style), overlapping on XOS/WFF/IPST. Checked top movers by real % change (XOS, SGLY, CDTG, AUUD, TRUG) plus all four core symbols against real minute bars — everything quiet, no fires. WETO trading at $36, matching what you flagged before you traded it. Three scan candidates (ASYS, GLBS, GNPX) skipped — too few premarket bars this early to check honestly rather than guess.</span></div>
         <div class="log-row"><span class="t">08:40 ET</span><span><b>SGLY fired</b> from the market scan (92 + 9 matches this run) — 48.7x volume confirming a +2.34% bar, entry ~$7.44, stop $7.29. All four core symbols and the rest of the scan (XOS, TRUG, DFSC, AUUD, ASYS, STFS) stayed quiet. WETO up to $46.60 premarket but no confirmed signal on it right now. GLBS/QNTM skipped — too few bars. User notified.</span></div>
         <div class="log-row"><span class="t">09:30 ET</span><span>User-requested rescan, and confirmed live-trade authorization: fires now get bought for real in the Agentic account (432805174), $150 max per Rule 2, GTC stop within 60s per Rule 3, no fixed target. This scan: SGLY's 8:40 fire confirmed stale (down to $6.28, past its $7.29 stop — correctly never bought). Everything else quiet too: WETO −10% this bar, unwinding its spike. No trade placed.</span></div>
+        <div class="log-row"><span class="t">10:16 ET</span><span>User-requested 10:00 rescan. Two real fires: IPST (fresh, +5.65% on 10.3x volume) and WFF (already stale by the time it was checked — skipped, correctly). Re-verified IPST wasn't halted (get_equity_tradability: active/tradeable) and checked real order-book depth before buying — bought 13 sh at $10.85 limit. Order broker-confirmed; fill still pending at time of this refresh.</span></div>
       </div>
     </div>
   </details>

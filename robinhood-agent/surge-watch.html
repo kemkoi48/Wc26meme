@@ -208,10 +208,10 @@
   </header>
 
   <!-- THE ANSWER. This is the only thing that has to be read at a glance. -->
-  <div class="hero fired" id="hero">
-    <div class="hero-label">Right now</div>
-    <div class="hero-main">IPST fired and bought — order placed, awaiting fill</div>
-    <p class="hero-sub">10:16 ET: IPST re-confirmed on a fresh bar (+5.65%, 10.3x volume) after its earlier 8:40 fire had already gone stale — this is a new, independent signal. Bought 13 sh, limit $10.85 (marketable against a real $10.76 ask, 1,600-share depth). Order is broker-confirmed but hasn't reported filled yet. Stop goes in within 60 seconds of the fill. WFF also fired this scan but was skipped — its signal had already died (price down 12% from the fire level, past where its stop would sit) before the trade could go in.</p>
+  <div class="hero" id="hero" style="border-color: var(--stop); background: var(--stop-dim);">
+    <div class="hero-label" style="color: var(--stop); font-weight: 700;">Closed at a loss — real mistake, logged honestly</div>
+    <div class="hero-main" style="color: var(--stop);">IPST: bought $10.75, stop rejected, sold $9.63 (−$14.56, −5.33R)</div>
+    <p class="hero-sub">The GTC stop placed at 10:20 ET was silently <b>rejected</b> by the broker — no resting protection existed after that point, and nothing caught it until the user asked at 10:23 ET to make sure this risky position got sold on time. By then price had already fallen past where the −2% stop would have triggered. Sold at market for a loss more than 5x what the stop was supposed to cap. New standing rule written into CLAUDE.md: after placing any protective order, re-check its state before treating the position as protected — a submitted order is not a confirmed one.</p>
   </div>
 
   <div class="legend">
@@ -223,9 +223,9 @@
     <span class="dot open"></span>
     <span>Entry window open (RULES.md) · live-trade authorized</span>
     <span class="sep">·</span>
-    <span>Refreshed <span id="asof">10:16 ET, 18 Aug</span></span>
+    <span>Refreshed <span id="asof">10:24 ET, 18 Aug</span></span>
     <span class="sep">·</span>
-    <span>Watching for the IPST fill</span>
+    <span>No open position — watching for the next fire</span>
   </div>
 
   <section>
@@ -248,8 +248,8 @@
       </div>
       <div class="watchrow" data-sym="IPST">
         <span class="sym">IPST</span>
-        <span class="price">$10.75</span>
-        <span class="pill fired">bought</span>
+        <span class="price">$9.63</span>
+        <span class="pill" style="color: var(--stop); background: var(--stop-dim); font-weight: 700;">closed −5.33R</span>
       </div>
     </div>
   </section>
@@ -327,18 +327,7 @@
 
   <!-- Action cards go here, one per fired symbol from EITHER section above.
        Empty when everything's quiet. -->
-  <div id="actions">
-    <div class="action-card">
-      <h3>IPST — bought and stopped, 10:18 ET</h3>
-      <p>13 shares filled at $10.75 (marketable limit $10.85 against a real
-      $10.76 ask, 1,600-share depth). GTC stop placed at $10.54 (−2%).
-      Honest miss: stop landed 105 seconds after the fill, not the 60s
-      target in Rule 3 — the fill took several status checks to confirm
-      before the stop could go in. No profit target by design — exit is
-      the first close below the prior bar's low, or 15 bars with no
-      progress. First live trade this scanner has ever placed.</p>
-    </div>
-  </div>
+  <div id="actions"></div>
 
   <details>
     <summary>What each one did yesterday (read once, not every check)</summary>
@@ -372,6 +361,8 @@
         <div class="log-row"><span class="t">09:30 ET</span><span>User-requested rescan, and confirmed live-trade authorization: fires now get bought for real in the Agentic account (432805174), $150 max per Rule 2, GTC stop within 60s per Rule 3, no fixed target. This scan: SGLY's 8:40 fire confirmed stale (down to $6.28, past its $7.29 stop — correctly never bought). Everything else quiet too: WETO −10% this bar, unwinding its spike. No trade placed.</span></div>
         <div class="log-row"><span class="t">10:16 ET</span><span>User-requested 10:00 rescan. Two real fires: IPST (fresh, +5.65% on 10.3x volume) and WFF (already stale by the time it was checked — skipped, correctly). Re-verified IPST wasn't halted (get_equity_tradability: active/tradeable) and checked real order-book depth before buying — bought 13 sh at $10.85 limit. Order broker-confirmed; fill still pending at time of this refresh.</span></div>
         <div class="log-row"><span class="t">10:18 ET</span><span>Fill confirmed: 13 sh IPST at $10.75. GTC stop placed at $10.54 — but 105 seconds after the fill, not the 60s Rule 3 target. Logged honestly in trades.csv (row 9, SCALP strategy). First live trade this scanner has placed.</span></div>
+        <div class="log-row"><span class="t">10:23 ET</span><span>User: "ipst is risky asset so make sure to sell it on time." Checked the stop order directly — it had been REJECTED by the broker at 10:20:26 ET, seconds after being placed. No protection existed the entire time. Price had already fallen to $9.87-9.61 by the time this was caught.</span></div>
+        <div class="log-row"><span class="t">10:24 ET</span><span>Sold at market, filled $9.6301. Closed <b>-$14.56, -5.33R</b> — over 5x the loss the stop was supposed to cap. Root cause of the rejection not yet diagnosed. New standing rule added to CLAUDE.md: verify a protective order's state after placing it, every time — a submitted order is not a confirmed one.</span></div>
       </div>
     </div>
   </details>

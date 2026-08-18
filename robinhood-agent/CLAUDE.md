@@ -44,6 +44,29 @@ and consider whether a marketable limit that's virtually certain to fill
 provisionally rather than polling to confirm first — worth testing, not
 yet decided.
 
+## RULE — a placed stop is not a real stop until its state is verified
+
+**The failure that made the above lesson worse, same trade, same day.**
+The GTC stop for the IPST trade was placed at 14:20:26 ET (`stop_price:
+10.54`) and I moved on, treating "order submitted" as "position
+protected" — exactly the gap Rule Zero exists to prevent, and I made it
+anyway. The stop was actually **rejected** by the broker seconds after
+submission (`state: rejected`, no resting order, no protection at all).
+Nobody caught it — not me, not a scheduled refresh — until the user
+asked, ~3 minutes later, "make sure to sell it on time." By then the
+price had already fallen from $10.75 to $9.61-9.87, past where the -2%
+stop would have triggered. Sold at market for -$14.56 (-5.33R) instead
+of the ~$2.73 (-1R) the stop was supposed to cap it at. Root cause of
+the rejection itself is still undiagnosed — flagged in trades.csv row 9,
+needs checking before the next live scalp trade.
+
+**Standing rule now: after placing ANY protective order (stop, GTC
+sell), re-check its state within the same turn before considering the
+position protected.** `place_equity_order` returning a response is not
+confirmation the order is live — `confirmed` can still flip to
+`rejected` moments later, silently, with no separate notification. A
+stop that isn't verified resting is not a stop; it's a belief.
+
 ## RULE ZERO — real data, or say nothing. No guessing, ever.
 
 Stated by the user on 2026-08-17 as **the core architecture of this

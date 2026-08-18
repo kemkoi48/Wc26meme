@@ -208,10 +208,10 @@
   </header>
 
   <!-- THE ANSWER. This is the only thing that has to be read at a glance. -->
-  <div class="hero quiet" id="hero">
+  <div class="hero fired" id="hero">
     <div class="hero-label">Right now</div>
-    <div class="hero-main">No signals — nothing to do</div>
-    <p class="hero-sub">All four core symbols and every scanned candidate are quiet — real volume without the price confirmation the rule requires. Wait, or check back after the 8:40 ET refresh.</p>
+    <div class="hero-main">SGLY fired — volume-confirmed breakout</div>
+    <p class="hero-sub">From the market scan, not the core four. Entry ~$7.44, stop $7.29 (−2%), no profit target — trail out on the first close below the prior bar's low, or after 15 bars with no progress. See the action card below.</p>
   </div>
 
   <div class="legend">
@@ -220,12 +220,12 @@
   </div>
 
   <div class="statusbar">
-    <span class="dot closed"></span>
-    <span>Premarket</span>
+    <span class="dot open"></span>
+    <span>Entry window open (RULES.md)</span>
     <span class="sep">·</span>
-    <span>Refreshed <span id="asof">07:00 ET, 18 Aug</span></span>
+    <span>Refreshed <span id="asof">08:40 ET, 18 Aug</span></span>
     <span class="sep">·</span>
-    <span>Next: ~8:40 ET, entry window opens</span>
+    <span>You check in ~9:15 ET — last automated refresh</span>
   </div>
 
   <section>
@@ -233,29 +233,29 @@
     <div id="watchlist">
       <div class="watchrow" data-sym="WETO">
         <span class="sym">WETO</span>
-        <span class="price">$36.00</span>
+        <span class="price">$46.60</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="WFF">
         <span class="sym">WFF</span>
-        <span class="price">$2.51</span>
+        <span class="price">$2.40</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="OSRH">
         <span class="sym">OSRH</span>
-        <span class="price">$0.667</span>
+        <span class="price">$0.631</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="IPST">
         <span class="sym">IPST</span>
-        <span class="price">$7.37</span>
+        <span class="price">$7.18</span>
         <span class="pill quiet">quiet</span>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>Today's market scan<span class="when" id="scan-time">07:00 ET, 18 Aug — 2 scanners</span></h2>
+    <h2>Today's market scan<span class="when" id="scan-time">08:40 ET, 18 Aug — 2 scanners</span></h2>
     <p class="scan-note">Rescanned every refresh using two of your own
     Robinhood account's saved scanners — "Early Momentum Ignition" (price
     $2-20, float under 20M, 1h relative volume over 3x) plus "Warrior
@@ -272,43 +272,63 @@
     shouldn't trust the size" below), so a new name gets the same rule,
     not a new one invented for it.</p>
     <div id="scan-results">
-      <div class="watchrow" data-sym="XOS">
-        <span class="sym">XOS</span>
-        <span class="price">$4.84</span>
-        <span class="pill quiet">quiet</span>
-      </div>
       <div class="watchrow" data-sym="SGLY">
         <span class="sym">SGLY</span>
-        <span class="price">$6.70</span>
-        <span class="pill quiet">quiet</span>
+        <span class="price">$7.44</span>
+        <span class="pill fired">fired</span>
       </div>
-      <div class="watchrow" data-sym="CDTG">
-        <span class="sym">CDTG</span>
-        <span class="price">$2.95</span>
-        <span class="pill quiet">quiet</span>
-      </div>
-      <div class="watchrow" data-sym="AUUD">
-        <span class="sym">AUUD</span>
-        <span class="price">$1.02</span>
+      <div class="watchrow" data-sym="XOS">
+        <span class="sym">XOS</span>
+        <span class="price">$4.62</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="TRUG">
         <span class="sym">TRUG</span>
-        <span class="price">$1.60</span>
+        <span class="price">$1.78</span>
         <span class="pill quiet">quiet</span>
       </div>
-      <p class="scan-note" style="margin-top:.75rem">94 matches on Early Momentum
-      Ignition, 9 on Warrior Trading Style (94/9, several overlapping — XOS, WFF,
-      IPST in both). Checked the top movers by real % change against minute
-      bars: all quiet — volume without the confirming price move. Three names
-      (ASYS, GLBS, GNPX) had too few premarket bars yet to check honestly and
-      were skipped rather than guessed at.</p>
+      <div class="watchrow" data-sym="DFSC">
+        <span class="sym">DFSC</span>
+        <span class="price">$2.29</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="AUUD">
+        <span class="sym">AUUD</span>
+        <span class="price">$1.03</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="ASYS">
+        <span class="sym">ASYS</span>
+        <span class="price">$17.57</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="STFS">
+        <span class="sym">STFS</span>
+        <span class="price">$4.37</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <p class="scan-note" style="margin-top:.75rem">92 matches on Early Momentum
+      Ignition, 9 on Warrior Trading Style, overlapping on WFF/IPST/XOS/DFSC.
+      Checked the top movers by real % change against minute bars.
+      <b>SGLY fired</b> — see the action card. Two names (GLBS, QNTM) had too
+      few bars yet to check honestly and were skipped rather than guessed at.</p>
     </div>
   </section>
 
   <!-- Action cards go here, one per fired symbol from EITHER section above.
        Empty when everything's quiet. -->
-  <div id="actions"></div>
+  <div id="actions">
+    <div class="action-card">
+      <h3>SGLY — fired 08:40 ET</h3>
+      <p>Volume-confirmed breakout: 48.7x the 20-bar median volume on a bar
+      that closed +2.34%. Entry near $7.44, hard stop $7.29 (−2%, GTC).
+      No profit target by design — exit on the first close below the prior
+      bar's low, or after 15 bars with no progress. This is a fresh market-scan
+      candidate, not one of your four core symbols — never traded before,
+      the entry rule is general-purpose but not individually backtested on
+      this name (see the honesty box below).</p>
+    </div>
+  </div>
 
   <details>
     <summary>What each one did yesterday (read once, not every check)</summary>
@@ -338,6 +358,7 @@
         <div class="log-row"><span class="t">03:10 ET</span><span>Switched the market scan's source from a third-party screener to your own Robinhood account's saved scanner ("Early Momentum Ignition"). Ran it live: 98 matches, and it independently found IPST and WFF — your own traded symbols — plus verified the top mover (XOS, premarket) against real 5-minute bars. Same broker feed the orders execute against, no second vendor to go stale.</span></div>
         <div class="log-row"><span class="t">03:45 ET</span><span>Checked all your other saved scans and account state while you sleep. Account safety: Agentic account is flat (no positions, no open orders) and your real trading account (5SH47822) has no live resting orders overnight — the only two non-terminal-looking orders on record were both rejected, never live. One dead position noted: ACETQZZ, 200 shares, an inactive/delisted ticker that can't be quoted or traded — informational only, nothing to do about it. Added "Warrior Trading Style" (float &lt;50M, volume 10M+) as a second scan net alongside Early Momentum Ignition — found AUUD and IVF as fresh candidates the first scan didn't surface. Also independently reconfirmed WETO as a real premarket mover (+40%) via a third saved scan ("Daily gainers"), and found two more saved scans (options IV/volume, RSI/ADX trend) that are real and working but belong to different strategies (S7 options, S1 trend-follow) — logged in sources.md, not mixed into this dashboard.</span></div>
         <div class="log-row"><span class="t">07:00 ET</span><span>First real premarket refresh. Both scanners ran live: 94 matches (Early Momentum Ignition) + 9 (Warrior Trading Style), overlapping on XOS/WFF/IPST. Checked top movers by real % change (XOS, SGLY, CDTG, AUUD, TRUG) plus all four core symbols against real minute bars — everything quiet, no fires. WETO trading at $36, matching what you flagged before you traded it. Three scan candidates (ASYS, GLBS, GNPX) skipped — too few premarket bars this early to check honestly rather than guess.</span></div>
+        <div class="log-row"><span class="t">08:40 ET</span><span><b>SGLY fired</b> from the market scan (92 + 9 matches this run) — 48.7x volume confirming a +2.34% bar, entry ~$7.44, stop $7.29. All four core symbols and the rest of the scan (XOS, TRUG, DFSC, AUUD, ASYS, STFS) stayed quiet. WETO up to $46.60 premarket but no confirmed signal on it right now. GLBS/QNTM skipped — too few bars. User notified.</span></div>
       </div>
     </div>
   </details>

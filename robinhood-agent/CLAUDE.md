@@ -33,6 +33,17 @@ trade a signal off a timestamp older than the refresh that's about to
 place the order; re-run `detect_entry` on fresh bars immediately before
 buying, not on what the dashboard last showed.
 
+**First live trade, 2026-08-18 10:18 ET (IPST, 13 sh @ $10.75):** stop
+landed 105 seconds after the fill, missing Rule 3's 60-second target —
+several `get_equity_orders` polls were spent confirming the fill before
+the stop went in. `place_equity_order` returns `state: unconfirmed` or
+`confirmed` immediately; it does NOT mean filled. Next time: poll faster
+and tighter (don't interleave dashboard/quote work between fill checks),
+and consider whether a marketable limit that's virtually certain to fill
+(deep book, tight spread) can go straight to placing the stop order
+provisionally rather than polling to confirm first — worth testing, not
+yet decided.
+
 ## RULE ZERO — real data, or say nothing. No guessing, ever.
 
 Stated by the user on 2026-08-17 as **the core architecture of this

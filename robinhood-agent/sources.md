@@ -1184,3 +1184,39 @@ of wakeups overnight — nothing meaningful happens in the dead hours, and
 the user asked to keep this efficient.
 
 URL: https://claude.ai/code/artifact/0c00fa02-b7c2-47cd-8074-224d17f2fbcf
+
+### Robinhood's own scanners beat Stocklake's screener for this job — 2026-08-18
+
+The user's account already has saved scanners (`get_scans` / `run_scan`),
+built in Legend, not something this session created. One is called "Early
+Momentum Ignition" (scan_id `9d3566de-aca8-4b0e-8099-304a3e474d92`):
+price $2-20, day volume >300k, float <20M shares, **1-hour relative
+volume >3x**. That last filter is exactly the "surge" half of
+`scalp_signal.py`'s detection rule, computed by the broker on real
+intraday volume, not derived after the fact.
+
+Ran it live, premarket 2026-08-18: 98 matches, sorted by % change. Real
+verification, not assumed: **IPST and WFF — two of the user's own traded
+symbols — were both in the results**, IPST specifically flagged with
+1h relative volume of 3,753x. The top result, XOS (premarket +82%), was
+checked against real 5-minute bars (`get_equity_historicals`, not
+interpolated fill): $2.09 at 20:00 UTC on 8/17 to $4.69 by 21:30 UTC on
+volume climbing from ~300k to over 1M shares per 5-min bar. The move is
+real.
+
+This is a better coarse filter than Stocklake's `get_screener` for this
+specific use case: it's sourced directly from the broker (no second data
+vendor to go stale — see the 2026-08-13 Stocklake staleness note above),
+it already has float and hourly relative volume built in (Stocklake's
+screener doesn't), and it's the same feed the orders execute against.
+**Stocklake still has a job** — `get_stock_research` and
+`get_insider_activity` for catalyst/insider verification once a candidate
+is found — but it should not be the primary momentum scanner. Switched
+Surge Watch's "Today's market scan" section and both scheduled refreshes
+to run Robinhood's `run_scan` first.
+
+A second saved scan, "Warrior Trading Style - Low Float Volume Movers"
+(scan_id `32ff11e9-065f-40b0-99a0-c5971241c435`, float <50M, volume
+>500k AND >=10M, price $1-20) is a looser secondary net — not yet used,
+noted here in case Early Momentum Ignition's float cap of 20M ever proves
+too tight.

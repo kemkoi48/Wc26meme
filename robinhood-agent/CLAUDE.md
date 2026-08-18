@@ -157,6 +157,27 @@ fundamentals remain the working catalyst check for those. Always try the
 symbol before assuming Pro has it; treat `symbol_not_found` as a routine
 coverage miss, not a tool failure.
 
+## Robinhood's own saved scanners — prefer these over a third-party screener
+
+The account has real saved scanners (`get_scans` / `run_scan`, built in
+Legend, not created by this agent). Verified live 2026-08-18: "Early
+Momentum Ignition" (scan_id `9d3566de-aca8-4b0e-8099-304a3e474d92` — price
+$2-20, float <20M, 1h relative volume >3x) independently surfaced IPST and
+WFF, the user's own traded symbols, and its top mover (XOS) checked out
+against real 5-minute bars. User's own words, 2026-08-18: "robinhood has
+everything. you can refine it thats all."
+
+Use `run_scan` on this scan_id as the primary momentum coarse filter —
+it's sourced directly from the broker (same feed orders execute against,
+no second vendor that can go stale), and it already has float + hourly
+relative volume built in, which Stocklake's `get_screener` doesn't. A
+looser secondary net exists too: "Warrior Trading Style - Low Float
+Volume Movers" (scan_id `32ff11e9-065f-40b0-99a0-c5971241c435`). Stocklake
+still has a job downstream of this — `get_stock_research` and
+`get_insider_activity` for catalyst/insider verification once a candidate
+is found — just not as the scanner itself. See sources.md for the full
+test.
+
 ## Using Stocklake tools for trade screening
 
 Stocklake is available as a connector at the platform level (authentication handled

@@ -256,12 +256,17 @@
 
   <section>
     <h2>Today's market scan<span class="when" id="scan-time">not yet run — closed</span></h2>
-    <p class="scan-note">Rescanned every refresh — a small-cap screen (market
-    cap under $2B, up 10%+ today, real volume), same volume-confirmed-move
-    logic as the four above. This is how a name that isn't WETO/WFF/OSRH/IPST
-    gets caught. Not individually backtested per symbol — the detection rule
-    itself was validated as general (see "why you shouldn't trust the size"
-    below), so a new name gets the same rule, not a new one invented for it.</p>
+    <p class="scan-note">Rescanned every refresh using your own Robinhood
+    account's saved scanner ("Early Momentum Ignition" — price $2-20, float
+    under 20M shares, 1-hour relative volume over 3x), then the same
+    volume-confirmed-move logic as the four above on each result's real
+    minute bars. This is how a name that isn't WETO/WFF/OSRH/IPST gets
+    caught. Switched from a third-party screener 2026-08-18 because this
+    scanner is sourced directly from the broker (no second vendor to go
+    stale) and already found IPST and WFF live on its own. Not individually
+    backtested per symbol — the detection rule itself was validated as
+    general (see "why you shouldn't trust the size" below), so a new name
+    gets the same rule, not a new one invented for it.</p>
     <div id="scan-results">
       <p class="scan-empty">No scan has run yet. First one is at the ~7:00 ET
       refresh, once premarket volume exists to screen on.</p>
@@ -297,6 +302,7 @@
       <div class="log" id="log">
         <div class="log-row"><span class="t">01:05 ET</span><span>Page rebuilt for clarity — separated "what do I do" from the backtest explanation. Market closed, no scan runs until premarket.</span></div>
         <div class="log-row"><span class="t">01:25 ET</span><span>Added "today's market scan" — was only checking 4 fixed symbols, now rescans a small-cap momentum screen every refresh so a new mover gets caught too. Tested the screen live just now: it surfaced CAPR and GLTO, neither of which is in the core four.</span></div>
+        <div class="log-row"><span class="t">03:10 ET</span><span>Switched the market scan's source from a third-party screener to your own Robinhood account's saved scanner ("Early Momentum Ignition"). Ran it live: 98 matches, and it independently found IPST and WFF — your own traded symbols — plus verified the top mover (XOS, premarket) against real 5-minute bars. Same broker feed the orders execute against, no second vendor to go stale.</span></div>
       </div>
     </div>
   </details>

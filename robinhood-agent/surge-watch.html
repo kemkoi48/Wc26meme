@@ -211,7 +211,7 @@
   <div class="hero quiet" id="hero">
     <div class="hero-label">Right now</div>
     <div class="hero-main">No signals — nothing to do</div>
-    <p class="hero-sub">XOS fired at 10:49 ET but the buy order was rejected — "not enough buying power." Real cash is $524.38, but only $110.65 was actually spendable: this is a cash account, and proceeds from today's three closed trades hadn't settled yet. By the time that was sorted, XOS had already fallen from $4.70 to $4.35 — past where its stop would've triggered — so it was correctly skipped rather than chased. No open position. Session tally unchanged: IPST −5.33R, SXTC −1.00R, WFF −0.97R.</p>
+    <p class="hero-sub">WETO fired at 10:54 ET (3.3x volume, +5.62% bar) but buying power is still only $110.65 (today's closed trades haven't settled) — at WETO's ~$42 ask, that's just 2 shares against a ~2% spread, too small to be a real position. Skipped rather than forced. No open position. Session tally: IPST −5.33R, SXTC −1.00R, WFF −0.97R.</p>
   </div>
 
   <div class="legend">
@@ -223,9 +223,9 @@
     <span class="dot open"></span>
     <span>Entry window open (RULES.md) · live-trade authorized</span>
     <span class="sep">·</span>
-    <span>Refreshed <span id="asof">10:49 ET, 18 Aug</span></span>
+    <span>Refreshed <span id="asof">10:54 ET, 18 Aug</span></span>
     <span class="sep">·</span>
-    <span>No open position · buying power now $110.65 (unsettled)</span>
+    <span>No open position · buying power $110.65 (unsettled)</span>
   </div>
 
   <section>
@@ -233,34 +233,34 @@
     <div id="watchlist">
       <div class="watchrow" data-sym="WETO">
         <span class="sym">WETO</span>
-        <span class="price">$47.91</span>
-        <span class="pill quiet">quiet</span>
+        <span class="price">$41.56</span>
+        <span class="pill" style="color: var(--stop); background: var(--stop-dim); font-weight: 700;">fired, skipped</span>
       </div>
       <div class="watchrow" data-sym="WFF">
         <span class="sym">WFF</span>
-        <span class="price">$2.61</span>
+        <span class="price">$2.59</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="OSRH">
         <span class="sym">OSRH</span>
-        <span class="price">$0.707</span>
+        <span class="price">$0.737</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="IPST">
         <span class="sym">IPST</span>
-        <span class="price">$13.81</span>
+        <span class="price">$17.07</span>
         <span class="pill quiet">quiet</span>
       </div>
     </div>
-    <p class="scan-note" style="margin-top:.5rem">IPST keeps climbing
-    ($13.81 now, was $7-8 this morning) but volume never confirms —
-    correctly never re-bought since the loss. This is a real lesson:
-    the biggest mover of the day was also the worst trade, because the
-    stop-verification process failed, not the entry call.</p>
+    <p class="scan-note" style="margin-top:.5rem">WETO fired for real
+    (3.3x volume, +5.62%) but buying power only allowed ~2 shares at a
+    ~2% spread — skipped as too marginal to be a real position, not
+    chased with a token size. IPST at $17.07 now, still never re-bought
+    since the loss.</p>
   </section>
 
   <section>
-    <h2>Today's market scan<span class="when" id="scan-time">10:49 ET, 18 Aug — 2 scanners</span></h2>
+    <h2>Today's market scan<span class="when" id="scan-time">10:54 ET, 18 Aug — 2 scanners</span></h2>
     <p class="scan-note">Rescanned every refresh using two of your own
     Robinhood account's saved scanners — "Early Momentum Ignition" (price
     $2-20, float under 20M, 1h relative volume over 3x) plus "Warrior
@@ -354,6 +354,7 @@
         <div class="log-row"><span class="t">10:44 ET</span><span>Scheduled rescan, nothing fired. Session tally: IPST −5.33R (the verification failure), SXTC −1.00R, WFF −0.97R (both textbook). Watching for the next signal.</span></div>
         <div class="log-row"><span class="t">10:49 ET</span><span><b>XOS fired</b> (9.9x volume, +2.84% bar), verified live and tradeable — but the buy order was REJECTED: "not enough buying power." Real finding: this is a cash account, and proceeds from today's three closed trades hadn't settled yet, so buying power was $110.65, not the $524.38 cash balance. By the time this was diagnosed, XOS had fallen to $4.35 from its $4.70 signal — past its stop level — so it was correctly skipped, not chased. Noted in CLAUDE.md for future sizing.</span></div>
         <div class="log-row"><span class="t">10:59 ET</span><span>User: "we are happy at 5% profit but if the momentum is there sell it at high." Added a profit-lock trail to the exit rule (scalp_signal.decide_exit) — arms once a trade has peaked at +5%+, then exits on a 2%+ pullback from that peak, not a fixed target. A trade that keeps making new highs past +5% keeps running exactly as before; it only locks in gains once it actually turns down from its own high. Neither threshold is independently backtested — the 5% is the user's stated comfort level, the 2% trail reuses the existing stop's distance. Tests added and passing. Applies to every exit check from here forward, including the open-position check on the next scheduled refresh.</span></div>
+        <div class="log-row"><span class="t">10:54 ET</span><span><b>WETO fired</b> (3.3x volume, +5.62% bar), verified live and tradeable. Buying power still $110.65 (unsettled from this morning) — at WETO's ~$42 ask, that's only 2 shares against a ~2% spread. Skipped as too marginal to be a real position rather than forcing a token-size trade. No open position.</span></div>
       </div>
     </div>
   </details>

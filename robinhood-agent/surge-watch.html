@@ -143,6 +143,9 @@
   .pill.quiet { color: var(--muted); background: var(--surface-2); border-color: var(--rule); }
   .pill.fired { color: var(--fire); background: var(--paper); font-weight: 700; }
 
+  .scan-note { margin: 0; font-size: .84rem; color: var(--muted); }
+  .scan-empty { margin: 0; font-size: .86rem; color: var(--muted); font-style: italic; }
+
   /* ---- expanded action card, only when fired ---- */
   .action-card {
     border: 2px solid var(--fire); background: var(--fire-dim); border-radius: 4px;
@@ -200,7 +203,7 @@
 <div class="wrap">
 
   <header>
-    <div class="eyebrow">Watching WETO &middot; WFF &middot; OSRH &middot; IPST</div>
+    <div class="eyebrow">Scanning the market, not four fixed tickers</div>
     <h1>Surge Watch</h1>
   </header>
 
@@ -226,7 +229,7 @@
   </div>
 
   <section>
-    <h2>Watchlist</h2>
+    <h2>Core watch<span class="when">your own trading history</span></h2>
     <div id="watchlist">
       <div class="watchrow" data-sym="WETO">
         <span class="sym">WETO</span>
@@ -251,7 +254,22 @@
     </div>
   </section>
 
-  <!-- Action cards go here, one per fired symbol. Empty when everything's quiet. -->
+  <section>
+    <h2>Today's market scan<span class="when" id="scan-time">not yet run — closed</span></h2>
+    <p class="scan-note">Rescanned every refresh — a small-cap screen (market
+    cap under $2B, up 10%+ today, real volume), same volume-confirmed-move
+    logic as the four above. This is how a name that isn't WETO/WFF/OSRH/IPST
+    gets caught. Not individually backtested per symbol — the detection rule
+    itself was validated as general (see "why you shouldn't trust the size"
+    below), so a new name gets the same rule, not a new one invented for it.</p>
+    <div id="scan-results">
+      <p class="scan-empty">No scan has run yet. First one is at the ~7:00 ET
+      refresh, once premarket volume exists to screen on.</p>
+    </div>
+  </section>
+
+  <!-- Action cards go here, one per fired symbol from EITHER section above.
+       Empty when everything's quiet. -->
   <div id="actions"></div>
 
   <details>
@@ -278,6 +296,7 @@
     <div class="inner">
       <div class="log" id="log">
         <div class="log-row"><span class="t">01:05 ET</span><span>Page rebuilt for clarity — separated "what do I do" from the backtest explanation. Market closed, no scan runs until premarket.</span></div>
+        <div class="log-row"><span class="t">01:25 ET</span><span>Added "today's market scan" — was only checking 4 fixed symbols, now rescans a small-cap momentum screen every refresh so a new mover gets caught too. Tested the screen live just now: it surfaced CAPR and GLTO, neither of which is in the core four.</span></div>
       </div>
     </div>
   </details>

@@ -178,6 +178,21 @@ still has a job downstream of this — `get_stock_research` and
 is found — just not as the scanner itself. See sources.md for the full
 test.
 
+**2026-08-18 overnight: checked every remaining saved scan and both
+accounts' positions/orders directly** (user: "check my other saved scans
+too... anything that is similar and seems important do it"). Account
+safety confirmed real, not assumed — Agentic account flat, real account's
+only resting-looking orders were rejected, never live. One dead position
+found (`ACETQZZ`, inactive/delisted, confirmed via `get_equity_quotes`
+erroring `inactive_instruments`) — informational, nothing to act on.
+Added "Warrior Trading Style" (scan_id `32ff11e9-065f-40b0-99a0-c5971241c435`)
+as a second scan net alongside Early Momentum Ignition — found real new
+candidates (AUUD, IVF) the first scan missed. Two more real, working
+scans found (options IV/volume — S7's territory; RSI/ADX trend — could
+unblock S1's missing allowlist someday) but deliberately NOT wired into
+the scalp dashboard — different strategies, logged in sources.md only.
+Full detail: sources.md, "All saved Robinhood scans checked" entry.
+
 ## Using Stocklake tools for trade screening
 
 Stocklake is available as a connector at the platform level (authentication handled

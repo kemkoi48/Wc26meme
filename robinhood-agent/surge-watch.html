@@ -256,17 +256,21 @@
 
   <section>
     <h2>Today's market scan<span class="when" id="scan-time">not yet run — closed</span></h2>
-    <p class="scan-note">Rescanned every refresh using your own Robinhood
-    account's saved scanner ("Early Momentum Ignition" — price $2-20, float
-    under 20M shares, 1-hour relative volume over 3x), then the same
+    <p class="scan-note">Rescanned every refresh using two of your own
+    Robinhood account's saved scanners — "Early Momentum Ignition" (price
+    $2-20, float under 20M, 1h relative volume over 3x) plus "Warrior
+    Trading Style" (float under 50M, day volume 10M+) as a second net for
+    high-conviction names the first misses — then the same
     volume-confirmed-move logic as the four above on each result's real
     minute bars. This is how a name that isn't WETO/WFF/OSRH/IPST gets
-    caught. Switched from a third-party screener 2026-08-18 because this
-    scanner is sourced directly from the broker (no second vendor to go
-    stale) and already found IPST and WFF live on its own. Not individually
-    backtested per symbol — the detection rule itself was validated as
-    general (see "why you shouldn't trust the size" below), so a new name
-    gets the same rule, not a new one invented for it.</p>
+    caught. Switched from a third-party screener 2026-08-18: both scanners
+    are sourced directly from the broker (no second vendor to go stale),
+    and live tests found IPST and WFF on their own, plus a real premarket
+    mover independently confirmed on WETO through a third saved scan
+    ("Daily gainers"). Not individually backtested per symbol — the
+    detection rule itself was validated as general (see "why you
+    shouldn't trust the size" below), so a new name gets the same rule,
+    not a new one invented for it.</p>
     <div id="scan-results">
       <p class="scan-empty">No scan has run yet. First one is at the ~7:00 ET
       refresh, once premarket volume exists to screen on.</p>
@@ -303,6 +307,7 @@
         <div class="log-row"><span class="t">01:05 ET</span><span>Page rebuilt for clarity — separated "what do I do" from the backtest explanation. Market closed, no scan runs until premarket.</span></div>
         <div class="log-row"><span class="t">01:25 ET</span><span>Added "today's market scan" — was only checking 4 fixed symbols, now rescans a small-cap momentum screen every refresh so a new mover gets caught too. Tested the screen live just now: it surfaced CAPR and GLTO, neither of which is in the core four.</span></div>
         <div class="log-row"><span class="t">03:10 ET</span><span>Switched the market scan's source from a third-party screener to your own Robinhood account's saved scanner ("Early Momentum Ignition"). Ran it live: 98 matches, and it independently found IPST and WFF — your own traded symbols — plus verified the top mover (XOS, premarket) against real 5-minute bars. Same broker feed the orders execute against, no second vendor to go stale.</span></div>
+        <div class="log-row"><span class="t">03:45 ET</span><span>Checked all your other saved scans and account state while you sleep. Account safety: Agentic account is flat (no positions, no open orders) and your real trading account (5SH47822) has no live resting orders overnight — the only two non-terminal-looking orders on record were both rejected, never live. One dead position noted: ACETQZZ, 200 shares, an inactive/delisted ticker that can't be quoted or traded — informational only, nothing to do about it. Added "Warrior Trading Style" (float &lt;50M, volume 10M+) as a second scan net alongside Early Momentum Ignition — found AUUD and IVF as fresh candidates the first scan didn't surface. Also independently reconfirmed WETO as a real premarket mover (+40%) via a third saved scan ("Daily gainers"), and found two more saved scans (options IV/volume, RSI/ADX trend) that are real and working but belong to different strategies (S7 options, S1 trend-follow) — logged in sources.md, not mixed into this dashboard.</span></div>
       </div>
     </div>
   </details>

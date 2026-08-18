@@ -1220,3 +1220,57 @@ A second saved scan, "Warrior Trading Style - Low Float Volume Movers"
 >500k AND >=10M, price $1-20) is a looser secondary net — not yet used,
 noted here in case Early Momentum Ignition's float cap of 20M ever proves
 too tight.
+
+### All saved Robinhood scans checked, 2026-08-18 overnight — account safety + full inventory
+
+User: "check my other saved scans too... anything that is similar and
+seems important do it." Ran every remaining saved scan live and checked
+account state before the user slept. Real results, not summarized from
+memory:
+
+**Account safety (both accounts checked directly):**
+- Agentic account (432805174): zero positions, and its order history's
+  only two non-terminal-looking entries (IVF, WETO buys) were both
+  `state: rejected` — never live. Flat, nothing at risk overnight.
+- Real trading account (5SH47822): one open position, `ACETQZZ` (200 sh,
+  avg $0.22). Checked, not assumed: `get_equity_quotes` returned
+  `inactive_instruments: ["ACETQZZ"]` and `search` found nothing — this
+  is a dead/delisted ticker, not a live holding with overnight risk, just
+  stuck. No open (non-terminal) orders on this account either — its two
+  non-terminal-looking entries (IVF, WETO) were also both rejected.
+
+**"Warrior Trading Style - Low Float Volume Movers"** (`32ff11e9...`,
+float <50M, volume >=10M): 10 matches live. Overlapped with Early
+Momentum Ignition on XOS/WFF/IPST, but also surfaced AUUD and IVF —
+genuinely new names the first scan didn't catch. Wired in as a second
+scan alongside Early Momentum Ignition (both scheduled refreshes updated
+2026-08-18 ~03:45 ET).
+
+**"Daily gainers"** (`4ace94c6...`, no real filter beyond asset type):
+generic sorted list, 100+ matches. Useful as an independent cross-check —
+it separately reconfirmed WETO as a real premarket mover (+40% shown),
+same symbol the user already flagged as "going crazy." Not wired in
+anywhere; redundant with the two scans above as a filter.
+
+**"High options volume and IV"** (`ce0cc952...`, relative options volume
+>2x): 112 matches (HDSN, NGEN, VNRX, WRAP, PROP at the top). Real and
+working. This belongs to the S7 options track, not the scalp dashboard —
+logged here for whenever options screening resumes, not merged into
+Surge Watch.
+
+**"Daily Movers - Fastest Growers (Quality Filtered)"** (`183fa533...`,
+mcap >$50M, RSI/ADX computed) and **"Building Momentum Candidates"**
+(`8083a928...`, RSI>55, ADX>25, MACD>0): both real and working, both
+surfaced genuine trending names with real RSI/ADX values (AMLX, DFSC,
+TNDM, CODI...). This is trend-following territory — S1 in CLAUDE.md's
+strategy index, which has been blocked since 2026-08-16 because its
+`daily_allowlist.json` doesn't exist. These two scans are a real,
+live-verified source that could fill that gap someday. Deliberately
+**not** wired into anything tonight — per CLAUDE.md's "strategies stay
+separate unless told to merge," this is S1's problem to solve when asked,
+not a reason to touch the scalp dashboard.
+
+**"Untitled Scan"** (`c3d98719...`, volume >1M only): not run — no
+distinguishing filter beyond what the others already cover, so running it
+would add API calls without new information. Noted here, not tested,
+consistent with Rule 0 (no claim is made about what it returns).

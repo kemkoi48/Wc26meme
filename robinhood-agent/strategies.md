@@ -1218,9 +1218,87 @@ capped by construction) — a genuine alternative, not a replacement. Decide
 per-trade based on IV level and how much leverage the setup's conviction
 justifies.
 
----
+### Third live run — 2026-08-17, ZIM and BULL, 0 of 2 passed
 
-## S8 — Verified Catalyst Momentum  ·  **DRAFT — n=1, not yet proven**
+Hand-run against the earnings calendar rather than via the `option_scanner.py`
+subprocess (this session already had live Stocklake/Stocktwits/Robinhood
+tool access, so the data-gathering happened directly instead of through a
+separate SDK session). Two names checked, both real, both rejected on real
+option-chain data.
+
+| Symbol | Priced move | Historical median | Ratio | Read |
+| --- | --- | --- | --- | --- |
+| ZIM (earnings 8/19 am) | 4.95% | 1.53% (n=5) | 1.86–3.24* | Rich — IV already ahead of the stock's own (surprisingly small) closing-day reaction |
+| BULL (earnings 8/19 pm) | 7.66% | 6.06% (n=4) | 1.27–1.54* | Rich, despite genuinely large historical moves |
+
+*Ratio range reflects mean vs. median of the historical sample; both exceed
+the 0.85 gate either way. ZIM's own $31 OTM call additionally failed the
+spread gate (40% vs. 15% max) — two independent reasons to reject it, same
+redundancy the ENVX regression test checks for.
+
+ZIM is the more interesting miss: its EPS actually swings wildly quarter to
+quarter (a 87% sequential EPS drop in one report), but the **stock's
+close-to-close reaction** on report day has historically been much smaller
+(~1.5–2.7%) than the EPS swings suggest — freight-rate data likely leaks
+ahead of the print for a shipping name, so most of the "surprise" is
+pre-priced by the time earnings actually land. A screen built on EPS-surprise
+reputation alone would have wrongly flagged this as underpriced; the
+close-to-close historical read caught it. Running tally is now 0 of 6 across
+three live runs (ONDS, LUNR, STNE, NKTR, ZIM, BULL) — see "Expect it to
+return nothing most days" above. Full numbers in `sources.md`, 2026-08-17.
+
+### Second track — catalysts with no single trigger date
+
+Added 2026-08-17. The mismatch-ratio test above only works for *dated*
+catalysts (earnings, an FDA decision, anything with a specific before/after
+to measure). It has no answer for "this stock has real insider buying and
+bullish AI-research signals but no scheduled event" — a genuinely different
+shape of catalyst the account asked about directly, and one Stocklake/
+Stocktwits access actually makes checkable now (it wasn't when S7 was first
+drafted).
+
+**The substitute edge test: implied volatility vs. this stock's own realized
+volatility**, not vs. a historical-event sample. `realized_volatility()` in
+`option_math.py` computes annualized realized vol from daily closes (same
+log-return method any options text uses); `iv_hv_ratio()` compares it to the
+contract's IV, same shape and interpretation as `mismatch_ratio()`:
+
+- **< 1.0** — IV prices less movement than the stock has actually been
+  making lately. The interesting case, *if* paired with a real directional
+  signal.
+- **≥ 1.0** — IV already at or above recent realized movement. No edge from
+  volatility alone, however good the story sounds.
+
+Set looser than the dated-catalyst gate (0.90 vs. 0.85) on purpose —
+realized vol is a blunter instrument than an actual historical-event sample,
+so it needs a wider margin before being trusted.
+
+**Direction and conviction, not judged by the code, only scored.**
+`catalyst_direction_score()` averages up to three independent read-only
+signals — Stocklake's `ai_verdict`, Stocklake's `insider_trend`
+(accumulation/distribution), and Stocktwits' `sentiment.bull_pct` — into a
+single −10 (bearish) to +10 (bullish) number, equal-weighted and requiring
+at least 2 of 3 to be usable (one reading is an anecdote, same floor as the
+historical-moves test). This is a *necessary* signal, never sufficient: a
+high score means multiple sources agree, not that they're right — see the
+MLTX lesson in `CLAUDE.md` (`get_signals` said LONG, `get_stock_research`
+said BEARISH, the tape had already rejected the "positive" headline). A
+contract's type (call/put) must match the score's sign, and there's a
+separate `ai_flag_score` floor (default 6/10) as a "worth attention at all"
+gate independent of direction.
+
+**Days-to-expiry band is wider and shaped differently.** No catalyst date to
+clear, so the floor (default 10 days) exists instead to keep the premium
+from being pure theta-bleed on a thesis that needs time to play out; the
+ceiling (default 90 days) keeps it from drifting into a multi-month
+directional bet that stops being "options are cheap right now" and becomes
+something else.
+
+`SoftCatalystScanConfig` / `evaluate_soft_candidate` / `apply_soft_filters_and_rank`
+in `option_math.py`, same fail-closed posture and rejection-with-reason
+convention as the dated-catalyst path, tested in `test_option_math.py`
+alongside it. **Not yet run against a live chain** — built the same evening
+as this entry, first live run is tomorrow's premarket session.
 
 Source: **not a book.** Every rule below was pulled from a trade or a
 rejection that actually happened this week (2026-08-11 through 2026-08-15),

@@ -33,6 +33,7 @@ Callers must treat None as exclusion, never as "assume fine".
 from __future__ import annotations
 
 import datetime as dt
+import math
 import statistics
 from dataclasses import dataclass
 from typing import Any, Optional, Sequence
@@ -228,6 +229,335 @@ def catalyst_effective_date(
     if t == "am":
         return d
     return d + dt.timedelta(days=1)
+
+
+def realized_volatility(
+    daily_closes: Sequence[Any], trading_days_per_year: float = 252.0
+) -> Optional[float]:
+    """Annualized realized volatility, as a decimal fraction (0.42 == 42%),
+    from close-to-close log returns. Same units as the `iv` field elsewhere
+    in this module (Robinhood's option quote: 2.93 == 293%), so the two are
+    directly comparable via iv_hv_ratio() below.
+
+    Requires at least 10 usable closes (two trading weeks) -- fewer makes the
+    stdev estimate too noisy to trust, same spirit as historical_move_pct's
+    two-observation floor. Non-positive or unparseable closes are dropped
+    rather than crashing; a gap-filled/interpolated bar (flat price, the WOLF
+    failure mode from sources.md) silently produces a log return of exactly
+    0.0 and is NOT specially detected here -- callers MUST discard
+    interpolated=true bars before passing closes in, the same discipline
+    option_scanner.py's SYSTEM_PROMPT already requires for historical_moves.
+    """
+    if not daily_closes:
+        return None
+    usable: list[float] = []
+    for c in daily_closes:
+        v = _as_float(c)
+        if v is None or v <= 0:
+            continue
+        usable.append(v)
+    if len(usable) < 10:
+        return None
+    log_returns = []
+    for i in range(1, len(usable)):
+        prev, cur = usable[i - 1], usable[i]
+        if prev <= 0 or cur <= 0:
+            continue
+        log_returns.append(math.log(cur / prev))
+    if len(log_returns) < 9:
+        return None
+    daily_stdev = statistics.stdev(log_returns)
+    years = _as_float(trading_days_per_year)
+    if years is None or years <= 0:
+        return None
+    return daily_stdev * (years ** 0.5)
+
+
+def iv_hv_ratio(implied_vol: Any, realized_vol: Any) -> Optional[float]:
+    """implied / realized. THE edge test for catalysts with no single trigger
+    date (insider buying, a sentiment spike, general hype) -- mismatch_ratio's
+    counterpart for that case, same shape and same interpretation:
+
+      < 1.0  the option market is pricing LESS movement than this stock has
+             actually been making lately -- the interesting case, especially
+             paired with a real directional signal (see catalyst_direction_score)
+      ~ 1.0  IV is roughly tracking realized movement -- no edge
+      > 1.0  IV already prices more movement than the stock has recently
+             delivered -- no edge from volatility alone, regardless of how
+             good the story sounds
+
+    Looser to trust than mismatch_ratio: historical_move_pct is built from
+    actual reactions to actual comparable events, while realized_vol is a
+    blunter instrument (all recent price action, not isolated to any event).
+    A soft-catalyst config should demand a wider margin than 0.85 as a result
+    -- see SoftCatalystScanConfig.max_iv_hv_ratio.
+    """
+    iv = _as_float(implied_vol)
+    hv = _as_float(realized_vol)
+    if iv is None or hv is None:
+        return None
+    if iv < 0 or hv <= 0:
+        return None
+    return iv / hv
+
+
+def catalyst_direction_score(
+    ai_verdict: Any = None,
+    insider_trend: Any = None,
+    stocktwits_bull_pct: Any = None,
+) -> Optional[float]:
+    """Signed composite catalyst conviction, -10 (strongly bearish) to +10
+    (strongly bullish), from up to three independent read-only signals:
+
+      ai_verdict           Stocklake get_stock_research / get_stock ai_verdict
+                            "bullish" -> +10, "neutral" -> 0, "bearish" -> -10
+      insider_trend        Stocklake sentiment.insider_trend
+                            "accumulation" -> +10, "neutral" -> 0,
+                            "distribution" -> -10
+      stocktwits_bull_pct  Stocktwits get_symbol_pulse sentiment.bull_pct,
+                            0-100 -> linearly mapped so 50 (even split) is 0,
+                            100 is +10, 0 is -10
+
+    Equal-weighted mean of whichever signals are usable -- not a tuned/opaque
+    weighting, because the module's whole point is that a human can check the
+    number by hand. Requires at least 2 of the 3 -- one reading is an
+    anecdote, same floor as historical_move_pct. An unrecognized string for
+    ai_verdict or insider_trend is dropped as unusable, not coerced to 0
+    ("neutral" must be said explicitly, not assumed from garbage input).
+
+    This is a NECESSARY signal, not sufficient: a high score means multiple
+    independent sources point the same direction, not that the direction is
+    correct. Cross-check against get_stock_research's own tape/sentiment read
+    before trusting a get_signals-only bullish call -- see CLAUDE.md's MLTX
+    lesson (2026-08-13): a bullish headline the tape is rejecting is a trap.
+    """
+    signals: list[float] = []
+
+    v = str(ai_verdict).strip().lower() if ai_verdict is not None else ""
+    if v == "bullish":
+        signals.append(10.0)
+    elif v == "neutral":
+        signals.append(0.0)
+    elif v == "bearish":
+        signals.append(-10.0)
+
+    t = str(insider_trend).strip().lower() if insider_trend is not None else ""
+    if t == "accumulation":
+        signals.append(10.0)
+    elif t == "neutral":
+        signals.append(0.0)
+    elif t == "distribution":
+        signals.append(-10.0)
+
+    bp = _as_float(stocktwits_bull_pct)
+    if bp is not None and 0.0 <= bp <= 100.0:
+        signals.append(max(-10.0, min(10.0, (bp - 50.0) / 5.0)))
+
+    if len(signals) < 2:
+        return None
+    return statistics.mean(signals)
+
+
+@dataclass(frozen=True)
+class SoftCatalystScanConfig:
+    """Thresholds for apply_soft_filters_and_rank -- the counterpart to
+    OptionScanConfig for catalysts with no single dated trigger (insider
+    accumulation, a sentiment spike, general hype/momentum with no scheduled
+    event). Structural/tradability gates are shared in spirit with
+    OptionScanConfig; the edge test and the days-to-expiry band differ,
+    because there is no catalyst date to time an expiry against."""
+
+    max_premium_usd: float = 50.0
+    max_spread_pct: float = 15.0
+    min_open_interest: float = 100.0
+    min_volume: float = 10.0
+    min_delta: float = 0.10
+    max_delta: float = 0.55
+    # Looser than OptionScanConfig's 0.85 -- see iv_hv_ratio()'s docstring on
+    # why realized-vol-vs-IV is a blunter instrument than a real historical
+    # event sample and needs a wider margin to trust.
+    max_iv_hv_ratio: float = 0.90
+    # Absolute value of catalyst_direction_score. 5.0 requires roughly
+    # "two of two signals agree at moderate-or-better conviction" -- not a
+    # coin flip, not unanimous-and-extreme either.
+    min_catalyst_score: float = 5.0
+    # Stocklake ai_flag_score floor (0-10 scale) -- a "worth attention" gate
+    # independent of direction, mirroring Stocklake's own high_conviction
+    # preset (flag_score >= 7). Set slightly looser here since flag_score and
+    # catalyst_direction_score are cross-checking different things.
+    min_flag_score: float = 6.0
+    # No catalyst date to time against, so the floor exists instead to keep
+    # premium from being pure theta-bleed on a thesis that needs weeks to
+    # play out, not days.
+    min_days_to_expiry: int = 10
+    max_days_to_expiry: int = 90
+    min_underlying_price: float = 2.0
+    max_underlying_price: float = 100.0
+    top_n: int = 10
+
+
+def evaluate_soft_candidate(
+    c: dict[str, Any], cfg: SoftCatalystScanConfig, today: Optional[dt.date] = None
+) -> tuple[Optional[dict[str, Any]], str]:
+    """Evaluate ONE candidate contract against the soft-catalyst edge test.
+    Mirrors evaluate_candidate's shape and fail-closed posture; see that
+    function's docstring for the general philosophy. Returns (result, reason)
+    with the same convention: result is None with a named reason on
+    rejection, never a silent drop.
+    """
+    today = today or dt.date.today()
+
+    symbol = str(c.get("symbol", "")).upper().strip()
+    if not symbol:
+        return None, "missing symbol"
+
+    underlying = _as_float(c.get("underlying_price"))
+    if underlying is None or underlying <= 0:
+        return None, "unusable underlying price"
+    if not (cfg.min_underlying_price <= underlying <= cfg.max_underlying_price):
+        return None, f"underlying ${underlying:.2f} outside price band"
+
+    expiry = _as_date(c.get("expiration_date"))
+    if expiry is None:
+        return None, "missing or malformed expiration date"
+    days_to_expiry = (expiry - today).days
+    if days_to_expiry < 0:
+        return None, f"expiry {expiry} has already passed"
+    if days_to_expiry < cfg.min_days_to_expiry:
+        return None, (
+            f"{days_to_expiry}d to expiry below min {cfg.min_days_to_expiry}d -- "
+            "no dated catalyst to time against; this needs room to work"
+        )
+    if days_to_expiry > cfg.max_days_to_expiry:
+        return None, f"{days_to_expiry}d to expiry exceeds max {cfg.max_days_to_expiry}d"
+
+    # --- tradability (identical gates to evaluate_candidate) ---
+    bid, ask = c.get("bid"), c.get("ask")
+    contract_mid = mid_price(bid, ask)
+    if contract_mid is None:
+        return None, "no usable two-sided quote on the contract"
+    sp = spread_pct(bid, ask)
+    if sp is None:
+        return None, "spread not computable"
+    if sp > cfg.max_spread_pct:
+        return None, f"spread {sp:.1f}% exceeds max {cfg.max_spread_pct:.1f}%"
+
+    ask_f = _as_float(ask)
+    if ask_f is None:
+        return None, "unusable ask"
+    premium_usd = ask_f * 100.0
+    if premium_usd > cfg.max_premium_usd:
+        return None, (
+            f"premium ${premium_usd:.0f}/contract exceeds max "
+            f"${cfg.max_premium_usd:.0f}"
+        )
+
+    oi = _as_float(c.get("open_interest"))
+    vol = _as_float(c.get("volume"))
+    if oi is None or vol is None:
+        return None, "missing open interest or volume"
+    if oi < cfg.min_open_interest:
+        return None, f"open interest {oi:.0f} below min {cfg.min_open_interest:.0f}"
+    if vol < cfg.min_volume:
+        return None, f"volume {vol:.0f} below min {cfg.min_volume:.0f}"
+
+    delta = _as_float(c.get("delta"))
+    if delta is None:
+        return None, "missing delta"
+    abs_delta = abs(delta)
+    if not (cfg.min_delta <= abs_delta <= cfg.max_delta):
+        return None, (
+            f"|delta| {abs_delta:.2f} outside band "
+            f"[{cfg.min_delta:.2f}, {cfg.max_delta:.2f}]"
+        )
+
+    # --- direction + conviction ---
+    score = catalyst_direction_score(
+        c.get("ai_verdict"), c.get("insider_trend"), c.get("stocktwits_bull_pct")
+    )
+    if score is None:
+        return None, "fewer than 2 usable directional signals"
+    if abs(score) < cfg.min_catalyst_score:
+        return None, (
+            f"catalyst score {score:+.1f} below min conviction "
+            f"+/-{cfg.min_catalyst_score:.1f}"
+        )
+    contract_type = str(c.get("type", "")).lower().strip()
+    if contract_type == "call" and score <= 0:
+        return None, f"call contract but catalyst score is {score:+.1f} (not bullish)"
+    if contract_type == "put" and score >= 0:
+        return None, f"put contract but catalyst score is {score:+.1f} (not bearish)"
+    if contract_type not in ("call", "put"):
+        return None, f"unrecognized contract type {contract_type!r}"
+
+    flag_score = _as_float(c.get("ai_flag_score"))
+    if flag_score is None:
+        return None, "missing ai_flag_score"
+    if flag_score < cfg.min_flag_score:
+        return None, f"flag score {flag_score:.1f} below min {cfg.min_flag_score:.1f}"
+
+    # --- the edge test ---
+    hv = realized_volatility(c.get("daily_closes") or [])
+    if hv is None:
+        return None, "fewer than 10 usable daily closes; realized vol not computable"
+    ratio = iv_hv_ratio(c.get("iv"), hv)
+    if ratio is None:
+        return None, "iv/hv ratio not computable"
+    if ratio > cfg.max_iv_hv_ratio:
+        return None, (
+            f"iv/hv ratio {ratio:.2f} > {cfg.max_iv_hv_ratio:.2f} -- implied "
+            f"vol {_as_float(c.get('iv')) or 0:.0%} vs realized {hv:.0%}; "
+            "not cheap relative to actual recent movement"
+        )
+
+    return {
+        "symbol": symbol,
+        "underlying_price": underlying,
+        "strike": _as_float(c.get("strike")),
+        "type": contract_type,
+        "expiration_date": expiry.isoformat(),
+        "days_to_expiry": days_to_expiry,
+        "bid": _as_float(bid),
+        "ask": ask_f,
+        "premium_usd": premium_usd,
+        "spread_pct": sp,
+        "delta": delta,
+        "iv": _as_float(c.get("iv")),
+        "realized_vol": hv,
+        "iv_hv_ratio": ratio,
+        "open_interest": oi,
+        "volume": vol,
+        "catalyst_score": score,
+        "ai_flag_score": flag_score,
+        "notes": str(c.get("notes", ""))[:400],
+    }, ""
+
+
+def apply_soft_filters_and_rank(
+    candidates: Sequence[dict[str, Any]],
+    cfg: SoftCatalystScanConfig,
+    today: Optional[dt.date] = None,
+) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """apply_filters_and_rank's counterpart for the soft-catalyst track.
+    Survivors are ranked by iv_hv_ratio ascending (cheapest relative to
+    actual recent movement first), capped at top_n. Same non-judgment of the
+    catalyst itself: a high catalyst_direction_score means multiple sources
+    agree, not that they are right."""
+    passed: list[dict[str, Any]] = []
+    rejected: list[dict[str, str]] = []
+    for c in candidates:
+        if not isinstance(c, dict):
+            rejected.append({"symbol": "?", "reason": "not a mapping"})
+            continue
+        result, reason = evaluate_soft_candidate(c, cfg, today=today)
+        if result is None:
+            rejected.append(
+                {"symbol": str(c.get("symbol", "?")).upper(), "reason": reason}
+            )
+            continue
+        passed.append(result)
+    passed.sort(key=lambda r: r["iv_hv_ratio"])
+    return passed[: max(0, cfg.top_n)], rejected
 
 
 @dataclass(frozen=True)

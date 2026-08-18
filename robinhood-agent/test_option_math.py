@@ -15,15 +15,21 @@ import datetime as dt
 
 from option_math import (
     OptionScanConfig,
+    SoftCatalystScanConfig,
     apply_filters_and_rank,
+    apply_soft_filters_and_rank,
     as_pct_of,
+    catalyst_direction_score,
     catalyst_effective_date,
     evaluate_candidate,
+    evaluate_soft_candidate,
     expected_move_from_iv,
     expected_move_from_straddle,
     historical_move_pct,
+    iv_hv_ratio,
     mid_price,
     mismatch_ratio,
+    realized_volatility,
     spread_pct,
 )
 
@@ -239,6 +245,120 @@ passed, _ = apply_filters_and_rank([a, b], cfg, today=today)
 check("ranked most-underpriced first", [p["symbol"] for p in passed] == ["BBB", "AAA"],
       str([p["symbol"] for p in passed]))
 check("top_n honored", len(apply_filters_and_rank([a, b], OptionScanConfig(top_n=1), today=today)[0]) == 1)
+
+print()
+print("realized_volatility")
+# Hand-verified independently via statistics.stdev on log returns, then
+# annualized by sqrt(252) -- see the comment this value was computed with.
+closes_15 = [10.00, 10.15, 9.98, 10.22, 10.05, 10.30, 10.18, 10.45, 10.20,
+             10.55, 10.40, 10.60, 10.35, 10.70, 10.50]
+check("15 closes -> ~36.7% annualized", approx(realized_volatility(closes_15), 0.3666110, 1e-5))
+check("fewer than 10 closes rejected", realized_volatility(closes_15[:9]) is None)
+check("empty rejected", realized_volatility([]) is None)
+check("non-positive closes dropped, still too few", realized_volatility([10, -5, 10, 0, 10, 10, 10, 10, 10, 10]) is None)
+# a flat/interpolated run (the WOLF failure mode) has zero variance -- this
+# function does NOT detect that on its own; callers must discard
+# interpolated=true bars before calling it. Documented, not silently fixed.
+flat = [5.0] * 15
+check("flat series -> ~0 vol (documented caller responsibility, not auto-fixed)",
+      approx(realized_volatility(flat), 0.0, 1e-9))
+
+print("iv_hv_ratio")
+check("cheap: iv below hv", approx(iv_hv_ratio(0.30, 0.40), 0.75))
+check("fair", approx(iv_hv_ratio(0.40, 0.40), 1.0))
+check("rich: iv above hv", approx(iv_hv_ratio(0.60, 0.40), 1.5))
+check("zero hv rejected", iv_hv_ratio(0.30, 0) is None)
+check("negative iv rejected", iv_hv_ratio(-0.1, 0.40) is None)
+
+print("catalyst_direction_score")
+check("two bullish signals -> +10",
+      approx(catalyst_direction_score("bullish", "accumulation", None), 10.0))
+check("bullish + bearish -> 0",
+      approx(catalyst_direction_score("bullish", "distribution", None), 0.0))
+check("bull_pct 90 alone plus verdict -> positive",
+      catalyst_direction_score("bullish", None, 90) > 5.0)
+check("single signal rejected (needs >= 2)",
+      catalyst_direction_score("bullish", None, None) is None)
+check("no signals rejected", catalyst_direction_score(None, None, None) is None)
+check("unrecognized verdict string dropped, not coerced to neutral",
+      catalyst_direction_score("somewhat bullish i guess", "accumulation", 90) is not None)
+check("bull_pct 50 (even split) -> 0 contribution",
+      approx(catalyst_direction_score("neutral", None, 50), 0.0))
+check("bull_pct clamped at extremes",
+      approx(catalyst_direction_score("bullish", None, 100), 10.0))
+
+print()
+print("evaluate_soft_candidate -- structural + edge gates")
+soft_cfg = SoftCatalystScanConfig()
+today2 = dt.date(2026, 8, 17)
+
+good_soft_call = {
+    "symbol": "TEST2",
+    "underlying_price": 20.00,
+    "strike": 22.0,
+    "type": "call",
+    "expiration_date": "2026-09-25",  # ~39 days out from today2
+    "bid": 0.45,
+    "ask": 0.50,
+    "iv": 0.30,
+    "delta": 0.28,
+    "open_interest": 500,
+    "volume": 50,
+    "daily_closes": closes_15,  # realized vol ~36.7%, iv 30% -> ratio ~0.82
+    "ai_verdict": "bullish",
+    "insider_trend": "accumulation",
+    "stocktwits_bull_pct": 80,
+    "ai_flag_score": 7,
+    "notes": "synthetic -- exercises the pass path",
+}
+res, why = evaluate_soft_candidate(good_soft_call, soft_cfg, today=today2)
+check("genuine soft mismatch passes", res is not None, why)
+if res:
+    # ai_verdict bullish (+10), insider accumulation (+10), bull_pct 80 (+6)
+    # -- mean of all three usable signals, not just the first two.
+    check("catalyst score ~8.67 (all three signals, mean)",
+          approx(res["catalyst_score"], 8.6667, 1e-3))
+    check("iv/hv ratio ~0.82", 0.75 < res["iv_hv_ratio"] < 0.90, str(res["iv_hv_ratio"]))
+
+rich = dict(good_soft_call, iv=0.50)  # 0.50/0.3666 ~ 1.36, above the 0.90 cap
+r, why = evaluate_soft_candidate(rich, soft_cfg, today=today2)
+check("iv/hv ratio cap enforced", r is None and "iv/hv ratio" in why, why)
+
+mismatched_direction = dict(good_soft_call, type="put")  # bullish score, put contract
+r, why = evaluate_soft_candidate(mismatched_direction, soft_cfg, today=today2)
+check("put contract rejected against a bullish score", r is None and "not bearish" in why, why)
+
+weak_conviction = dict(good_soft_call, ai_verdict="neutral", insider_trend="neutral",
+                        stocktwits_bull_pct=55)
+r, why = evaluate_soft_candidate(weak_conviction, soft_cfg, today=today2)
+check("weak conviction rejected", r is None and "conviction" in why, why)
+
+low_flag = dict(good_soft_call, ai_flag_score=3)
+r, why = evaluate_soft_candidate(low_flag, soft_cfg, today=today2)
+check("flag score floor enforced", r is None and "flag score" in why, why)
+
+too_soon = dict(good_soft_call, expiration_date="2026-08-20")  # 3 days out
+r, why = evaluate_soft_candidate(too_soon, soft_cfg, today=today2)
+check("min days-to-expiry enforced (no dated catalyst to time against)",
+      r is None and "below min" in why, why)
+
+too_far = dict(good_soft_call, expiration_date="2027-06-18")  # >90 days out
+r, why = evaluate_soft_candidate(too_far, soft_cfg, today=today2)
+check("max days-to-expiry enforced", r is None and "exceeds max" in why, why)
+
+thin_signals = dict(good_soft_call, insider_trend=None, stocktwits_bull_pct=None)
+r, why = evaluate_soft_candidate(thin_signals, soft_cfg, today=today2)
+check("single directional signal rejected", r is None and "directional signals" in why, why)
+
+print()
+print("apply_soft_filters_and_rank")
+cheaper = dict(good_soft_call, symbol="CHEAPER", iv=0.20)  # ratio ~0.55, better than good_soft_call's ~0.82
+passed, rejected = apply_soft_filters_and_rank(
+    [good_soft_call, rich, cheaper], soft_cfg, today=today2
+)
+check("two pass, one rejected on iv/hv", len(passed) == 2 and len(rejected) == 1)
+check("ranked cheapest iv/hv first", [p["symbol"] for p in passed] == ["CHEAPER", "TEST2"],
+      str([p["symbol"] for p in passed]))
 
 print()
 if failures:

@@ -951,3 +951,108 @@ the S7 track record: 0 of 4 prior contracts (ONDS, LUNR, STNE, NKTR) passed
 either; this makes it 0 of 6. The screen is built to say no most days — see
 option_scanner.py's own framing. Did not force a marginal trade to have
 something to report.
+
+## 2026-08-17 The user's own scalping — the first real edge in this repo
+
+The account's Investing account (••••7822, margin, NOT the Agentic account
+this agent trades) was up **+$137.44 / +36.29%** on 2026-08-17. The Agentic
+account was up $6.03 / 1.37% the same day on the same tape. That gap is the
+most useful data this repo has produced, and it is the user's own execution,
+not a book.
+
+Pulled the real fills with timestamps from `get_equity_orders` on ••••7822
+rather than reading the screenshots. Six IPST round trips:
+
+| # | Buy ET | Sell ET | Hold | Buy | Sell | P&L | % |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 10:21:51 | 10:27:02 | 5.2m | 6.84 | 7.26 | +8.45 | +6.2% |
+| 2 | 10:31:05 | 10:33:34 | 2.5m | 7.55 | 7.13 | −8.40 | −5.6% |
+| 3 | 10:57:45 | 10:59:53 | **2.1m** | 7.72 | 9.57 | **+36.96** | **+23.9%** |
+| 4 | 11:33:23 | 11:38:37 | 5.2m | 8.24 | 8.39 | +4.27 | +1.7% |
+| 5 | 11:45:32 | 11:46:19 | **0.8m** | 8.54 | 8.23 | −9.30 | −3.6% |
+| 6 | 12:23:28 | 12:25:04 | 1.6m | 7.71 | 7.63 | −2.40 | −1.0% |
+
+**IPST net +$29.58 on 3 wins / 3 losses.** Median hold **149 seconds**;
+fastest exit 46 seconds. Same pattern on WFF ($4.49 → $10.20 range traded
+repeatedly) and OSRH. This is the same instrument (IPST) this agent screened
+at 08:56 ET and rejected as "pump chatter, sit this window out."
+
+### What the minute bars say about entry and exit
+
+Trade 3, the +23.9% winner. Minute volume around the 10:57:45 entry:
+
+| Bar | Volume | vs prev | Close |
+| --- | --- | --- | --- |
+| 10:56 | 62,551 | — | 7.47 |
+| **10:57** | **251,916** | **4.0x** | 7.685 |
+| 10:58 | 283,689 | 1.1x | 7.881 |
+| 10:59 | 660,285 | 2.3x | **9.66** |
+| 11:00 | 420,764 | 0.6x | 8.645 |
+
+Entry was **into** the 4.0x volume-surge bar, filled at 7.7174 near that
+bar's 7.75 high. Exit at 9.5654 came 2m08s later, inside the 660k-share
+climax bar whose high was 9.66 — **sold within 1% of the absolute peak.**
+The very next minute closed 8.645, a −10% drop. Getting out on the climax
+rather than after it is the whole trade.
+
+Trade 2, the −5.6% loser, is the same setup entered one bar too late:
+
+| Bar | Volume | vs prev | Close |
+| --- | --- | --- | --- |
+| 10:30 | 368,036 | 3.3x | 7.615 |
+| **10:31** | **149,480** | **0.4x** | 7.58 |
+| 10:32 | 206,055 | 1.4x | 7.30 |
+
+The surge bar was 10:30. The 10:31 entry landed as volume collapsed to 0.4x
+— buying the extension after the buyers were gone. Cut 2.5 minutes later.
+
+**The mechanism, stated plainly:** buy *during* a volume surge that is
+breaking price upward; sell into the climax; and when volume does not follow
+within a minute or two, exit immediately for a small loss. Three losers
+averaged −3.4%; the one winner made +23.9%. **The asymmetry is manufactured
+by exit speed, not by entry accuracy** — a 50% hit rate is fine when losers
+are cut in ~90 seconds and the winner is allowed to go vertical.
+
+### Why this repo's rules produced the opposite
+
+Direct contradictions with `RULES.md`, all of them load-bearing:
+
+- **Rule 1 (name the news before buying)** is an entry gate built for a
+  position held over hours. It rejected IPST at 08:56 ET on correct
+  reasoning — the Stocktwits chatter genuinely was pump talk, and the stock
+  genuinely did round-trip. But a 2-minute trade does not need the narrative
+  to be *true*, only the volume to be *real*. Rule 1 is the right gate for
+  S8 and the wrong gate for a scalp.
+- **Rule 4 (target = entry + 1.25R)** caps the winner. Applied to trade 3 it
+  would have exited around 8.1 instead of 9.57 — turning +23.9% into roughly
+  +5%, throwing away three quarters of the day's profit on the single trade
+  that carried it.
+- **Rule 7 (close by the bell)** implies a hold measured in hours. The real
+  time stop here is ~90 seconds.
+
+Not a reason to delete those rules — they belong to S8, which is a different
+strategy with a different holding period. It is a reason to stop pretending
+one rule set covers both.
+
+### What this agent can and cannot do about it — stated honestly
+
+**Cannot:** replicate this. A 149-second median hold with a 46-second
+fastest exit requires reacting inside a single minute bar. This agent runs
+on scheduled check-ins and each one costs 30–60s of tool calls before a
+decision exists. By the time a 4x volume bar is detected, read, and acted
+on, the move it signalled is over. Promising to auto-scalp would be
+promising something the execution model cannot deliver, and the honest
+version of that promise is "no."
+
+For scale: at 11:45:32 ET the user bought IPST at 8.54; at 11:45:38 — six
+seconds later — this agent bought OCUL at 10.59. The user was flat 47
+seconds later for −3.6%. The agent held four hours for +0.36R (+$0.70).
+Same minute, same tape, two entirely different games.
+
+**Can:** watch far more names at once than a human, and compute the surge
+condition on live minute bars across a whole watchlist. The realistic
+division of labour is **agent detects, human executes** — this agent
+monitoring N symbols for the 3–4x volume-surge-with-price-breakout
+condition and surfacing it fast, the user pulling the trigger. That plays to
+what each side is actually good at instead of asking either to do the
+other's job badly.

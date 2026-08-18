@@ -1160,3 +1160,27 @@ real WETO bars (21 minute bars ending 16:09 UTC, transcribed by script from
 oversold later: the signal bar correctly fires, and the very next real bar
 correctly hits the stop for −1.09%, matching the full-day simulation
 exactly.
+
+### Surge Watch dashboard — 2026-08-18, and the capability check behind it
+
+Before building: checked whether a published page could poll Robinhood
+directly on its own (no agent in the loop). It cannot, in this environment
+— the `mcp` artifact capability needs `mcp__claude_ai_*`-prefixed tools to
+exist for the target connectors, and none do here, even though
+Robinhood/Stocklake/Stocktwits are all connected for this agent's own tool
+calls. Checked via `ListConnectors` and `ToolSearch`, not assumed.
+
+So the page (`surge-watch.html`) is honest about what it actually is: a
+static artifact at one stable URL, refreshed by this agent pulling real
+data and republishing — not a page that live-polls the market in the
+viewer's browser. The UI says this explicitly ("This page updates when
+refreshed and republished — not on its own while you're looking at it").
+
+Two lean scheduled refreshes set for 2026-08-18: ~7:00 ET (early premarket)
+and ~8:40 ET (RULES.md's entry window open), each pulling live quotes +
+minute bars and re-running `scalp_signal.py`'s `detect_entry` for real,
+then republishing to the same artifact URL. Deliberately not a dense chain
+of wakeups overnight — nothing meaningful happens in the dead hours, and
+the user asked to keep this efficient.
+
+URL: https://claude.ai/code/artifact/0c00fa02-b7c2-47cd-8074-224d17f2fbcf

@@ -1,0 +1,307 @@
+<title>Surge Watch</title>
+<style>
+  :root {
+    --paper:      #fbfaf7;
+    --surface:    #f2efe9;
+    --surface-2:  #e7e2d9;
+    --ink:        #1c1a17;
+    --ink-soft:   #45403a;
+    --muted:      #736c62;
+    --rule:       #d8d2c7;
+    --accent:     #8a5a2b;
+    --accent-dim: #f0e6d8;
+    --stop:       #9e3320;
+    --stop-dim:   #f7e5e0;
+    --target:     #2f6146;
+    --target-dim: #e3efe7;
+    --fire:       #a8660a;
+    --fire-dim:   #fbead1;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "DejaVu Sans Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #14120f;
+      --surface:    #1e1b17;
+      --surface-2:  #2a251f;
+      --ink:        #f0ece5;
+      --ink-soft:   #cbc4b9;
+      --muted:      #948c80;
+      --rule:       #332d26;
+      --accent:     #d09a5e;
+      --accent-dim: #2b2015;
+      --stop:       #e58a76;
+      --stop-dim:   #331a14;
+      --target:     #7fc39c;
+      --target-dim: #16291f;
+      --fire:       #f0b429;
+      --fire-dim:   #332405;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:      #14120f;
+    --surface:    #1e1b17;
+    --surface-2:  #2a251f;
+    --ink:        #f0ece5;
+    --ink-soft:   #cbc4b9;
+    --muted:      #948c80;
+    --rule:       #332d26;
+    --accent:     #d09a5e;
+    --accent-dim: #2b2015;
+    --stop:       #e58a76;
+    --stop-dim:   #331a14;
+    --target:     #7fc39c;
+    --target-dim: #16291f;
+    --fire:       #f0b429;
+    --fire-dim:   #332405;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 1.75rem 1.1rem 4rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 46rem; margin: 0 auto; display: flex; flex-direction: column; gap: 1.75rem; }
+
+  header { display: flex; flex-direction: column; gap: .6rem; }
+  .eyebrow {
+    font-family: var(--mono); font-size: .7rem; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  h1 { font-size: clamp(1.7rem, 6vw, 2.15rem); line-height: 1.05; margin: 0; font-weight: 640; letter-spacing: -.02em; }
+  .sub { color: var(--muted); margin: 0; font-size: .95rem; }
+
+  .statusbar {
+    display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 3px;
+    padding: .75rem .95rem; font-family: var(--mono); font-size: .82rem;
+  }
+  .dot { width: .5rem; height: .5rem; border-radius: 50%; flex-shrink: 0; }
+  .dot.closed { background: var(--muted); }
+  .dot.open { background: var(--target); box-shadow: 0 0 0 3px var(--target-dim); }
+  .statusbar .sep { color: var(--rule); }
+  .statusbar .muted { color: var(--muted); }
+
+  h2 {
+    font-size: 1rem; margin: 0; font-weight: 640;
+    padding-bottom: .4rem; border-bottom: 2px solid var(--ink);
+    display: flex; align-items: baseline; gap: .6rem;
+  }
+  h2 .when {
+    font-family: var(--mono); font-size: .65rem; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); margin-left: auto; font-weight: 400;
+  }
+  section { display: flex; flex-direction: column; gap: .8rem; }
+
+  .cards { display: flex; flex-direction: column; gap: .65rem; }
+  .card {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 3px;
+    padding: .9rem 1rem; display: flex; flex-direction: column; gap: .5rem;
+  }
+  .card.fired { border-color: var(--fire); background: var(--fire-dim); }
+  .card-top { display: flex; align-items: center; gap: .7rem; }
+  .sym { font-family: var(--mono); font-weight: 700; font-size: 1.05rem; letter-spacing: .01em; }
+  .pill {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .04em;
+    padding: .2rem .55rem; border-radius: 2px; border: 1px solid currentColor;
+    text-transform: uppercase;
+  }
+  .pill.quiet { color: var(--muted); background: var(--surface-2); border-color: var(--rule); }
+  .pill.fired { color: var(--fire); background: var(--fire-dim); font-weight: 700; }
+  .price-row {
+    margin-left: auto; text-align: right; font-family: var(--mono);
+    font-variant-numeric: tabular-nums; display: flex; flex-direction: column; gap: .05rem;
+  }
+  .price { font-size: 1.05rem; font-weight: 700; }
+  .chg { font-size: .78rem; }
+  .chg.up { color: var(--target); }
+  .chg.down { color: var(--stop); }
+  .card-note { font-size: .86rem; color: var(--ink-soft); margin: 0; }
+  .card-note b { color: var(--ink); }
+  .card-meta { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
+
+  .fired-detail {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+    gap: .5rem; margin-top: .2rem;
+  }
+  .fired-detail .stat {
+    background: var(--paper); border-radius: 2px; padding: .5rem .6rem;
+    display: flex; flex-direction: column; gap: .1rem;
+  }
+  .fired-detail .k { font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .fired-detail .v { font-family: var(--mono); font-size: .92rem; font-weight: 700; }
+
+  .box {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 3px;
+    padding: .95rem 1.05rem; display: flex; flex-direction: column; gap: .5rem;
+  }
+  .box h3 { margin: 0; font-size: .92rem; font-weight: 640; }
+  .box p { margin: 0; color: var(--ink-soft); font-size: .88rem; }
+  .box.warn { border-color: var(--stop); background: var(--stop-dim); }
+  .box.warn h3 { color: var(--stop); }
+
+  .log { display: flex; flex-direction: column; gap: 0; font-family: var(--mono); font-size: .8rem; }
+  .log-row {
+    display: flex; gap: .7rem; padding: .4rem 0; border-bottom: 1px solid var(--rule);
+    color: var(--muted);
+  }
+  .log-row:last-child { border-bottom: none; }
+  .log-row .t { flex-shrink: 0; color: var(--ink-soft); }
+
+  footer { color: var(--muted); font-size: .82rem; border-top: 1px solid var(--rule); padding-top: 1rem; display: flex; flex-direction: column; gap: .3rem; }
+  code { font-family: var(--mono); background: var(--surface-2); padding: .08em .35em; border-radius: 2px; font-size: .88em; }
+  a { color: var(--accent); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Watching WETO &middot; WFF &middot; OSRH &middot; IPST</div>
+    <h1>Surge Watch</h1>
+    <p class="sub">Volume-confirmed breakout scanner. Not continuously live — this
+    page shows the data as of the last refresh below, not this instant.</p>
+  </header>
+
+  <div class="statusbar">
+    <span class="dot closed"></span>
+    <span>Market closed</span>
+    <span class="sep">·</span>
+    <span class="muted">Refreshed <span id="asof">00:30 ET, 18 Aug</span></span>
+    <span class="sep">·</span>
+    <span class="muted">Next scan: premarket, ~4:00 ET</span>
+  </div>
+
+  <section>
+    <h2>Watchlist<span class="when">last session's close + current print</span></h2>
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-top">
+          <span class="sym">WETO</span>
+          <span class="pill quiet">quiet</span>
+          <div class="price-row">
+            <span class="price">$35.14</span>
+            <span class="chg up">+42.9% vs $24.59 close</span>
+          </div>
+        </div>
+        <p class="card-note">Overnight print on thin volume — real but easy to
+        overweight. <b>Was up 396% premarket-low to after-hours-high
+        yesterday</b> ($8.65 → $42.94) with no verifiable catalyst, just heavy
+        momentum-chat volume. Scanner found 11 signals on it yesterday and
+        <b>lost 4.4% net</b> — see the honesty box below before trading this one.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <span class="sym">WFF</span>
+          <span class="pill quiet">quiet</span>
+          <div class="price-row">
+            <span class="price">$2.16</span>
+            <span class="chg up">+6.9% vs $2.02 close</span>
+          </div>
+        </div>
+        <p class="card-note">Yesterday's best scanner result by far — four
+        signals rode a trend from ~$4.49 to ~$10.20 intraday. Read the
+        <b>why</b> in the honesty box: those wins were the 15-bar time limit
+        cutting a still-rising trade, not the rule calling the top.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <span class="sym">OSRH</span>
+          <span class="pill quiet">quiet</span>
+          <div class="price-row">
+            <span class="price">$0.6322</span>
+            <span class="chg up">+7.2% vs $0.59 close</span>
+          </div>
+        </div>
+        <p class="card-note">17 signals yesterday, roughly flat net (−0.2%).
+        Highest signal count of the four, lowest edge — a lot of noise at this
+        price level.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <span class="sym">IPST</span>
+          <span class="pill quiet">quiet</span>
+          <div class="price-row">
+            <span class="price">$8.16</span>
+            <span class="chg up">+10.4% vs $7.39 close</span>
+          </div>
+        </div>
+        <p class="card-note">Where this scanner came from — 6 of your own real
+        trades yesterday, median hold 149 seconds, net +$29.58. The signal
+        logic is built and regression-tested directly against your 10:57
+        winner and your 10:31 loser on this ticker.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Example: what a fired card looks like<span class="when">illustrative, from yesterday 10:57 ET</span></h2>
+    <div class="cards">
+      <div class="card fired">
+        <div class="card-top">
+          <span class="sym">IPST</span>
+          <span class="pill fired">signal fired</span>
+          <div class="price-row">
+            <span class="price">$7.685</span>
+            <span class="chg up">volume 3.2x median</span>
+          </div>
+        </div>
+        <p class="card-note">Volume 3.2x median CONFIRMING a +2.81% bar — the
+        real signal that preceded your +23.9% trade.</p>
+        <div class="fired-detail">
+          <div class="stat"><span class="k">Entry</span><span class="v">~$7.685</span></div>
+          <div class="stat"><span class="k">Hard stop</span><span class="v">$7.531</span></div>
+          <div class="stat"><span class="k">Target</span><span class="v">none</span></div>
+          <div class="stat"><span class="k">Exit rule</span><span class="v">trail</span></div>
+        </div>
+        <p class="card-meta">No profit target by design — a fixed target would
+        have cut your real +23.9% trade to about +5%. Exit on a close below the
+        prior bar's low, or 15 bars with no progress.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="box warn">
+    <h3>Read this before trading anything this page shows</h3>
+    <p><b>The entry logic is real and tested</b> — volume-confirmed moves beat
+    both a volume spike alone and a price move alone, measured across 1,530
+    real minute bars. It correctly separates your actual IPST winner's bar
+    from your actual IPST loser's bar.</p>
+    <p><b>The dollar returns are not a forecast.</b> Yesterday's backtest
+    total (+709% across 41 signals) came almost entirely from WFF, and traced
+    back to four trades that got cut by a 15-bar time limit while still
+    climbing — luck of where the clock landed, not something the rule earned.
+    Tested cold against WETO the same day: 11 signals, <b>net −4.4%</b>, 8 of
+    11 hit the stop. The scanner finds real local breakouts. It cannot tell a
+    trend launching from a trend pausing before it fails.</p>
+    <p>Treat every "signal fired" as <i>"something real just happened,"</i>
+    not <i>"this runs."</i> Size every entry assuming it loses about 2%.</p>
+  </div>
+
+  <section>
+    <h2>Refresh log<span class="when">real, not simulated</span></h2>
+    <div class="log" id="log">
+      <div class="log-row"><span class="t">00:30 ET</span><span>Page built. Quotes pulled live from Robinhood. Market closed — no minute-bar scan runs until premarket.</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Prices from Robinhood, pulled directly — not estimated. Scanner logic:
+    <code>scalp_signal.py</code> in the repo, tested against real trades from
+    2026-08-17. Full writeup: <code>sources.md</code>, "The user's own
+    scalping" and "Out-of-sample test — WETO."</p>
+    <p>This page updates when refreshed and republished — not on its own while
+    you're looking at it. Reload for the latest version at the same link.</p>
+  </footer>
+
+</div>

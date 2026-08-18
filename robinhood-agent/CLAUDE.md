@@ -67,6 +67,26 @@ confirmation the order is live — `confirmed` can still flip to
 `rejected` moments later, silently, with no separate notification. A
 stop that isn't verified resting is not a stop; it's a belief.
 
+## The Agentic account is a CASH account — proceeds don't settle same-day
+
+Discovered 2026-08-18 10:49 ET, mid-session, real money: a 4th scalp trade
+(XOS, freshly fired) was rejected with "Not enough buying power," even
+though `get_portfolio` showed `cash: $524.38`. The real spendable figure
+was `buying_power: $110.65` — proceeds from that morning's three closed
+trades (IPST, SXTC, WFF) hadn't settled yet. This account is `type: cash`
+per `get_accounts`, not margin, so a sell's proceeds are not spendable
+until settlement (typically T+1), regardless of the cash balance shown.
+
+**Before sizing a buy at the $150 Rule 2 cap, check `buying_power` from
+`get_portfolio`, not `cash`.** If a position closed earlier the same
+session, assume its proceeds are NOT available for the next buy until
+confirmed otherwise. This will keep recurring on any day with multiple
+round-trip scalp trades — it is not a one-off. By the time this was
+diagnosed, XOS had fallen from its $4.70 signal to $4.35 (past its own
+stop level) and was correctly skipped rather than chased — but a faster
+buying-power check would have caught this before the signal went stale,
+not after.
+
 ## RULE ZERO — real data, or say nothing. No guessing, ever.
 
 Stated by the user on 2026-08-17 as **the core architecture of this

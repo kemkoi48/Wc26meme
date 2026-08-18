@@ -211,7 +211,7 @@
   <div class="hero quiet" id="hero">
     <div class="hero-label">Right now</div>
     <div class="hero-main">No signals — nothing to do</div>
-    <p class="hero-sub">WFF's stop also fired on its own — closed 54s after entry, −0.97R. Fast whipsaw: price recovered to $2.63 minutes later, which is the accepted cost of a hard-stop/no-target design, not a mistake. No open position right now. Session so far: IPST −5.33R (the stop-verification failure), SXTC −1.00R (textbook), WFF −0.97R (textbook, just fast). All three closes are honestly logged in trades.csv.</p>
+    <p class="hero-sub">XOS fired at 10:49 ET but the buy order was rejected — "not enough buying power." Real cash is $524.38, but only $110.65 was actually spendable: this is a cash account, and proceeds from today's three closed trades hadn't settled yet. By the time that was sorted, XOS had already fallen from $4.70 to $4.35 — past where its stop would've triggered — so it was correctly skipped rather than chased. No open position. Session tally unchanged: IPST −5.33R, SXTC −1.00R, WFF −0.97R.</p>
   </div>
 
   <div class="legend">
@@ -223,9 +223,9 @@
     <span class="dot open"></span>
     <span>Entry window open (RULES.md) · live-trade authorized</span>
     <span class="sep">·</span>
-    <span>Refreshed <span id="asof">10:44 ET, 18 Aug</span></span>
+    <span>Refreshed <span id="asof">10:49 ET, 18 Aug</span></span>
     <span class="sep">·</span>
-    <span>No open position · rescanning every 5 min</span>
+    <span>No open position · buying power now $110.65 (unsettled)</span>
   </div>
 
   <section>
@@ -233,32 +233,34 @@
     <div id="watchlist">
       <div class="watchrow" data-sym="WETO">
         <span class="sym">WETO</span>
-        <span class="price">$49.38</span>
+        <span class="price">$47.91</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="WFF">
         <span class="sym">WFF</span>
-        <span class="price">$2.63</span>
+        <span class="price">$2.61</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="OSRH">
         <span class="sym">OSRH</span>
-        <span class="price">$0.696</span>
+        <span class="price">$0.707</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="IPST">
         <span class="sym">IPST</span>
-        <span class="price">$12.03</span>
+        <span class="price">$13.81</span>
         <span class="pill quiet">quiet</span>
       </div>
     </div>
-    <p class="scan-note" style="margin-top:.5rem">IPST up to $12.03 now
-    (+2.9% this bar) but only 1.6x volume — unconfirmed, correctly not
-    re-bought. WFF back above the stop-out price at $2.63.</p>
+    <p class="scan-note" style="margin-top:.5rem">IPST keeps climbing
+    ($13.81 now, was $7-8 this morning) but volume never confirms —
+    correctly never re-bought since the loss. This is a real lesson:
+    the biggest mover of the day was also the worst trade, because the
+    stop-verification process failed, not the entry call.</p>
   </section>
 
   <section>
-    <h2>Today's market scan<span class="when" id="scan-time">10:44 ET, 18 Aug — 2 scanners</span></h2>
+    <h2>Today's market scan<span class="when" id="scan-time">10:49 ET, 18 Aug — 2 scanners</span></h2>
     <p class="scan-note">Rescanned every refresh using two of your own
     Robinhood account's saved scanners — "Early Momentum Ignition" (price
     $2-20, float under 20M, 1h relative volume over 3x) plus "Warrior
@@ -277,33 +279,33 @@
     <div id="scan-results">
       <div class="watchrow" data-sym="AIXC">
         <span class="sym">AIXC</span>
-        <span class="price">$2.67</span>
+        <span class="price">$3.14</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="XOS">
         <span class="sym">XOS</span>
-        <span class="price">$4.40</span>
-        <span class="pill quiet">quiet</span>
+        <span class="price">$4.35</span>
+        <span class="pill" style="color: var(--stop); background: var(--stop-dim); font-weight: 700;">fired, missed</span>
       </div>
       <div class="watchrow" data-sym="SGLY">
         <span class="sym">SGLY</span>
-        <span class="price">$5.76</span>
+        <span class="price">$5.89</span>
         <span class="pill quiet">quiet</span>
       </div>
       <div class="watchrow" data-sym="SXTC">
         <span class="sym">SXTC</span>
-        <span class="price">$5.07</span>
+        <span class="price">$5.13</span>
         <span class="pill quiet">quiet</span>
       </div>
-      <div class="watchrow" data-sym="TJGC">
-        <span class="sym">TJGC</span>
-        <span class="price">$4.44</span>
+      <div class="watchrow" data-sym="EJH">
+        <span class="sym">EJH</span>
+        <span class="price">$1.89</span>
         <span class="pill quiet">quiet</span>
       </div>
       <p class="scan-note" style="margin-top:.75rem">18 matches on Early
-      Momentum Ignition, 7 on Warrior Trading Style. Nothing fired this
-      round — XOS moved +1.97% on 5.6x volume, just under the 2% price
-      threshold, a near-miss the rule correctly stayed out of.</p>
+      Momentum Ignition, 7 on Warrior Trading Style. XOS fired for real
+      (9.9x volume, +2.84%) but the buy order hit a buying-power wall —
+      see the log. Missed, not mistraded; nothing else confirmed.</p>
     </div>
   </section>
 
@@ -350,6 +352,7 @@
         <div class="log-row"><span class="t">10:39 ET</span><span>Scheduled 5-min rescan. <b>WFF fired</b> (core watch) — 4.0x volume confirming a +2.82% bar. Bought 58 sh at $2.5799. GTC stop placed at $2.53, state verified immediately — confirmed resting, 15s after the fill. Third straight trade with a verified stop.</span></div>
         <div class="log-row"><span class="t">10:40 ET</span><span>WFF's stop fired too — closed <b>−0.97R</b> just 54s after entry, a fast whipsaw. Price recovered to $2.63 minutes later. This is the accepted cost of no profit target, not a mistake — the stop worked exactly as designed, same as SXTC. No open position now.</span></div>
         <div class="log-row"><span class="t">10:44 ET</span><span>Scheduled rescan, nothing fired. Session tally: IPST −5.33R (the verification failure), SXTC −1.00R, WFF −0.97R (both textbook). Watching for the next signal.</span></div>
+        <div class="log-row"><span class="t">10:49 ET</span><span><b>XOS fired</b> (9.9x volume, +2.84% bar), verified live and tradeable — but the buy order was REJECTED: "not enough buying power." Real finding: this is a cash account, and proceeds from today's three closed trades hadn't settled yet, so buying power was $110.65, not the $524.38 cash balance. By the time this was diagnosed, XOS had fallen to $4.35 from its $4.70 signal — past its stop level — so it was correctly skipped, not chased. Noted in CLAUDE.md for future sizing.</span></div>
       </div>
     </div>
   </details>

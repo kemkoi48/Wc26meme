@@ -100,6 +100,65 @@ in `test_scalp_signal.py`; two pre-existing tests were adjusted because
 their bar values happened to cross the new +5% trigger, changing which
 rule fired first — not a regression, the new rule firing there is correct.
 
+## Long-run growth sleeve — new, 2026-08-18, agent-executed
+
+User, verbatim: *"you know what your strategy will be fast growing
+investment not the day trading and option trading... day trading is not
+feasible with your situation... You will be help me screen I will
+execute the day trade but you will trade yourself for long run."* Split
+of responsibility, effective immediately:
+
+- **Day trading (Surge Watch, scalp_signal.py)**: screening only from
+  here on. The dashboard still refreshes and reports fires, but the
+  autonomous 5-minute self-chained trading loop is OFF (user: "stop
+  surge watch screening for now" — the recurring `send_later` chain was
+  cancelled). The user executes any day-trade fire by hand.
+- **Long-run growth (growth_signal.py, new)**: agent-executed, same
+  Agentic account (432805174), same capital, funded as it settles —
+  no separate account or carve-out requested.
+
+**Entry screen**: Robinhood saved scan "Growth Momentum (long-run)"
+(scan_id `2514847d-25cb-4628-9731-bb5b0ee7d246`) — market cap >$1B, RSI
+50-70, 1-month change >5%, ADX>20, avg volume >500k. See
+`growth_signal.py`'s module docstring for the full derivation, including
+the unit-conversion bug caught before trusting the filter (the % Change
+expression returns a decimal ratio, not a percentage — an early draft
+demanded a 500% monthly move and matched zero instruments).
+
+**Exit**: a wide 18% trailing stop from the peak price since entry
+(`growth_signal.TRAIL_PCT`) — user chose "wide" over scalp-style 2% and
+over no stop at all. This is the user's stated risk tolerance, not a
+backtested number.
+
+**RULE — fractional-share equity orders cannot carry ANY stop trigger.**
+Discovered live 2026-08-18, the growth sleeve's first trade (trades.csv
+row 12). Tried a GTC stop_market on a 0.607998-share PLTR position:
+rejected, `"Invalid time in force for fractional order"`. Tried GFD
+instead: rejected again, `"Invalid trigger for fractional order"` — so
+it is not a time-in-force problem, fractional orders reject the `stop`
+trigger outright, confirming and sharpening the existing "Fractional
+shares: only on type=market" line in `place_equity_order`'s own
+parameter docs. **Consequence: a fractional buy for this sleeve cannot
+have a real resting stop.** Prefer a WHOLE-SHARE buy sized to whatever
+buying power is actually available, even if that means picking a
+cheaper name from the scan than the single best candidate, so
+`decide_stop_update`'s trailing stop can actually rest as a broker
+order. If a fractional buy is unavoidable, say so explicitly — "no
+resting stop, monitored by hand" — never imply broker-side protection
+that does not exist.
+
+**RULE — a same-day round trip does not return buying power to where it
+started, even in a cash account, even at zero net exposure.** Same
+trade: reversing the unprotectable PLTR fractional position (sold
+immediately, -$0.08 round-trip cost) dropped buying power from $110.65
+to $5.65 for the rest of the day — the sell's proceeds are unsettled
+same as any other sale (T+1), regardless of how recently the shares
+were bought. This should have been checked BEFORE reversing, not
+discovered after. **Before undoing any position to fix a mistake, check
+whether the undo itself is affordable in the same way a fresh trade
+would be** — an "instant fix" that costs the day's remaining buying
+power is not actually free.
+
 ## RULE ZERO — real data, or say nothing. No guessing, ever.
 
 Stated by the user on 2026-08-17 as **the core architecture of this
@@ -168,6 +227,7 @@ verification check rather than trusting the first one to re-arm itself.
 | S7 | Options (long calls/puts) | DRAFT, option_level_2 confirmed live | Passarelli + own catalyst-mismatch research | `option_math.py` + `option_scanner.py` built, unit-tested (`test_option_math.py`). Six contracts graded across three live runs (ONDS, LUNR, STNE, NKTR, ZIM, BULL), all six rejections, zero trades placed. 2026-08-17: added a second track for catalysts with no dated trigger (insider activity, sentiment, general hype) — `SoftCatalystScanConfig`/`evaluate_soft_candidate`/`apply_soft_filters_and_rank`, edge test is IV vs. this stock's own realized volatility rather than vs. a historical-event sample. Not yet run live; see strategies.md S7. |
 | S8 | Verified Catalyst Momentum | DRAFT, n=1 live trades, catalyst gate backtested | Not a book — reverse-engineered from this week's own trades and rejections | Written 2026-08-15 after noticing S1–S7 had contributed zero trades while the ad hoc screen carried the account. 2026-08-16: the float-turnover disqualifier was backtested (single day, n=11, not independent) and **demoted** — turnover magnitude didn't predict outcome and was actively suppressed on the one name that was halting. The catalyst check is the real gate now; turnover is secondary. See S8's "Float-turnover backtest" subsection. |
 | — | Day-trade equity screening (SMWB/RSKD picks) | Ad hoc, hand-run each time | Saved Robinhood scans + Stocktwits catalyst check | NOT S3. Don't conflate a finding here into a reason to edit S3. This is what S8 is trying to formalize — but S8 is not yet proven, so this ad hoc process stays the working method until S8 earns LIVE status on its own results. |
+| S9 | Growth sleeve (long-run, agent-executed) | LIVE, n=1 (reversed same-day, not a real trade outcome) | User's own risk split, 2026-08-18 | `growth_signal.py`. Screen: Robinhood scan `2514847d-25cb-4628-9731-bb5b0ee7d246`. Exit: 18% trail from peak, user's stated tolerance not a backtest. First trade (PLTR, row 12) reversed same-day after discovering fractional orders can't carry a stop — see CLAUDE.md's growth-sleeve section for both new rules that came out of it. No open position as of 2026-08-18 14:45 ET; buying power $5.65 until settlement. |
 
 Read this table before re-deriving a strategy's status from scratch.
 

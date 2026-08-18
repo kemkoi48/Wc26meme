@@ -84,7 +84,8 @@ sig = detect_entry(both)
 check("surge + move fires", sig.fired, sig.reason)
 check("  stop is 2% under entry", approx(sig.stop_price, 10.35 * 0.98, 1e-9))
 check("  entry hint is the signal bar close", approx(sig.entry_hint, 10.35))
-check("  confidence names the n=41 limit", "n=41" in sig.confidence)
+check("  confidence names the WETO out-of-sample check",
+      "WETO" in sig.confidence and "-4.4%" in sig.confidence)
 
 check("insufficient history does not fire", not detect_entry(flat(5)).fired)
 check("down bar does not fire",
@@ -160,6 +161,60 @@ check("time stop fires at max_hold", d.exit_now and d.kind == "time", d.reason)
 
 check("stop takes priority over time",
       decide_exit(entry, [Bar(o=10, h=10.1, l=9.7, c=9.75, v=100)] * 15).kind == "stop")
+
+print()
+print("OUT-OF-SAMPLE -- real WETO bars, 2026-08-17, NOT one of the 5 symbols")
+print("the thresholds were derived from. This is a negative result and it")
+print("is pinned here on purpose so the module cannot silently drift into")
+print("being oversold later. See scalp_signal.py's module docstring.")
+# 21 real one-minute bars ending 16:09 UTC (12:09 ET), pulled from
+# get_equity_historicals and transcribed by script (not by eye -- Rule 0).
+# The last bar is a genuine surge+move signal bar.
+weto_window = [
+    dict(o=16.95, h=16.95, l=16.7, c=16.7181, v=2504),
+    dict(o=16.76, h=16.9999, l=16.76, c=16.7602, v=2696),
+    dict(o=16.77, h=16.9188, l=16.71, c=16.81, v=8694),
+    dict(o=16.9163, h=17.25, l=16.8219, c=17.185, v=28327),
+    dict(o=17.2364, h=17.2364, l=16.79, c=16.9214, v=9229),
+    dict(o=16.9294, h=17.0, l=16.52, c=16.7058, v=26697),
+    dict(o=16.72, h=16.7999, l=16.701, c=16.7999, v=3115),
+    dict(o=16.701, h=16.8, l=16.6632, c=16.7, v=2664),
+    dict(o=16.83, h=16.83, l=16.55, c=16.56, v=6492),
+    dict(o=16.59, h=16.69, l=16.3, c=16.51, v=10118),
+    dict(o=16.481, h=16.6, l=16.37, c=16.48, v=8771),
+    dict(o=16.59, h=16.59, l=16.02, c=16.1155, v=8084),
+    dict(o=16.105, h=16.2839, l=16.05, c=16.25, v=8692),
+    dict(o=16.25, h=16.38, l=16.16, c=16.2535, v=5807),
+    dict(o=16.2714, h=16.4699, l=16.2714, c=16.37, v=5145),
+    dict(o=16.4, h=16.4, l=16.2, c=16.29, v=4006),
+    dict(o=16.2771, h=16.34, l=16.2, c=16.22, v=5933),
+    dict(o=16.2267, h=16.3399, l=16.14, c=16.2501, v=9270),
+    dict(o=16.36, h=16.41, l=16.165, c=16.205, v=6499),
+    dict(o=16.2086, h=16.66, l=16.1, c=16.4914, v=8295),
+    dict(o=16.58, h=17.09, l=16.435, c=17.0405, v=25774),
+]
+weto_bars = to_bars([
+    {"open_price": b["o"], "high_price": b["h"], "low_price": b["l"],
+     "close_price": b["c"], "volume": b["v"]}
+    for b in weto_window
+])
+sig = detect_entry(weto_bars)
+check("WETO bar (17.04, vol 25774, 3.5x/+2.8%) DOES fire -- it is a real "
+      "volume-confirmed breakout, same as IPST's", sig.fired, sig.reason)
+
+# The next two real bars: price stalls and rolls over into the stop.
+weto_followup = to_bars([
+    dict(open_price=16.965, high_price=17.0, low_price=16.6601, close_price=16.855, volume=17472),
+    dict(open_price=16.7569, high_price=16.95, low_price=16.75, close_price=16.7844, volume=16731),
+])
+entry = sig.entry_hint
+d1 = decide_exit(entry, weto_followup[:1])
+check("...but the very next real bar hits the hard stop (this is the "
+      "honest outcome for 8 of WETO's 11 signals that day)",
+      d1.exit_now and d1.kind == "stop", d1.reason)
+if d1.exit_now:
+    pnl = (weto_followup[0].c - entry) / entry * 100
+    print(f"       real outcome on this signal: {pnl:+.2f}%")
 
 print()
 if failures:

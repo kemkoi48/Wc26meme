@@ -40,6 +40,31 @@ act:
     and the repo has rejected far better-supported claims than this (see
     S2's 74-trade rejection in strategies.md).
 
+  OUT-OF-SAMPLE TEST, 2026-08-17 -- the rule was checked against WETO,
+  which was NOT in the original five symbols, and the direction claim
+  above did not survive contact with it:
+      11 signals fired on WETO ($10.16 -> $24.79 that regular session,
+      arguably an even bigger trend day than WFF's). Net result: -4.4%,
+      3 wins out of 11. 8 of the 11 hit the -2% hard stop.
+    The WFF result traces to a specific mechanical accident: its four
+    biggest signals (bars 35/38/39/40, essentially one entry re-fired)
+    happened to land at the exact start of its run, and all four were cut
+    by the 15-bar TIME cap while still climbing (+150% to +248%), never by
+    the trail -- meaning the "profit" is really "the time cap forced an
+    exit before the trend that was still running finally stopped," which
+    is luck of where 15 bars happened to land, not a property of the
+    entry rule. WETO's 11 signals fired at points inside its OWN comparably
+    huge trend that were NOT followed by a clean multi-bar run -- they were
+    mid-trend pauses that reversed, and the tight stop cut them small.
+    Conclusion, stated plainly: this rule detects "something real is
+    happening" (see the volume-confirmation finding above, which DID hold
+    up -- WETO's signal bars were genuine local breakouts, not noise). It
+    does NOT reliably distinguish "this is the start of an hours-long move"
+    from "this is a pause inside one." Do not size as if it does. The
+    module was NOT re-tuned to make WETO's number look better after seeing
+    it -- that would be curve-fitting one out-of-sample failure into a new
+    in-sample fit, exactly what Rule 0 (CLAUDE.md) exists to prevent.
+
   WHAT SURVIVES the honesty check is the SHAPE, not the size: most signals
   lose a little and a few win a lot. That matches the user's own day (three
   losers averaging -3.4%, one winner +23.9%) and it is the reason the exit
@@ -238,10 +263,13 @@ def detect_entry(
         entry_hint=entry,
         stop_price=entry * (1 + stop_pct / 100.0),
         confidence=(
-            "Direction is measurement-backed (surge+move beat surge alone and "
-            "move alone on 1,530 bars). Expected return is NOT -- the sizing "
-            "study was n=41 on one day with 86% of profit from 3 trades. "
-            "Assume most signals lose ~2%; size for that."
+            "This bar shows a real local breakout (volume-confirmed moves beat "
+            "unconfirmed ones on 1,530 measured bars) -- it is NOT a forecast "
+            "that a large move follows. Out-of-sample check on WETO 2026-08-17 "
+            "(11 signals, net -4.4%, 8/11 hit the stop) showed this rule cannot "
+            "tell a trend LAUNCH from a mid-trend pause. Assume most signals "
+            "lose ~2%; size for that, and do not hold expecting a repeat of "
+            "any single day's backtest number."
         ),
     )
 

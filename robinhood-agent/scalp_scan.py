@@ -107,6 +107,10 @@ def main() -> None:
         print("  no entries. That is the normal outcome -- on 2026-08-17 this")
         print("  condition fired 41 times across 5 symbols in a whole session,")
         print("  and 28 of those still lost money.\n")
+    print("  Known limit (WETO out-of-sample check, 2026-08-17): this signal")
+    print("  finds real local breakouts but cannot tell a trend LAUNCH from a")
+    print("  mid-trend pause -- 11 WETO signals that day netted -4.4%. Treat")
+    print("  every alert as 'something real is happening,' not 'this runs.'")
 
 
 if __name__ == "__main__":

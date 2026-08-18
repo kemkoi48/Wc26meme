@@ -1117,3 +1117,46 @@ on IPST and only IPST out of the five symbols — the same minute the user
 entered. The regression test in `test_scalp_signal.py` pins both sides: the
 10:57 bar (before the +23.9% winner) must fire, and the 10:31 bar (before
 the −5.6% loser, entered one bar after the surge had passed) must not.
+
+### Out-of-sample test — WETO, 2026-08-17, and why the +709% number is wrong
+
+Requested directly: "not just IPST, i trade wff, osrh, weto." WFF and OSRH
+were already inside the original 41-signal study (per-symbol: IPST +9.2%,
+WFF +699.6%, OSRH −0.2%, OABI +0.7%). WETO was not — it wasn't one of the
+five symbols the thresholds were derived from, which makes it the first
+real out-of-sample test the scanner has had.
+
+**It failed.** 11 signals fired on WETO's regular session ($10.16 → $24.79,
+arguably a bigger trend day than WFF's). Net result: **−4.4%, 3 wins of
+11, 8 of 11 hit the −2% hard stop.** Same entry logic, same real bars,
+opposite sign.
+
+**Diagnosing rather than re-tuning** (re-tuning after seeing the failure
+would be curve-fitting the failure away, exactly what Rule 0 forbids):
+traced WFF's four biggest signals (bars 35/38/39/40) and found every one
+exited on the **time cap**, not the trail — cut at 15 bars while still
+running +150% to +248%. The rule never told those trades to exit; the
+15-bar limit did, and the trend happened to still be climbing when it hit.
+That is a property of where the clock ran out, not a property of the
+entry signal.
+
+WETO's 11 signals fired at points inside its own comparably large trend
+that were *not* followed by a clean run — mid-trend pauses that rolled
+over, caught by the tight stop before anything developed.
+
+**Conclusion, stated as precisely as the evidence allows:** the rule
+reliably detects a real, volume-confirmed local breakout (that half is
+still supported — WETO's signal bars were genuine breaks, not noise, same
+shape as IPST's). It does **not** reliably distinguish the start of an
+hours-long move from a pause inside one that is about to fail. The
++709%/mostly-WFF backtest number should be read as one lucky mechanical
+accident, not a rate. `scalp_signal.py`'s `confidence` field now says this
+on every fired signal, not just in the docstring — the honest limitation
+travels with the alert, not just the source code.
+
+Pinned as a permanent regression test in `test_scalp_signal.py` against
+real WETO bars (21 minute bars ending 16:09 UTC, transcribed by script from
+`get_equity_historicals`, not by eye) so this cannot silently get
+oversold later: the signal bar correctly fires, and the very next real bar
+correctly hits the stop for −1.09%, matching the full-day simulation
+exactly.

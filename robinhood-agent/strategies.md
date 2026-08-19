@@ -847,6 +847,80 @@ exist because zero coded exit rule was a bigger risk than an honest,
 conservative placeholder; revisit once real trades produce real outcomes to
 look at, same posture as every other threshold in this repo.
 
+### Governing rules, 2026-08-19 — set after user pushback
+
+User's response to the $50/contract cap being confirmed: *"bro $50 per
+contract is crazy. so becareful. we cannot lose. if you analyze it will
+lose dont buy the contract. our strategy must be based on the
+learning/the things we learn from the book. set the rule."* Written down
+here as the explicit, standing rule set for S7, not left implicit in code
+comments:
+
+1. **$50/contract is a hard ceiling on loss, not a target size.** It is
+   already the account's smallest real trade — most setups will be
+   screened out before spending anywhere near it (see rule 2). It is not
+   being lowered further because a smaller cap doesn't fix the actual
+   complaint, which is about setup quality, not dollar amount.
+2. **"We cannot lose" is not a standard any real options strategy can
+   promise — anyone claiming otherwise is wrong** — but the entry gates
+   already enforce the honest version of it: `mismatch_ratio` (catalyst
+   setups) and `iv_hv_ratio` (soft-catalyst setups) exist specifically to
+   reject any candidate the math says is overpriced relative to its own
+   name's historical move pattern. Real track record so far: 6/6 live
+   chain checks correctly rejected (ONDS, LUNR, STNE, NKTR, ZIM, BULL) —
+   zero contracts bought because zero have cleared the bar. **Rule, made
+   explicit: if a candidate fails its gate, it is not bought — full stop,
+   no discretionary override "because it looks good."** The gates ARE the
+   "don't buy it if analysis says it'll lose" rule the user asked for;
+   this just states that in words instead of leaving it implicit in code.
+3. **McMillan's own stated buyer's standard, adopted as policy:** a long
+   option is only a reasonable buy when the breakeven has a real
+   probability of being reached — McMillan frames this in terms of
+   delta/probability, not "any directional hunch." Concretely: no long
+   option is bought below roughly 0.30 delta on the entry leg (too far
+   OTM to have a realistic shot within the holding window), and no option
+   is bought into a scheduled IV-elevating event (earnings, a known
+   binary catalyst date) on the expectation that direction alone pays for
+   an IV crush — checked via `get_earnings_calendar` before every entry,
+   already-standing practice, now stated as a hard rule rather than a
+   habit.
+4. **No chasing a move that has already happened.** If the price action
+   that would justify the trade already occurred (the gap already
+   printed, the reaction already priced in), the setup is stale — not
+   bought retroactively. This directly answers the MRNA question below.
+
+### MRNA, 2026-08-19 — "we had the news no?" — checked against real data, answer: no
+
+User's claim: the MRNA move could have been bought Monday (08-17) or
+Tuesday (08-18) because the news was already out. Checked directly rather
+than assumed, three ways:
+
+- `get_earnings_calendar` for the surrounding week — MRNA doesn't appear.
+  Not an earnings event.
+- `get_symbol_messages` (Stocktwits) for MRNA — every message is
+  timestamped 2026-08-19, ~21:52-21:56 UTC, all post-move reaction/hype.
+  Nothing dated earlier discussing the catalyst in advance.
+- `get_equity_historicals`, hourly bars, 08-17 through 08-19 extended
+  hours — the real answer. MRNA traded flat in the $62-65 range through
+  **all** of Monday and Tuesday, including the Tuesday 23:00 UTC
+  post-market bar (closed $62.51, nothing unusual). The move starts
+  abruptly at the **2026-08-19T10:00:00Z bar — 6:00 AM ET Wednesday
+  premarket** — open $63.01, close $99.52, on 376k shares, then keeps
+  accelerating through the next few hours (high $140.77, 17.6M shares in
+  the 13:00 UTC hour alone).
+
+**Honest answer: no, we did not have the news Monday or Tuesday.** The
+stock was flat and unremarkable both of those days on the actual tape —
+this was a genuine surprise (almost certainly a clinical/data readout,
+given the shape and size of the gap) that broke Wednesday premarket, not
+a disclosed catalyst sitting there to be traded in advance. There was no
+missed entry on the days named — the information didn't exist yet on
+either of those days. Rule 4 above is what would have kept us out of
+chasing it Wednesday morning after the print, which is the only point in
+this sequence a same-day entry was even theoretically available, and by
+open the move was already most of the way done — exactly the "already
+happened" case rule 4 rules out.
+
 Source: Dan Passarelli, *Trading Options Greeks* (Bloomberg Financial
 Series). A Greeks-first options text — deltas, theta, vega, spread
 construction, volatility trading. Read the parts relevant to what this

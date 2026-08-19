@@ -22,6 +22,7 @@ from option_math import (
     catalyst_direction_score,
     catalyst_effective_date,
     evaluate_candidate,
+    decide_option_exit,
     evaluate_soft_candidate,
     expected_move_from_iv,
     expected_move_from_straddle,
@@ -381,6 +382,42 @@ passed, rejected = apply_soft_filters_and_rank(
 check("two pass, one rejected on iv/hv", len(passed) == 2 and len(rejected) == 1)
 check("ranked cheapest iv/hv first", [p["symbol"] for p in passed] == ["CHEAPER", "TEST2"],
       str([p["symbol"] for p in passed]))
+
+print("decide_option_exit -- interim S7 exit rule (2026-08-19)")
+check("holding, well inside all thresholds", decide_option_exit(1.00, 1.10, 20).exit_now is False)
+check(
+    "stop-loss at exactly -50% fires",
+    decide_option_exit(1.00, 0.50, 20).kind == "stop",
+)
+check(
+    "just above -50% (-49%) does not fire the stop",
+    decide_option_exit(1.00, 0.51, 20).exit_now is False,
+)
+check(
+    "profit-lock at exactly +100% (a double) fires",
+    decide_option_exit(1.00, 2.00, 20).kind == "profit",
+)
+check(
+    "just below a double (+99%) does not fire profit-lock",
+    decide_option_exit(1.00, 1.99, 20).exit_now is False,
+)
+check(
+    "time stop at exactly 5 days fires even flat P&L",
+    decide_option_exit(1.00, 1.00, 5).kind == "time",
+)
+check("6 days does not trigger the time stop", decide_option_exit(1.00, 1.00, 6).exit_now is False)
+check(
+    "stop-loss takes priority over time stop when both would fire",
+    decide_option_exit(1.00, 0.40, 2).kind == "stop",
+)
+check("zero entry premium rejected", decide_option_exit(0, 1.00, 20).exit_now is False)
+check("negative entry premium rejected", decide_option_exit(-1, 1.00, 20).exit_now is False)
+check("negative current premium rejected", decide_option_exit(1.00, -0.1, 20).exit_now is False)
+check("negative dte rejected", decide_option_exit(1.00, 1.00, -1).exit_now is False)
+check(
+    "custom thresholds honored",
+    decide_option_exit(1.00, 0.70, 20, stop_loss_pct=25.0).kind == "stop",
+)
 
 print()
 if failures:

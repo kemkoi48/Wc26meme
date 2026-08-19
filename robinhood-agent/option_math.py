@@ -820,3 +820,84 @@ def apply_filters_and_rank(
         passed.append(result)
     passed.sort(key=lambda r: r["mismatch_ratio"])
     return passed[: max(0, cfg.top_n)], rejected
+
+
+@dataclass(frozen=True)
+class OptionExitDecision:
+    exit_now: bool
+    reason: str
+    kind: str = ""  # "stop" | "profit" | "time" | ""
+
+
+# Interim exit rule for the first live S7 trades, added 2026-08-19 when the
+# strategy went from watch-only to agent-executed. NOT from McMillan and NOT
+# backtested -- unlike scalp_signal.py's thresholds (measured against 1,530
+# real bars) or growth_signal.py's (at least the user's own stated
+# tolerance), these three numbers are simply a conservative starting point
+# chosen because a long option has no stop-order equivalent (the position IS
+# the defined risk) and S7 had no coded exit rule at all before this. Revisit
+# once real trades exist to look at outcomes -- same posture this repo
+# applies to every other new threshold.
+OPTION_STOP_LOSS_PCT = 50.0    # exit if premium has lost half its value
+OPTION_PROFIT_LOCK_PCT = 100.0  # exit if premium has doubled
+OPTION_TIME_STOP_DAYS = 5       # exit with this many days left, to stay out
+                                 # of the steepest theta-decay zone (Ch. 3's
+                                 # decay-accelerates-under-8-weeks finding,
+                                 # sharper still in the final days)
+
+
+def decide_option_exit(
+    entry_premium: Any,
+    current_premium: Any,
+    days_to_expiry: Any,
+    stop_loss_pct: float = OPTION_STOP_LOSS_PCT,
+    profit_lock_pct: float = OPTION_PROFIT_LOCK_PCT,
+    time_stop_days: int = OPTION_TIME_STOP_DAYS,
+) -> OptionExitDecision:
+    """Exit logic for a single-leg long call/put position, checked in
+    priority order. A long option has no broker-side stop-order equivalent
+    for a naked long (the premium paid already IS the max loss) -- this is a
+    periodic-check rule, not a resting order, so it must be re-evaluated on
+    whatever cadence the position is actually monitored.
+
+    Priority:
+      1. Stop-loss -- premium has fallen to stop_loss_pct or more below
+         entry. Cut it; a long option that has lost half its value rarely
+         recovers before expiry finishes the job.
+      2. Profit-lock -- premium has risen to profit_lock_pct or more above
+         entry (a "double"). Bank it. Unlike scalp_signal's profit-lock
+         trail, this is a flat target, not a trailing one -- there is no
+         equivalent of "ride the peak" implemented yet for options, so this
+         is deliberately the more conservative of the two designs.
+      3. Time stop -- fewer than time_stop_days remain. Close regardless of
+         P&L rather than hold into the fastest-decay window.
+    """
+    entry = _as_float(entry_premium)
+    cur = _as_float(current_premium)
+    dte = _as_float(days_to_expiry)
+    if entry is None or entry <= 0 or cur is None or cur < 0 or dte is None or dte < 0:
+        return OptionExitDecision(False, "unusable input")
+
+    pnl_pct = (cur - entry) / entry * 100.0
+
+    if pnl_pct <= -stop_loss_pct:
+        return OptionExitDecision(
+            True,
+            f"stop-loss: premium {cur:.2f} is {pnl_pct:.1f}% below entry {entry:.2f}",
+            "stop",
+        )
+    if pnl_pct >= profit_lock_pct:
+        return OptionExitDecision(
+            True,
+            f"profit-lock: premium {cur:.2f} is {pnl_pct:+.1f}% above entry {entry:.2f}",
+            "profit",
+        )
+    if dte <= time_stop_days:
+        return OptionExitDecision(
+            True,
+            f"time stop: {dte:.0f} days to expiry ({pnl_pct:+.1f}%)",
+            "time",
+        )
+    return OptionExitDecision(
+        False, f"holding, {dte:.0f} days to expiry, {pnl_pct:+.1f}%"
+    )

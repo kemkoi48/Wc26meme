@@ -824,7 +824,28 @@ the momentum scanner is.
 
 ---
 
-## S7 — Options (long calls / long puts)  ·  **DRAFT — not yet traded live**
+## S7 — Options (long calls / long puts)  ·  **LIVE, agent-executed — 2026-08-19**
+
+**Status change, 2026-08-19.** User asked "when are we going to start doing
+the option trading," was asked directly whether to flip from watch-only to
+agent-executed (no preference stated — treated as delegation, consistent
+with how prior "you choose" decisions in this account have been handled)
+and to set a capital rule (answered: a small fixed cap per trade, ~$50).
+That already matched `option_math.py`'s existing `max_premium_usd = 50.0`
+default in both `OptionScanConfig` and `SoftCatalystScanConfig` — no code
+change needed there, just confirming the existing threshold is now the
+live-money one, not a placeholder.
+
+**What changed for real:** added `decide_option_exit()` to `option_math.py`
+(tested) — S7 had a tested, real ENTRY screen (mismatch ratio / IV-vs-HV
+gates, 0-for-6 on real chains so far) but NO coded exit rule at all before
+this. A long option has no stop-order equivalent (premium paid already IS
+the max loss), so this is a periodic-check rule: stop-loss at -50% of
+premium, profit-lock at +100% (a double), time stop at 5 days to expiry.
+**Explicitly labeled interim and NOT backtested** — these three numbers
+exist because zero coded exit rule was a bigger risk than an honest,
+conservative placeholder; revisit once real trades produce real outcomes to
+look at, same posture as every other threshold in this repo.
 
 Source: Dan Passarelli, *Trading Options Greeks* (Bloomberg Financial
 Series). A Greeks-first options text — deltas, theta, vega, spread

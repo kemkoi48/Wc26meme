@@ -159,6 +159,38 @@ whether the undo itself is affordable in the same way a fresh trade
 would be** — an "instant fix" that costs the day's remaining buying
 power is not actually free.
 
+## Watchlist hygiene pass — 2026-08-18 night
+
+User asked to prune the "August 11" watchlist (a dated, single-day
+catalyst pick list — see its own pre-existing description) and check
+the others. Real methodology used: today's volume vs 2-week average
+volume (still active vs faded), proximity to 52-week high/low (still
+running vs reverted), and `financial_status_indicator` (exchange
+compliance flags) via `get_equity_fundamentals`. Result on "August 11"
+(16 -> 6 items): kept TISI (new 52w high same day), OABI/ABCL (both
+made new 52w highs within the prior 24h), SE/RIOT (durable, liquid,
+not really "stale catalyst" material), KPLT (merger catalyst still
+presumably pending, flagged caution same as the list's own original
+note). Removed EYPT (made a new 52-WEEK LOW the day before — thesis
+inverted), AIFC/BIOX (`financial_status_indicator` = noncompliant),
+VG/CNTB/ITP/DYAI (no elevated activity, no cited catalyst), WXM/BW
+(the list's own original note already said "no catalyst"/"halted,
+unconfirmed" at creation, both down further since).
+
+Also removed NAK from "Cryptos to Watch" — a mining stock, wrong asset
+class for a crypto list, correctly still lives in "penny".
+
+**Deliberately left "penny" and "timothy" untouched** despite being
+asked to filter them too — checked every name (fundamentals, 52w
+range, compliance flags), found real weakness in several (IGC, DJT,
+TLRY, GME all well off their highs) but none with an objective red
+flag comparable to August 11's noncompliance/52w-low/already-flagged-
+no-catalyst reasons. Those two lists are undated and not framed as
+single-day catalyst picks the way "August 11" explicitly is, so
+"off its highs" alone isn't a real basis to remove something from
+what might be a deliberate standing watch list — said so directly to
+the user rather than guessing at intent and pruning anyway.
+
 ## RULE ZERO — real data, or say nothing. No guessing, ever.
 
 Stated by the user on 2026-08-17 as **the core architecture of this

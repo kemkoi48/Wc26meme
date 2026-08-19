@@ -1274,3 +1274,55 @@ not a reason to touch the scalp dashboard.
 distinguishing filter beyond what the others already cover, so running it
 would add API calls without new information. Noted here, not tested,
 consistent with Rule 0 (no claim is made about what it returns).
+
+---
+
+## 2026-08-19 ~07:00 ET — Premarket watch, "August 19" watchlist built
+
+Ran all three market scans live: "Early Momentum Ignition" (89 matches,
+top mover TNON +105.7%), "Warrior Trading Style" (14 matches, top movers
+TNON/BIVI/MSS), "Daily gainers" (202 matches, top real movers RDAC/DUKR —
+both too thin to trust, <15K shares volume — then TNON, MRNA +74.7%, BIVI,
+ZNB, BSEM, CAST +23.8%).
+
+**Catalyst-checked via Stocktwits pulse + Robinhood fundamentals before
+including anything, same discipline as the "August 11" list:**
+
+- **MRNA** — real, verified catalyst: Merck/Moderna's Intismeran melanoma
+  vaccine hit its Phase 3 primary endpoint (multiple independent Stocktwits
+  posts citing the same wire item, LiveSquawk). $25B cap, real liquidity,
+  broke through its own 52-week high on the news. Best pick of the day by
+  a wide margin.
+- **CAST** (FreeCast) — real business-development news cited (regained
+  full control of InvestorNewsChannel.com, cited DIRECTV/Starlink
+  distribution deals), but from a single Stocktwits-relayed source, not an
+  independently verified filing. 154M shares volume, real liquidity.
+  Included with that caveat.
+- **TNON** — the loudest mover (+105-109%) but flagged NEGATIVE on real
+  grounds, not excluded silently: `financial_status_indicator` =
+  Noncompliant, and the Stocktwits community itself is calling out a
+  "$100M mixed securities shelf filing Monday" (real dilution risk) and
+  "recycled old news" behind the Benzinga pickup. Included per the
+  "August 11" precedent of logging risky/no-real-catalyst movers with an
+  explicit warning rather than pretending they weren't checked.
+- **Excluded, no distinct catalyst found**: BIVI (BioVie) and MSS (Maison
+  Solutions) and TGL (Treasure Global) — all three showed up only in
+  generic "premarket movers" group-posts with no sourced news behind them,
+  tiny floats (BIVI 7.2M, MSS/TGL both under 2M), and MSS/TGL are both
+  down >98% from a 52-week high a year ago. RDAC (+188.9%) and DUKR
+  (+128.1%) excluded outright — real % moves but under 15,000 shares of
+  volume each, not tradeable size.
+
+Watchlist created: **"August 19"** (`c15a7e55-bc55-4869-bf4f-6eb82a04c3e4`),
+3 items (MRNA, CAST, TNON), description summarizes the catalyst/risk read
+above.
+
+**Options monitoring (watch-only, per the user's standing instruction that
+options stay agent-monitored but not agent-traded):** ran "High options
+volume and IV" (65 matches). Standout relative-options-volume names: CVX
+(6.99x, but only 26.9% IV — unusual combo for a mega-cap, worth noting),
+CMPX (7.06x, 133.7% IV), REI (5.93x), AS (5.25x), ASX (4.82x). Highest raw
+IV in the scan: ALEC 191.7%, BEEM 186.4%, QNC 182.1%, CEPO 144.8%, AVD
+146.8%. None cross-referenced further against S7's mismatch-ratio/IV-HV
+gates tonight — this is a report, not a screen run, per the trigger's own
+instruction to keep this separate from any entry decision.

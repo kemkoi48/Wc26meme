@@ -26,6 +26,7 @@ from option_math import (
     expected_move_from_iv,
     expected_move_from_straddle,
     historical_move_pct,
+    iv_cheap_vs_multi_window_hv,
     iv_hv_ratio,
     mid_price,
     mismatch_ratio,
@@ -269,6 +270,27 @@ check("fair", approx(iv_hv_ratio(0.40, 0.40), 1.0))
 check("rich: iv above hv", approx(iv_hv_ratio(0.60, 0.40), 1.5))
 check("zero hv rejected", iv_hv_ratio(0.30, 0) is None)
 check("negative iv rejected", iv_hv_ratio(-0.1, 0.40) is None)
+
+print("iv_cheap_vs_multi_window_hv -- McMillan Ch. 39 Method 2 (IV < 0.8x every window)")
+check(
+    "cheap against all four windows -> True",
+    iv_cheap_vs_multi_window_hv(0.20, 0.30, 0.30, 0.30, 0.30) is True,
+)
+check(
+    "cheap against three windows but not the fourth (accelerating stock) -> False",
+    iv_cheap_vs_multi_window_hv(0.20, 0.30, 0.30, 0.30, 0.24) is False,
+)
+check(
+    "right at the 0.8x boundary on one window -> False (must be strictly below)",
+    iv_cheap_vs_multi_window_hv(0.24, 0.30, 0.30, 0.30, 0.30) is False,
+)
+check(
+    "custom threshold honored",
+    iv_cheap_vs_multi_window_hv(0.28, 0.30, 0.30, 0.30, 0.30, threshold=0.95) is True,
+)
+check("missing window -> None", iv_cheap_vs_multi_window_hv(0.20, 0.30, 0.30, 0.30, None) is None)
+check("zero window -> None", iv_cheap_vs_multi_window_hv(0.20, 0.30, 0.30, 0.30, 0) is None)
+check("negative iv -> None", iv_cheap_vs_multi_window_hv(-0.1, 0.30, 0.30, 0.30, 0.30) is None)
 
 print("catalyst_direction_score")
 check("two bullish signals -> +10",

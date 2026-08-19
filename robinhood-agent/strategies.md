@@ -1300,6 +1300,142 @@ convention as the dated-catalyst path, tested in `test_option_math.py`
 alongside it. **Not yet run against a live chain** — built the same evening
 as this entry, first live run is tomorrow's premarket session.
 
+### Second source added, 2026-08-19 — McMillan, *Options as a Strategic Investment* (5th ed.)
+
+The user provided their own copy (epub) and asked explicitly not to rely on
+memory of this book but to actually read it. Converted to plain text (the
+epub's OCR layer had a per-character letter-spacing artifact that had to be
+detected and fixed before the text was usable — see `mcmillan/README.md`)
+and read cover to cover, all 43 chapters, across 8 parallel passes. The full
+notes, organized by chapter with McMillan's numbers quoted close to
+verbatim, live in `mcmillan/` — treat this section as the synthesis, that
+folder as the primary source to check before trusting a paraphrase.
+
+**Headline finding: almost the entire book is structurally inaccessible at
+this account's size, and McMillan's own numbers say so, not an inference.**
+Covered writing, naked call/put writing, ratio writing/spreading, straddle/
+strangle *writing*, synthetic stock positions, and every strategy requiring
+100 shares of stock all carry explicit dollar figures in the thousands
+(his own worked examples: $2,730–$3,910 for a single ratio-write unit,
+$5,875–$7,800 collateral for 5 naked puts, $1,400–$1,500 for a single
+synthetic stock/short-sale position) or broker-imposed minimum equity for
+naked-writing approval ("as low as $2,000 to as high as $100,000"). Vertical
+and calendar debit/credit spreads are individually much cheaper (his own
+examples run $50–$700 in debit/collateral), but he separately states "for
+most brokerage firms, the minimum equity requirement for spreads is $2,000"
+— a real, broker-level gate on top of the per-spread economics, not yet
+checked against what this account's own broker (Robinhood) actually
+requires. **That check — "does this specific account's spread approval
+have a minimum-equity floor, and what is it" — is a real next step, not
+assumed either way here.** Combined with S7's own already-established,
+independent blocker (this MCP connector does not support multi-leg orders
+at any approval level), spreads stay out of scope for now on two separate
+grounds, one mechanical and one capital-based.
+
+**What's actually left, per the book's own numbers: outright long calls,
+outright long puts, and long straddles/strangles.** This is exactly what
+S7 already does (single-leg long options only) — the book independently
+arrives at the same narrow slice this account already occupies, for a
+different reason (capital size vs. tooling), which is a real point of
+convergence worth taking seriously rather than a coincidence to shrug off.
+
+**The IV framework — this is the part worth actually wiring into S7.**
+McMillan's master rule, stated plainly: *"If implied volatility is 'low,'
+buy it. If it's 'high,' sell it with caution."* Since this account can only
+realistically buy (not sell/write) options, only the "buy low" half applies
+— which happens to be the safer half of his own asymmetry: *"Buyers of
+volatility really have little to fear if they miscalculate... Sellers of
+volatility... one mistake could be the last one."*
+
+Two concrete methods for judging "cheap," in his own stated order of
+preference:
+1. **IV percentile (his preferred method).** Rank today's IV against
+   ~600 trading days of the underlying's own history; **≤10th percentile
+   = cheap**, **≥90th = expensive**. Percentile alone isn't enough — also
+   check the range is *wide* (his test: would the option be worth the same
+   or more in a month if IV merely reverted to the 50th percentile, given
+   normal time decay? If yes, the range has room). **Not implemented yet**
+   — needs a real multi-year implied-volatility time series per symbol,
+   and it hasn't been verified whether any connected tool can actually
+   supply that (option chain snapshots give today's IV, not history).
+   Real next step: check `get_equity_technical_indicators` and
+   `get_option_historicals` for whether either carries IV history, before
+   assuming this method is buildable.
+2. **IV vs. historical volatility, multi-window (his stated fallback,
+   explicitly rated inferior to #1 but usable today).** *"One might
+   require that implied volatility is less than 80% of each of the 10-,
+   20-, 50-, and 100-day historical volatility calculations."* **Built
+   tonight**: `iv_cheap_vs_multi_window_hv()` in `option_math.py`, tested
+   in `test_option_math.py`. This is stricter than the existing
+   `iv_hv_ratio()` / `SoftCatalystScanConfig.max_iv_hv_ratio` (0.90,
+   single-window, no book citation for that number) — the new function
+   requires clearing 0.8x against *all four* windows at once, which
+   McMillan's own reasoning ties to catching a stock whose volatility
+   regime is actively shifting rather than trusting one possibly-stale
+   window. **Not yet wired into `evaluate_soft_candidate`'s live gate** —
+   doing that means fetching four HV windows instead of one per candidate,
+   a real data-plumbing change, proposed but not made tonight.
+
+**Probability threshold, from his Ch. 39 worked example:** an attractive
+*buying* situation has "probabilities in excess of 80% of the underlying
+ever exceeding the break-even point" — using the "ever" (path-dependent)
+probability, not the simpler endpoint-at-expiration one, and using the
+*lowest* of the 10/20/50/100-day historical vols as the model input when
+buying (a deliberately conservative choice for the buyer's side). **Not
+implemented** — a correct GBM barrier-touch probability formula is
+non-trivial to get right (risk-neutral vs. real-world drift, upper vs.
+lower barrier sign handling) and this repo's own Rule 0 is not worth
+bending under time pressure at 4am; flagged as a real next piece of work,
+not guessed at here.
+
+**A caveat that applies directly to the mismatch-ratio work already
+running:** *"Once these mispriced options have been found, it is always
+imperative to check the news... if [cheap] and one then checks the news
+stories and finds that the underlying stock has been the beneficiary of an
+all-cash tender offer, he would not buy those options."* This is the same
+discipline the dated-catalyst screen already has via `catalyst_effective_date`
+and the historical-move check — good to have it independently confirmed by
+a second, unrelated source rather than only by this account's own
+backtesting.
+
+**A finding relevant if multi-leg orders ever become available:** debit
+vertical spreads (bull call spreads, bear put spreads) have **negative
+vega** — they *lose* value as IV rises, the opposite of an outright long
+option. McMillan's own words: *"High or increasing implied volatility is
+not a friend of the bull spread, while it is a friendly ally of the
+outright call purchase."* His stated fix for someone who thinks a call
+looks expensive but still wants the trade: buy the call outright and sell
+a slightly-OTM credit put spread against it, rather than reaching for a
+bull call spread believing it's "the cheaper version" of the same idea —
+it isn't, under rising IV. Logged for when the multi-leg blocker lifts;
+not actionable today.
+
+**Position sizing conflict, surfaced rather than silently resolved:**
+McMillan's stated cap for speculative option buying is **≤15% of risk
+capital per position** (Ch. 3, Ch. 16, and again in Ch. 43's closing
+synthesis: "15 to 20% of his assets for speculative option buying" as a
+portfolio-level cap). This account's house rule (above, "House rules")
+is tighter. **Recommendation: keep the house rule.** McMillan's number is
+a general one for investors with real diversification across many
+positions; this account is currently small enough that a single options
+position is effectively the whole options sleeve, and the tighter house
+number was arrived at from this account's own real losses, not a general
+textbook guideline. Loosening it to match the book would be adopting a
+bigger number because a book said so, not because this account's own
+results support it — exactly the kind of unearned confidence Rule 0
+exists to prevent.
+
+**McMillan's own closing chapter (43, "The Best Strategy?") is worth
+reading directly rather than summarizing away:** *"There is no one best
+strategy... Profit potentials also do not determine suitability; risk
+levels do."* He explicitly names naked option writing (sold for
+fractional prices) and covered/ratio put writing as strategies "generally
+to be avoided by most investors" — independent confirmation, from the
+book's own author, of conclusions this account had already reached from
+its own capital constraints and from S1–S8's trade history. His suitability
+test, worth keeping as a standing question before any options trade:
+*"How will I react if the worst case occurs?"*
+
 Source: **not a book.** Every rule below was pulled from a trade or a
 rejection that actually happened this week (2026-08-11 through 2026-08-15),
 not from Miner, Sincere, Passarelli, Oz, Warrior Trading, or DailyFX. It

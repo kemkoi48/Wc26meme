@@ -301,6 +301,48 @@ def iv_hv_ratio(implied_vol: Any, realized_vol: Any) -> Optional[float]:
     return iv / hv
 
 
+def iv_cheap_vs_multi_window_hv(
+    implied_vol: Any,
+    hv_10: Any,
+    hv_20: Any,
+    hv_50: Any,
+    hv_100: Any,
+    threshold: float = 0.8,
+) -> Optional[bool]:
+    """McMillan's Method 2 for judging cheap IV ("Options as a Strategic
+    Investment", 5th ed., Ch. 39 -- read in full 2026-08-19, see
+    mcmillan/07_volatility.md), quoted close to verbatim: "One should ensure
+    that implied volatility is significantly different from all of the
+    pertinent historical volatilities. For example, one might require that
+    implied volatility is less than 80% of each of the 10-, 20-, 50-, and
+    100-day historical volatility calculations."
+
+    This is a MULTI-window AND -- IV must clear the 0.8x bar against every
+    one of the four windows, not just one -- because a stock whose vol
+    regime is actively shifting (accelerating or decelerating) can show a
+    misleadingly cheap reading against a single stale window. iv_hv_ratio()
+    above compares against exactly one realized-vol reading; this is the
+    stricter, book-sourced version for when multiple windows are available.
+
+    McMillan rates this Method 2 as inferior to his preferred Method 1 (IV
+    PERCENTILE against the underlying's own ~600-day trailing history) --
+    that method is NOT implemented here yet because it needs a real
+    multi-year implied-volatility time series per symbol, which has not
+    been verified as available from this account's data sources. Treat this
+    function as a documented stand-in, not the book's actual first choice.
+
+    Returns None (unusable, not "pass") if any input is missing/unusable --
+    a partial multi-window read is not the same claim as this rule makes."""
+    iv = _as_float(implied_vol)
+    windows = [_as_float(hv_10), _as_float(hv_20), _as_float(hv_50), _as_float(hv_100)]
+    if iv is None or iv < 0 or any(w is None or w <= 0 for w in windows):
+        return None
+    t = _as_float(threshold)
+    if t is None or t <= 0:
+        return None
+    return all(iv < t * w for w in windows)
+
+
 def catalyst_direction_score(
     ai_verdict: Any = None,
     insider_trend: Any = None,

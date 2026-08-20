@@ -1389,3 +1389,61 @@ releases, or a wire hitting right before the next day's premarket opens
 volume builds toward the open. The riskiest window to trust a move in is
 the deep overnight (12-4 AM ET) — real names do move there, but thin volume
 means it's the least reliable point to judge whether a move will hold.
+
+## 2026-08-20 ~7:15 AM ET — recurring premarket-watch trigger, first real run
+
+First automatic firing of the new daily trigger (created a few hours after
+midnight the same night). "August 20" already existed from the earlier
+manual session, so no rename needed this cycle — just a refresh now that
+real premarket (not thin overnight) volume is in.
+
+**Real-data sources used:** Stocktwits `get_trending_symbols` (now `session:
+PRE_MARKET`, not overnight), `get_symbol_messages` for MSTR/WMT/HOOD,
+`get_earnings_calendar` (many 08-20 entries now show real `eps.actual`,
+confirming which reports already landed), Robinhood `run_scan` on "Daily
+Movers - Fastest Growers" and "Warrior Trading Style - Low Float Volume
+Movers".
+
+**The dominant real theme today: a dated, sourced macro/policy catalyst.**
+Stocktwits carried a same-morning item: Trump hosted crypto executives at
+the White House and urged Congress to pass the Clarity Act (crypto
+regulatory clarity); BTC named as up double digits intraday with a real
+short-squeeze component ($2.7B cited). This is a genuine, dated, sourced
+catalyst (not just "crypto is green today") and it mechanically explains
+the whole crypto-equity complex moving together: **MSTR** +10.5%
+(leveraged BTC balance-sheet proxy, community explicitly ties the move to
+BTC%), **COIN** +7.7% (the purest-play exchange name), **BMNR** +8%
+(already on the list, same ETH-proxy logic as last night), **BULL** still
++14-15% (its own earnings+squeeze catalyst from last night, now also
+riding the sector tailwind), **HOOD** +5.5% (crypto-trading-volume
+beneficiary, same White House news cited directly in its own feed).
+Smaller/less liquid names showing the identical pattern (CAN, UPXI, DFDV,
+BTBT, SBET, BKKT, ABTC, all +6-14%) were deliberately **not** added --
+same real catalyst, but redundant and lower quality/liquidity than
+MSTR/COIN/BMNR/HOOD; curating for quality, not stacking every ticker that
+moved on the same news.
+
+**WMT** -6.1% ($107.28 pm vs $114.30 close) -- added on a *different*,
+independently real catalyst: Q2 earnings actually **beat** (adj EPS $0.81
+vs $0.74 est, revenue beat), but management **cut Q3 guidance** (62-64c
+vs 68c est) and comp sales missed estimates. Confirmed via LiveSquawk and
+StocktwitsEarnings' verified data feeds inside the Stocktwits results, not
+rumor. A real "beat then guide down" divergence, not noise.
+
+**MRNA** -11.6% premarket, continuing to give back yesterday's spike
+(down from $174.38 close toward $154). Confirms last night's call to drop
+it -- the catalyst was already fully priced in, and it's now unwinding
+exactly as expected rather than offering a fresh entry.
+
+**Scans checked for anything missed:** "Warrior Trading Style - Low Float"
+(16 matches) -- all either no fresh catalyst or, in TNON's case, actively
+confirming the prior night's dilution-risk warning (now -30%). Nothing
+added from this scan. "Daily Movers - Fastest Growers" (large result,
+read via jq) -- top movers were entirely the same crypto-complex names
+already covered above, plus FUTU (+9.3%, real earnings today) which was
+considered and left off for now (lower profile, thinner liquidity than
+the six already on the list -- can revisit if it holds through the open).
+
+Watchlist: **"August 20"** now 6 items (BULL, BMNR, MSTR, COIN, HOOD,
+WMT), description updated in place (256-char cap, full reasoning here
+instead).

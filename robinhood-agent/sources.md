@@ -1326,3 +1326,66 @@ IV in the scan: ALEC 191.7%, BEEM 186.4%, QNC 182.1%, CEPO 144.8%, AVD
 146.8%. None cross-referenced further against S7's mismatch-ratio/IV-HV
 gates tonight — this is a report, not a screen run, per the trigger's own
 instruction to keep this separate from any entry decision.
+
+## 2026-08-20 ~00:35 ET — user-requested screen, "August 20" watchlist built
+
+User asked directly (not the scheduled trigger, ~4.5hrs before it would have
+fired anyway): teach Greeks, screen the market, build tomorrow's watchlist,
+delete "August 19" (no delete tool exists — repurposed in place, same as
+the "August 11" precedent), and check what time stocks usually start moving
+unusually.
+
+**Real-data sources used:** Stocktwits `get_trending_symbols` (overnight
+premarket movers), Robinhood `get_scans`/saved scan list, `get_earnings_calendar`
+(08-20/08-21 window), `get_symbol_messages` for catalyst verification on the
+two names actually added, `get_stock_news` (Stocklake) for BULL, real quotes
+via `get_equity_quotes`.
+
+- **MRNA** — dropped. Yesterday's real catalyst (Merck Phase 3 win, +75%)
+  already fully played out; overnight it's giving some back (-5% to ~$165
+  premarket off a $174.38 close). Rule: don't chase an already-printed move
+  (same rule the user set for S7 after the MRNA conversation yesterday,
+  applied here to equities too).
+- **CAST** — dropped. No fresh catalyst; flat/slightly down overnight
+  ($1.70 close -> ~$1.57).
+- **TNON** — dropped. Already flagged high-risk/no-real-catalyst on 08-19;
+  now actively crashing overnight (~-23%, $11.41 close -> ~$8.70). Confirms
+  the original caution was correct.
+- **BULL** (Webull) — added. Real, dated catalyst: Q2 earnings call
+  8/19 (`get_stock_news` confirms), then a short-covering squeeze on top
+  (Stocktwits community explicitly citing "short covering... as the
+  article says"). +14.6% premarket. Flagged as squeeze-driven, so
+  high-variance — a real catalyst, but one that can give back hard once
+  the squeeze is done.
+- **BMNR** (BitMine Immersion Technologies) — added. Real, verified,
+  directly traceable catalyst: it's a corporate ETH-treasury proxy, and
+  ETH itself is up ~18% today (Treasury buyback news, real ETF inflows,
+  short squeeze — see today's separate ETH research). BMNR +6.3%
+  premarket, tracking ETH's move; Fundstrat's Tom Lee thesis (BMNR
+  outperforms ETH after ETH outperforms BTC) referenced repeatedly in the
+  community as the reason people are in it, not just price action alone.
+
+Watchlist: renamed **"August 19" -> "August 20"** in place (same
+`c15a7e55-bc55-4869-bf4f-6eb82a04c3e4` id — no `delete_watchlist` tool
+exists in this MCP connector), now 2 items (BULL, BMNR).
+
+**Standing process change:** created a recurring weekday trigger ("Premarket
+watch: build the day's watchlist", 7:00 AM ET / `0 11 * * 1-5`) so this
+screen-and-rename process happens automatically each morning going forward,
+separate from the existing 8am ET S7 options trigger and 4pm ET growth-sleeve
+trigger. Previously this had only been done ad hoc / via one-off reminders.
+
+**"What time do stocks usually start moving unusually" — answered from real
+evidence gathered across this account's actual sessions, not just general
+knowledge:** the MRNA move (08-19) began at 6:00 AM ET premarket, right as
+premarket liquidity thickens. Tonight's BULL/BMNR moves are showing in the
+1-4 AM ET overnight session, but that window has much thinner volume and
+wider spreads than real premarket — a move seen at 2 AM ET is far less
+confirmed than the same move still holding by 7-8 AM ET. General pattern,
+not a hard rule: dated catalysts (earnings, trial results, FDA, M&A) tend to
+drop either right at the open/close of the *prior* session (after-hours PM
+releases, or a wire hitting right before the next day's premarket opens
+~4 AM ET) or get confirmed/extended in the 8:00-9:30 AM ET premarket ramp as
+volume builds toward the open. The riskiest window to trust a move in is
+the deep overnight (12-4 AM ET) — real names do move there, but thin volume
+means it's the least reliable point to judge whether a move will hold.

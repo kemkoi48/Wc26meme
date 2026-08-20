@@ -1677,6 +1677,55 @@ validated by this week's account performance; the account was profitable
 this week because of the process this formalizes, not because of this
 document.
 
+### Fourth/fifth live runs — 2026-08-20, BULL and BMNR, 0 of 2 passed
+
+**Process fix first: the 8am ET trigger fired before options were tradable.**
+The daily S7 trigger ran at ~7:30 AM ET premarket. Every option quote pulled
+was timestamped `2026-08-19T19:59:xx` — yesterday's 4pm close — because
+`extended_hours_state` is disabled on every chain checked; this connector's
+option quotes simply don't update until the regular session opens at 9:30
+AM ET. Computing mismatch/IV-HV ratios against stale, pre-move pricing
+would have been a fake check with real dollar consequences, so nothing was
+graded on that data. Fixed by rescheduling the trigger to 9:35 AM ET
+(`35 13 * * 1-5`) — five minutes after the open, enough time for real
+quotes to populate.
+
+**BMNR — real numbers, fails on premium alone, at every delta that clears
+the 0.30 floor.** 09-18 expiry, underlying $21.54 live: $21 strike ask
+$2.30 (delta 0.596) = $230/contract; $22 strike $1.86 (0.516) = $186; $23
+strike $1.46 (0.441) = $146; $25 strike $0.94 (0.313) = $94 — all still
+over the $50 cap even at the last strike still clearing the delta floor.
+$27 strike is finally under budget ($61 -- still over, and delta 0.218 is
+already below the 0.30 floor). There is no strike on this expiry where
+premium and delta both clear their gates simultaneously. Real, live,
+decisive rejection — not a near-miss.
+
+**BULL — clears every tradability gate, fails the actual edge test.**
+$10 strike, 09-18 expiry, live: ask $0.32 = $32/contract (under cap),
+delta 0.329 (clears the floor), spread ~3% (tight), OI 30,918 / volume
+11,873 today (genuinely liquid, unlike most of this account's prior
+checks). Computed `realized_volatility` from BULL's real daily closes
+(`get_equity_historicals`, 07-01 through 08-19, 35 bars): 49.9% over the
+full window, 53.8% over the last 20 days. Live IV on this contract: 63.4%.
+`iv_hv_ratio` = **1.18-1.27**, well above the 0.90 cap -- the option is
+*rich*, not cheap, relative to BULL's own actual historical movement.
+This is the IV-master-rule failure mode by name: BULL's real catalyst
+(8/19 earnings + short squeeze, +15% that day) already pushed IV up sharp,
+but 20-day realized vol hasn't caught up because most of the trailing
+window was a calm $7.00-8.00 range before the spike. Buying now means
+paying for volatility that's already happened, into a name whose IV can
+mean-revert (crush) once the squeeze cools — the exact trap McMillan
+warns against, and exactly why the ratio gate exists. Rejected on real
+computed grounds; `catalyst_direction_score` couldn't even be computed
+today (Stocktwits/Stocklake both disconnected mid-session) but it's moot
+-- the edge test alone already kills this one.
+
+**Running total: 8 real live checks (ONDS, LUNR, STNE, NKTR, ZIM, BULL
+8/17, BULL 8/20, BMNR 8/20), 8 rejections, 0 trades.** The screen keeps
+doing exactly what it's for -- both of today's clean real setups (real
+catalyst, real liquidity, real numbers) still failed on price, which is
+the entire point of having gates instead of trading the story.
+
 ---
 
 ## What to build next, in order

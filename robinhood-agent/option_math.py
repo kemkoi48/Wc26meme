@@ -582,7 +582,8 @@ def apply_soft_filters_and_rank(
 ) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
     """apply_filters_and_rank's counterpart for the soft-catalyst track.
     Survivors are ranked by iv_hv_ratio ascending (cheapest relative to
-    actual recent movement first), capped at top_n. Same non-judgment of the
+    actual recent movement first, ties broken by lower premium_usd), capped
+    at top_n. Same non-judgment of the
     catalyst itself: a high catalyst_direction_score means multiple sources
     agree, not that they are right."""
     passed: list[dict[str, Any]] = []
@@ -598,7 +599,10 @@ def apply_soft_filters_and_rank(
             )
             continue
         passed.append(result)
-    passed.sort(key=lambda r: r["iv_hv_ratio"])
+    # Best edge first; cheaper premium breaks ties among equally-qualified
+    # candidates (2026-08-19, user: "keep $50 but try to find cheaper if
+    # possible" -- edge quality still decides, this only orders ties).
+    passed.sort(key=lambda r: (r["iv_hv_ratio"], r["premium_usd"]))
     return passed[: max(0, cfg.top_n)], rejected
 
 
@@ -796,8 +800,8 @@ def apply_filters_and_rank(
     """THE safety-critical function. Reported numbers are UNTRUSTED input.
 
     Returns (passed, rejected). Survivors are ranked by mismatch ratio
-    ascending -- most underpriced relative to the name's own history first --
-    and capped at top_n.
+    ascending -- most underpriced relative to the name's own history first,
+    ties broken by lower premium_usd -- and capped at top_n.
 
     What this function deliberately does NOT do: judge the catalyst. Whether
     a real, dated, market-moving event exists is not verifiable by any
@@ -818,7 +822,10 @@ def apply_filters_and_rank(
             )
             continue
         passed.append(result)
-    passed.sort(key=lambda r: r["mismatch_ratio"])
+    # Best edge first; cheaper premium breaks ties among equally-qualified
+    # candidates (2026-08-19, user: "keep $50 but try to find cheaper if
+    # possible" -- edge quality still decides, this only orders ties).
+    passed.sort(key=lambda r: (r["mismatch_ratio"], r["premium_usd"]))
     return passed[: max(0, cfg.top_n)], rejected
 
 

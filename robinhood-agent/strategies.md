@@ -389,6 +389,75 @@ side is realistic — limit orders fill at the limit or better — but stop
 fills can slip worse than modelled. Treat the 1.0–1.5R band as a working
 hypothesis to be re-tested at n≥15, not as a settled parameter.
 
+### Second, independent confirmation — 2026-08-20, full order-history pull, n=108
+
+User asked for pattern suggestions after a losing stretch. Rather than
+answer from general knowledge, pulled the actual manual-account (5SH47822)
+order history end to end (May 27 -- Aug 20, 2026, 208 real fills) and
+FIFO-matched every buy/sell into round trips. This is a completely
+different data cut from the MFE test above (that used 4 trades' 5-minute
+bars; this uses 108 trades' actual fill timestamps) and it independently
+points at the same underlying bias.
+
+**Headline: 60% win rate, but net −$38.19, because losses run 1.6x bigger
+than wins** (avg win +$6.87, avg loss −$11.27, n=65 wins / 43 losses). Win
+rate was never the problem. Loss size was.
+
+**Holding time is the cleanest predictor found yet, sharper than symbol or
+price:**
+
+| Holding time | n | Win rate | Total P&L | Avg P&L |
+| --- | --- | --- | --- | --- |
+| <5 min | 65 | 68% | **+$224.65** | +$3.46 |
+| 5-30 min | 29 | 55% | −$108.30 | −$3.73 |
+| 30min-2hr | 8 | 38% | −$70.63 | −$8.83 |
+| 2hr-1 day | 1 | 0% | −$27.80 | −$27.80 |
+| >1 day | 5 | 40% | −$56.12 | −$11.22 |
+
+Every bucket past 5 minutes is net negative. The <5-minute bucket alone
+is more profitable than the account's entire net result — meaning
+everything held longer is, in aggregate, actively erasing those gains.
+**This is the mirror image of the MFE finding above**: that test showed
+winners get cut short (79% of the available favorable move given back);
+this one shows losers get held too long (avg loss hold 2288min vs avg win
+hold 1382min, median loss hold 6min vs median win hold 3min). Same bias,
+two independent measurements: sell winners fast, hold losers hoping they
+recover. This is the textbook disposition effect, not a story -- it now
+shows up twice in this account's own numbers.
+
+**Concrete worst cases, all held-too-long:** AIRO bought 2026-07-29,
+*not sold until 89,115 minutes later* (62 days) for −$47.31 -- a day-trade
+candidate that quietly became a bag-hold. IPST on 08/18: entered $17.61,
+held 26 minutes while it kept falling, exited $14.465, −$59.75 (-17.9%) --
+the single worst trade in the window. OMH today (08/20): held 138 minutes
+on a reverse-split penny name, −$27.80.
+
+**Price band is a weaker but real secondary signal:** $5-10 was the only
+consistently profitable band (+$52.40 total, 67% win rate, n=27). $2-5 was
+the worst (−$51.89, n=25) despite an okay 52% win rate -- again, size of
+the losses, not frequency. <$2 pennies were roughly breakeven on a lot of
+small trades (−$2.52, n=30, 63% win rate) but contributed nothing net
+despite the volume of activity.
+
+**What this actually suggests, in order of leverage:**
+1. **A hard time-stop on losers is worth more than better stock-picking
+   right now.** If a trade isn't working within ~5 minutes, the data says
+   cut it — don't wait to see if it comes back. This one change would have
+   turned several of the worst trades above (IPST -17.9%, AIRO -27.7%,
+   OMH -8.5%) into small, contained losses instead of large ones.
+2. **The instinct to hold a loser "until it recovers" is the leak, not a
+   specific bad symbol or sector.** IPST itself is net +$75.97 over 26
+   trades (73% win rate) — the same name that produced the single worst
+   loss in the window when held too long. It's not which stock; it's how
+   long the losing ones get held.
+3. **Favor the $5-10 price band when candidates are otherwise similar** —
+   real, if secondary, edge in this account's own data, not a general
+   rule from any book.
+
+n=108 over ~3 months, one account, one trading style -- a real pattern,
+not yet a rule to automate. Worth re-checking after another few weeks of
+trades to see if the holding-time relationship holds up out of sample.
+
 ---
 
 ## Capital allocation — what is actually fundable

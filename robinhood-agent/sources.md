@@ -1809,3 +1809,18 @@ guessing at the visible text. (2) `floatLoading`'s condition had an
 operator-precedence bug (`!a || a.state === 'loading' && b`) that also
 referenced a `state: 'loading'` value the code never actually sets --
 simplified to check `fundInFlight` directly, which is the real signal.
+
+## 2026-08-21 ~4:03pm ET — S9 daily stop check: BTG ratcheted to $4.53
+
+Growth sleeve daily stop check trigger fired. BTG closed today at $5.525,
+a new high over both prior sessions ($5.27 close 08-19, $5.38 close 08-20).
+`decide_stop_update(4.42, 5.525)` said ratchet: new stop $4.5305 (18%
+below the new peak). Cancelled the resting $4.42 stop (verified
+`state: cancelled`), then hit a real constraint placing the new one —
+Robinhood rejected the raw $4.5305 stop_price ("Prices above $1.00 can't
+have subpenny increments"). Rounded to $4.53 and it placed clean. New
+order shows `state: queued`, same as the 08-19 ratchet — market was
+already closed (4:03pm ET) when this ran, so a regular_hours stop_market
+queues for tomorrow's open rather than resting live tonight. Not a
+rejection, same pattern as last time. CLAUDE.md's S9 row updated with the
+same detail.

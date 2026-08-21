@@ -1915,6 +1915,89 @@ edit to make unilaterally.
 
 ---
 
+## S10 — Same-day / 0DTE index option edge test  ·  **DRAFT, n=0 live decisions**
+
+`intraday_edge.py`. Built 2026-08-21 after the user bought QQQ 0DTE calls
+by hand on their own manual account (not agent-traded) and I told them,
+honestly but uselessly: *"I don't have an edge model built for same-day
+index moves the way I do for the equity screens."* Their reply: *"you
+need this."* Correct, so it was built the same afternoon, same method as
+S7's mismatch_ratio -- compare what the option is pricing in against what
+the underlying has actually, really done.
+
+**The question:** an option with T minutes left needs the underlying to
+clear breakeven by the close. The option's own delta/broker-quoted
+"chance of profit" says how likely the market thinks that is. Is that
+number backed by how this underlying has actually moved in this exact
+closing window on real past days, or is it just optimism with a Greek
+letter attached?
+
+  historical frequency = how often the underlying cleared that size of
+                          move, in the same number of minutes before
+                          close, over real past trading days
+  edge ratio            = historical frequency / implied probability
+
+Ratio >= 1.0: real history clears the bar at least as often as priced in
+-- a checkable edge. Ratio < 1.0: the option is pricing more optimism
+than the tape has delivered -- reject, same posture as S7's IV-already-
+paid-for-the-move rejection.
+
+**First real test, same day, on the actual position that motivated
+this:** QQQ at $713.27, ~1:57pm ET, 108 minutes left in the session.
+
+- **$714 call** -- needed +0.15% to breakeven. Robinhood's own model:
+  24.4% chance of profit. Real answer, from 44 actual trading days of
+  QQQ 5-minute bars (2026-06-22 through 2026-08-21, pulled live): the
+  closing-108-minute window cleared +0.15% on **8 of 44 days (18.2%)**.
+  Edge ratio **0.75** -- rejected. The position went on to expire
+  worthless.
+- **$717 call** -- needed +0.53%. Real history: **0 of 44 days, ever**,
+  in this exact window. Not close.
+
+Both real rejections are baked into `test_intraday_edge.py` as a
+permanent regression test, same pattern as `test_option_math.py`'s ENVX
+chain -- a future version of this module that cannot reject this exact
+real trade is broken, full stop.
+
+**A real bug was caught building this, not shipped:** the first draft of
+`realized_move_frequency` used a literal `>=` on the threshold regardless
+of sign. For a call (positive threshold, needs a rise) that is correct.
+For a put (negative threshold, needs a fall) it is backwards -- a bigger
+fall (more negative) would fail a naive `m >= -0.5` check, undercounting
+exactly the days that would have made the put profitable. Fixed to branch
+on the threshold's sign before any real put decision used it; caught by
+the test suite, not by a live loss.
+
+**Status, honestly: n=0 live decisions using this module.** It correctly
+replayed the one real decision that already happened, using only data
+that existed before that decision -- that is a real validation, not a
+backtest fit to its own answer, since the QQQ position was already down
+35% and the module was built *afterward* from data that predates it.
+Genuinely untested prospectively. Same posture as every other fresh gate
+in this repo: promising on one real case, not yet a track record.
+
+**Known limits, stated plainly, not glossed over:**
+- **44 trading days is thin** for a binomial rate this precise (18.2% =
+  8/44 -- one more or fewer hit day moves the estimate by over 2 points).
+  `MIN_HISTORICAL_DAYS = 20` is a floor to stop the estimate from being
+  pure noise, not a claim that 44 is plenty.
+- **Regime-blind.** The 44 days span whatever volatility regime QQQ was
+  actually in this summer; a genuinely different regime (a VIX spike, a
+  Fed day) could make the historical base rate stale exactly when it
+  matters most. Nothing here detects that.
+- **One underlying, one window size, so far.** Only run against QQQ and
+  a 108-minute closing window. Extending to other windows/underlyings
+  works mechanically (`daily_close_window_moves` takes any bars and any
+  window), but each new underlying needs its own real historical pull --
+  QQQ's base rate says nothing about SPY's or a single stock's.
+- **Not wired into any trigger.** This is a callable module, not yet part
+  of S7's live screen or a new scheduled check. Given account is small
+  and the S7 sleeve already covers single-name options, whether this
+  belongs as a manual on-demand tool (ask before a same-day trade) or a
+  new automated gate is an open decision, not decided here.
+
+---
+
 ## What to build next, in order
 
 1. **Regime classifier** — `get_market_pulse` plus the **7/20/65 SMA

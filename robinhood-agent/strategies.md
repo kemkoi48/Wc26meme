@@ -945,14 +945,30 @@ comments:
 3. **McMillan's own stated buyer's standard, adopted as policy:** a long
    option is only a reasonable buy when the breakeven has a real
    probability of being reached — McMillan frames this in terms of
-   delta/probability, not "any directional hunch." Concretely: no long
-   option is bought below roughly 0.30 delta on the entry leg (too far
-   OTM to have a realistic shot within the holding window), and no option
-   is bought into a scheduled IV-elevating event (earnings, a known
-   binary catalyst date) on the expectation that direction alone pays for
-   an IV crush — checked via `get_earnings_calendar` before every entry,
-   already-standing practice, now stated as a hard rule rather than a
-   habit.
+   delta/probability, not "any directional hunch." The intent: don't buy
+   an option so far OTM it has no realistic shot within the holding
+   window. Also, no option is bought into a scheduled IV-elevating event
+   (earnings, a known binary catalyst date) on the expectation that
+   direction alone pays for an IV crush — checked via
+   `get_earnings_calendar` before every entry, already-standing practice,
+   now stated as a hard rule rather than a habit.
+
+   > **KNOWN DRIFT, found 2026-08-21 — this rule is NOT fully enforced.**
+   > This section was originally written claiming "no long option is
+   > bought below roughly 0.30 delta." That number was never in the code:
+   > `OptionScanConfig.min_delta` and `SoftCatalystScanConfig.min_delta`
+   > have always been **0.10**, and two test fixtures that the suite
+   > treats as *genuine good setups* carry deltas of 0.25 and 0.28 — both
+   > would be rejected by a 0.30 floor. So the documented rule and the
+   > enforced gate disagree, and raising the gate to 0.30 would
+   > invalidate the suite's own definition of a passing trade.
+   >
+   > Deliberately **not** silently reconciled. Editing a live-money risk
+   > gate to match a number this file asserted without validation is the
+   > same "wrong number sitting in a gate position" failure this repo
+   > already caught once on S8's float-turnover threshold. Neither value
+   > is backed by results — S7 has 0 trades. Left as an open decision for
+   > the user; until it is resolved, **0.10 is what actually runs.**
 4. **No chasing a move that has already happened.** If the price action
    that would justify the trade already occurred (the gap already
    printed, the reaction already priced in), the setup is stale — not

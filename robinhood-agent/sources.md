@@ -1583,3 +1583,47 @@ BTC-linked cohort, not one name.
 close — above the $5.39 peak close that currently anchors the trailing
 stop. If it holds through the session, today's 4:05 PM check should
 ratchet the stop above $4.42 for the first time since 08-19.
+
+## 2026-08-21 09:35 ET — S7 daily screen: GRRR checked, rejected; delta-floor drift found
+
+Flat (no open S7 position), so ran the entry screen. Dated-catalyst track:
+next earnings are Mon 08-24 / Tue 08-25. Best fit by price and liquidity
+was **GRRR** (Gorilla Technology, $15.66 live, Q2 earnings 08-24 pm, so
+effective catalyst 08-25; the 09-11 expiry clears it with room).
+
+Real live chain, 09-11 calls, quoted 09:37 ET — **all rejected, and not
+narrowly:**
+
+| Strike | Ask | Cost | Delta | Spread | IV | OI / Vol |
+|---|---|---|---|---|---|---|
+| $16 | $1.80 | $180 | 0.52 | **61.8%** | 99% | 45 / 1 |
+| $17 | $2.20 | $220 | 0.45 | **132.1%** | 121% | 12 / 0 |
+| $18 | $1.65 | $165 | 0.37 | **138.5%** | 118% | 3 / 0 |
+| $19-21 | — | — | 0.02 | no bid at all | — | 0-2 / 0 |
+
+Run through `evaluate_candidate` rather than eyeballed; every one failed
+on **spread** before the premium cap even applied. Worth noting *why*
+that matters more than the price: at a 62-138% bid/ask spread these
+contracts cannot be entered and exited at a fair price at any size. Even
+with unlimited capital this is untradeable. IV of 99-121% into earnings
+is the IV-crush setup the rules explicitly exclude. Robinhood's own
+"chance of profit (long)" on the three: 29.6%, 25.2%, 21.1%.
+
+**Running total: 9 real live checks, 9 rejections, 0 trades.**
+
+### Defect found by this run: documented delta floor was never enforced
+
+Running the real code printed its actual config — `min_delta 0.10` —
+against a strategies.md section (written 08-19) asserting "no long option
+is bought below roughly 0.30 delta." **The 0.30 was never in the code.**
+Worse, `test_option_math.py` carries two fixtures the suite treats as
+genuine *passing* setups with deltas of **0.25** and **0.28** — a 0.30
+floor would reject both, so raising the gate would invalidate the suite's
+own definition of a good trade.
+
+Not silently reconciled, in either direction. Bumping a live-money gate
+to match a number this file asserted without validation is precisely the
+failure already caught once on S8's float-turnover threshold. Neither
+0.10 nor 0.30 is backed by outcomes — S7 has zero trades. Documented as
+open drift in strategies.md S7 with the enforced value (0.10) stated
+plainly, and surfaced to the user as a decision rather than an edit.

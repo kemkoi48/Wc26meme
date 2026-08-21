@@ -1447,3 +1447,45 @@ the six already on the list -- can revisit if it holds through the open).
 Watchlist: **"August 20"** now 6 items (BULL, BMNR, MSTR, COIN, HOOD,
 WMT), description updated in place (256-char cap, full reasoning here
 instead).
+
+## 2026-08-20 ~22:00 ET — scanner tooling built (user asked for a Warrior-style scanner)
+
+User linked warriortrading.com/scanners and asked "can you create a scanner
+like this? do you need api or what do you need?" Fetched their actual page
+rather than assuming: Day Trade Dash is a paid subscription — real-time
+alerts across strategies (momentum squeezes, reversals, gappers, halts),
+columns for Float, Volume, Relative Volume, Gap%, 52wk hi/lo, ATR, short
+interest, bundled news feed, audio alerts, third-party data vendor unnamed.
+
+**Answer on "do you need an API": no.** The Robinhood MCP connector already
+returns the same core fields via saved scans (`run_scan`) — Float, Volume,
+Relative Volume, Gap, % Change, RSI, ADX, MACD. What Warrior has that we
+don't: audio alerts, a self-updating table, 52wk hi/lo + short-interest
+columns, and news in the same pane. User said "lets do both" to the two
+options offered.
+
+**A. Alert trigger** (`trig_011uqSeqdqMoS3e5ZUTk13jN`, `0 14-20 * * 1-5`,
+hourly 10am-4pm ET). Runs both momentum scans, then filters hard: >5% change
+AND elevated RVOL AND not already faded off the high, then requires a
+nameable dated catalyst before alerting. Explicitly instructed that silence
+is the correct output most hours and that false alerts are worse than none.
+Alert-only — cannot place orders; execution stays in S7/S9.
+
+**B. "Ignition Board" dashboard** —
+https://claude.ai/code/artifact/952415af-3876-453b-a469-db076662881e
+A published artifact declaring the `mcp` capability scoped to
+`Robinhood: [run_scan, get_scans]` — **read-only by construction**; no order
+tool is in the manifest, so the page structurally cannot trade even if its
+code were changed. Uses `watchTool` with a 60s refetch (Robinhood offers no
+push/streaming through this connector, so "live" = polling, stated plainly
+to the user). Built only against request/response shapes actually observed
+in-session for both tools — no guessed API shapes.
+
+Design decisions worth keeping: (1) the row "quality" stripe encodes
+direction + whether RVOL backs the move, which is the user's #1 misread;
+(2) an always-available panel restates the four pre-entry checks plus the
+n=108 holding-time finding, so the tool teaches the read instead of just
+listing tickers; (3) it detects non-regular-hours from an ET clock and warns
+that % change / RVOL go flat-or-inflated on thin prints — a real failure
+mode observed directly in the 08-20 after-hours scan pull, where every row
+showed 0% change and RVOL of exactly 1.

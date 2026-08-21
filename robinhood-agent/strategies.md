@@ -1819,6 +1819,102 @@ the entire point of having gates instead of trading the story.
 
 ---
 
+## Threshold audit — which numbers are backed, 2026-08-21
+
+Prompted by the user after two separate unvalidated gate values surfaced
+in one week (S8's float-turnover threshold, demoted 08-16; S7's delta
+floor, reconciled 08-21): *"what other numbers in the code are not backed
+by anything."* Fair question, so every numeric threshold across the
+strategy modules was read with its provenance comment. Findings below,
+worst first. **Nothing was changed as a result of this audit** — that was
+the whole lesson of the delta-floor episode.
+
+### Tier 1 — load-bearing AND unvalidated. These matter most.
+
+| Number | Where | The problem |
+|---|---|---|
+| `max_mismatch_ratio = 0.85` | `OptionScanConfig` | **The single most load-bearing unvalidated number in the system.** It is the gate that has rejected 9 of 9 contracts. Its comment gives a *rationale* ("0.85 demands a real margin rather than a rounding error") but no measurement — nobody ever tested whether 0.80 or 0.90 separates winners from losers, because there are no winners or losers yet. Wrong in one direction and S7 never trades; wrong in the other and it trades junk. |
+| `max_iv_hv_ratio = 0.90` | `SoftCatalystScanConfig` | Same failure mode on the soft track. The comment justifies it *relative* to 0.85 ("a blunter instrument… needs a wider margin"), which is reasoning about an unmeasured number from another unmeasured number. |
+| `min_catalyst_score = 5.0` | `SoftCatalystScanConfig` | Threshold on a scale (`catalyst_direction_score`) this repo invented. Neither the scale nor the cut-off has been checked against outcomes. |
+| `min_flag_score = 6.0` | `SoftCatalystScanConfig` | Openly derived by loosening Stocklake's own `high_conviction` preset of 7 — the comment says "slightly looser here." Why 6 and not 7 was never established. |
+
+### Tier 2 — undocumented, no provenance comment at all
+
+`min_open_interest = 100.0`, `min_volume = 10.0`, `max_delta = 0.55`,
+`min_days_to_expiry = 10`, `max_days_to_expiry = 90 / 45`,
+`min_underlying_price = 2.0`, `max_underlying_price = 100.0` (all in the
+option configs); `min_atr_pct = 1.0`, `max_atr_pct = 8.0`,
+`min_price = 1.0`, `max_price = 2000.0` (ScreeningConfig);
+`max_order_notional_usd = 100.0`, `max_orders_per_run = 3`,
+`max_orders_per_day = 10` (RiskConfig).
+
+The RiskConfig three are low-risk — they only ever make the system do
+*less*, and failing closed is the right default. The rest are ordinary
+plausible-looking numbers with nothing behind them.
+
+**One of these is actively contradicted by the user's own data.**
+`min_underlying_price = 2.0` lets the options screener consider $2-5
+underlyings. The 08-20 order-history analysis (n=108, "Exits" section
+above) found $2-5 was the user's **worst** equity band: −$51.89 across 25
+trades, the largest loss bucket, while $5-10 was the only profitable one
+(+$52.40, 67% win rate). That is equity evidence being applied to an
+options gate, so it is suggestive rather than decisive — but it is the
+only one of these numbers with any real evidence pointing at it, and the
+evidence points the wrong way.
+
+### Tier 3 — honestly labelled as unbacked already. No action needed.
+
+These are fine *because* they say what they are:
+
+- `TRAIL_PCT = 18.0` (growth sleeve) — "the user's stated risk tolerance,
+  not a backtest," with a note to revisit once trades close.
+- `PROFIT_TRIGGER_PCT = 5.0` / `PROFIT_TRAIL_PCT = 2.0` (scalp) —
+  explicitly "NOT independently backtested," traced to the user's own
+  words on 2026-08-18.
+- `OPTION_STOP_LOSS_PCT / PROFIT_LOCK / TIME_STOP` (50 / 100 / 5) —
+  labelled interim placeholders at the point S7 went live.
+- `max_premium_usd = 50.0`, `min_delta = 0.25` — user decisions, dated,
+  and the delta floor is now pinned on both sides by tests.
+
+### Tier 4 — genuinely backed
+
+- `MIN_SURGE = 3.0`, `MIN_BAR_RETURN_PCT = 2.0`, `DEFAULT_STOP_PCT =
+  −2.0`, `MAX_HOLD_BARS = 15`, `VOLUME_LOOKBACK = 20` (scalp) — measured
+  on 2026-08-17 with the comparisons written into the comments (3x vs 4x
+  MFE and sample sizes; −2% vs −3%; median bars-to-peak 11). **This module
+  is the standard the rest of the repo should be held to.**
+- `max_spread_pct = 15.0` (options) — calibrated against the live ENVX
+  chain, 2026-08-12.
+- `max_spread_pct = 1.0` (momentum scan) — justified with a real quote
+  (TISI 21.55 x 22.55 = 4.54% on 2026-08-11).
+- Growth-sleeve screen constants (`MIN_MARKET_CAP_USD`, `RSI_LOW/HIGH`,
+  `MIN_ADX`, `MIN_AVG_VOLUME`) — a transcription of the real saved
+  Robinhood scan, verifiable against it.
+
+### What this means
+
+The pattern is consistent: **numbers that came from a measurement or a
+dated user decision are documented; numbers invented to make a screen
+feel rigorous are the ones with rationale-shaped comments and nothing
+underneath.** A comment explaining *why a number is sensible* is not
+evidence — that is what both S8's turnover threshold and S7's delta floor
+looked like right before they failed.
+
+The honest limit on fixing this: **S7 has zero closed trades**, so
+0.85/0.90 cannot be validated by outcomes yet, only reasoned about. The
+correct posture is not to tune them now but to (a) leave them alone, (b)
+keep logging every rejection with its real numbers, and (c) revisit once
+there is a sample. Tuning a gate to produce trades, when the reason for
+no trades is that nothing qualified, would be fitting the rule to the
+desired answer.
+
+One cheap, real improvement is available now and is worth doing before
+any tuning: `min_underlying_price` should probably be reconsidered
+against the user's own $5-10 finding. That is a user decision, not an
+edit to make unilaterally.
+
+---
+
 ## What to build next, in order
 
 1. **Regime classifier** — `get_market_pulse` plus the **7/20/65 SMA

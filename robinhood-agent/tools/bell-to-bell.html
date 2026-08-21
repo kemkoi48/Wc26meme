@@ -14,8 +14,8 @@
     --line:#E0DAD1; --line-strong:#CFC7BB;
     --ink:#1A1917; --ink-muted:#6B6862; --ink-faint:#948F86;
     --accent:#B3632F; --accent-soft:#F3E3D6;
-    --up:#2A7355; --up-soft:#DFEDE6; --down:#A93E2A; --flat:#7C776F;
-    --radius:7px;
+    --up:#2A7355; --up-soft:#DFEDE6; --down:#A93E2A; --down-soft:#F7E2DC; --flat:#7C776F;
+    --radius:8px;
     --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
     --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
   }
@@ -24,32 +24,33 @@
     --line:#322F37; --line-strong:#46424C;
     --ink:#EDEAE4; --ink-muted:#9C978E; --ink-faint:#74706A;
     --accent:#DE9660; --accent-soft:#3A2A1E;
-    --up:#5FBF93; --up-soft:#1B3830; --down:#E8846B; --flat:#837E76;
+    --up:#5FBF93; --up-soft:#1B3830; --down:#E8846B; --down-soft:#3B241E; --flat:#837E76;
   }
 
   * { box-sizing:border-box; }
-  html { scroll-behavior:smooth; scroll-padding-top:84px; }
+  html { scroll-behavior:smooth; scroll-padding-top:78px; }
   body {
-    margin:0; padding:0 0 60px;
+    margin:0; padding:0 0 44px;
     background:var(--ground); color:var(--ink);
     font-family:var(--sans); font-size:15px; line-height:1.5;
     -webkit-font-smoothing:antialiased;
   }
-  .wrap { max-width:1280px; margin:0 auto; padding:0 20px; }
+  /* desktop-first: use the whole screen, cap only on very wide monitors */
+  .wrap { max-width:2100px; margin:0 auto; padding:0 26px; }
 
-  /* header */
+  /* ---------- header ---------- */
   header.mast {
     position:sticky; top:0; z-index:50;
     background:var(--surface); border-bottom:1px solid var(--line);
   }
-  .mast-in { display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding-block:13px; }
-  .brand { display:flex; align-items:baseline; gap:10px; margin-right:auto; }
+  .mast-in { display:flex; align-items:center; gap:18px; flex-wrap:wrap; padding-block:12px; }
+  .brand { display:flex; align-items:baseline; gap:10px; }
   .brand h1 { margin:0; font-size:19px; font-weight:700; letter-spacing:-.015em; }
   .brand .sub {
     font-family:var(--mono); font-size:11px; letter-spacing:.07em;
     text-transform:uppercase; color:var(--ink-faint);
   }
-  nav { display:flex; gap:4px; }
+  nav { display:flex; gap:3px; margin-right:auto; }
   nav a {
     font-family:var(--mono); font-size:11.5px; letter-spacing:.05em;
     text-transform:uppercase; text-decoration:none;
@@ -61,7 +62,7 @@
   .mkt {
     display:inline-flex; align-items:center; gap:7px;
     font-family:var(--mono); font-size:11.5px; letter-spacing:.05em;
-    text-transform:uppercase; padding:6px 11px; border-radius:100px;
+    text-transform:uppercase; padding:6px 12px; border-radius:100px;
     border:1px solid var(--line-strong); background:var(--surface-2);
     color:var(--ink-muted); white-space:nowrap;
   }
@@ -74,85 +75,124 @@
   button, input {
     font-family:var(--sans); font-size:13px; color:var(--ink);
     background:var(--surface-2); border:1px solid var(--line-strong);
-    border-radius:var(--radius); padding:7px 11px;
+    border-radius:var(--radius); padding:7px 12px;
   }
   button { cursor:pointer; }
   button:hover { border-color:var(--accent); }
   :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 
-  /* rules */
-  details.checks {
-    margin-top:18px; background:var(--surface);
-    border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  /* ---------- top strip: settings + rules side by side on desktop ---------- */
+  .strip {
+    display:grid; gap:16px; margin-top:18px;
+    grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
   }
-  details.checks summary {
-    cursor:pointer; padding:12px 15px; font-size:13.5px; font-weight:600;
-    list-style:none; display:flex; align-items:center; gap:9px;
-  }
-  details.checks summary::-webkit-details-marker { display:none; }
-  details.checks summary::before {
-    content:"▸"; color:var(--accent); font-size:11px; transition:transform .15s;
-  }
-  details.checks[open] summary::before { transform:rotate(90deg); }
-  .checks-body { padding:14px 15px 15px; border-top:1px solid var(--line); }
-  .checks-body ol { margin:0; padding-left:19px; }
-  .checks-body li { margin-bottom:10px; font-size:13.5px; color:var(--ink-muted); }
-  .checks-body li:last-child { margin-bottom:0; }
-  .checks-body li b { color:var(--ink); font-weight:600; }
-  .rule {
-    margin-top:14px; padding:11px 13px; background:var(--surface-2);
-    border-left:3px solid var(--accent); border-radius:0 var(--radius) var(--radius) 0;
-    font-size:13px; color:var(--ink);
-  }
+  @media (max-width:1100px) { .strip { grid-template-columns:1fr; } }
 
-  /* sections */
-  section { margin-top:26px; }
-  .sec-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:11px; }
-  .sec-head h2 {
-    margin:0; font-size:12px; font-family:var(--mono); font-weight:500;
-    letter-spacing:.09em; text-transform:uppercase; color:var(--ink-muted);
-  }
-  .sec-head .hint { font-size:12.5px; color:var(--ink-faint); }
-  .panel {
+  .card {
     background:var(--surface); border:1px solid var(--line);
     border-radius:var(--radius); overflow:hidden;
   }
-  .panel.h-movers { height:460px; }
-  .panel.h-screener { height:620px; }
-  .panel.h-chart { height:560px; }
-  .tradingview-widget-container,
-  .tradingview-widget-container__widget { height:100%; width:100%; }
+  .card > h3 {
+    margin:0; padding:11px 15px;
+    font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.09em; text-transform:uppercase; color:var(--ink-muted);
+    border-bottom:1px solid var(--line); background:var(--surface-2);
+    display:flex; align-items:center; gap:8px; justify-content:space-between;
+  }
+  .card > h3 .tag {
+    font-size:10px; letter-spacing:.05em; color:var(--accent);
+    background:var(--accent-soft); padding:2px 7px; border-radius:100px;
+    border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);
+  }
+  .card-body { padding:13px 15px 15px; }
 
-  .chart-bar { display:flex; gap:8px; align-items:center; margin-bottom:11px; flex-wrap:wrap; }
-  .chart-bar input { font-family:var(--mono); text-transform:uppercase; width:130px; letter-spacing:.05em; }
+  /* settings table */
+  table.set { width:100%; border-collapse:collapse; font-size:13px; }
+  table.set td { padding:6px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.set tr:last-child td { border-bottom:none; }
+  table.set td.f {
+    font-family:var(--mono); font-size:12px; color:var(--ink-muted);
+    white-space:nowrap; padding-right:14px; width:1%;
+  }
+  table.set td.v { font-family:var(--mono); font-weight:600; white-space:nowrap; padding-right:14px; width:1%; }
+  table.set td.w { color:var(--ink-faint); font-size:12.5px; line-height:1.45; }
+  .v.good { color:var(--up); }
+  .v.avoid { color:var(--down); }
 
+  .howto {
+    margin-top:12px; padding:10px 12px; background:var(--surface-2);
+    border-left:3px solid var(--accent); border-radius:0 var(--radius) var(--radius) 0;
+    font-size:12.5px; color:var(--ink-muted); line-height:1.55;
+  }
+  .howto b { color:var(--ink); }
+
+  /* rules list */
+  .card-body ol { margin:0; padding-left:18px; }
+  .card-body ol li { margin-bottom:9px; font-size:13px; color:var(--ink-muted); line-height:1.5; }
+  .card-body ol li:last-child { margin-bottom:0; }
+  .card-body ol li b { color:var(--ink); font-weight:600; }
+  .rule {
+    margin-top:12px; padding:10px 12px; background:var(--surface-2);
+    border-left:3px solid var(--accent); border-radius:0 var(--radius) var(--radius) 0;
+    font-size:12.5px; color:var(--ink); line-height:1.55;
+  }
+
+  /* ---------- warning ---------- */
   .warn {
     background:var(--accent-soft); border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);
-    border-radius:var(--radius); padding:12px 15px; margin-top:18px;
+    border-radius:var(--radius); padding:11px 15px; margin-top:16px;
     font-size:13.5px; display:flex; gap:11px; align-items:flex-start;
   }
   .warn strong { color:var(--accent); font-weight:600; }
   .warn .ic { flex:none; font-size:15px; line-height:1.3; }
 
+  /* ---------- widget grid (desktop-dense) ---------- */
+  .grid {
+    display:grid; gap:16px; margin-top:18px;
+    grid-template-columns:minmax(0,1fr) minmax(0,1.45fr);
+  }
+  @media (max-width:1100px) { .grid { grid-template-columns:1fr; } }
+
+  .sec-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:9px; }
+  .sec-head h2 {
+    margin:0; font-size:11.5px; font-family:var(--mono); font-weight:500;
+    letter-spacing:.09em; text-transform:uppercase; color:var(--ink-muted);
+  }
+  .sec-head .hint { font-size:12.5px; color:var(--ink-faint); }
+
+  .panel {
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); overflow:hidden;
+  }
+  /* fill a desktop screen without dwarfing a laptop */
+  .h-movers  { height:clamp(420px, 52vh, 720px); }
+  .h-chart   { height:clamp(420px, 52vh, 720px); }
+  .h-screener{ height:clamp(520px, 74vh, 1100px); }
+
+  .tradingview-widget-container,
+  .tradingview-widget-container__widget { height:100%; width:100%; }
+
+  .chart-bar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .chart-bar input {
+    font-family:var(--mono); text-transform:uppercase;
+    width:120px; letter-spacing:.05em; padding:5px 10px; font-size:12.5px;
+  }
+  .chart-bar button { padding:5px 11px; font-size:12.5px; }
+
   footer.foot {
-    margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
+    margin-top:26px; padding-top:16px; border-top:1px solid var(--line);
     font-size:12.5px; color:var(--ink-faint); line-height:1.65;
+    display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
   }
   footer.foot b { color:var(--ink-muted); font-weight:600; }
+  footer.foot p { margin:0; }
   .tradingview-widget-copyright {
-    font-family:var(--sans); font-size:11px; padding:6px 10px;
+    font-family:var(--sans); font-size:10.5px; padding:5px 10px;
     color:var(--ink-faint); background:var(--surface);
   }
   .tradingview-widget-copyright a { color:var(--ink-faint); text-decoration:none; }
 
-  @media (prefers-reduced-motion:reduce) {
-    html { scroll-behavior:auto; }
-    details.checks summary::before { transition:none; }
-  }
-  @media (max-width:700px) {
-    .brand { width:100%; }
-    nav { width:100%; flex-wrap:wrap; }
-  }
+  @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
 </style>
 </head>
 <body>
@@ -165,8 +205,8 @@
     </div>
     <nav>
       <a href="#movers">Movers</a>
-      <a href="#screener">Screener</a>
       <a href="#chart">Chart</a>
+      <a href="#screener">Screener</a>
     </nav>
     <span id="mkt" class="mkt"><span class="dot"></span><span id="mkt-txt">—</span></span>
     <button id="theme" type="button" title="Switch light / dark">◐ Theme</button>
@@ -177,57 +217,108 @@
 
   <div id="warn-slot"></div>
 
-  <details class="checks" id="checks">
-    <summary>The four things to check before you touch a ticker</summary>
-    <div class="checks-body">
-      <ol>
-        <li><b>Relative volume, not the % gain.</b> A big move on normal volume is thin — maybe a couple of prints. Real relative volume means money actually showed up. Sort for it in the screener; don't trust a green number on its own.</li>
-        <li><b>Can you name the catalyst in one sentence?</b> Not "it's green" — <i>why</i>. If you can't say it out loud, you're guessing what the crowd is doing and you don't know whether they're buying or selling into you.</li>
-        <li><b>Early or already extended?</b> Pull the ticker up in the Chart section below <i>before</i> entering. If price already ran and is fading off its high, the move is done — you'd be buying the exhaustion.</li>
-        <li><b>Float cuts both ways.</b> Tight float moves fast on real interest and reverses just as fast. Not good or bad — it means smaller size and more violence in both directions.</li>
-      </ol>
-      <div class="rule">
-        Your own order history, n=108 round trips: <b>60% win rate, still net negative</b>, because losses ran 1.6× bigger than wins. Trades held under 5 minutes were net <b>+$224</b>; every longer bucket was negative. Decide the exit before you enter.
+  <div class="strip">
+    <div class="card">
+      <h3>Filters to scan with <span class="tag">from your own results</span></h3>
+      <div class="card-body">
+        <table class="set">
+          <tr>
+            <td class="f">Price</td><td class="v good">$5 – $10</td>
+            <td class="w">Your only profitable band: +$52 over 27 trades, 67% win rate. Everything else lost money.</td>
+          </tr>
+          <tr>
+            <td class="f">Price — avoid</td><td class="v avoid">under $2</td>
+            <td class="w">Where your worst damage came from. Sub-$2 names were net negative across 30 trades despite a decent hit rate.</td>
+          </tr>
+          <tr>
+            <td class="f">Rel. volume</td><td class="v">≥ 2×</td>
+            <td class="w">The floor for "real money showed up." Below this a big % move is a couple of prints.</td>
+          </tr>
+          <tr>
+            <td class="f">Rel. volume</td><td class="v good">≥ 5×</td>
+            <td class="w">What you actually want. This is the difference between a move and a headfake.</td>
+          </tr>
+          <tr>
+            <td class="f">Volume</td><td class="v">≥ 500K</td>
+            <td class="w">Liquidity to get back <em>out</em>. Thin names are easy to enter and expensive to leave.</td>
+          </tr>
+          <tr>
+            <td class="f">Change</td><td class="v">≥ +4%</td>
+            <td class="w">Enough to be a real move, low enough that you're not arriving at the end of it.</td>
+          </tr>
+          <tr>
+            <td class="f">Market cap</td><td class="v">≥ $50M</td>
+            <td class="w">Filters out the sub-$10M junk and reverse-split shells that burned you.</td>
+          </tr>
+          <tr>
+            <td class="f">Float</td><td class="v">under 20M</td>
+            <td class="w">Optional. Moves faster on real interest — and reverses just as fast. Size smaller if you use it.</td>
+          </tr>
+        </table>
+        <div class="howto">
+          <b>To apply these:</b> the embedded screener below opens on Top Gainers. Use its toolbar to
+          add columns and sort. For the full filter set, open
+          <b>tradingview.com/screener</b> in a tab, set these once, and save it as your own screen —
+          the free plan keeps saved screens.
+        </div>
       </div>
     </div>
-  </details>
 
-  <section id="movers">
-    <div class="sec-head">
-      <h2>Movers</h2>
-      <span class="hint">Today's gainers, losers and most active. Start here, then verify volume in the screener.</span>
+    <div class="card">
+      <h3>Before you touch a ticker</h3>
+      <div class="card-body">
+        <ol>
+          <li><b>Relative volume, not the % gain.</b> A big move on normal volume is thin. Check the volume column before the price column.</li>
+          <li><b>Name the catalyst in one sentence.</b> Not "it's green" — <i>why</i>. If you can't say it out loud, you don't know whether the crowd is buying or selling into you.</li>
+          <li><b>Early, or already extended?</b> Pull it up in the chart on the right <i>before</i> entering. Price fading off its high means the move is done.</li>
+          <li><b>Decide the exit before you enter.</b> Not after it goes against you.</li>
+        </ol>
+        <div class="rule">
+          Your order history, n=108 round trips: <b>60% win rate, still net negative</b> — losses ran
+          1.6× bigger than wins. Trades held under 5 minutes: net <b>+$224</b>. Every longer bucket: negative.
+        </div>
+      </div>
     </div>
-    <div class="panel h-movers" id="w-hotlists"></div>
-  </section>
+  </div>
 
-  <section id="screener">
+  <div class="grid">
+    <section id="movers">
+      <div class="sec-head">
+        <h2>Movers</h2>
+        <span class="hint">Start here — then verify volume.</span>
+      </div>
+      <div class="panel h-movers" id="w-hotlists"></div>
+    </section>
+
+    <section id="chart">
+      <div class="sec-head">
+        <h2>Chart</h2>
+        <span class="hint">Check #3 — where is price versus the day's high?</span>
+        <form class="chart-bar" id="chart-form" style="margin-left:auto">
+          <input id="sym" type="text" value="AAPL" aria-label="Ticker symbol" autocomplete="off" spellcheck="false">
+          <button type="submit">Load</button>
+        </form>
+      </div>
+      <div class="panel h-chart" id="w-chart"></div>
+    </section>
+  </div>
+
+  <section id="screener" style="margin-top:22px">
     <div class="sec-head">
       <h2>Screener</h2>
-      <span class="hint">Use the widget's own toolbar to switch presets and add columns — volume, relative volume, float.</span>
+      <span class="hint">Opens on Top Gainers. Use the toolbar to change preset, add columns, and sort by volume.</span>
     </div>
     <div class="panel h-screener" id="w-screener"></div>
   </section>
 
-  <section id="chart">
-    <div class="sec-head">
-      <h2>Chart</h2>
-      <span class="hint">This is check #3. Look at where price sits versus the day's high before you commit.</span>
-    </div>
-    <form class="chart-bar" id="chart-form">
-      <input id="sym" type="text" value="AAPL" aria-label="Ticker symbol" autocomplete="off" spellcheck="false">
-      <button type="submit">Load chart</button>
-    </form>
-    <div class="panel h-chart" id="w-chart"></div>
-  </section>
-
   <footer class="foot">
     <p>
-      <b>This file is yours.</b> Save it anywhere and open it in any browser — it runs on its own,
-      with no Claude and no account. Charts and data come from TradingView's free widgets, so it
-      needs an internet connection but no API key and no login.
+      <b>This file is yours.</b> Save it anywhere, open it in any browser — it runs on its own, with
+      no Claude and no account. Data comes from TradingView's free widgets: no API key, no login,
+      just an internet connection.
     </p>
     <p>
-      Nothing here places orders or touches your brokerage. A ticker showing up on a list is not a
+      Nothing here places orders or touches your brokerage. A ticker appearing on a list is not a
       recommendation — it only means it cleared that list's numeric filters.
     </p>
   </footer>
@@ -238,25 +329,20 @@
   "use strict";
 
   var TV = "https://s3.tradingview.com/external-embedding/";
-  var LS_THEME = "b2b.theme", LS_CHECKS = "b2b.checks", LS_SYM = "b2b.sym";
+  var LS_THEME = "b2b.theme", LS_SYM = "b2b.sym";
 
   function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
   function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
 
-  /* ---- theme: TradingView widgets take their theme at mount time,
-     so changing it means re-mounting them. ---- */
+  /* TradingView widgets read their config at mount time, so changing the
+     theme or symbol means rebuilding the widget rather than updating it. */
   function currentTheme() {
     var saved = lsGet(LS_THEME);
     if (saved === "dark" || saved === "light") return saved;
     return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark" : "light";
   }
-  function applyTheme(t) { document.documentElement.setAttribute("data-theme", t); }
 
-  /* ---- widget mounting ----
-     Each TradingView widget is a script tag whose text content is its JSON
-     config. Building it in JS (rather than pasting static markup) is what
-     lets the theme toggle and the symbol box re-render them. */
   function mount(host, file, config, credit) {
     host.innerHTML = "";
     var outer = document.createElement("div");
@@ -282,6 +368,20 @@
     }
   }
 
+  function mountChart(theme) {
+    var sym = (document.getElementById("sym").value || "AAPL").trim().toUpperCase();
+    mount(document.getElementById("w-chart"), "embed-widget-advanced-chart.js", {
+      symbol: sym,
+      interval: "5",
+      timezone: "America/New_York",
+      theme: theme,
+      style: "1",
+      locale: "en",
+      allow_symbol_change: true,
+      autosize: true
+    });
+  }
+
   function mountAll(theme) {
     mount(document.getElementById("w-hotlists"), "embed-widget-hotlists.js", {
       colorTheme: theme,
@@ -298,7 +398,7 @@
       width: "100%",
       height: "100%",
       defaultColumn: "overview",
-      defaultScreen: "most_capitalized",
+      defaultScreen: "top_gainers",
       showToolbar: true,
       locale: "en",
       market: "us",
@@ -308,21 +408,6 @@
     mountChart(theme);
   }
 
-  function mountChart(theme) {
-    var sym = (document.getElementById("sym").value || "AAPL").trim().toUpperCase();
-    mount(document.getElementById("w-chart"), "embed-widget-advanced-chart.js", {
-      symbol: sym,
-      interval: "5",
-      timezone: "America/New_York",
-      theme: theme,
-      style: "1",
-      locale: "en",
-      allow_symbol_change: true,
-      autosize: true
-    });
-  }
-
-  /* ---- market clock (US Eastern) ---- */
   function marketState() {
     var f = new Intl.DateTimeFormat("en-US", {
       timeZone: "America/New_York", weekday: "short",
@@ -332,18 +417,16 @@
     f.formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
     if (p.weekday === "Sat" || p.weekday === "Sun") return { k:"closed", label:"Weekend — closed" };
     var m = parseInt(p.hour,10) * 60 + parseInt(p.minute,10);
-    if (m >= 570 && m < 960) return { k:"open",   label:"Market open" };
-    if (m >= 240 && m < 570) return { k:"pre",    label:"Premarket" };
-    if (m >= 960 && m < 1200) return { k:"pre",   label:"After hours" };
+    if (m >= 570 && m < 960)  return { k:"open", label:"Market open" };
+    if (m >= 240 && m < 570)  return { k:"pre",  label:"Premarket" };
+    if (m >= 960 && m < 1200) return { k:"pre",  label:"After hours" };
     return { k:"closed", label:"Market closed" };
   }
 
   function paintMarket() {
     var st = marketState();
-    var el = document.getElementById("mkt");
-    el.className = "mkt " + (st.k === "closed" ? "" : st.k);
+    document.getElementById("mkt").className = "mkt " + (st.k === "closed" ? "" : st.k);
     document.getElementById("mkt-txt").textContent = st.label;
-
     var slot = document.getElementById("warn-slot");
     if (st.k !== "open") {
       if (!slot.firstChild) {
@@ -352,27 +435,19 @@
           'wildly inflated on thin after-hours prints. Treat anything here as a name to look at ' +
           'when the bell rings, not a live setup.</div></div>';
       }
-    } else {
-      slot.innerHTML = "";
-    }
+    } else { slot.innerHTML = ""; }
   }
 
-  /* ---- boot ---- */
   var theme = currentTheme();
-  applyTheme(theme);
+  document.documentElement.setAttribute("data-theme", theme);
 
   var savedSym = lsGet(LS_SYM);
   if (savedSym) document.getElementById("sym").value = savedSym;
 
-  if (lsGet(LS_CHECKS) !== "0") document.getElementById("checks").open = true;
-  document.getElementById("checks").addEventListener("toggle", function () {
-    lsSet(LS_CHECKS, this.open ? "1" : "0");
-  });
-
   document.getElementById("theme").addEventListener("click", function () {
     theme = (theme === "dark") ? "light" : "dark";
     lsSet(LS_THEME, theme);
-    applyTheme(theme);
+    document.documentElement.setAttribute("data-theme", theme);
     mountAll(theme);
   });
 

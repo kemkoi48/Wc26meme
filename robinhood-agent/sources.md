@@ -1489,3 +1489,46 @@ listing tickers; (3) it detects non-regular-hours from an ET clock and warns
 that % change / RVOL go flat-or-inflated on thin prints — a real failure
 mode observed directly in the 08-20 after-hours scan pull, where every row
 showed 0% change and RVOL of exactly 1.
+
+## 2026-08-21 — "Bell to Bell": a standalone scanner with no Claude dependency
+
+User clarified what they actually wanted: *"I just need an independent
+scanner that I can use without claude."* The Ignition Board artifact,
+though it costs no model tokens, is hosted on claude.ai and reads data
+through the user's claude.ai Robinhood connector — so it is NOT
+independent. Correct answer required a different build.
+
+**First, the answer they already owned:** the saved scans ("Early Momentum
+Ignition", "Warrior Trading Style - Low Float Volume Movers") live in the
+user's own Robinhood account. The agent has been reading them through a
+connector, but the user can open them in the Robinhood app with zero
+Claude involvement. Told them this before building anything.
+
+**Built: `tools/bell-to-bell.html`** — a single self-contained local HTML
+file. No API key, no login, no server, no Claude. Uses TradingView's free
+embeddable widgets, whose script URLs were verified live rather than
+recalled: `embed-widget-hotlists.js` (day's gainers/losers/most active),
+`embed-widget-screener.js` (full US screener with its own toolbar), and
+`embed-widget-advanced-chart.js` (5-min chart, ET timezone).
+
+Design notes worth keeping:
+- **Widgets are mounted from JS, not pasted as static markup.** TradingView
+  reads its config from a script tag's text content at mount time, so a
+  theme toggle or symbol change requires re-mounting. Building them
+  programmatically is what makes both work.
+- **The chart section exists specifically to close check #3** ("early or
+  already extended?") — the one check the Ignition Board structurally
+  could not answer, because `run_scan` returns no intraday high.
+- Same after-hours warning as the Ignition Board, from the same real
+  observation (08-20 after-hours scan pull returned 0% change and RVOL of
+  exactly 1 on every row).
+- `defaultScreen` left at `most_capitalized`, the only preset value
+  verified from TradingView's own demo snippet. Rather than guess at
+  preset names like "top_gainers", the UI tells the user to switch presets
+  via the widget's toolbar, and the hotlists widget covers movers anyway.
+
+**Free-scanner landscape checked** (web search, 2026): TradingView free is
+the strongest free screener (~14k US stocks, saveable screens); Barchart
+free is good for unusual/relative volume; **Finviz free is 15-minute
+delayed — explicitly warned against for day-trade entries**, which matters
+for this user specifically.

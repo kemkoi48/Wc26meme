@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bell to Bell</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔔</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground:#F7F5F2; --surface:#FFFFFF; --surface-2:#F1EEE9;
+    --line:#E0DAD1; --line-strong:#CFC7BB;
+    --ink:#1A1917; --ink-muted:#6B6862; --ink-faint:#948F86;
+    --accent:#B3632F; --accent-soft:#F3E3D6;
+    --up:#2A7355; --up-soft:#DFEDE6; --down:#A93E2A; --flat:#7C776F;
+    --radius:7px;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  :root[data-theme="dark"] {
+    --ground:#151417; --surface:#1D1C21; --surface-2:#26242A;
+    --line:#322F37; --line-strong:#46424C;
+    --ink:#EDEAE4; --ink-muted:#9C978E; --ink-faint:#74706A;
+    --accent:#DE9660; --accent-soft:#3A2A1E;
+    --up:#5FBF93; --up-soft:#1B3830; --down:#E8846B; --flat:#837E76;
+  }
+
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; scroll-padding-top:84px; }
+  body {
+    margin:0; padding:0 0 60px;
+    background:var(--ground); color:var(--ink);
+    font-family:var(--sans); font-size:15px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap { max-width:1280px; margin:0 auto; padding:0 20px; }
+
+  /* header */
+  header.mast {
+    position:sticky; top:0; z-index:50;
+    background:var(--surface); border-bottom:1px solid var(--line);
+  }
+  .mast-in { display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding-block:13px; }
+  .brand { display:flex; align-items:baseline; gap:10px; margin-right:auto; }
+  .brand h1 { margin:0; font-size:19px; font-weight:700; letter-spacing:-.015em; }
+  .brand .sub {
+    font-family:var(--mono); font-size:11px; letter-spacing:.07em;
+    text-transform:uppercase; color:var(--ink-faint);
+  }
+  nav { display:flex; gap:4px; }
+  nav a {
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.05em;
+    text-transform:uppercase; text-decoration:none;
+    color:var(--ink-muted); padding:7px 11px; border-radius:var(--radius);
+    border:1px solid transparent;
+  }
+  nav a:hover { color:var(--accent); background:var(--surface-2); border-color:var(--line); }
+
+  .mkt {
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.05em;
+    text-transform:uppercase; padding:6px 11px; border-radius:100px;
+    border:1px solid var(--line-strong); background:var(--surface-2);
+    color:var(--ink-muted); white-space:nowrap;
+  }
+  .dot { width:7px; height:7px; border-radius:50%; background:var(--flat); flex:none; }
+  .mkt.open { color:var(--up); border-color:color-mix(in srgb,var(--up) 45%,transparent); background:var(--up-soft); }
+  .mkt.open .dot { background:var(--up); }
+  .mkt.pre { color:var(--accent); border-color:color-mix(in srgb,var(--accent) 45%,transparent); background:var(--accent-soft); }
+  .mkt.pre .dot { background:var(--accent); }
+
+  button, input {
+    font-family:var(--sans); font-size:13px; color:var(--ink);
+    background:var(--surface-2); border:1px solid var(--line-strong);
+    border-radius:var(--radius); padding:7px 11px;
+  }
+  button { cursor:pointer; }
+  button:hover { border-color:var(--accent); }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  /* rules */
+  details.checks {
+    margin-top:18px; background:var(--surface);
+    border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  }
+  details.checks summary {
+    cursor:pointer; padding:12px 15px; font-size:13.5px; font-weight:600;
+    list-style:none; display:flex; align-items:center; gap:9px;
+  }
+  details.checks summary::-webkit-details-marker { display:none; }
+  details.checks summary::before {
+    content:"▸"; color:var(--accent); font-size:11px; transition:transform .15s;
+  }
+  details.checks[open] summary::before { transform:rotate(90deg); }
+  .checks-body { padding:14px 15px 15px; border-top:1px solid var(--line); }
+  .checks-body ol { margin:0; padding-left:19px; }
+  .checks-body li { margin-bottom:10px; font-size:13.5px; color:var(--ink-muted); }
+  .checks-body li:last-child { margin-bottom:0; }
+  .checks-body li b { color:var(--ink); font-weight:600; }
+  .rule {
+    margin-top:14px; padding:11px 13px; background:var(--surface-2);
+    border-left:3px solid var(--accent); border-radius:0 var(--radius) var(--radius) 0;
+    font-size:13px; color:var(--ink);
+  }
+
+  /* sections */
+  section { margin-top:26px; }
+  .sec-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:11px; }
+  .sec-head h2 {
+    margin:0; font-size:12px; font-family:var(--mono); font-weight:500;
+    letter-spacing:.09em; text-transform:uppercase; color:var(--ink-muted);
+  }
+  .sec-head .hint { font-size:12.5px; color:var(--ink-faint); }
+  .panel {
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); overflow:hidden;
+  }
+  .panel.h-movers { height:460px; }
+  .panel.h-screener { height:620px; }
+  .panel.h-chart { height:560px; }
+  .tradingview-widget-container,
+  .tradingview-widget-container__widget { height:100%; width:100%; }
+
+  .chart-bar { display:flex; gap:8px; align-items:center; margin-bottom:11px; flex-wrap:wrap; }
+  .chart-bar input { font-family:var(--mono); text-transform:uppercase; width:130px; letter-spacing:.05em; }
+
+  .warn {
+    background:var(--accent-soft); border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);
+    border-radius:var(--radius); padding:12px 15px; margin-top:18px;
+    font-size:13.5px; display:flex; gap:11px; align-items:flex-start;
+  }
+  .warn strong { color:var(--accent); font-weight:600; }
+  .warn .ic { flex:none; font-size:15px; line-height:1.3; }
+
+  footer.foot {
+    margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--ink-faint); line-height:1.65;
+  }
+  footer.foot b { color:var(--ink-muted); font-weight:600; }
+  .tradingview-widget-copyright {
+    font-family:var(--sans); font-size:11px; padding:6px 10px;
+    color:var(--ink-faint); background:var(--surface);
+  }
+  .tradingview-widget-copyright a { color:var(--ink-faint); text-decoration:none; }
+
+  @media (prefers-reduced-motion:reduce) {
+    html { scroll-behavior:auto; }
+    details.checks summary::before { transition:none; }
+  }
+  @media (max-width:700px) {
+    .brand { width:100%; }
+    nav { width:100%; flex-wrap:wrap; }
+  }
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap mast-in">
+    <div class="brand">
+      <h1>Bell to Bell</h1>
+      <span class="sub">Standalone desk</span>
+    </div>
+    <nav>
+      <a href="#movers">Movers</a>
+      <a href="#screener">Screener</a>
+      <a href="#chart">Chart</a>
+    </nav>
+    <span id="mkt" class="mkt"><span class="dot"></span><span id="mkt-txt">—</span></span>
+    <button id="theme" type="button" title="Switch light / dark">◐ Theme</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div id="warn-slot"></div>
+
+  <details class="checks" id="checks">
+    <summary>The four things to check before you touch a ticker</summary>
+    <div class="checks-body">
+      <ol>
+        <li><b>Relative volume, not the % gain.</b> A big move on normal volume is thin — maybe a couple of prints. Real relative volume means money actually showed up. Sort for it in the screener; don't trust a green number on its own.</li>
+        <li><b>Can you name the catalyst in one sentence?</b> Not "it's green" — <i>why</i>. If you can't say it out loud, you're guessing what the crowd is doing and you don't know whether they're buying or selling into you.</li>
+        <li><b>Early or already extended?</b> Pull the ticker up in the Chart section below <i>before</i> entering. If price already ran and is fading off its high, the move is done — you'd be buying the exhaustion.</li>
+        <li><b>Float cuts both ways.</b> Tight float moves fast on real interest and reverses just as fast. Not good or bad — it means smaller size and more violence in both directions.</li>
+      </ol>
+      <div class="rule">
+        Your own order history, n=108 round trips: <b>60% win rate, still net negative</b>, because losses ran 1.6× bigger than wins. Trades held under 5 minutes were net <b>+$224</b>; every longer bucket was negative. Decide the exit before you enter.
+      </div>
+    </div>
+  </details>
+
+  <section id="movers">
+    <div class="sec-head">
+      <h2>Movers</h2>
+      <span class="hint">Today's gainers, losers and most active. Start here, then verify volume in the screener.</span>
+    </div>
+    <div class="panel h-movers" id="w-hotlists"></div>
+  </section>
+
+  <section id="screener">
+    <div class="sec-head">
+      <h2>Screener</h2>
+      <span class="hint">Use the widget's own toolbar to switch presets and add columns — volume, relative volume, float.</span>
+    </div>
+    <div class="panel h-screener" id="w-screener"></div>
+  </section>
+
+  <section id="chart">
+    <div class="sec-head">
+      <h2>Chart</h2>
+      <span class="hint">This is check #3. Look at where price sits versus the day's high before you commit.</span>
+    </div>
+    <form class="chart-bar" id="chart-form">
+      <input id="sym" type="text" value="AAPL" aria-label="Ticker symbol" autocomplete="off" spellcheck="false">
+      <button type="submit">Load chart</button>
+    </form>
+    <div class="panel h-chart" id="w-chart"></div>
+  </section>
+
+  <footer class="foot">
+    <p>
+      <b>This file is yours.</b> Save it anywhere and open it in any browser — it runs on its own,
+      with no Claude and no account. Charts and data come from TradingView's free widgets, so it
+      needs an internet connection but no API key and no login.
+    </p>
+    <p>
+      Nothing here places orders or touches your brokerage. A ticker showing up on a list is not a
+      recommendation — it only means it cleared that list's numeric filters.
+    </p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var TV = "https://s3.tradingview.com/external-embedding/";
+  var LS_THEME = "b2b.theme", LS_CHECKS = "b2b.checks", LS_SYM = "b2b.sym";
+
+  function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+
+  /* ---- theme: TradingView widgets take their theme at mount time,
+     so changing it means re-mounting them. ---- */
+  function currentTheme() {
+    var saved = lsGet(LS_THEME);
+    if (saved === "dark" || saved === "light") return saved;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark" : "light";
+  }
+  function applyTheme(t) { document.documentElement.setAttribute("data-theme", t); }
+
+  /* ---- widget mounting ----
+     Each TradingView widget is a script tag whose text content is its JSON
+     config. Building it in JS (rather than pasting static markup) is what
+     lets the theme toggle and the symbol box re-render them. */
+  function mount(host, file, config, credit) {
+    host.innerHTML = "";
+    var outer = document.createElement("div");
+    outer.className = "tradingview-widget-container";
+    var inner = document.createElement("div");
+    inner.className = "tradingview-widget-container__widget";
+    outer.appendChild(inner);
+
+    var s = document.createElement("script");
+    s.type = "text/javascript";
+    s.src = TV + file;
+    s.async = true;
+    s.textContent = JSON.stringify(config);
+    outer.appendChild(s);
+    host.appendChild(outer);
+
+    if (credit) {
+      var c = document.createElement("div");
+      c.className = "tradingview-widget-copyright";
+      c.innerHTML = '<a href="' + credit.href + '" rel="noopener nofollow" target="_blank">' +
+                    credit.label + '</a> by TradingView';
+      host.appendChild(c);
+    }
+  }
+
+  function mountAll(theme) {
+    mount(document.getElementById("w-hotlists"), "embed-widget-hotlists.js", {
+      colorTheme: theme,
+      dateRange: "1D",
+      exchange: "US",
+      showChart: false,
+      showSymbolLogo: true,
+      locale: "en",
+      width: "100%",
+      height: "100%"
+    });
+
+    mount(document.getElementById("w-screener"), "embed-widget-screener.js", {
+      width: "100%",
+      height: "100%",
+      defaultColumn: "overview",
+      defaultScreen: "most_capitalized",
+      showToolbar: true,
+      locale: "en",
+      market: "us",
+      colorTheme: theme
+    }, { href: "https://www.tradingview.com/screener/", label: "Stock Screener" });
+
+    mountChart(theme);
+  }
+
+  function mountChart(theme) {
+    var sym = (document.getElementById("sym").value || "AAPL").trim().toUpperCase();
+    mount(document.getElementById("w-chart"), "embed-widget-advanced-chart.js", {
+      symbol: sym,
+      interval: "5",
+      timezone: "America/New_York",
+      theme: theme,
+      style: "1",
+      locale: "en",
+      allow_symbol_change: true,
+      autosize: true
+    });
+  }
+
+  /* ---- market clock (US Eastern) ---- */
+  function marketState() {
+    var f = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York", weekday: "short",
+      hour: "numeric", minute: "numeric", hour12: false
+    });
+    var p = {};
+    f.formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
+    if (p.weekday === "Sat" || p.weekday === "Sun") return { k:"closed", label:"Weekend — closed" };
+    var m = parseInt(p.hour,10) * 60 + parseInt(p.minute,10);
+    if (m >= 570 && m < 960) return { k:"open",   label:"Market open" };
+    if (m >= 240 && m < 570) return { k:"pre",    label:"Premarket" };
+    if (m >= 960 && m < 1200) return { k:"pre",   label:"After hours" };
+    return { k:"closed", label:"Market closed" };
+  }
+
+  function paintMarket() {
+    var st = marketState();
+    var el = document.getElementById("mkt");
+    el.className = "mkt " + (st.k === "closed" ? "" : st.k);
+    document.getElementById("mkt-txt").textContent = st.label;
+
+    var slot = document.getElementById("warn-slot");
+    if (st.k !== "open") {
+      if (!slot.firstChild) {
+        slot.innerHTML = '<div class="warn"><span class="ic">◐</span><div>' +
+          '<strong>Outside regular hours.</strong> Percent-change and volume readings go flat or ' +
+          'wildly inflated on thin after-hours prints. Treat anything here as a name to look at ' +
+          'when the bell rings, not a live setup.</div></div>';
+      }
+    } else {
+      slot.innerHTML = "";
+    }
+  }
+
+  /* ---- boot ---- */
+  var theme = currentTheme();
+  applyTheme(theme);
+
+  var savedSym = lsGet(LS_SYM);
+  if (savedSym) document.getElementById("sym").value = savedSym;
+
+  if (lsGet(LS_CHECKS) !== "0") document.getElementById("checks").open = true;
+  document.getElementById("checks").addEventListener("toggle", function () {
+    lsSet(LS_CHECKS, this.open ? "1" : "0");
+  });
+
+  document.getElementById("theme").addEventListener("click", function () {
+    theme = (theme === "dark") ? "light" : "dark";
+    lsSet(LS_THEME, theme);
+    applyTheme(theme);
+    mountAll(theme);
+  });
+
+  document.getElementById("chart-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    lsSet(LS_SYM, document.getElementById("sym").value.trim().toUpperCase());
+    mountChart(theme);
+  });
+
+  paintMarket();
+  setInterval(paintMarket, 30000);
+  mountAll(theme);
+})();
+</script>
+</body>
+</html>

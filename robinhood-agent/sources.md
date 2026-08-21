@@ -1532,3 +1532,54 @@ the strongest free screener (~14k US stocks, saveable screens); Barchart
 free is good for unusual/relative volume; **Finviz free is 15-minute
 delayed — explicitly warned against for day-trade entries**, which matters
 for this user specifically.
+
+## 2026-08-21 ~7:20 AM ET — premarket watch, "August 21" built
+
+Second automatic firing of the daily premarket trigger. Renamed
+"August 20" -> "August 21" in place (5 items).
+
+**Dominant theme, day 2: the Bitcoin complex is extending, not fading.**
+Yesterday's catalyst (White House crypto event / Clarity Act push + BTC
+surge) has not exhausted — it accelerated overnight. Real premarket
+numbers vs 08-20 closes:
+
+| Symbol | Premarket | Close | Move |
+|---|---|---|---|
+| MSTR | $122.38 | $112.39 | **+8.9%** |
+| ROST | $247.50 | $228.99 | **+8.1%** |
+| COIN | $181.70 | $172.35 | **+5.4%** |
+| BMNR | $22.57 | $21.57 | **+4.6%** |
+| HOOD | $99.13 | $95.10 | **+4.2%** |
+| BULL | $9.01 | $8.85 | +1.9% |
+| WMT | $103.67 | $103.84 | -0.2% |
+
+Corroborating the theme rather than assuming it: Stocktwits trending has
+IBIT +6.6%, Grayscale BTC +6.7%, MSTY +8.6%, SBET +5.0% — the whole
+BTC-linked cohort, not one name.
+
+- **Kept: MSTR, COIN, HOOD, BMNR.** Same verified catalyst as yesterday,
+  still live and expanding. **But flagged extended** — MSTR at +8.9%
+  premarket on day 2 is exactly the "already printed" case S7 rule 4
+  excludes for a fresh entry. Kept as names to watch for a pullback, not
+  as clean entries.
+- **Added ROST.** The one genuinely *fresh*, independently-dated catalyst
+  today: Q2 earnings, reported 08-20 pm (confirmed on the earnings
+  calendar with `eps.actual` now populated), +8.1% premarket. Not part of
+  the crypto theme — independent.
+- **Dropped BULL.** Was +14.6% premarket yesterday on earnings + short
+  squeeze; today +1.9%. The squeeze has done its work. Textbook
+  already-printed — dropped rather than held out of attachment.
+- **Dropped WMT.** -0.2%, flat. The beat-then-guide-down repricing
+  happened yesterday; nothing left to trade.
+- **Considered and rejected: ASST** (Strive, +9.8% premarket). Checked
+  `get_symbol_messages` directly: the entire thread is squeeze hype
+  ("30% short", "squizee") with no independent dated catalyst — its move
+  is purely derivative of BTC plus short positioning. Same discipline as
+  08-20's rejection of the smaller crypto proxies: one theme does not
+  justify stacking every ticker riding it. IBIT/MSTY/Grayscale BTC
+  excluded as ETFs; SBET excluded as redundant to BMNR.
+
+**Also noted, growth sleeve:** BTG trading $5.51 premarket vs a $5.38
+close — above the $5.39 peak close that currently anchors the trailing
+stop. If it holds through the session, today's 4:05 PM check should
+ratchet the stop above $4.42 for the first time since 08-19.

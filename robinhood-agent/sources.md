@@ -1729,3 +1729,38 @@ as RESTING LIMIT-ORDER imbalance, not executed trade flow -- this
 connector has no tick-level buyer/seller classification, so this answers
 "who wants to trade right now," a real but different question from "who
 already did."
+
+## 2026-08-21 ~11:20 ET — Ignition Board: favorability sort, real catalyst column; corrected Stocklake claim
+
+**User caught a real mistake:** the last entry said "Stocklake needs
+re-authorization," generalized from one failed `get_insider_activity`
+call. User pushed back ("you have stocklake mcp"). Retested live rather
+than argue from memory: `get_stock_news` succeeded immediately on the
+same account, same session. **Correction: Stocklake itself is fine.**
+Only `get_insider_activity` is blocked, and its own tool description says
+"Pro tier only" -- almost certainly a tier gate on that one premium
+endpoint, not a connector-wide auth failure. Recorded here so the
+overbroad claim doesn't stand uncorrected in the log.
+
+**Fixed a real bug from the previous edit, before a user ever hit it.**
+The "Pillars" column had been added to the sortable COLS list with a
+value that's an object (`{rvol,chg,price,float}`), but the sort
+comparator did `x - y` on it -- objects minus objects is `NaN`, so
+clicking that header would have silently done nothing. Caught while
+building the requested favorability sort, not shipped broken: renamed the
+sort key to the actual numeric `pillarsMet`, and extended the comparator
+with proper per-key handling (string compare for symbol, cache lookups
+for the two on-demand columns, tiebreak on relative volume for pillar
+ties -- more real volume outranks less when pillar counts match).
+
+**Default sort is now "most favorable ATM"** -- pillarsMet descending,
+RVOL as tiebreaker -- directly answering what was asked, and it's what
+loads first rather than something the user has to find.
+
+**Added a real Catalyst column**, Stocklake's `get_stock_news` (days=3,
+limit=3), click-to-check per symbol like the Order Book column -- never
+auto-polled, because the guest tier hard-caps at 25 calls/day for the
+whole account, shared with anything else this session uses Stocklake for
+today. Shows the first real headline (title + published_at in the
+tooltip) when one exists; **shows exactly "N/A" when none does**, per the
+user's own wording, not a softened "no catalyst found."

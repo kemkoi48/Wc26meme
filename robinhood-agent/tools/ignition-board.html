@@ -630,6 +630,10 @@
     <b>Alerts (flash, sound, tab title) only fire while this tab is open in your browser</b> — this page runs
     inside claude.ai's frame, which does not reliably support real operating-system push notifications, so
     no promise is made here that you'll see it if the tab or browser is closed.
+    <b>Catalyst</b> pulls a real dated headline (Stocklake), click "Check" per symbol — deliberately not
+    automatic, since that connector's free tier caps at 25 lookups/day for the whole account, shared with
+    anything else it's used for. "N/A" means no headline was found in the last 3 days, not that nothing is
+    happening — always worth a manual look on Stocktwits or elsewhere before trusting it either way.
   </p>
 </main>
 
@@ -683,7 +687,9 @@
   var isStale = false;
   var retried = false;
   var swingRetried = false;
-  var sort = { key: "chg", dir: -1 };
+  // Default view answers "which is most favorable ATM": most pillars
+  // cleared first, real relative volume as the tiebreaker.
+  var sort = { key: "pillarsMet", dir: -1 };
   var swingSort = { key: "chg1mo", dir: -1 };
   var freshUntil = {};      // symbol -> timestamp; drives the newpulse row animation
   var alertsOn = false;
@@ -822,14 +828,15 @@
   }
 
   var COLS = [
-    { key: "sym",     label: "Symbol" },
-    { key: "chg",     label: "% Chg" },
-    { key: "last",    label: "Last" },
-    { key: "rvol",    label: "Rel Vol" },
-    { key: "vol",     label: "Volume" },
-    { key: "float",   label: "Float" },
-    { key: "pillars", label: "Pillars" },
-    { key: "book",    label: "Order Book" }
+    { key: "sym",        label: "Symbol" },
+    { key: "pillarsMet", label: "Pillars ★" },
+    { key: "chg",        label: "% Chg" },
+    { key: "last",       label: "Last" },
+    { key: "rvol",       label: "Rel Vol" },
+    { key: "vol",        label: "Volume" },
+    { key: "float",      label: "Float" },
+    { key: "book",       label: "Order Book" },
+    { key: "catalyst",   label: "Catalyst" }
   ];
 
   // ---------- order-book buy/sell pressure (on demand, per symbol) ----------
@@ -869,6 +876,39 @@
       .then(paintRows);
   }
 
+  // ---------- catalyst (on demand, per symbol) ----------
+  // Real dated news headlines via Stocklake, not a heuristic guess from
+  // social chatter -- matches how catalysts have been verified by hand all
+  // session (get_stock_news, checked live before this was wired in). Stays
+  // click-triggered, never auto-polled: the connector's guest tier caps at
+  // 25 calls/DAY, account-wide, shared with anything else Stocklake is used
+  // for -- an auto-refreshing column across a full table would blow through
+  // that in one poll cycle.
+  var catalystCache = {}; // sym -> { state, text, publishedAt } | { state:'error', msg }
+
+  function checkCatalyst(sym) {
+    if (!mcp || catalystCache[sym] && catalystCache[sym].state === "loading") return;
+    catalystCache[sym] = { state: "loading" };
+    paintRows();
+    mcp.callTool("Stocklake", "get_stock_news", { symbol: sym, days: 3, limit: 3 }, { cache: { staleTime: 600000 } })
+      .then(function (res) {
+        var p = res && res.payload;
+        var articles = p && p.articles;
+        if (Array.isArray(articles) && articles.length) {
+          catalystCache[sym] = { state: "done", text: articles[0].title, publishedAt: articles[0].published_at };
+        } else {
+          catalystCache[sym] = { state: "done", text: null };
+        }
+      })
+      .catch(function (err) {
+        var msg = (err && err.message) || "";
+        if (/guest.?limit/i.test(msg)) msg = "Daily news-lookup limit hit (resets midnight UTC)";
+        else if (!msg) msg = "lookup failed";
+        catalystCache[sym] = { state: "error", msg: msg };
+      })
+      .then(paintRows);
+  }
+
   function paintHead() {
     els.head.innerHTML = COLS.map(function (c) {
       var on = sort.key === c.key;
@@ -886,15 +926,32 @@
     });
   }
 
+  // "Most favorable ATM" is what the default sort answers: pillarsMet
+  // first (how many of the 4 real numeric S3 pillars this row clears),
+  // relative volume as the tiebreaker when pillar counts match, since RVOL
+  // is the pillar that actually means "real money showed up" rather than a
+  // thin print. Book/catalyst pull from their own on-demand caches, keyed
+  // by symbol, since they are not stored on the row itself.
+  function sortVal(r, key) {
+    if (key === "book") { var bc = bookCache[r.sym]; return bc && bc.state === "done" ? bc.pct : null; }
+    if (key === "catalyst") { var cc = catalystCache[r.sym]; return cc && cc.state === "done" && cc.text ? 1 : 0; }
+    return r[key];
+  }
+
   function paintRows() {
     if (!rows.length) return;
     var sorted = rows.slice().sort(function (a, b) {
-      var x = a[sort.key], y = b[sort.key];
-      if (sort.key === "sym") return String(x).localeCompare(String(y)) * sort.dir;
+      if (sort.key === "sym") return String(a.sym).localeCompare(String(b.sym)) * sort.dir;
+      var x = sortVal(a, sort.key), y = sortVal(b, sort.key);
       if (x === null && y === null) return 0;
       if (x === null) return 1;
       if (y === null) return -1;
-      return (x - y) * sort.dir;
+      if (x !== y) return (x - y) * sort.dir;
+      if (sort.key === "pillarsMet") {
+        var rx = a.rvol === null ? -1 : a.rvol, ry = b.rvol === null ? -1 : b.rvol;
+        return (rx - ry) * sort.dir; // tiebreak: more relative volume wins
+      }
+      return 0;
     });
 
     var anyFloat = rows.some(function (r) { return r.floatReported; });
@@ -941,9 +998,25 @@
           buyPct.toFixed(0) + '% buy / ' + sellPct.toFixed(0) + '% sell</span>';
       }
 
+      var cc = catalystCache[r.sym];
+      var catCell;
+      if (!cc) {
+        catCell = '<button type="button" class="book-btn cat-btn" data-sym="' + esc(r.sym) + '">Check</button>';
+      } else if (cc.state === "loading") {
+        catCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      } else if (cc.state === "error") {
+        catCell = '<button type="button" class="book-btn cat-btn" data-sym="' + esc(r.sym) + '" title="' + esc(cc.msg) + '">Retry</button>';
+      } else if (!cc.text) {
+        catCell = '<span class="num" style="color:var(--ink-faint)">N/A</span>';
+      } else {
+        var short = cc.text.length > 58 ? cc.text.slice(0, 57) + "…" : cc.text;
+        catCell = '<span title="' + esc(cc.text) + (cc.publishedAt ? " (" + esc(cc.publishedAt) + ")" : "") + '" style="text-align:left;display:inline-block;max-width:220px;white-space:normal">' + esc(short) + '</span>';
+      }
+
       return '<tr class="' + r.q + '">' +
         '<td class="sym"><div class="ticker">' + esc(r.sym) + '</div>' +
           (r.name ? '<div class="coname">' + esc(r.name) + '</div>' : '') + '</td>' +
+        '<td>' + pillarsCell + '</td>' +
         '<td class="num ' + cls + '">' + pct(r.chg) + '</td>' +
         '<td class="num">' + money(r.last) + '</td>' +
         '<td><div class="meter"><span class="track"><span class="fill' +
@@ -952,13 +1025,16 @@
           '<span class="val">' + rvolTxt(r.rvol) + '</span></div></td>' +
         '<td class="num">' + compact(r.vol) + '</td>' +
         '<td>' + floatCell + '</td>' +
-        '<td>' + pillarsCell + '</td>' +
         '<td>' + bookCell + '</td>' +
+        '<td>' + catCell + '</td>' +
         '</tr>';
     }).join("");
 
-    Array.prototype.forEach.call(els.body.querySelectorAll(".book-btn"), function (btn) {
+    Array.prototype.forEach.call(els.body.querySelectorAll(".book-btn:not(.cat-btn)"), function (btn) {
       btn.addEventListener("click", function () { checkBook(btn.getAttribute("data-sym")); });
+    });
+    Array.prototype.forEach.call(els.body.querySelectorAll(".cat-btn"), function (btn) {
+      btn.addEventListener("click", function () { checkCatalyst(btn.getAttribute("data-sym")); });
     });
 
     var floatNote = document.getElementById("float-note");

@@ -1680,3 +1680,52 @@ New-qualifier tracking persists in localStorage keyed to the calendar
 date, so a page reload during the same day doesn't re-fire alerts for
 names already seen, and the set naturally resets the next day when the
 scan's own results roll over.
+
+## 2026-08-21 ~11:00 ET — Ignition Board: real 5-pillar scoring, order-book pressure; insider blocked
+
+Three real asks: (1) float was showing empty for some scans, (2) score
+against the actual documented "5 pillars" rule, (3) add insider activity,
+(4, arrived mid-turn) track buy vs. sell pressure.
+
+**Float-empty diagnosed, not just patched.** Not every saved Robinhood
+scan carries a Float column at all (Growth Momentum, Daily gainers, etc.
+don't) -- picking one of those in the dropdown made every row's Float cell
+blank with no explanation, which reads as broken. Fixed two ways: the row
+shaper now distinguishes "this scan doesn't report float" (shows `n/a`,
+title-tipped) from "float is null for this specific row," and the page
+now surfaces an explicit banner naming the two scans that do carry it
+(Early Momentum Ignition, Warrior Trading Style) when the selected one
+doesn't.
+
+**Real 5-pillar scoring replaces the earlier ad hoc quality heuristic.**
+Pulled the actual numbers from strategies.md's S3 section rather than
+inventing new ones: rel. vol >= 5x, % change >= 10%, price $2-20,
+float <= 20M -- the four NUMERIC pillars. Each row now shows a real
+"N/4 pillars" chip (title-tipped with which ones passed) computed from
+these exact thresholds, and a row scores out of 3 rather than being
+silently marked as failing float when the underlying scan can't report
+it. The 5th pillar, catalyst, is explicitly non-numeric per S3's own
+documentation and is called out in the checks panel as something this
+page cannot automate -- same honesty as the earlier per-row date already
+established for "is this already extended."
+
+**Insider activity: genuinely blocked, not skipped.** Checked
+`get_insider_activity` live before promising anything -- **the Stocklake
+connector itself needs re-authorization (expired token)**, a session-level
+auth issue, not something fixable from inside this page. The tool's own
+description also says "Pro tier only," so even after reauth it may not
+answer without a paid tier -- flagged to the user rather than silently
+built around. Nothing shipped for this; told the user plainly instead.
+
+**Buy vs. sell pressure -- real, but scoped honestly.** Added a per-row,
+click-to-check "Order Book" column using the real `get_equity_price_book`
+tool (added to the artifact's manifest, tested live on SDOT before
+shipping). Sums resting share size across the top 10 bid and ask levels
+and shows e.g. "62% buy / 38% sell." Deliberately on-demand, not
+auto-polled per row -- Robinhood's connector hasn't shown Stocklake-style
+rate limits this session, but there's no reason to hammer 10+ symbols
+every 60s when a click answers the question. Explicitly labeled in the UI
+as RESTING LIMIT-ORDER imbalance, not executed trade flow -- this
+connector has no tick-level buyer/seller classification, so this answers
+"who wants to trade right now," a real but different question from "who
+already did."

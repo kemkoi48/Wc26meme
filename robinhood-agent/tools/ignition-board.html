@@ -348,6 +348,13 @@
   }
   .chip.tight { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); background: var(--accent-soft); }
 
+  .book-btn {
+    font-family: var(--mono); font-size: 11px; padding: 3px 9px;
+    background: var(--surface-2); border: 1px solid var(--line-strong);
+    border-radius: 100px; color: var(--ink-muted); cursor: pointer;
+  }
+  .book-btn:hover { border-color: var(--accent); color: var(--accent); }
+
   /* ---------- alert bell ---------- */
 
   .bell {
@@ -524,20 +531,24 @@
     <div class="tile"><span class="k">Matches</span><span class="v" id="t-count">—</span><div class="note" id="t-count-note">&nbsp;</div></div>
     <div class="tile"><span class="k">Up &gt; 5%</span><span class="v up" id="t-movers">—</span><div class="note">real gainers</div></div>
     <div class="tile"><span class="k">Volume behind it</span><span class="v hot" id="t-rvol">—</span><div class="note">elevated rel. volume</div></div>
-    <div class="tile"><span class="k">Both at once</span><span class="v" id="t-both">—</span><div class="note">up &amp; volume confirms</div></div>
+    <div class="tile"><span class="k">All pillars</span><span class="v" id="t-both">—</span><div class="note">every numeric S3 pillar met</div></div>
   </section>
 
   <details class="checks" id="checks">
-    <summary>The four things to look at before you touch a row</summary>
+    <summary>Warrior Trading's 5 pillars — what "Pillars" and "Order Book" actually check</summary>
     <div class="checks-body">
       <ol>
-        <li><b>Relative volume, not the % gain.</b> A big move on normal volume is a thin move — maybe a couple of prints. Elevated relative volume means real money actually showed up. The bar in the RVOL column is that check.</li>
-        <li><b>Can you name the catalyst in one sentence?</b> Not "it's green" — <i>why</i>. If you can't say it out loud, you have no edge; you're guessing what the crowd is doing and you don't know if they're buying or selling into you.</li>
-        <li><b>Early or already extended?</b> If the move already happened, you're buying the exhaustion. This board can't see intraday highs, so check the chart before entering — that one is on you.</li>
-        <li><b>Float cuts both ways.</b> Tight float moves fast on real interest and reverses just as fast. It isn't good or bad — it means smaller size and more violence in both directions.</li>
+        <li><b>Relative volume ≥ 5x.</b> A big move on normal volume is thin — maybe a couple of prints. This is a real numeric pillar, scored automatically.</li>
+        <li><b>% change ≥ 10%.</b> Also scored automatically, from the scan's own number.</li>
+        <li><b>Price $2–$20.</b> Scored automatically from the Last column.</li>
+        <li><b>Float ≤ 20M.</b> Scored automatically — but only on the two scans that report float (Early Momentum Ignition, Warrior Trading Style). The Pillars column shows "n/a" for this one on scans that don't carry it, rather than silently failing it.</li>
+        <li><b>Catalyst — the 5th pillar, and it is NOT numeric.</b> Nothing here can automate it. Can you name the reason in one sentence? If you can't say it out loud, you're guessing what the crowd is doing and don't know if they're buying or selling into you. This is the one pillar you always have to check yourself.</li>
       </ol>
       <div class="rule">
-        Your own order history, n=108 round trips: <b>60% win rate, still net negative</b>, because losses ran 1.6× bigger than wins. Trades held under 5 minutes were net <b>+$224</b>; every longer bucket was negative. Decide the exit before you enter.
+        <b>Order Book</b> (click "Check" on any row) shows real resting Level-2 depth — how many shares are waiting to buy vs. sell in the top 10 price levels right now. This is <i>limit-order</i> pressure, not executed trade flow — Robinhood's data doesn't classify individual trades as buyer- or seller-initiated, so this is a real but partial picture of who wants to trade, not who already did.
+      </div>
+      <div class="rule">
+        Also: this board can't see intraday highs, so "is this already extended?" — the crowd already having moved on — is still on you; check a chart before entering. And your own order history, n=108 round trips: <b>60% win rate, still net negative</b>, because losses ran 1.6× bigger than wins. Trades held under 5 minutes were net <b>+$224</b>; every longer bucket was negative. Decide the exit before you enter.
       </div>
     </div>
   </details>
@@ -635,6 +646,7 @@
     refresh: document.getElementById("refresh"),
     head: document.getElementById("head"),
     body: document.getElementById("body"),
+    tableShell: document.getElementById("tbl").closest(".table-shell"),
     stateSlot: document.getElementById("state-slot"),
     warnSlot: document.getElementById("warn-slot"),
     updated: document.getElementById("updated"),
@@ -760,39 +772,102 @@
     return null;
   }
 
+  // Warrior Trading's 5 pillars, as this repo documents them
+  // (strategies.md S3 / CLAUDE.md): relative volume, % change, price range,
+  // float, catalyst. Thresholds below are S3's own numeric pillars --
+  // rel. vol >=5x, % change >=10%, price $2-20, float <=20M -- not this
+  // page's own invention. The 5th, catalyst, is explicitly NOT numeric and
+  // cannot be automated; it stays a manual check (see the panel below).
+  var PILLAR = {
+    rvol: 5,        // relative volume >= 5x
+    chg: 0.10,       // % change >= 10%
+    priceLo: 2, priceHi: 20,
+    float: 20e6      // float <= 20M
+  };
+
   function shape(r) {
     var c = r.columns || {};
     var rvol = num(pluck(c, ["Relative volume (1, 1H)", "Relative volume"]));
     var chg = num(pluck(c, ["% Change"]));
+    var last = num(pluck(c, ["Last"]));
+    var float = num(pluck(c, ["Float"]));
     var o = {
       sym: r.ticker || pluck(c, ["Symbol"]) || "—",
       name: pluck(c, ["Name"]) || "",
       chg: chg,
-      last: num(pluck(c, ["Last"])),
+      last: last,
       rvol: rvol,
       vol: num(pluck(c, ["Volume"])),
-      float: num(pluck(c, ["Float"])),
+      float: float,
+      floatReported: Object.prototype.hasOwnProperty.call(c, "Float"),
       gap: num(pluck(c, ["Gap"]))
     };
-    // Quality read, from what the scan actually returns: direction + whether
-    // volume backs it. Deliberately NOT a recommendation.
-    var moving = o.chg !== null && o.chg >= 0.05;
-    var loud = o.rvol !== null && o.rvol >= 5;
+    var p = {
+      rvol: rvol !== null && rvol >= PILLAR.rvol,
+      chg: chg !== null && chg >= PILLAR.chg,
+      price: last !== null && last >= PILLAR.priceLo && last <= PILLAR.priceHi,
+      float: float !== null && float <= PILLAR.float
+    };
+    o.pillars = p;
+    o.pillarsMet = (p.rvol ? 1 : 0) + (p.chg ? 1 : 0) + (p.price ? 1 : 0) + (p.float ? 1 : 0);
+    // Reachable pillars: a scan missing the Float column (e.g. one without
+    // a float filter) can never score that pillar -- don't punish a row for
+    // a check this scan structurally can't answer.
+    o.pillarsOf = o.floatReported ? 4 : 3;
     if (o.chg !== null && o.chg < 0) o.q = "q-down";
-    else if (moving && loud) o.q = "q-strong";
-    else if (moving) o.q = "q-watch";
+    else if (o.pillarsMet >= o.pillarsOf) o.q = "q-strong";
+    else if (o.pillarsMet >= 2) o.q = "q-watch";
     else o.q = "q-thin";
     return o;
   }
 
   var COLS = [
-    { key: "sym",   label: "Symbol" },
-    { key: "chg",   label: "% Chg" },
-    { key: "last",  label: "Last" },
-    { key: "rvol",  label: "Rel Vol" },
-    { key: "vol",   label: "Volume" },
-    { key: "float", label: "Float" }
+    { key: "sym",     label: "Symbol" },
+    { key: "chg",     label: "% Chg" },
+    { key: "last",    label: "Last" },
+    { key: "rvol",    label: "Rel Vol" },
+    { key: "vol",     label: "Volume" },
+    { key: "float",   label: "Float" },
+    { key: "pillars", label: "Pillars" },
+    { key: "book",    label: "Order Book" }
   ];
+
+  // ---------- order-book buy/sell pressure (on demand, per symbol) ----------
+  // Real Level-2 depth (get_equity_price_book), summed over the top N
+  // resting levels each side. This is RESTING LIMIT-ORDER imbalance, not
+  // executed trade flow -- Robinhood's connector exposes no tick-level
+  // buy/sell classification, so "more sellers than buyers" is answered here
+  // as "more size waiting to sell than to buy right now," which is real and
+  // useful but a different (and partial) thing. Said plainly in the UI.
+  var BOOK_LEVELS = 10;
+  var bookCache = {};   // sym -> { state: 'loading'|'done'|'error', pct, bidSz, askSz }
+
+  function summarizeBook(book) {
+    var bidSz = (book.bids || []).slice(0, BOOK_LEVELS)
+      .reduce(function (s, l) { return s + (num(l.quantity) || 0); }, 0);
+    var askSz = (book.asks || []).slice(0, BOOK_LEVELS)
+      .reduce(function (s, l) { return s + (num(l.quantity) || 0); }, 0);
+    var total = bidSz + askSz;
+    return { bidSz: bidSz, askSz: askSz, pct: total > 0 ? bidSz / total : null };
+  }
+
+  function checkBook(sym) {
+    if (!mcp || bookCache[sym] && bookCache[sym].state === "loading") return;
+    bookCache[sym] = { state: "loading" };
+    paintRows();
+    mcp.callTool(SERVER, "get_equity_price_book", { symbols: [sym] }, { cache: false })
+      .then(function (res) {
+        var p = res && res.payload;
+        var book = p && p.data && p.data.books && p.data.books[0];
+        if (!book) { bookCache[sym] = { state: "error", msg: "no book returned" }; }
+        else { bookCache[sym] = Object.assign({ state: "done" }, summarizeBook(book)); }
+      })
+      .catch(function (err) {
+        var d = describe(err);
+        bookCache[sym] = { state: "error", msg: d.title };
+      })
+      .then(paintRows);
+  }
 
   function paintHead() {
     els.head.innerHTML = COLS.map(function (c) {
@@ -822,12 +897,50 @@
       return (x - y) * sort.dir;
     });
 
+    var anyFloat = rows.some(function (r) { return r.floatReported; });
+
     els.body.innerHTML = sorted.map(function (r) {
       var cls = r.chg === null ? "zero" : r.chg > 0 ? "pos" : r.chg < 0 ? "neg" : "zero";
       // log-ish scale: these ratios span 1× to several thousand ×
       var fillPct = r.rvol === null ? 0 :
         Math.max(4, Math.min(100, (Math.log10(Math.max(1, r.rvol)) / 3) * 100));
       var tight = r.float !== null && r.float > 0 && r.float < 5e6;
+
+      var floatCell;
+      if (r.floatReported) {
+        floatCell = r.float === null ? '<span class="num">—</span>' :
+          '<span class="chip' + (tight ? " tight" : "") + '">' + compact(r.float) + '</span>';
+      } else {
+        floatCell = '<span class="num" style="color:var(--ink-faint)" title="This scan does not report float">n/a</span>';
+      }
+
+      var pillarClass = r.pillarsMet >= r.pillarsOf ? "tight" : "";
+      var pillarTitle = "rel.vol ≥ 5x: " + (r.pillars.rvol ? "yes" : "no") +
+        " · %chg ≥ 10%: " + (r.pillars.chg ? "yes" : "no") +
+        " · price $2-20: " + (r.pillars.price ? "yes" : "no") +
+        (r.floatReported ? " · float ≤ 20M: " + (r.pillars.float ? "yes" : "no") : " · float: n/a for this scan");
+      var pillarsCell = '<span class="chip ' + pillarClass + '" title="' + esc(pillarTitle) + '">' +
+        r.pillarsMet + '/' + r.pillarsOf + '</span>';
+
+      var bc = bookCache[r.sym];
+      var bookCell;
+      if (!bc) {
+        bookCell = '<button type="button" class="book-btn" data-sym="' + esc(r.sym) + '">Check</button>';
+      } else if (bc.state === "loading") {
+        bookCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      } else if (bc.state === "error") {
+        bookCell = '<button type="button" class="book-btn" data-sym="' + esc(r.sym) + '" title="' + esc(bc.msg || "failed") + '">Retry</button>';
+      } else if (bc.pct === null) {
+        bookCell = '<span class="num" style="color:var(--ink-faint)">no book</span>';
+      } else {
+        var buyPct = bc.pct * 100;
+        var sellPct = 100 - buyPct;
+        var lean = buyPct >= 55 ? "pos" : buyPct <= 45 ? "neg" : "zero";
+        bookCell = '<span class="num ' + lean + '" title="Top ' + BOOK_LEVELS + ' levels: ' +
+          compact(bc.bidSz) + ' sh waiting to buy vs ' + compact(bc.askSz) + ' sh waiting to sell">' +
+          buyPct.toFixed(0) + '% buy / ' + sellPct.toFixed(0) + '% sell</span>';
+      }
+
       return '<tr class="' + r.q + '">' +
         '<td class="sym"><div class="ticker">' + esc(r.sym) + '</div>' +
           (r.name ? '<div class="coname">' + esc(r.name) + '</div>' : '') + '</td>' +
@@ -838,14 +951,35 @@
           '" style="width:' + fillPct.toFixed(0) + '%"></span></span>' +
           '<span class="val">' + rvolTxt(r.rvol) + '</span></div></td>' +
         '<td class="num">' + compact(r.vol) + '</td>' +
-        '<td>' + (r.float === null ? '<span class="num">—</span>' :
-          '<span class="chip' + (tight ? " tight" : "") + '">' + compact(r.float) + '</span>') + '</td>' +
+        '<td>' + floatCell + '</td>' +
+        '<td>' + pillarsCell + '</td>' +
+        '<td>' + bookCell + '</td>' +
         '</tr>';
     }).join("");
 
+    Array.prototype.forEach.call(els.body.querySelectorAll(".book-btn"), function (btn) {
+      btn.addEventListener("click", function () { checkBook(btn.getAttribute("data-sym")); });
+    });
+
+    var floatNote = document.getElementById("float-note");
+    if (rows.length && !anyFloat) {
+      if (!floatNote) {
+        floatNote = document.createElement("div");
+        floatNote.id = "float-note";
+        floatNote.className = "info-card";
+        floatNote.style.marginTop = "10px";
+        floatNote.innerHTML = "<b>This scan doesn't report float.</b> " +
+          "Pick <b>Early Momentum Ignition</b> or <b>Warrior Trading Style - Low Float Volume Movers</b> " +
+          "from the dropdown above for the float pillar — those are the two saved scans that carry it.";
+        els.tableShell.parentNode.insertBefore(floatNote, els.tableShell.nextSibling);
+      }
+    } else if (floatNote) {
+      floatNote.remove();
+    }
+
     var movers = rows.filter(function (r) { return r.chg !== null && r.chg >= 0.05; });
     var loud = rows.filter(function (r) { return r.rvol !== null && r.rvol >= 5; });
-    var both = rows.filter(function (r) { return r.chg !== null && r.chg >= 0.05 && r.rvol !== null && r.rvol >= 5; });
+    var both = rows.filter(function (r) { return r.pillarsMet >= r.pillarsOf; });
     els.tCount.textContent = rows.length;
     els.tMovers.textContent = movers.length;
     els.tRvol.textContent = loud.length;

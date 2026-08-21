@@ -953,22 +953,28 @@ comments:
    `get_earnings_calendar` before every entry, already-standing practice,
    now stated as a hard rule rather than a habit.
 
-   > **KNOWN DRIFT, found 2026-08-21 — this rule is NOT fully enforced.**
-   > This section was originally written claiming "no long option is
-   > bought below roughly 0.30 delta." That number was never in the code:
-   > `OptionScanConfig.min_delta` and `SoftCatalystScanConfig.min_delta`
-   > have always been **0.10**, and two test fixtures that the suite
-   > treats as *genuine good setups* carry deltas of 0.25 and 0.28 — both
-   > would be rejected by a 0.30 floor. So the documented rule and the
-   > enforced gate disagree, and raising the gate to 0.30 would
-   > invalidate the suite's own definition of a passing trade.
+   > **DRIFT FOUND AND RESOLVED, 2026-08-21.** This section originally
+   > asserted "no long option is bought below roughly 0.30 delta." That
+   > number was never in the code: both `OptionScanConfig.min_delta` and
+   > `SoftCatalystScanConfig.min_delta` enforced **0.10**, and two test
+   > fixtures the suite treats as *genuine passing setups* carry deltas
+   > of 0.25 and 0.28 — a 0.30 floor would have rejected both, so raising
+   > the gate to match the prose would have invalidated the suite's own
+   > definition of a good trade.
    >
-   > Deliberately **not** silently reconciled. Editing a live-money risk
-   > gate to match a number this file asserted without validation is the
-   > same "wrong number sitting in a gate position" failure this repo
-   > already caught once on S8's float-turnover threshold. Neither value
-   > is backed by results — S7 has 0 trades. Left as an open decision for
-   > the user; until it is resolved, **0.10 is what actually runs.**
+   > Not reconciled silently in either direction — editing a live-money
+   > gate to match an unvalidated number is the same failure caught
+   > earlier on S8's float-turnover threshold. Put to the user as an
+   > explicit decision; they chose **0.25**, now set in both configs.
+   > That is 2.5x stricter than what actually ran before (0.10 delta is
+   > roughly a 10%-chance-of-finishing-ITM lottery ticket), while leaving
+   > both existing fixtures valid so the tests still mean something.
+   > `test_option_math.py` now pins the boundary on both sides — 0.25
+   > accepted, 0.24 rejected, plus an assert that fails loudly if the
+   > fixture ever drifts off the floor — so a future silent change to
+   > either 0.10 or 0.30 breaks a test instead of quietly changing what
+   > gets traded.
+
 4. **No chasing a move that has already happened.** If the price action
    that would justify the trade already occurred (the gap already
    printed, the reaction already priced in), the setup is stale — not

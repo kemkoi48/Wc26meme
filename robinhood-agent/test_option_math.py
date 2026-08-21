@@ -227,6 +227,16 @@ lotto["delta"] = 0.02
 r, why = evaluate_candidate(lotto, cfg, today=today)
 check("pure lottery ticket excluded by delta floor", r is None and "delta" in why, why)
 
+# The 0.25 floor was chosen 2026-08-21 to resolve real drift: strategies.md
+# claimed 0.30 while the code enforced 0.10. `good` sits exactly ON the floor
+# at delta 0.25, so pin both sides -- a silent drift back to 0.10, or a bump
+# to 0.30, now breaks a test instead of quietly changing what gets traded.
+assert good["delta"] == 0.25, "fixture moved off the delta floor; update these tests"
+r, why = evaluate_candidate(dict(good, delta=0.25), cfg, today=today)
+check("delta exactly at the 0.25 floor is accepted", r is not None, why)
+r, why = evaluate_candidate(dict(good, delta=0.24), cfg, today=today)
+check("delta just below the floor (0.24) is rejected", r is None and "delta" in why, why)
+
 thin = dict(good)
 thin["historical_moves"] = [20.0]
 r, why = evaluate_candidate(thin, cfg, today=today)

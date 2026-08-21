@@ -413,7 +413,7 @@ class SoftCatalystScanConfig:
     max_spread_pct: float = 15.0
     min_open_interest: float = 100.0
     min_volume: float = 10.0
-    min_delta: float = 0.10
+    min_delta: float = 0.25
     max_delta: float = 0.55
     # Looser than OptionScanConfig's 0.85 -- see iv_hv_ratio()'s docstring on
     # why realized-vol-vs-IV is a blunter instrument than a real historical
@@ -627,7 +627,7 @@ class OptionScanConfig:
     # (~91% of far-OTM buyers lose, per sources.md) is not worth screening
     # for; above the ceiling the leverage that makes this strategy work is
     # gone and buying the stock is usually the better expression.
-    min_delta: float = 0.10
+    min_delta: float = 0.25
     max_delta: float = 0.55
     # The actual edge test. Below 1.0 means underpriced vs. this name's own
     # history; 0.85 demands a real margin rather than a rounding error.

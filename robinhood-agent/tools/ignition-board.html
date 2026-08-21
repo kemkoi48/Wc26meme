@@ -581,10 +581,11 @@
         <li>1-month change ≥ +5%</li>
       </ul>
       <div class="note">
-        <b>Float isn't shown here on purpose</b> — these are large, liquid
-        names where float scarcity isn't the relevant risk the way it is for
-        the low-float momentum table above. Float is not one of this scan's
-        filters.
+        <b>Float</b> is shown for reference (live, via per-symbol fundamentals,
+        not a filter of this scan) — but it isn't the risk that matters here
+        the way it is on the low-float momentum table above. These are
+        large, liquid companies; float scarcity isn't why a row appears in
+        this list.
       </div>
       <div class="note warn2">
         <b>Honest limit on "about to be met":</b> Robinhood's scan tool only
@@ -791,12 +792,60 @@
     float: 20e6      // float <= 20M
   };
 
+  // ---------- float, universally, via per-symbol fundamentals ----------
+  // Some saved scans (Growth Momentum, Daily gainers, ...) simply don't
+  // carry a Float column -- that's a property of the scan's own config, not
+  // something this page can coax out of run_scan. get_equity_fundamentals
+  // reports float per symbol regardless of which scan found it, so it's
+  // used here as the real, universal source -- a scan's own Float column
+  // (when present) is only a same-poll placeholder until this resolves.
+  // Auto-fetched, not click-gated: unlike Stocklake, Robinhood's connector
+  // hasn't shown rate limits this session, and float doesn't need
+  // per-minute freshness the way price/volume do.
+  var FUND_TTL_MS = 5 * 60 * 1000;
+  var fundCache = {};    // sym -> { float, state: 'loading'|'done'|'error', at }
+  var fundInFlight = {};
+
+  function ensureFundamentals(syms, onDone) {
+    var now = Date.now();
+    var need = Array.from(new Set(syms)).filter(function (s) {
+      if (s === "—" || fundInFlight[s]) return false;
+      var c = fundCache[s];
+      return !c || c.state === "error" || (c.state === "done" && now - c.at > FUND_TTL_MS);
+    });
+    if (!need.length || !mcp) return;
+    for (var i = 0; i < need.length; i += 10) {
+      var batch = need.slice(i, i + 10);
+      batch.forEach(function (s) { fundInFlight[s] = true; });
+      mcp.callTool("Robinhood", "get_equity_fundamentals", { symbols: batch }, { cache: { staleTime: FUND_TTL_MS } })
+        .then(function (res) {
+          var p = res && res.payload;
+          var results = (p && p.data && p.data.results) || [];
+          results.forEach(function (r) {
+            fundCache[r.symbol] = { float: num(r.float), state: "done", at: Date.now() };
+          });
+        })
+        .catch(function () {
+          batch.forEach(function (s) { fundCache[s] = { float: null, state: "error", at: Date.now() }; });
+        })
+        .then(function () {
+          batch.forEach(function (s) { delete fundInFlight[s]; });
+          if (onDone) onDone();
+        });
+    }
+  }
+
+  function resolvedFloat(sym, scanFloat) {
+    var c = fundCache[sym];
+    if (c && c.state === "done") return c.float;
+    return scanFloat; // fundamentals not back yet -- use the scan's own value if it had one
+  }
+
   function shape(r) {
     var c = r.columns || {};
     var rvol = num(pluck(c, ["Relative volume (1, 1H)", "Relative volume"]));
     var chg = num(pluck(c, ["% Change"]));
     var last = num(pluck(c, ["Last"]));
-    var float = num(pluck(c, ["Float"]));
     var o = {
       sym: r.ticker || pluck(c, ["Symbol"]) || "—",
       name: pluck(c, ["Name"]) || "",
@@ -804,22 +853,25 @@
       last: last,
       rvol: rvol,
       vol: num(pluck(c, ["Volume"])),
-      float: float,
-      floatReported: Object.prototype.hasOwnProperty.call(c, "Float"),
+      scanFloat: num(pluck(c, ["Float"])),
       gap: num(pluck(c, ["Gap"]))
     };
+    return deriveRow(o);
+  }
+
+  function deriveRow(o) {
+    var float = resolvedFloat(o.sym, o.scanFloat);
+    o.float = float;
+    o.floatLoading = float === null && (!fundCache[o.sym] || fundInFlight[o.sym]);
     var p = {
-      rvol: rvol !== null && rvol >= PILLAR.rvol,
-      chg: chg !== null && chg >= PILLAR.chg,
-      price: last !== null && last >= PILLAR.priceLo && last <= PILLAR.priceHi,
+      rvol: o.rvol !== null && o.rvol >= PILLAR.rvol,
+      chg: o.chg !== null && o.chg >= PILLAR.chg,
+      price: o.last !== null && o.last >= PILLAR.priceLo && o.last <= PILLAR.priceHi,
       float: float !== null && float <= PILLAR.float
     };
     o.pillars = p;
     o.pillarsMet = (p.rvol ? 1 : 0) + (p.chg ? 1 : 0) + (p.price ? 1 : 0) + (p.float ? 1 : 0);
-    // Reachable pillars: a scan missing the Float column (e.g. one without
-    // a float filter) can never score that pillar -- don't punish a row for
-    // a check this scan structurally can't answer.
-    o.pillarsOf = o.floatReported ? 4 : 3;
+    o.pillarsOf = 4;
     if (o.chg !== null && o.chg < 0) o.q = "q-down";
     else if (o.pillarsMet >= o.pillarsOf) o.q = "q-strong";
     else if (o.pillarsMet >= 2) o.q = "q-watch";
@@ -954,8 +1006,6 @@
       return 0;
     });
 
-    var anyFloat = rows.some(function (r) { return r.floatReported; });
-
     els.body.innerHTML = sorted.map(function (r) {
       var cls = r.chg === null ? "zero" : r.chg > 0 ? "pos" : r.chg < 0 ? "neg" : "zero";
       // log-ish scale: these ratios span 1× to several thousand ×
@@ -963,19 +1013,15 @@
         Math.max(4, Math.min(100, (Math.log10(Math.max(1, r.rvol)) / 3) * 100));
       var tight = r.float !== null && r.float > 0 && r.float < 5e6;
 
-      var floatCell;
-      if (r.floatReported) {
-        floatCell = r.float === null ? '<span class="num">—</span>' :
-          '<span class="chip' + (tight ? " tight" : "") + '">' + compact(r.float) + '</span>';
-      } else {
-        floatCell = '<span class="num" style="color:var(--ink-faint)" title="This scan does not report float">n/a</span>';
-      }
+      var floatCell = r.float !== null
+        ? '<span class="chip' + (tight ? " tight" : "") + '" title="Live per-symbol float (get_equity_fundamentals)">' + compact(r.float) + '</span>'
+        : '<span class="num" style="color:var(--ink-faint)">' + (r.floatLoading ? "…" : "—") + '</span>';
 
       var pillarClass = r.pillarsMet >= r.pillarsOf ? "tight" : "";
       var pillarTitle = "rel.vol ≥ 5x: " + (r.pillars.rvol ? "yes" : "no") +
         " · %chg ≥ 10%: " + (r.pillars.chg ? "yes" : "no") +
         " · price $2-20: " + (r.pillars.price ? "yes" : "no") +
-        (r.floatReported ? " · float ≤ 20M: " + (r.pillars.float ? "yes" : "no") : " · float: n/a for this scan");
+        " · float ≤ 20M: " + (r.float === null ? "loading…" : (r.pillars.float ? "yes" : "no"));
       var pillarsCell = '<span class="chip ' + pillarClass + '" title="' + esc(pillarTitle) + '">' +
         r.pillarsMet + '/' + r.pillarsOf + '</span>';
 
@@ -1036,22 +1082,6 @@
     Array.prototype.forEach.call(els.body.querySelectorAll(".cat-btn"), function (btn) {
       btn.addEventListener("click", function () { checkCatalyst(btn.getAttribute("data-sym")); });
     });
-
-    var floatNote = document.getElementById("float-note");
-    if (rows.length && !anyFloat) {
-      if (!floatNote) {
-        floatNote = document.createElement("div");
-        floatNote.id = "float-note";
-        floatNote.className = "info-card";
-        floatNote.style.marginTop = "10px";
-        floatNote.innerHTML = "<b>This scan doesn't report float.</b> " +
-          "Pick <b>Early Momentum Ignition</b> or <b>Warrior Trading Style - Low Float Volume Movers</b> " +
-          "from the dropdown above for the float pillar — those are the two saved scans that carry it.";
-        els.tableShell.parentNode.insertBefore(floatNote, els.tableShell.nextSibling);
-      }
-    } else if (floatNote) {
-      floatNote.remove();
-    }
 
     var movers = rows.filter(function (r) { return r.chg !== null && r.chg >= 0.05; });
     var loud = rows.filter(function (r) { return r.rvol !== null && r.rvol >= 5; });
@@ -1205,6 +1235,11 @@
     els.tCountNote.textContent = (typeof total === "number" && total > rows.length)
       ? "of " + total + " matching" : " ";
     setUpdated();
+
+    ensureFundamentals(rows.map(function (r) { return r.sym; }), function () {
+      rows = rows.map(deriveRow);
+      paintRows();
+    });
   }
 
   function start(scanId, isRetry) {
@@ -1336,13 +1371,15 @@
     { key: "adx",    label: "ADX" },
     { key: "last",   label: "Last" },
     { key: "mktcap", label: "Mkt Cap" },
-    { key: "avgvol", label: "Avg Vol" }
+    { key: "avgvol", label: "Avg Vol" },
+    { key: "float",  label: "Float" }
   ];
 
   function shapeSwing(r) {
     var c = r.columns || {};
+    var sym = r.ticker || pluck(c, ["Symbol"]) || "—";
     return {
-      sym: r.ticker || pluck(c, ["Symbol"]) || "—",
+      sym: sym,
       name: pluck(c, ["Name"]) || "",
       chg: num(pluck(c, ["% Change"])),
       chg1mo: num(pluck(c, ["% Change (1MO, close)"])),
@@ -1350,7 +1387,8 @@
       adx: num(pluck(c, ["Average directional index (14)", "ADX"])),
       last: num(pluck(c, ["Last"])),
       mktcap: num(pluck(c, ["Market cap"])),
-      avgvol: num(pluck(c, ["Average volume"]))
+      avgvol: num(pluck(c, ["Average volume"])),
+      float: resolvedFloat(sym, null) // this scan has no Float column of its own -- fundamentals-only
     };
   }
 
@@ -1395,6 +1433,7 @@
         '<td class="num">' + money(r.last) + '</td>' +
         '<td class="num">' + compact(r.mktcap) + '</td>' +
         '<td class="num">' + compact(r.avgvol) + '</td>' +
+        '<td class="num">' + (r.float === null ? '<span style="color:var(--ink-faint)">…</span>' : compact(r.float)) + '</td>' +
         '</tr>';
     }).join("");
   }
@@ -1439,6 +1478,11 @@
       paintSwingRows();
     }
     swingSetUpdated(false);
+
+    ensureFundamentals(swingRows.map(function (r) { return r.sym; }), function () {
+      swingRows = swingRows.map(function (r) { r.float = resolvedFloat(r.sym, null); return r; });
+      paintSwingRows();
+    });
   }
 
   function startSwing() {

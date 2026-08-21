@@ -1764,3 +1764,48 @@ whole account, shared with anything else this session uses Stocklake for
 today. Shows the first real headline (title + published_at in the
 tooltip) when one exists; **shows exactly "N/A" when none does**, per the
 user's own wording, not a softened "no catalyst found."
+
+## 2026-08-21 ~12:00 ET — Ignition Board: real float everywhere, via per-symbol fundamentals
+
+User: "why is there float data n/a? cant you pull float data at all?" -- a
+fair complaint about the earlier design (Swing panel omitted float on
+purpose; main panel showed "n/a" for any scan without a Float column,
+e.g. Growth Momentum). Rather than just explain it again, found a real
+fix: `get_equity_fundamentals` reports float per symbol directly,
+independent of which scan found the row -- confirmed live (NVDA, SDOT)
+before wiring it in.
+
+**Redesigned float sourcing end to end.** Added `ensureFundamentals()`:
+auto-fetched (not click-gated, unlike Order Book/Catalyst -- Robinhood
+hasn't shown rate limits this session, and float doesn't need per-minute
+freshness), batches up to 10 symbols per call, 5-minute cache TTL.
+`resolvedFloat(sym, scanFloat)` prefers the fundamentals value once it
+loads, falling back to a scan's own Float column (when present) only
+during the brief window before fundamentals responds -- avoids an empty
+flash on first paint.
+
+Refactored `shape()` into a pure column mapper plus a new `deriveRow()`
+that computes float/pillars from whatever's authoritative *right now*;
+called once synchronously after a scan result lands, and again after
+each fundamentals batch resolves, so pillar counts and the float column
+both self-correct without a manual refresh.
+
+**Consequence: `pillarsOf` is now always 4, not scan-dependent.** The
+earlier "3 of 3, this scan can't report float" carve-out is gone --
+float is answerable for any row on any scan now, so every row is judged
+against the same real bar.
+
+**Swing panel gets a real Float column too**, sourced the same way,
+replacing the earlier "intentionally omitted" framing (info-card copy
+updated to match -- shown for reference, still not the risk that
+matters for large-cap swing names, but no longer hidden).
+
+Caught and fixed two real bugs while making this change, before either
+reached the user: (1) the edit tool kept rejecting an exact-looking
+string match around `onResult`'s tail -- `cat -A` traced it to a
+non-breaking space (U+00A0) already sitting in the file, invisible in a
+normal read; worked around with a byte-safe Python replace instead of
+guessing at the visible text. (2) `floatLoading`'s condition had an
+operator-precedence bug (`!a || a.state === 'loading' && b`) that also
+referenced a `state: 'loading'` value the code never actually sets --
+simplified to check `fundInFlight` directly, which is the real signal.

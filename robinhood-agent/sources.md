@@ -1627,3 +1627,56 @@ failure already caught once on S8's float-turnover threshold. Neither
 0.10 nor 0.30 is backed by outcomes — S7 has zero trades. Documented as
 open drift in strategies.md S7 with the enforced value (0.10) stated
 plainly, and surfaced to the user as a decision rather than an edit.
+
+## 2026-08-21 ~10:15 ET — Ignition Board: swing-setup panel + in-page alerts
+
+User feedback: TradingView's screener (in Bell to Bell) lags/isn't
+dependable. Real cause, not fixed by this session — it's a known
+limitation of TradingView's free-tier real-time entitlements, outside
+what an embedded widget can control. Pointed the user back to Ignition
+Board as the dependable one, since it reads the same live Robinhood data
+this session has used to actually operate the account all week, not a
+third-party feed.
+
+User then asked for two things: (1) a note on what's favorable for swing
+trades specifically (distinct from the existing day-trade momentum
+panel), including float; (2) an alert when that condition is met or about
+to be met, "on time."
+
+**Added a second, independent panel: "Swing setups."** Feeds from the
+real `Growth Momentum (long-run)` scan (`2514847d-25cb-4628-9731-bb5b0ee7d246`)
+-- the exact same scan `growth_signal.py`'s S9 sleeve is built on (market
+cap > $1B, RSI 50-70, ADX > 20, avg volume > 500K, 1-month change > 5%,
+all confirmed against `get_scans` output, not invented). Its own filters
+are stated on the page as the real favorability criteria, since a row
+only appears because it already cleared all five.
+
+Float deliberately **not** shown on this panel, with an explicit note
+why: this scan targets large/liquid names where float scarcity isn't the
+governing risk the way it is on the low-float day-trade panel above (which
+already showed float from the first build). Conflating the two would have
+been dishonest, not just cosmetic.
+
+**"About to be met" honestly scoped down.** `run_scan` only returns full
+matches, not near-misses -- there's no reliable way to see a stock closing
+in on the RSI/ADX band before it actually crosses. Said so on the page
+rather than faking a proximity score. What the page can do, and does: flag
+the instant a symbol newly appears in the scan's results, which is the
+earliest this data can know.
+
+**Alerting -- three channels, deliberately not resting on the least
+reliable one.** This artifact runs inside claude.ai's frame; a real OS
+push notification is often blocked there and can't be verified from this
+session. So the primary channels are ones that reliably work in a
+sandboxed frame: an in-page flash + a WebAudio beep + a running alert log
+(all always logged; sound/flash only if the user opts in via the header
+bell toggle) and the document title changing while the tab is unfocused.
+A `Notification()` call is attempted only if the browser already reports
+`permission: "granted"`, wrapped so any failure is silent -- never the
+only thing anything depends on. The page's own footer now states plainly
+that none of this works with the tab or browser closed.
+
+New-qualifier tracking persists in localStorage keyed to the calendar
+date, so a page reload during the same day doesn't re-fire alerts for
+names already seen, and the set naturally resets the next day when the
+scan's own results roll over.

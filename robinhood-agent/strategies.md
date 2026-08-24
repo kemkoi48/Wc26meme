@@ -1998,6 +1998,63 @@ in this repo: promising on one real case, not yet a track record.
 
 ---
 
+## S11 — "EMA fan-out" trend-momentum claim  ·  **TESTED — no exploitable edge, do not fund**
+
+`ema_fan_backtest.py`. User showed a trading-room marketing thread
+(2026-08-24) claiming a 13/48/200 EMA ribbon predicts trend continuation:
+EMAs stacked in order = trending (favor calls when 13>48>200, puts when
+reversed), and the *wider* the spacing between them ("fan-out"), the
+stronger the momentum. Proof offered was two cherry-picked winning
+weekly-option trades (SPY 748c +171%, QQQ 705p +212%) with hand-drawn
+annotations after the fact — no stated win rate, no losers shown, no
+backtest, no stop rule. Same posture as every other claim in this repo:
+don't trust the anecdote, pull real bars and test it.
+
+**Method.** Real 5-minute bars, SPY + QQQ, 2026-06-22 through 2026-08-21
+(44 trading days, 3,432 bars/symbol, regular session, pulled live via
+`get_equity_historicals`). EMA13/48/200 computed continuously; bars
+classified bullish (13>48>200), bearish (13<48<200), or mixed/chop
+(anything else). Forward return measured 6 bars ahead (30 min) in the
+trend's favorable direction. Fan width = `|EMA13-EMA200|/EMA200`, split
+into narrow/mid/wide terciles within each regime.
+
+**Result — the claim does not hold:**
+- Bullish regime: SPY +0.0171% mean fwd return, 57.4% hit rate (n=1305).
+  QQQ +0.0193%, 56.1% hit rate (n=1108). A small, real tilt above 50% —
+  but the magnitude is noise-level (a few cents on a $700-765 underlying
+  over 30 minutes), almost certainly smaller than bid/ask spread and
+  nowhere near enough to carry option theta/spread costs.
+- Bearish regime: SPY -0.0186% mean, 49.6% hit rate. QQQ -0.0196% mean,
+  50.0% hit rate. **A coinflip.** "Favor puts when EMAs stack bearish"
+  showed no edge at all in this window.
+- **The fan-width claim specifically fails**, and inconsistently across
+  the two symbols — the actual falsification: SPY's *mid* tercile
+  (-0.0011%) was worse than its *narrow* tercile (+0.0020%); QQQ's
+  *wide* tercile (-0.0303%, 49.2% hit rate) was the **worst of all three
+  buckets**, worse than narrow (-0.0171%) and far worse than mid
+  (+0.0497%, 58.0% hit rate, the best result in the whole test). Wider
+  spacing did not mean stronger forward continuation on either symbol —
+  the relationship isn't even monotonic, let alone strong.
+
+**A bug caught before reporting:** the first draft measured the
+mixed/chop bucket's "hit rate" using an absolute-value return, which is
+positive by construction — it printed a nonsensical 100% hit rate.
+Fixed to report chop as a signed mean/median with no hit-rate claim
+(direction is undefined in chop by definition). Numbers above are from
+the corrected run.
+
+**Verdict:** the underlying TA concept (MA ribbons converge in chop,
+diverge in trend) is real and non-controversial, and "don't trade the
+bunched-up zone" remains reasonable risk framing. But as a standalone
+signal for picking calls vs. puts, or for treating wider spacing as
+higher conviction, it has **no measured edge** in 44 real trading days
+on the two names the thread itself used. Not funded, not added as a
+gate anywhere in S1-S10. If the user wants to revisit this, it would
+need a real economic edge (not noise-level bps) net of spread and theta
+before it's worth wiring into anything.
+
+---
+
 ## What to build next, in order
 
 1. **Regime classifier** — `get_market_pulse` plus the **7/20/65 SMA

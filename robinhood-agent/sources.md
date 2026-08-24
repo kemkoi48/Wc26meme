@@ -2048,3 +2048,30 @@ buy/sell"): treat finding the next position as active work, not
 something to wait on. Will re-run the Growth Momentum scan
 (2514847d-25cb-4628-9731-bb5b0ee7d246) live to see what real
 candidates exist right now.
+
+## 2026-08-24 ~2:50pm ET — S9: new position, LYFT (3 sh, $17.5779, stop $14.42)
+
+Same afternoon BTG was closed, acted on the user's direct instruction
+to keep finding the next opportunity rather than sit flat. Real
+constraint: buying power was only $57.13 -- BTG's $482.78 sale
+proceeds are unsettled (T+1, cash account), so this had to work within
+the small settled-cash figure. Flagged the limited-margin upgrade path
+to the user (eligible=true) as a permanent fix for this T+1 lag going
+forward; not yet acted on.
+
+Re-ran the Growth Momentum scan live (356 real matches, up from the
+prior runs). Sorted by price, checked real fundamentals on 12
+whole-share-affordable names: SNAP, RIG, PSKY, NXE, OWL, UEC, PATH,
+LYFT, ARCC, CDE, AG, S. Most were unprofitable on a real PE basis
+(SNAP -28.2, RIG -3.3, PSKY -18.3, NXE -35.6, UEC -58.3, S -22.2).
+LYFT stood out: PE 2.44, unusually cheap for a name that's actually
+profitable, with momentum already confirmed by the scan's own filters
+(RSI 50-70, ADX>20, 1mo change >5%, market cap $6.65B).
+
+Bought 3 whole shares at $17.5779 (marketable limit at the $17.58 ask,
+filled immediately, no fee). Placed GTC stop_market at $14.42
+(growth_signal.trailing_stop_price, 18% below entry) -- verified
+state: confirmed within 8 seconds, resting live (market open). Third
+growth-sleeve trade overall; first same-day rotation (close one
+position, open the next, same afternoon) rather than a standalone
+entry. trades.csv row 14, CLAUDE.md's S9 row updated to n=3.

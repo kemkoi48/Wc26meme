@@ -1906,3 +1906,46 @@ faded, so both stay live watchlist candidates. Full option-chain gate
 check (mismatch_ratio/iv_hv_ratio/delta/premium cap) deferred to the
 9:35am ET S7 trigger as planned -- quotes are still premarket/stale
 here.
+
+## 2026-08-24 ~9:40am ET — S7 daily screen: 9th/10th real checks, both rejected
+
+Market open. Flat (no open S7 position). User had directly asked me to
+find favorable option contracts today, on top of the standing 9:35am ET
+trigger, so this run covers both.
+
+**PDD and XPEV excluded before reaching the option chain.** Both
+reported Q2 earnings this morning (PDD beat, +3.4%; XPEV -3.1% despite
+reporting) -- the reaction already happened at the open. Buying either
+now is chasing an already-printed move, not a real mismatch_ratio setup
+(that track needs a catalyst still ahead, not one that already fired
+and already got priced in). Rejected on rule 4, not run through the
+chain math at all.
+
+**AAOI** (9th real check): equity-offering/margin-call story, down
+-17.5% by the open (accelerated from -12.8% premarket -- still live,
+not faded). realized_volatility from 250 real daily closes: 157%
+(20-day), 147% (60-day), 144% (90-day) -- already an extremely volatile
+name before today. Checked real option quotes, 08-28 expiry (4 DTE):
+  - $85p: mark $0.475, delta -0.071
+  - $80p: mark $0.275, delta -0.041
+  - $95p (much closer to ATM, current price $102.93): mark $2.20
+    (**$220/contract, 4.4x the $50 cap**), delta -0.246 -- still short
+    of the 0.30 floor even at 4.4x the allowed premium.
+No strike clears both the $50 cap and the 0.30 delta floor -- same
+structural conflict as BMNR (2026-08-20).
+
+**BABA** (10th real check): $10B HK equity offering / dilution story,
+-0.85% at the open (much of the premarket -2.2% faded by 9:38am --
+already showing signs of the already-printed pattern too).
+realized_volatility not separately needed once the delta problem showed
+up: 08-28 $100p mark $0.02 (delta -0.007), $95p mark $0.01-0.26
+range/illiquid (delta -0.003). Both essentially worthless-delta lottery
+tickets at the cap. Not checked closer to ATM given AAOI's result
+already proved the shape of the problem on a similarly-priced,
+similarly-volatile name.
+
+**Running total: 10/10 real checks rejected, 0 trades placed.** The
+screen is doing exactly what it's designed to do on a $50/contract cap
+against $100+ underlyings -- these two names were real, catalyst-backed,
+still-live moves, and they still don't clear the gates. CLAUDE.md's S7
+row updated with the running total.

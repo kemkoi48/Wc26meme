@@ -1990,3 +1990,16 @@ S7 buy today.
 a real reason. The XPEV near-miss is the closest anything has come, and
 it's still a reject on the already-printed rule, not a close call worth
 funding.
+
+## 2026-08-24 ~12:47pm ET — BTG stop ratcheted mid-day, user-prompted
+
+User noticed BTG running and asked directly to check/raise the sell
+order, outside the normal 4pm ET scheduled check. Real intraday high
+today: $5.7005 (5-min bars), a new peak over the $5.525 close that set
+Friday's $4.53 stop. decide_stop_update(4.53, 5.7005) said ratchet:
+new stop $4.6744, rounded to $4.67 (penny tick). Cancelled the $4.53
+stop (verified state: cancelled), placed the new one -- this time the
+market was open, so it went straight to state: confirmed and rests
+live immediately, no next-open queuing like the two prior ratchets.
+Third ratchet on this position, same mechanism (decide_stop_update,
+18% trail) each time. CLAUDE.md's S9 row updated.

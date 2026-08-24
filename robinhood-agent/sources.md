@@ -1824,3 +1824,45 @@ already closed (4:03pm ET) when this ran, so a regular_hours stop_market
 queues for tomorrow's open rather than resting live tonight. Not a
 rejection, same pattern as last time. CLAUDE.md's S9 row updated with the
 same detail.
+
+## 2026-08-24 ~2:20am ET — premarket catalyst check ahead of market open
+
+User asked me to find favorable option contracts on "quality trending
+assets" today. Checked real overnight movers (Stocktwits trending,
+Robinhood earnings calendar) at 2:20am ET, well before the 9:30am ET
+regular open. Two names cleared a real, dated catalyst check:
+
+- **BABA**: down ~4.7% overnight (~10% in HK trading) on a real, dated
+  news event — a $10B primary equity offering priced in Hong Kong,
+  reportedly the largest-ever follow-on by a HK-listed company. Dilution
+  fear, not just price action. No earnings scheduled today per
+  get_earnings_calendar.
+- **AAOI**: down ~12.3% overnight, the largest mover checked. Real
+  catalyst: an equity offering announcement plus retail chatter about
+  forced margin-call selling. No earnings today.
+
+Both would be PUT candidates given the negative catalyst, not the
+trend-follow calls the user may have expected. CRWV and KLAC were also
+checked and ruled out: CRWV's Stocktwits chatter was pure anonymous
+prediction-posting with no linked news; KLAC's weakness reads as broad
+semicap-sector sympathy, not a company-specific catalyst — flagged as
+"no catalyst, price action only" per the standing rule, not surfaced as
+a setup.
+
+Also excluded on sight: PDD, XPEV, TUYA, NSSC, PICS, AAPG all report
+earnings today (2026-08-24) per get_earnings_calendar — event risk,
+out of scope regardless of any move.
+
+Did NOT pull option chain data for BABA/AAOI at this hour — this repo
+already learned (S7, 2026-08-20) that quotes/greeks don't refresh until
+the 9:30am ET regular open, so anything pulled now would be stale
+extended-hours numbers. Real gate-checking (mismatch_ratio, iv_hv_ratio,
+delta floor, premium cap, no-chasing-an-already-printed-move) deferred
+to the already-scheduled 7:00am ET "Premarket watch" and 9:35am ET "S7
+options" triggers, which will re-verify with live data rather than
+trust this premarket read — a premarket move can reverse by the open.
+This entry exists so those triggers have a starting reference, not a
+conclusion to just carry forward uncritically.
+
+Also note: EMA fan-out backtest run tonight (S11, see strategies.md) --
+tested negative, not usable as an entry filter for today's picks.

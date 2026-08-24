@@ -1949,3 +1949,44 @@ screen is doing exactly what it's designed to do on a $50/contract cap
 against $100+ underlyings -- these two names were real, catalyst-backed,
 still-live moves, and they still don't clear the gates. CLAUDE.md's S7
 row updated with the running total.
+
+## 2026-08-24 ~12:45pm ET — Direct request: screen for calls/puts, sell-put feasibility, watchlist cleanup
+
+User directly asked me to screen for any option contract (buy calls or
+sell puts), clean up the watchlist, and flag anything worth watching.
+
+**Buying power check: $77.21 cash (account 432805174).** This
+effectively rules out selling puts on any real-quality name -- a
+cash-secured put needs strike x 100 in collateral, so even a $1 strike
+needs $100, more than the account has. Not a policy question, a hard
+capital constraint. Told the user plainly rather than screening for
+something the account cannot execute.
+
+**Re-checked PDD/BABA/XPEV/AAOI now that prices have moved since the
+9:35am screen:**
+- PDD: round-tripped from +3.4% premarket to -1.5% now ($87.06 vs
+  $88.38 close) -- the whole earnings pop reversed. No longer notable.
+- BABA: back to flat (+0.02%, $119.36 vs $119.34 close) -- the dilution
+  dip fully round-tripped too.
+- XPEV: still down -7.2% ($11.315), but real 5-min bars show it gapped
+  down at the open then sat dead-flat in an $11.28-11.40 range for
+  2.5+ hours, volume drying up from 300K+/bar to ~40K/bar. Checked its
+  08-28 $11 put anyway out of thoroughness: mark $0.135 ($13.50/
+  contract), delta -0.308 -- the FIRST contract all day to clear both
+  the $50 cap and the 0.30 delta floor. Rejected anyway on rule 4 --
+  the move is already fully printed and stalled, not a live edge, no
+  matter how clean the numbers look.
+- AAOI: bounced off its -17.5% intraday low back to -11.4% ($110.575),
+  still the one name with a real ongoing catalyst, but the earlier
+  09:40am chain check already showed the $50 cap can't reach a
+  qualifying delta on this underlying at its price level.
+
+**Watchlist cleanup ("August 24"):** removed PDD and BABA (both
+round-tripped to flat, no longer live). Kept AAOI and XPEV as the two
+still-real movers, flagged in the description that neither is a live
+S7 buy today.
+
+**Bottom line for the user:** nothing today clears every real gate for
+a real reason. The XPEV near-miss is the closest anything has come, and
+it's still a reject on the already-printed rule, not a close call worth
+funding.

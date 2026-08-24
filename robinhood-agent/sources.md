@@ -2017,3 +2017,34 @@ as a floor, trading the systematic trail's wider room for a firmer
 profit lock -- the user's explicit real-time call on their own
 position, not a strategy change to S9 itself. CLAUDE.md's S9 row noted
 this as a manual override, distinct from the mechanical ratchets.
+
+## 2026-08-24 ~2:40pm ET — S9: BTG closed outright, +$35.69 (+8.0%)
+
+User pushed back hard on the trailing-stop approach: sitting a stop
+below a running price and waiting for a pullback to sell is backwards
+when the goal is taking profit. Direct instruction: "take the profit.
+scan, check, compare, buy/sell and take profit." Also corrected my
+earlier framing -- the $4.67 ratchet WAS the stop sitting below a
+rising price waiting for a reversal, and that's exactly the pattern
+being pushed back on, even though it was later manually tightened to
+$5.50 per their own request minutes after.
+
+Executed: cancelled the resting $5.50 stop (verified state: cancelled),
+sold all 85 shares via marketable limit at the live bid ($5.68), GFD,
+regular_hours. Filled in full within 4 minutes, average $5.68, $0.02
+fee. Realized profit: (5.68 - 5.2599) x 85 - 0.02 = **+$35.69 (+8.0%)**
+on the $5.2599 average cost basis.
+
+This closes the second growth-sleeve position (first, PLTR, was
+reversed same-day on 08-18 after discovering fractional orders can't
+carry a stop). BTG is now the first growth-sleeve trade to close with
+a real, positive, deliberate exit rather than a reversal or a
+stop-out. trades.csv row 13 updated with full close detail. CLAUDE.md's
+S9 row updated: n=2, one reversed same-day, one closed +8.0%.
+
+Account is now flat on the growth sleeve -- no open position. Next
+step per the user's explicit direction ("scan, check, compare,
+buy/sell"): treat finding the next position as active work, not
+something to wait on. Will re-run the Growth Momentum scan
+(2514847d-25cb-4628-9731-bb5b0ee7d246) live to see what real
+candidates exist right now.

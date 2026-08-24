@@ -1866,3 +1866,43 @@ conclusion to just carry forward uncritically.
 
 Also note: EMA fan-out backtest run tonight (S11, see strategies.md) --
 tested negative, not usable as an entry filter for today's picks.
+
+## 2026-08-24 ~7:20am ET — Premarket watch: watchlist rebuilt for the day
+
+Trigger fired. Renamed "August 21" -> "August 24" (list
+c15a7e55-bc55-4869-bf4f-6eb82a04c3e4).
+
+**Dropped (5): ROST, HOOD, COIN, MSTR, BMNR.** All flat premarket this
+morning (ROST +0.4%, HOOD -1.2%, MSTR +0.2%, BMNR +1.1%, COIN -0.8%) --
+Friday's "BTC complex day 2, already extended" catalyst and ROST's
+earnings pop are both fully digested over the weekend. No fresh
+information today, so per the no-chasing-an-already-printed-move rule
+these are out, not held over on inertia.
+
+**Added (4), all with a real dated catalyst verified today:**
+- PDD: reported Q2 this morning, EPS $2.85 actual vs $2.77 est (beat).
+  +3.4% premarket.
+- XPEV: reported Q2 this morning (EPS -0.19, no estimate given to
+  compare). -3.1% premarket -- down despite reporting, likely a
+  guidance/revenue read, not verified further at this hour.
+- BABA: -2.2% premarket, continuation of the $10B Hong Kong equity
+  offering / dilution story flagged at 2am -- still live, not faded.
+- AAOI: -12.8% premarket (previous close $124.82 -> $108.90 as of this
+  read), continuation of the equity-offering + margin-call chatter
+  flagged at 2am -- the single biggest real move on the list.
+
+**Checked and excluded:** SMCI (-2.9% premarket) -- Stocktwits chatter
+is pure "red across the board" sector-sympathy noise alongside NVDA/AMD/
+AVGO, no company-specific news found. TUYA/PICS/AAPG report PM today --
+event risk, excluded regardless of any move (none currently moving
+anyway). NSSC also reported this morning but wasn't a trending/notable
+mover.
+
+Time-sensitive note for the user: PDD, XPEV, NSSC already reported
+before this check ran -- their earnings reactions are live catalysts
+today, not scheduled events still pending. BABA and AAOI's moves are
+now ~1 trading day old (first surfaced 2am premarket) but neither has
+faded, so both stay live watchlist candidates. Full option-chain gate
+check (mismatch_ratio/iv_hv_ratio/delta/premium cap) deferred to the
+9:35am ET S7 trigger as planned -- quotes are still premarket/stale
+here.

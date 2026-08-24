@@ -2003,3 +2003,17 @@ market was open, so it went straight to state: confirmed and rests
 live immediately, no next-open queuing like the two prior ratchets.
 Third ratchet on this position, same mechanism (decide_stop_update,
 18% trail) each time. CLAUDE.md's S9 row updated.
+
+## 2026-08-24 ~12:49pm ET — BTG stop manually tightened to $5.50, user override
+
+Two minutes after the systematic ratchet to $4.67, user said "let's
+take the profit? maybe increase the sell order to $5.50?" -- an
+explicit manual override of the 18% trail, not a decide_stop_update
+output. Confirmed BTG's live quote first ($5.695, so $5.50 is a valid
+stop below market). Cancelled the $4.67 stop (verified state:
+cancelled), placed a new one at $5.50 (verified state: confirmed,
+resting live). This locks in roughly +4.6% from the $5.26 average cost
+as a floor, trading the systematic trail's wider room for a firmer
+profit lock -- the user's explicit real-time call on their own
+position, not a strategy change to S9 itself. CLAUDE.md's S9 row noted
+this as a manual override, distinct from the mechanical ratchets.

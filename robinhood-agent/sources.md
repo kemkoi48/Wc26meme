@@ -2174,3 +2174,12 @@ failure, it's a real, repeatedly-confirmed fact about what this cap
 can reach. Running total: 12/12 rejected, 0 trades.
 
 CLAUDE.md's S7 row updated with the running total and pattern note.
+
+### 2026-08-25 ~4:04pm ET -- S9 daily stop check, LYFT ratchet
+Position verified: 4 sh, avg $17.58, resting stop $14.65 covered all 4 shares
+(quantity check passed, no gap this cycle). Real intraday high today (5-min
+bars) was $17.97, a new peak over yesterday's $17.8698 -- `decide_stop_update`
+said ratchet. Cancelled the $14.65 stop (verified `state: cancelled`), placed
+$14.74 (18% below $17.97, verified resting/queued not rejected). Order landed
+4 minutes after the 4pm close, so it shows `state: queued` for next-open --
+same as the 08-24 precedent, not a problem.

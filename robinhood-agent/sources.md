@@ -2144,3 +2144,33 @@ SUGP, SDOT all checked via the scan, all lack a fresh catalyst beyond
 No high-market-cap earnings scheduled today that overlap the current
 watchlist names. ZM/NCNO/QFIN/BOX/HEI/SMTC report PM today -- noted,
 none currently on the watchlist.
+
+## 2026-08-25 ~9:40am ET — S7 daily screen: 11th/12th real checks, both rejected
+
+Market open. Flat (no open S7 position). Checked today's watchlist:
+AAOI and OXY.
+
+**AAOI** (11th check): now $111.45, bouncing off yesterday's lows.
+08-28 $100p: mark $125/contract (2.5x the cap), delta -0.168 -- worse
+than yesterday's rejection, not better, despite the higher price. Same
+structural wall.
+
+**OXY** (12th check): real, fresh, sector-wide catalyst (oil extending
+its fall despite new Iran sanctions, confirmed broad across 8 major
+names yesterday). realized_volatility from real daily closes: 30.4%
+(20d), 33.6% (60d) -- much calmer than AAOI, worth checking properly.
+09-04 $58p: mark $48.50 (clears the cap), delta -0.241 (misses the
+0.30 floor). 09-04 $59p: delta -0.463 (clears the floor with real
+conviction), but mark $121.50 (2.4x the cap). IV ~33.5% vs realized
+vol ~30-34% -- roughly fair pricing, not the deciding factor here; the
+cap/delta conflict alone is enough to reject.
+
+**Pattern now confirmed across four different underlyings** (BMNR
+08-20, AAOI 08-24/08-25, BABA 08-24, now OXY): whenever the underlying
+trades much above ~$50-60/share, the $50/contract premium cap and the
+0.30 delta floor are structurally incompatible -- no strike satisfies
+both regardless of how good the catalyst is. This isn't a screening
+failure, it's a real, repeatedly-confirmed fact about what this cap
+can reach. Running total: 12/12 rejected, 0 trades.
+
+CLAUDE.md's S7 row updated with the running total and pattern note.

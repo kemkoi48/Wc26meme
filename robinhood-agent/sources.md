@@ -2109,3 +2109,38 @@ than relying on this session catching it by chance.
 
 trades.csv row 14 and CLAUDE.md's S9 row both updated with the full
 detail.
+
+## 2026-08-25 ~7:21am ET — Premarket watch: watchlist rebuilt for the day
+
+Trigger fired. Renamed "August 24" -> "August 25" (list
+c15a7e55-bc55-4869-bf4f-6eb82a04c3e4).
+
+**Kept: AAOI.** +4.8% premarket ($112.85 vs $107.63 close) -- bouncing
+off yesterday's lows, the equity-offering/dilution story from earlier
+this week is stabilizing rather than continuing to fall. Still the one
+real, live name on the list.
+
+**Dropped: XPEV.** Flat overnight (+0.9%), the earnings-reaction
+catalyst from 08-24 has fully played out -- no longer notable.
+
+**Added: OXY.** Real, sourced, sector-wide catalyst discovered earlier
+this session (via direct user question, not the scanner): crude oil
+extending its fall despite new US sanctions on Iran -- the market
+"shrugging off" what would normally be a bullish supply-tightening
+signal. Confirmed broad -- XOM, CVX, OXY, SLB, HAL, COP, DVN, APA all
+down 0.6-2.0% premarket together, not one name. OXY picked as the
+representative name (highest oil-price sensitivity of the group,
+clearest mover at -2.0%).
+
+**Checked and excluded:** AMIX -- real volatility (hit $16 after-hours,
+now $7.40, already faded hard), but the only "catalyst" circulating is
+retail chatter about an unverified "patent catalyst" and warrant
+mechanics, no linked/sourced news article found. Sentiment on the name
+is also split (some calling it a pumper, real disagreement in the
+thread) -- not a clean, verifiable setup. DAIC, PMI, BTCT, LUCY, DXST,
+SUGP, SDOT all checked via the scan, all lack a fresh catalyst beyond
+"still moving."
+
+No high-market-cap earnings scheduled today that overlap the current
+watchlist names. ZM/NCNO/QFIN/BOX/HEI/SMTC report PM today -- noted,
+none currently on the watchlist.

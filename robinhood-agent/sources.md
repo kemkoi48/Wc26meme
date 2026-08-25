@@ -2075,3 +2075,37 @@ state: confirmed within 8 seconds, resting live (market open). Third
 growth-sleeve trade overall; first same-day rotation (close one
 position, open the next, same afternoon) rather than a standalone
 entry. trades.csv row 14, CLAUDE.md's S9 row updated to n=3.
+
+## 2026-08-24 ~4:11pm ET — S9 daily stop check: LYFT ratcheted + resized, real gap caught
+
+Scheduled trigger fired. Its stored instructions still referenced BTG
+(closed earlier today) -- ran the real check against the actual
+current position (LYFT) instead, and updated the trigger's own prompt
+afterward so it stops drifting from reality.
+
+Real intraday high since entry: $17.8698 (5-min bars). decide_stop_update(14.42,
+17.8698) said ratchet to $14.6532 (rounded $14.65).
+
+While doing this, get_equity_positions showed LYFT quantity=4, not the
+3 the agent bought -- get_equity_orders confirmed a 4th share was
+bought directly by the user (placed_agent: user, 2026-08-24T19:05:32Z,
+$17.585), right around the time the agent explained buying power
+couldn't cover another share. The resting $14.42 stop was still sized
+for only 3 shares, meaning the 4th sat unprotected all afternoon until
+this check caught it.
+
+Cancelled the 3-share $14.42 stop, placed a new 4-share stop at $14.65
+covering the full real position. Verified via get_equity_orders:
+state: queued (market closed right as the order went in, same
+next-open queuing pattern as every other post-close ratchet today, not
+a rejection).
+
+Updated the growth-sleeve trigger's own stored prompt (via
+update_trigger) to explicitly check resting-stop quantity against real
+position quantity every run, not just price -- the user trading
+directly on this account is apparently a real, recurring thing, not a
+one-off, so the standing check needs to catch it going forward rather
+than relying on this session catching it by chance.
+
+trades.csv row 14 and CLAUDE.md's S9 row both updated with the full
+detail.

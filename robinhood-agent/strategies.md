@@ -930,6 +930,26 @@ comments:
    screened out before spending anywhere near it (see rule 2). It is not
    being lowered further because a smaller cap doesn't fix the actual
    complaint, which is about setup quality, not dollar amount.
+
+   > **RAISED 2026-08-25: $50 → $150/contract, user's explicit
+   > instruction.** By 2026-08-25 the $50 cap had produced a real,
+   > repeated structural finding, not a setup-quality one: 12/12 live
+   > checks (BMNR, AAOI x2, BABA, OXY) rejected because $50 cannot reach
+   > the 0.30 delta floor on any underlying trading much above ~$50-60/
+   > share — the cap and the delta floor were mutually exclusive on that
+   > whole class of names, regardless of catalyst quality. User raised it
+   > to $150 after asking directly for a number; $150 was chosen because
+   > today's real rejections (AAOI $100p at $125/ct, OXY $59p at
+   > $121.50/ct) needed roughly that much to reach the floor. Still a
+   > hard ceiling, not a target — the rest of this section (rules 2-4)
+   > applies unchanged. `OptionScanConfig.max_premium_usd`,
+   > `SoftCatalystScanConfig.max_premium_usd`, and `config.json`'s
+   > `option_scan.max_premium_usd` all updated together; test fixture in
+   > `test_option_math.py` bumped from $90 to $157.50 so "premium cap
+   > enforced" still actually tests the cap. OXY's $59p (delta -0.463,
+   > $121.50/ct) now clears both the cap and the delta band on today's
+   > numbers — worth a fresh live re-check at tomorrow's 9:35am run
+   > rather than trusting after-hours data.
 2. **"We cannot lose" is not a standard any real options strategy can
    promise — anyone claiming otherwise is wrong** — but the entry gates
    already enforce the honest version of it: `mismatch_ratio` (catalyst

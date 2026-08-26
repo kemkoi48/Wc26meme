@@ -62,7 +62,7 @@
     "top_n": 10
   },
   "option_scan": {
-    "max_premium_usd": 50.0,
+    "max_premium_usd": 150.0,
     "max_spread_pct": 15.0,
     "min_open_interest": 100,
     "min_volume": 10,

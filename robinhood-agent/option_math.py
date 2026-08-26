@@ -409,7 +409,14 @@ class SoftCatalystScanConfig:
     OptionScanConfig; the edge test and the days-to-expiry band differ,
     because there is no catalyst date to time an expiry against."""
 
-    max_premium_usd: float = 50.0
+    # Raised 2026-08-19 -> 2026-08-25 ($50 -> $150), user's explicit
+    # instruction after 12/12 real checks (BMNR, AAOI x2, BABA, OXY) were
+    # structurally rejected at $50: on any underlying trading much above
+    # ~$50-60/share, $50 cannot reach the 0.30 delta floor at all. $150
+    # was chosen because today's real rejections (AAOI $100p at $125/ct,
+    # OXY $59p at $121.50/ct) needed roughly that much. Still a hard cap,
+    # not a target -- same posture as the original $50.
+    max_premium_usd: float = 150.0
     max_spread_pct: float = 15.0
     min_open_interest: float = 100.0
     min_volume: float = 10.0
@@ -616,7 +623,10 @@ class OptionScanConfig:
     # house risk rule still applies on top -- both caps apply and the
     # smaller one binds. Premium IS the max loss on a long option, so this
     # is a true risk cap, not a notional cap.
-    max_premium_usd: float = 50.0
+    # Raised 2026-08-19 -> 2026-08-25 ($50 -> $150), user's explicit
+    # instruction after 12/12 real checks were structurally rejected at
+    # $50 -- see SoftCatalystScanConfig's comment for the full rationale.
+    max_premium_usd: float = 150.0
     # See spread_pct() on why this is far looser than the stock scanner's 1%.
     # 15% admits the ATM contracts and excludes the deep-OTM penny strikes,
     # calibrated against the live ENVX chain on 2026-08-12.

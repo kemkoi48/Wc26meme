@@ -213,7 +213,7 @@ check("buffer 0 still cannot open a 0DTE back door", r is None and "0DTE" in why
 print(f"       reason: {why}")
 
 premium = dict(good)
-premium["bid"], premium["ask"] = 0.85, 0.90  # $90/contract, tight spread
+premium["bid"], premium["ask"] = 1.55, 1.60  # $157.50/contract, tight spread
 r, why = evaluate_candidate(premium, cfg, today=today)
 check("premium cap enforced", r is None and "premium" in why, why)
 

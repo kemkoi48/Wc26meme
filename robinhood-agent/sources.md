@@ -2183,3 +2183,34 @@ said ratchet. Cancelled the $14.65 stop (verified `state: cancelled`), placed
 $14.74 (18% below $17.97, verified resting/queued not rejected). Order landed
 4 minutes after the 4pm close, so it shows `state: queued` for next-open --
 same as the 08-24 precedent, not a problem.
+
+### 2026-08-25 ~10:55pm ET -- S9 fourth position, SMCI (order placed, pending fill)
+User: "you have more money to spend so go for options stock and anything
+that you can hunt" -- real settled buying power $489.67 (confirmed via
+get_portfolio, unsettled_funds $0). Market closed (10:55pm ET), so this is
+a queued entry for tomorrow's 9:30am open, not a live fill tonight.
+
+Re-ran the Growth Momentum scan live (2514847d-25cb-4628-9731-bb5b0ee7d246,
+360 real matches). Filtered to whole-share-affordable (<$60), liquid
+(avg vol >500k) names, sorted by 1-month change: mostly silver/gold miners
+(HL, CDE, AG, HBM) and uranium (UEC) riding a real sector rally (matches
+the CCJ/UUUU/OKLO story from earlier today), plus SMCI, SNAP, ZETA, GTLB.
+Checked real fundamentals on 7: SNAP (PE -31.8), UEC (PE -60.7), ZETA
+(PE -2020), GTLB (PE -278.7) all unprofitable -- same pattern as every
+prior growth pick. SMCI stood out: PE 10.79 (cheap for +35.8% 1mo),
+RSI 55 (not yet overbought, unlike the 65-70 RSI mining names), ADX 25.2,
+$66.9M avg volume, still well off its 52wk high ($58.78 vs $38.57 now).
+HL/CDE also real and profitable (PE 26/17) but more extended (RSI 66-67).
+
+Placed: BUY 12 sh SMCI, limit $39.50 (above tonight's $38.57 close, price
+protection against an overnight gap), regular_hours, gfd. Verified state:
+queued (not rejected -- market closed, this is the expected next-open
+queuing behavior, same as every stop order placed after 4pm this week).
+Scheduled a check for ~9:31am ET tomorrow (trig_01RA1izVEShePzEdWd5t9ETh)
+to verify the real fill and place the initial 18% GTC stop immediately,
+per the fractional-share/unprotected-position lessons from PLTR and the
+Rule Zero standard of never assuming a queued order becomes a real fill.
+
+Also raised the S7 options premium cap $50 -> $150/contract this same
+session per direct user instruction (see CLAUDE.md's S7 row and
+strategies.md's Governing rules section for the full record).

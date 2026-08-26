@@ -2274,3 +2274,36 @@ Stocktwits) rather than assuming it can't recur.
 Result: "August 25" emptied and marked closed/superseded (list_id
 c15a7e55-bc55-4869-bf4f-6eb82a04c3e4). "August 26" created (list_id
 28897739-a4e8-40fa-ac57-6fb0eb30137b): CCJ, UUUU, OKLO, RRC, ET, ACAD.
+
+### 2026-08-26 ~7:30am ET -- Premarket watch (scheduled trigger)
+No separate dated day-trade list exists right now -- "August 25" was
+closed and superseded by "August 26" a few hours ago per the user's own
+request. Treating "August 26" as today's one list rather than creating a
+naming collision; added this cycle's real premarket findings into it.
+
+Real premarket movers checked (Stocktwits trending + Robinhood's "Daily
+Movers - Fastest Growers" scan): INTU -10.7% (real, dated catalyst --
+FY26 beat but FY27 guidance disappointed, multiple analyst PT cuts same
+morning: Morgan Stanley 335->315, Goldman 500+->276, Truist 410->350) --
+already-printed reaction, informational only, not added. ZM -6.8%
+premarket, not investigated further (no position/thesis overlap). NVDA
+flat premarket but reports Q2 earnings AFTER CLOSE TODAY -- real, large,
+market-wide event; noted for awareness, not actionable for any current
+position.
+
+Two real additions, both independently cross-confirming the live
+uranium/nuclear theme already on the list (CCJ/UUUU/OKLO):
+- SMR (NuScale Power): real premarket move (+3.16%), a Stocktwits post
+  explicitly grouped $OKLO $SMR $CCJ $UUUU together this morning. Real
+  technical setup (RSI 53.7 neutral, MACD bullish, broke above the $9.89
+  resistance level, volume above average). Same early-stage/unprofitable
+  profile as OKLO (PE -4.31) -- tracked as thematic/sector momentum, not
+  a value pick, same basis OKLO was already being tracked on.
+- LEU (Centrus Energy): surfaced independently in the real quality-
+  momentum scan (RSI 56.6, ADX 17.5 -- weaker trend signal than the
+  others). Different link in the nuclear value chain (fuel enrichment/
+  services, not mining or reactor-building) -- real diversification
+  within the theme. Profitable but expensive (PE 80.8), 52wk range
+  $142-$464 vs $195.80 now.
+
+"August 26" now: CCJ, UUUU, OKLO, SMR, LEU, RRC, ET, ACAD.

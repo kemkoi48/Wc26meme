@@ -2318,3 +2318,23 @@ stop_market, verified state: confirmed (resting, not rejected) 98
 seconds after the fill. Logged to trades.csv row 15 and CLAUDE.md's S9
 row. Fourth growth-sleeve position, second currently open (alongside
 LYFT).
+
+### 2026-08-26 ~4:03pm ET -- S9 daily stop check, LYFT holds, SMCI ratchets
+LYFT: real position 4 sh, stop $14.74 covers all 4 (quantity check passed).
+Today's real high ($17.80, 5-min bars) didn't exceed the existing peak
+($17.97 from 08-25), so decide_stop_update correctly said no change.
+
+SMCI: real position 12 sh, stop $31.16 covered all 12 (quantity check
+passed -- no manual-buy gap this time). Today's real high since entry
+was $38.27 (11:40am ET) -- decide_stop_update said ratchet. Cancelled
+$31.16 (verified state: cancelled), placed $31.38 (18% below $38.27).
+Order landed 3.5 min after the 4pm close -- state: queued, next-open,
+not a rejection.
+
+Real, separate finding while checking positions: the user bought 1 share
+of SMR directly on the account this morning (~8:30am ET, $10.00,
+placed_agent: user) -- SMR is one of the names added to the "August 26"
+watchlist during the premarket check. This share is outside S9's scope
+(not picked via the growth scan, not an agent order) and currently has
+NO resting stop. Flagged to the user directly rather than silently
+adding it to growth-sleeve tracking or leaving it unmentioned.

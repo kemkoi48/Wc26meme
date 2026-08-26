@@ -2307,3 +2307,14 @@ uranium/nuclear theme already on the list (CCJ/UUUU/OKLO):
   $142-$464 vs $195.80 now.
 
 "August 26" now: CCJ, UUUU, OKLO, SMR, LEU, RRC, ET, ACAD.
+
+### 2026-08-26 ~9:36am ET -- S9: SMCI fill verified, initial stop placed
+Scheduled follow-up from last night's queued buy fired at market open.
+Verified via get_equity_orders: filled 12 sh @ $38.00 (average_price),
+09:30:00.095 ET -- better than the $39.50 ceiling, real confirmation of
+how a limit buy actually works (ceiling, not target). Computed
+growth_signal.trailing_stop_price(38.00) = $31.16, placed GTC
+stop_market, verified state: confirmed (resting, not rejected) 98
+seconds after the fill. Logged to trades.csv row 15 and CLAUDE.md's S9
+row. Fourth growth-sleeve position, second currently open (alongside
+LYFT).

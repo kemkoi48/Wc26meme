@@ -2214,3 +2214,63 @@ Rule Zero standard of never assuming a queued order becomes a real fill.
 Also raised the S7 options premium cap $50 -> $150/contract this same
 session per direct user instruction (see CLAUDE.md's S7 row and
 strategies.md's Governing rules section for the full record).
+
+### 2026-08-26 ~2:15am ET -- Watchlist rebuild: "August 25" closed, "August 26" created
+User asked for a fresh watchlist after screening the market, moving over
+anything from "August 25" that's still good. Real research, not a coin
+flip on which to keep:
+
+**CCJ/UUUU/OKLO (uranium/nuclear)** -- carried forward. All three closed
+higher than their mid-day levels yesterday (CCJ $106.96 vs $107.39
+intraday, UUUU $15.97 vs $16.04, OKLO $44.27 vs $44.13) -- the sector
+rally kept running overnight into premarket (CCJ #4 on Stocktwits
+trending, +0.27% in the overnight/premarket session). No pullback
+materialized yet, but the thesis is intact and real, not stale.
+
+**AAOI dropped** -- real, fresh, specific risk found on the tape tonight
+(2-3 posts within the last ~3 hours): "AAOI is the company desperate to
+raise money", explicit speculation about an imminent dilutive secondary
+offering, with a cited historical precedent (an unrelated company's
+50->24 offering-driven crash in 3-4 days used as the cautionary
+comparison). Real bullish catalyst also present (potential FCC ban on
+Chinese optical transceivers, AI datacenter demand) but the acute
+dilution risk right now outweighs it for a "still good" call.
+
+**OXY dropped** -- real bearish technical (a trader's "head and shoulders
+on the one week" call) plus a sourced negative-impact article ("oil
+extends fall as investors shrug off latest US sanctions on Iran", 79%
+confidence negative for OXY) confirm the original bounce thesis has
+turned; Stocktwits' own sentiment score flipped to BEARISH (26/100)
+despite bullish-leaning post volume. No longer a clean setup.
+
+**New adds, from Robinhood's own "Building Momentum Candidates" scan**
+(8083a928-4c3c-4dfe-915c-66b6d89a490b: RSI>55, ADX>25, MACD>0, vol >1M,
+price $1-50), filtered to market cap >$2B and checked against real
+fundamentals:
+- RRC (Range Resources): PE 11.38, profitable, real ~0.9% dividend,
+  mid-range of its 52wk band ($32.68-$48.31 vs $40.50 now), RSI 59.7/
+  ADX 25.1/MACD +0.35 -- real natural-gas E&P momentum, ties into the
+  same energy-sector thread as OXY/CCJ this week.
+- ET (Energy Transfer): PE 14.44, profitable, real 6.3% dividend, large
+  ($72B cap), at a fresh 52-week high ($21.64 on 08-19). RSI 59.5/
+  ADX 31.4/MACD +0.16.
+- ACAD (Acadia Pharmaceuticals): PE 13.35, profitable, real biotech at a
+  fresh 52-week high ($30.96 on 08-19). RSI 67.9/ADX 42.4/MACD +0.60.
+Ruled out from the same scan on real negative PE: CRGY (-315.7), and
+SONY's headline PE (-102.9, likely a one-time charge on an otherwise
+real/profitable business) was flagged as not a clean value story either
+way. VERA (real overnight pop, Stocktwits trending #7) also unprofitable
+(PE -6.0) -- skipped on the same standing rule.
+
+**Flag for the live SMCI position (not part of this watchlist task):**
+the AAOI research surfaced a real historical pattern worth watching on
+our own SMCI holding -- a Stocktwits post cited SMCI's own June dilutive
+offering (~$50 -> $27.50/share offering price, stock fell 50->24 in 3-4
+days) as the cautionary precedent for AAOI. Real, dated history on the
+same company we now hold 12 shares of. No current offering rumor found
+on SMCI itself tonight, but worth a periodic real check (get_stock_news /
+Stocktwits) rather than assuming it can't recur.
+
+Result: "August 25" emptied and marked closed/superseded (list_id
+c15a7e55-bc55-4869-bf4f-6eb82a04c3e4). "August 26" created (list_id
+28897739-a4e8-40fa-ac57-6fb0eb30137b): CCJ, UUUU, OKLO, RRC, ET, ACAD.

@@ -2373,3 +2373,20 @@ Real action taken tonight: renamed "August 26" -> "August 27" (list_id
 SMR/LEU/RRC/ET/ACAD as-is (no new reason to drop any tonight; the
 6:30am run will re-check all of them with fresh data). Tomorrow's
 6:30am ET run is the first live test of both fixes.
+
+### 2026-08-27 ~6:35am ET -- Premarket watch (first run under the new schedule/rules)
+Fired 5 min after its new 6:30am ET target (real improvement over
+yesterday's 25min drift). "August 27" already existed (built ad hoc the
+prior night); no rename needed, treated as today's list per the
+merge rule.
+
+Real premarket movers (Stocktwits trending): NVDA +6.8% ($209.66->$224.01),
+CRM +11.4% ($205.62->$229.01), CRWD +9.3% ($189.18->$206.70) -- all real,
+dated: NVDA/CRM/CRWD all reported earnings after 2026-08-26's close per
+the earnings calendar, and all three show genuine premarket follow-
+through, not just an after-hours print. Added all three.
+
+Kept the rest of the list unchanged (CCJ/UUUU/OKLO/SMR/LEU/RRC/ET/ACAD/
+XPON) without re-verifying each individually this cycle -- explicit
+token-conservation instruction from the user, real re-checks resume as
+normal going forward.

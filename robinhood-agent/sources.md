@@ -2338,3 +2338,38 @@ watchlist during the premarket check. This share is outside S9's scope
 (not picked via the growth scan, not an agent order) and currently has
 NO resting stop. Flagged to the user directly rather than silently
 adding it to growth-sleeve tracking or leaving it unmentioned.
+
+### 2026-08-27 ~12:20am ET -- Watchlist schedule fixed; XPON added after a real miss
+User asked for a standing daily schedule: new dated watchlist every
+trading day, previous day's list closed out by moving/removing names,
+done before 7am. This mechanism already existed (the "Premarket watch"
+trigger, trig_01QgTDVhFfLA6ZpAvrLYactt) but had two real gaps, both
+fixed tonight:
+
+1. **Timing.** Cron was `0 11 * * 1-5` (7:00am ET) but the real fire
+   yesterday landed at 11:25:49 UTC (7:25am ET) -- ~25 min of real
+   drift, after the user's 7am deadline. Moved to `30 10 * * 1-5`
+   (6:30am ET) to build in buffer.
+2. **Coverage blind spot -- the actual cause of missing XPON.** The
+   trigger only looked for a fresh, dated catalyst (news/earnings) each
+   morning. XPON had no single new press release today -- it was
+   already flagged and tracked informally starting 2026-08-24 (real
+   dilution/offering unwind), then kept posting genuine, large moves on
+   08-25 and 08-26 without one new headline. Real result: XPON hit
+   $11.76 today (from a real ~$5.15-5.45 support base cited by multiple
+   independent Stocktwits traders), message volume EXTREMELY_HIGH
+   (score 97), and it's on several different traders' own posted "watch
+   Thursday" lists right now. My own hourly momentum checks this week
+   saw XPON's price ($6-9 range) but never caught the full move because
+   each cycle re-tested only "is this near its OWN highest point in the
+   last hour" -- a real, sustained multi-day mover with heavy chatter
+   was never given credit for being real just because it lacked a fresh
+   single-day catalyst. Rewrote the trigger's prompt to explicitly treat
+   "sustained real momentum + heavy real chatter across days" as a valid
+   watchlist inclusion basis, separate from the fresh-catalyst screen.
+
+Real action taken tonight: renamed "August 26" -> "August 27" (list_id
+28897739-a4e8-40fa-ac57-6fb0eb30137b), added XPON. Kept CCJ/UUUU/OKLO/
+SMR/LEU/RRC/ET/ACAD as-is (no new reason to drop any tonight; the
+6:30am run will re-check all of them with fresh data). Tomorrow's
+6:30am ET run is the first live test of both fixes.

@@ -23,3 +23,13 @@ Added 5 real premarket movers, all with confirmed dated catalysts:
 
 Not earnings-driven pumps or chatter-only -- all five have a real,
 checkable, dated reason.
+
+## 2026-08-28 (~10:12am ET) — Momentum scan, first cycle under regular-hours RVOL
+
+Top real mover: QNRX +33% at peak $8.25 (~9:35-9:40am ET) on real
+six-patient clinical trial data -- a real, dated catalyst. But already
+reversed hard by the time of this check: down to ~$6.85-6.94, ~17% off
+high in under 30 minutes. Real reason confirmed via Stocktwits: a trader
+noted "massive dilution priced well below the current price... momentum
+cracked, lower highs followed." Real catalyst, already fully priced in
+and reversing -- not a fresh setup, no alert sent.

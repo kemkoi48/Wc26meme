@@ -681,6 +681,17 @@
   var mcp = null;
   var unwatch = null;
   var swingUnwatch = null;
+  // Verified live 2026-08-28 (overnight session): Robinhood's own scan
+  // engine breaks its relative-volume math outside regular hours -- every
+  // one of 95 real matches came back with plain "Relative volume" flat at
+  // exactly 1 (a placeholder, not a real reading) while "Relative volume
+  // (1, 1H)" spiked into the hundreds or hundreds-of-thousands (e.g. MODD
+  // 203,143x) -- a divide-by-near-zero against the thin off-hours 1h
+  // average. This is upstream data, not something this page can compute
+  // around. So the RVOL pillar is gated on market state: outside regular
+  // hours it never counts toward pillarsMet, so a garbage RVOL spike can't
+  // paint a row as a false "strong" setup before the bell.
+  var marketIsOpen = false;
   var rows = [];
   var swingRows = [];
   var lastGood = null;
@@ -754,17 +765,26 @@
     var m = marketState();
     els.mkt.className = "mkt " + (m.k === "closed" ? "" : m.k);
     els.mktTxt.textContent = m.label;
+    var wasOpen = marketIsOpen;
+    marketIsOpen = m.k === "open";
     if (m.k !== "open") {
       if (!els.warnSlot.firstChild) {
         els.warnSlot.innerHTML =
           '<div class="warn-strip"><span class="ic">◐</span><div>' +
           '<strong>Outside regular hours.</strong> Scan figures are unreliable right now — ' +
           'percent-change and relative-volume readings go flat or wildly inflated on thin after-hours prints. ' +
+          'The Rel Vol pillar below is deliberately switched off until the bell rings (verified live: it reads a ' +
+          'flat placeholder of 1x or spikes into the thousands off real off-hours data, either way meaningless), ' +
+          'so a bogus reading can\'t paint a row as a false "strong" setup. ' +
           'Treat anything here as a name to look at when the bell rings, not a live setup.' +
           '</div></div>';
       }
     } else {
       els.warnSlot.innerHTML = "";
+    }
+    if (wasOpen !== marketIsOpen && rows.length) {
+      rows = rows.map(deriveRow);
+      paintRows();
     }
     return m;
   }
@@ -863,15 +883,19 @@
     var float = resolvedFloat(o.sym, o.scanFloat);
     o.float = float;
     o.floatLoading = float === null && (!fundCache[o.sym] || fundInFlight[o.sym]);
+    o.rvolUnreliable = !marketIsOpen;
     var p = {
-      rvol: o.rvol !== null && o.rvol >= PILLAR.rvol,
+      rvol: marketIsOpen && o.rvol !== null && o.rvol >= PILLAR.rvol,
       chg: o.chg !== null && o.chg >= PILLAR.chg,
       price: o.last !== null && o.last >= PILLAR.priceLo && o.last <= PILLAR.priceHi,
       float: float !== null && float <= PILLAR.float
     };
     o.pillars = p;
+    // Outside regular hours the RVOL pillar is excluded from the count
+    // entirely (not scored as failed) since the underlying data is not
+    // just unfavorable, it's not meaningful -- out of 4 doesn't apply.
     o.pillarsMet = (p.rvol ? 1 : 0) + (p.chg ? 1 : 0) + (p.price ? 1 : 0) + (p.float ? 1 : 0);
-    o.pillarsOf = 4;
+    o.pillarsOf = marketIsOpen ? 4 : 3;
     if (o.chg !== null && o.chg < 0) o.q = "q-down";
     else if (o.pillarsMet >= o.pillarsOf) o.q = "q-strong";
     else if (o.pillarsMet >= 2) o.q = "q-watch";
@@ -1011,6 +1035,12 @@
       // log-ish scale: these ratios span 1× to several thousand ×
       var fillPct = r.rvol === null ? 0 :
         Math.max(4, Math.min(100, (Math.log10(Math.max(1, r.rvol)) / 3) * 100));
+      var rvolCell = r.rvolUnreliable
+        ? '<span class="num" style="color:var(--ink-faint)" title="Robinhood\'s own RVOL math breaks outside regular hours (verified live 2026-08-28) -- not shown as a number here on purpose">pre-open</span>'
+        : '<div class="meter"><span class="track"><span class="fill' +
+          (r.rvol !== null && r.rvol >= 5 ? " strong" : "") +
+          '" style="width:' + fillPct.toFixed(0) + '%"></span></span>' +
+          '<span class="val">' + rvolTxt(r.rvol) + '</span></div>';
       var tight = r.float !== null && r.float > 0 && r.float < 5e6;
 
       var floatCell = r.float !== null
@@ -1018,7 +1048,7 @@
         : '<span class="num" style="color:var(--ink-faint)">' + (r.floatLoading ? "…" : "—") + '</span>';
 
       var pillarClass = r.pillarsMet >= r.pillarsOf ? "tight" : "";
-      var pillarTitle = "rel.vol ≥ 5x: " + (r.pillars.rvol ? "yes" : "no") +
+      var pillarTitle = "rel.vol ≥ 5x: " + (r.rvolUnreliable ? "not evaluated (outside regular hours, RVOL data unreliable)" : (r.pillars.rvol ? "yes" : "no")) +
         " · %chg ≥ 10%: " + (r.pillars.chg ? "yes" : "no") +
         " · price $2-20: " + (r.pillars.price ? "yes" : "no") +
         " · float ≤ 20M: " + (r.float === null ? "loading…" : (r.pillars.float ? "yes" : "no"));
@@ -1065,10 +1095,7 @@
         '<td>' + pillarsCell + '</td>' +
         '<td class="num ' + cls + '">' + pct(r.chg) + '</td>' +
         '<td class="num">' + money(r.last) + '</td>' +
-        '<td><div class="meter"><span class="track"><span class="fill' +
-          (r.rvol !== null && r.rvol >= 5 ? " strong" : "") +
-          '" style="width:' + fillPct.toFixed(0) + '%"></span></span>' +
-          '<span class="val">' + rvolTxt(r.rvol) + '</span></div></td>' +
+        '<td>' + rvolCell + '</td>' +
         '<td class="num">' + compact(r.vol) + '</td>' +
         '<td>' + floatCell + '</td>' +
         '<td>' + bookCell + '</td>' +
@@ -1084,11 +1111,11 @@
     });
 
     var movers = rows.filter(function (r) { return r.chg !== null && r.chg >= 0.05; });
-    var loud = rows.filter(function (r) { return r.rvol !== null && r.rvol >= 5; });
+    var loud = marketIsOpen ? rows.filter(function (r) { return r.rvol !== null && r.rvol >= 5; }) : [];
     var both = rows.filter(function (r) { return r.pillarsMet >= r.pillarsOf; });
     els.tCount.textContent = rows.length;
     els.tMovers.textContent = movers.length;
-    els.tRvol.textContent = loud.length;
+    els.tRvol.textContent = marketIsOpen ? loud.length : "—";
     els.tBoth.textContent = both.length;
     els.tBoth.className = "v" + (both.length ? " up" : "");
   }

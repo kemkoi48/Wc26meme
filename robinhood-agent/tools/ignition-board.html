@@ -538,7 +538,7 @@
     <summary>Warrior Trading's 5 pillars — what "Pillars" and "Order Book" actually check</summary>
     <div class="checks-body">
       <ol>
-        <li><b>Relative volume ≥ 5x.</b> A big move on normal volume is thin — maybe a couple of prints. This is a real numeric pillar, scored automatically.</li>
+        <li><b>Relative volume ≥ 5x.</b> A big move on normal volume is thin — maybe a couple of prints. Scored automatically during regular hours from Robinhood's own live number. Outside regular hours that field breaks (verified: flat 1x, or spikes into the thousands), so a <b>*</b> marks a value this page computed itself instead from real historical bars (today's volume-so-far vs. the average by this time on recent prior days) — auto-computed for real movers, "Check*" on demand for the rest.</li>
         <li><b>% change ≥ 10%.</b> Also scored automatically, from the scan's own number.</li>
         <li><b>Price $2–$20.</b> Scored automatically from the Last column.</li>
         <li><b>Float ≤ 20M.</b> Scored automatically — but only on the two scans that report float (Early Momentum Ignition, Warrior Trading Style). The Pillars column shows "n/a" for this one on scans that don't carry it, rather than silently failing it.</li>
@@ -772,12 +772,11 @@
       if (!els.warnSlot.firstChild) {
         els.warnSlot.innerHTML =
           '<div class="warn-strip"><span class="ic">◐</span><div>' +
-          '<strong>Outside regular hours.</strong> Scan figures are unreliable right now — ' +
-          'percent-change and relative-volume readings go flat or wildly inflated on thin after-hours prints. ' +
-          'The Rel Vol pillar below is deliberately switched off until the bell rings (verified live: it reads a ' +
-          'flat placeholder of 1x or spikes into the thousands off real off-hours data, either way meaningless), ' +
-          'so a bogus reading can\'t paint a row as a false "strong" setup. ' +
-          'Treat anything here as a name to look at when the bell rings, not a live setup.' +
+          '<strong>Outside regular hours.</strong> Robinhood\'s own Rel Vol field breaks right now (verified live: ' +
+          'flat 1x placeholder, or spikes into the thousands off a near-empty trailing average). Rows marked with ' +
+          '<b>*</b> are showing a Rel Vol this page computed itself instead, from real historical bars — ' +
+          'today\'s volume so far vs. the average by this same time on the last several trading days, the same ' +
+          'comparison a real scanner makes. Click "Check*" on any row to compute it on demand.' +
           '</div></div>';
       }
     } else {
@@ -786,8 +785,91 @@
     if (wasOpen !== marketIsOpen && rows.length) {
       rows = rows.map(deriveRow);
       paintRows();
+      if (!marketIsOpen) autoComputeRvolForMovers();
     }
     return m;
+  }
+
+  // ---------- self-computed relative volume (pre/after hours) ----------
+  // Robinhood's own RVOL field breaks outside regular hours (verified live
+  // 2026-08-28: flat 1x placeholder, or spikes into the thousands off a
+  // near-zero trailing-1h average -- a real, upstream data problem, not
+  // fixable by reading the field differently). But the RAW per-bar volume
+  // underneath it is real even premarket (verified same session: PPCB's
+  // actual 2026-08-27 premarket bar showed real volume 19,161,603, not
+  // broken). A professional scanner (this is genuinely how Warrior
+  // Trading-style tools do it) doesn't compare against a noisy few-minute
+  // trailing window -- it compares volume-so-far-today against volume-by-
+  // this-same-time-of-day on recent prior days, which stays meaningful at
+  // any hour including premarket. That's a real, computable number from
+  // get_equity_historicals, built here instead of just disabling the
+  // pillar. Gated to real movers only (RVOL_AUTO_BUDGET), 5-min cache.
+  var RVOL_TTL_MS = 5 * 60 * 1000;
+  var rvolCache = {};   // sym -> { state:'loading'|'done'|'error', value, days, msg, at }
+  var RVOL_AUTO_BUDGET = 12;
+  var rvolAutoSpent = 0;
+
+  function etParts(d) {
+    var f = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "numeric", minute: "numeric", hour12: false
+    });
+    var parts = {};
+    f.formatToParts(d).forEach(function (p) { parts[p.type] = p.value; });
+    return {
+      dateKey: parts.year + "-" + parts.month + "-" + parts.day,
+      mins: parseInt(parts.hour, 10) * 60 + parseInt(parts.minute, 10)
+    };
+  }
+
+  function computeRealRvol(sym, force) {
+    if (!mcp) return;
+    var c = rvolCache[sym];
+    if (c && (c.state === "loading" || (c.state === "done" && Date.now() - c.at < RVOL_TTL_MS))) return;
+    if (!force) {
+      if (rvolAutoSpent >= RVOL_AUTO_BUDGET) return;
+      rvolAutoSpent++;
+    }
+    rvolCache[sym] = { state: "loading" };
+    var start = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+    mcp.callTool(SERVER, "get_equity_historicals",
+      { symbols: [sym], start_time: start, interval: "5minute", bounds: "trading" },
+      { cache: { staleTime: RVOL_TTL_MS } })
+      .then(function (res) {
+        var p = res && res.payload;
+        var bars = p && p.data && p.data.results && p.data.results[0] && p.data.results[0].bars;
+        if (!Array.isArray(bars) || !bars.length) { rvolCache[sym] = { state: "error", msg: "no bars" }; paintRows(); return; }
+        var now = etParts(new Date());
+        var byDay = {}; // ET date key -> cumulative volume up to now's minute-of-day
+        bars.forEach(function (b) {
+          if (b.interpolated) return;
+          var et = etParts(new Date(b.begins_at));
+          if (et.mins > now.mins) return; // same time-of-day window only, apples to apples
+          byDay[et.dateKey] = (byDay[et.dateKey] || 0) + (num(b.volume) || 0);
+        });
+        var todayVol = byDay[now.dateKey] || 0;
+        var priorVols = Object.keys(byDay).filter(function (d) { return d !== now.dateKey; }).map(function (d) { return byDay[d]; });
+        if (priorVols.length < 2) { rvolCache[sym] = { state: "error", msg: "not enough trading-day history yet" }; paintRows(); return; }
+        var avgPrior = priorVols.reduce(function (a, b) { return a + b; }, 0) / priorVols.length;
+        rvolCache[sym] = {
+          state: "done",
+          value: avgPrior > 0 ? todayVol / avgPrior : null,
+          days: priorVols.length,
+          at: Date.now()
+        };
+        rows = rows.map(deriveRow);
+        paintRows();
+        autoCheckStrongRows(); // a resolved real RVOL can newly clear 3+ pillars
+      })
+      .catch(function () { rvolCache[sym] = { state: "error", msg: "lookup failed" }; paintRows(); });
+  }
+
+  function autoComputeRvolForMovers() {
+    if (marketIsOpen || !rows.length) return;
+    for (var i = 0; i < rows.length && rvolAutoSpent < RVOL_AUTO_BUDGET; i++) {
+      var r = rows[i];
+      if (r.sym !== "—" && r.chg !== null && r.chg >= PILLAR.chg) computeRealRvol(r.sym);
+    }
   }
 
   // ---------- row shaping ----------
@@ -885,18 +967,19 @@
     o.float = float;
     o.floatLoading = float === null && (!fundCache[o.sym] || fundInFlight[o.sym]);
     o.rvolUnreliable = !marketIsOpen;
+    var rc = rvolCache[o.sym];
+    o.rvolReal = rc && rc.state === "done" ? rc.value : null;
+    o.rvolRealState = rc ? rc.state : null;
+    var effRvol = marketIsOpen ? o.rvol : o.rvolReal;
     var p = {
-      rvol: marketIsOpen && o.rvol !== null && o.rvol >= PILLAR.rvol,
+      rvol: effRvol !== null && effRvol >= PILLAR.rvol,
       chg: o.chg !== null && o.chg >= PILLAR.chg,
       price: o.last !== null && o.last >= PILLAR.priceLo && o.last <= PILLAR.priceHi,
       float: float !== null && float <= PILLAR.float
     };
     o.pillars = p;
-    // Outside regular hours the RVOL pillar is excluded from the count
-    // entirely (not scored as failed) since the underlying data is not
-    // just unfavorable, it's not meaningful -- out of 4 doesn't apply.
     o.pillarsMet = (p.rvol ? 1 : 0) + (p.chg ? 1 : 0) + (p.price ? 1 : 0) + (p.float ? 1 : 0);
-    o.pillarsOf = marketIsOpen ? 4 : 3;
+    o.pillarsOf = 4;
     if (o.chg !== null && o.chg < 0) o.q = "q-down";
     else if (o.pillarsMet >= o.pillarsOf) o.q = "q-strong";
     else if (o.pillarsMet >= 2) o.q = "q-watch";
@@ -1052,15 +1135,29 @@
 
     els.body.innerHTML = sorted.map(function (r) {
       var cls = r.chg === null ? "zero" : r.chg > 0 ? "pos" : r.chg < 0 ? "neg" : "zero";
+      var effRvol = r.rvolUnreliable ? r.rvolReal : r.rvol;
       // log-ish scale: these ratios span 1× to several thousand ×
-      var fillPct = r.rvol === null ? 0 :
-        Math.max(4, Math.min(100, (Math.log10(Math.max(1, r.rvol)) / 3) * 100));
-      var rvolCell = r.rvolUnreliable
-        ? '<span class="num" style="color:var(--ink-faint)" title="Robinhood\'s own RVOL math breaks outside regular hours (verified live 2026-08-28) -- not shown as a number here on purpose">pre-open</span>'
-        : '<div class="meter"><span class="track"><span class="fill' +
-          (r.rvol !== null && r.rvol >= 5 ? " strong" : "") +
+      var fillPct = effRvol === null ? 0 :
+        Math.max(4, Math.min(100, (Math.log10(Math.max(1, effRvol)) / 3) * 100));
+
+      var rvolCell;
+      if (!r.rvolUnreliable) {
+        rvolCell = '<div class="meter"><span class="track"><span class="fill' +
+          (effRvol !== null && effRvol >= 5 ? " strong" : "") +
           '" style="width:' + fillPct.toFixed(0) + '%"></span></span>' +
-          '<span class="val">' + rvolTxt(r.rvol) + '</span></div>';
+          '<span class="val">' + rvolTxt(effRvol) + '</span></div>';
+      } else if (r.rvolRealState === "loading") {
+        rvolCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      } else if (r.rvolRealState === "done") {
+        rvolCell = '<div class="meter" title="Self-computed: today\'s volume so far vs. the average by this same time on the last ' + (rvolCache[r.sym].days || 0) + ' trading days -- Robinhood\'s own RVOL field is unreliable right now, this is a real number computed from real historical bars instead"><span class="track"><span class="fill' +
+          (effRvol !== null && effRvol >= 5 ? " strong" : "") +
+          '" style="width:' + fillPct.toFixed(0) + '%"></span></span>' +
+          '<span class="val">' + rvolTxt(effRvol) + '*</span></div>';
+      } else if (r.rvolRealState === "error") {
+        rvolCell = '<button type="button" class="book-btn rvol-btn" data-sym="' + esc(r.sym) + '" title="' + esc((rvolCache[r.sym] && rvolCache[r.sym].msg) || "failed") + '">Retry</button>';
+      } else {
+        rvolCell = '<button type="button" class="book-btn rvol-btn" data-sym="' + esc(r.sym) + '" title="Robinhood\'s RVOL field is unreliable outside regular hours -- click to compute a real one from historical bars">Check*</button>';
+      }
       var tight = r.float !== null && r.float > 0 && r.float < 5e6;
 
       var floatCell = r.float !== null
@@ -1068,10 +1165,14 @@
         : '<span class="num" style="color:var(--ink-faint)">' + (r.floatLoading ? "…" : "—") + '</span>';
 
       var pillarClass = r.pillarsMet >= r.pillarsOf ? "tight" : "";
-      var pillarTitle = "rel.vol ≥ 5x: " + (r.rvolUnreliable ? "not evaluated (outside regular hours, RVOL data unreliable)" : (r.pillars.rvol ? "yes" : "no")) +
+      var rvolNote = r.rvolUnreliable
+        ? (r.rvolRealState === "done" ? (r.pillars.rvol ? "yes (self-computed*)" : "no (self-computed*)") : "not yet computed*")
+        : (r.pillars.rvol ? "yes" : "no");
+      var pillarTitle = "rel.vol ≥ 5x: " + rvolNote +
         " · %chg ≥ 10%: " + (r.pillars.chg ? "yes" : "no") +
         " · price $2-20: " + (r.pillars.price ? "yes" : "no") +
-        " · float ≤ 20M: " + (r.float === null ? "loading…" : (r.pillars.float ? "yes" : "no"));
+        " · float ≤ 20M: " + (r.float === null ? "loading…" : (r.pillars.float ? "yes" : "no")) +
+        (r.rvolUnreliable ? " (* outside regular hours: self-computed vs. Robinhood's own broken field)" : "");
       var pillarsCell = '<span class="chip ' + pillarClass + '" title="' + esc(pillarTitle) + '">' +
         r.pillarsMet + '/' + r.pillarsOf + '</span>';
 
@@ -1123,19 +1224,25 @@
         '</tr>';
     }).join("");
 
-    Array.prototype.forEach.call(els.body.querySelectorAll(".book-btn:not(.cat-btn)"), function (btn) {
+    Array.prototype.forEach.call(els.body.querySelectorAll(".book-btn:not(.cat-btn):not(.rvol-btn)"), function (btn) {
       btn.addEventListener("click", function () { checkBook(btn.getAttribute("data-sym")); });
     });
     Array.prototype.forEach.call(els.body.querySelectorAll(".cat-btn"), function (btn) {
       btn.addEventListener("click", function () { checkCatalyst(btn.getAttribute("data-sym")); });
     });
+    Array.prototype.forEach.call(els.body.querySelectorAll(".rvol-btn"), function (btn) {
+      btn.addEventListener("click", function () { computeRealRvol(btn.getAttribute("data-sym"), true); });
+    });
 
     var movers = rows.filter(function (r) { return r.chg !== null && r.chg >= 0.05; });
-    var loud = marketIsOpen ? rows.filter(function (r) { return r.rvol !== null && r.rvol >= 5; }) : [];
+    var loud = rows.filter(function (r) {
+      var eff = r.rvolUnreliable ? r.rvolReal : r.rvol;
+      return eff !== null && eff >= 5;
+    });
     var both = rows.filter(function (r) { return r.pillarsMet >= r.pillarsOf; });
     els.tCount.textContent = rows.length;
     els.tMovers.textContent = movers.length;
-    els.tRvol.textContent = marketIsOpen ? loud.length : "—";
+    els.tRvol.textContent = loud.length;
     els.tBoth.textContent = both.length;
     els.tBoth.className = "v" + (both.length ? " up" : "");
   }
@@ -1277,6 +1384,7 @@
         "");
     } else {
       paintRows();
+      autoComputeRvolForMovers();
       autoCheckStrongRows();
     }
     var total = result.total_items;
@@ -1287,6 +1395,7 @@
     ensureFundamentals(rows.map(function (r) { return r.sym; }), function () {
       rows = rows.map(deriveRow);
       paintRows();
+      autoComputeRvolForMovers();
       autoCheckStrongRows();
     });
   }

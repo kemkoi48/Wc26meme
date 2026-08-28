@@ -2390,3 +2390,39 @@ Kept the rest of the list unchanged (CCJ/UUUU/OKLO/SMR/LEU/RRC/ET/ACAD/
 XPON) without re-verifying each individually this cycle -- explicit
 token-conservation instruction from the user, real re-checks resume as
 normal going forward.
+
+## 2026-08-28 (~1:30am ET) — PPCB miss, root cause, and two real fixes
+
+User flagged missing PPCB's real move on 2026-08-27. Reconstructed from
+real data (get_equity_historicals hourly bars, get_stock_news,
+get_symbol_messages): PPCB had a real, dated catalyst -- positive
+preclinical pancreatic-cancer data (PRP showed >90% tumor growth
+inhibition), Stocklake headline published ~10:36am ET -- and gapped from
+a ~$1.07 prior close to open $4.22, peak $4.35, right at the 9:30am
+open. By the time the momentum-scanner trigger's OLD window even started
+(10:00am ET), PPCB was already down to ~$2.60-2.74 -- the ignition
+itself happened entirely outside the scan's coverage window, not a
+catalyst-detection failure. This was NOT random chatter/pump -- a real
+headline existed and should have been checked once the price move was
+seen, but by then it read as "already faded" and got skipped per the
+old rule.
+
+Two real fixes shipped same session:
+1. Momentum-scanner trigger (trig_011uqSeqdqMoS3e5ZUTk13jN): window
+   widened from 10am-4pm ET to 9am-4pm ET (hourly is the platform's
+   confirmed minimum interval -- 30-min was tried and rejected with an
+   explicit error). Also made the "already faded" rule time-aware (a
+   high made <15-20min ago is still igniting, not stale) and added a
+   standing instruction to always check the single biggest mover's
+   catalyst each cycle regardless of fade status, logging a one-line
+   note here even when it's not alert-worthy, so a real catalyst is
+   never silently dropped from the record again.
+2. Ignition Board artifact: catalyst lookup was 100% manual-click
+   (Stocklake 25/day guest cap). Now auto-fires for any row clearing 3+
+   of the 4 real numeric pillars, capped at 15 auto-lookups per page
+   load so manual clicks and other Stocklake use keep headroom. Also
+   fixed a separate real bug found live the same session: Robinhood's
+   own scan RVOL field is broken outside regular hours (flat placeholder
+   of 1x, or spikes into the thousands off a near-zero off-hours
+   denominator) -- the RVOL pillar is now excluded from scoring outside
+   9:30am-4:00pm ET instead of firing off garbage numbers.

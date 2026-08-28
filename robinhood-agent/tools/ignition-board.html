@@ -631,10 +631,11 @@
     <b>Alerts (flash, sound, tab title) only fire while this tab is open in your browser</b> — this page runs
     inside claude.ai's frame, which does not reliably support real operating-system push notifications, so
     no promise is made here that you'll see it if the tab or browser is closed.
-    <b>Catalyst</b> pulls a real dated headline (Stocklake), click "Check" per symbol — deliberately not
-    automatic, since that connector's free tier caps at 25 lookups/day for the whole account, shared with
-    anything else it's used for. "N/A" means no headline was found in the last 3 days, not that nothing is
-    happening — always worth a manual look on Stocktwits or elsewhere before trusting it either way.
+    <b>Catalyst</b> pulls a real dated headline (Stocklake). Rows clearing 3+ pillars check automatically, up to
+    15 lookups per page load; everything else needs a manual "Check" click — the connector's free tier caps at
+    25 lookups/day for the whole account, shared with anything else it's used for, so a full auto-refresh isn't
+    possible. "N/A" means no headline was found in the last 3 days, not that nothing is happening — always worth
+    a manual look on Stocktwits or elsewhere before trusting it either way.
   </p>
 </main>
 
@@ -952,15 +953,34 @@
       .then(paintRows);
   }
 
-  // ---------- catalyst (on demand, per symbol) ----------
+  // ---------- catalyst (auto for strong rows, click for the rest) ----------
   // Real dated news headlines via Stocklake, not a heuristic guess from
   // social chatter -- matches how catalysts have been verified by hand all
-  // session (get_stock_news, checked live before this was wired in). Stays
-  // click-triggered, never auto-polled: the connector's guest tier caps at
-  // 25 calls/DAY, account-wide, shared with anything else Stocklake is used
-  // for -- an auto-refreshing column across a full table would blow through
-  // that in one poll cycle.
+  // session (get_stock_news, checked live before this was wired in). The
+  // connector's guest tier caps at 25 calls/DAY, account-wide, shared with
+  // anything else Stocklake is used for, so this can't auto-check every row
+  // on every poll. Compromise, added 2026-08-28 after the user asked for
+  // the catalyst column to actually work like a real screener instead of
+  // requiring a click per row: auto-fire ONLY for rows clearing 3+ of the
+  // real numeric pillars (the names that matter), capped at AUTO_CATALYST_
+  // BUDGET lookups for this page's lifetime so manual clicks and any other
+  // Stocklake use today still have headroom. Once the budget is spent,
+  // remaining rows fall back to the manual "Check" button, same as before.
   var catalystCache = {}; // sym -> { state, text, publishedAt } | { state:'error', msg }
+  var AUTO_CATALYST_BUDGET = 15;
+  var autoCatalystSpent = 0;
+
+  function autoCheckStrongRows() {
+    if (!mcp || autoCatalystSpent >= AUTO_CATALYST_BUDGET) return;
+    for (var i = 0; i < rows.length && autoCatalystSpent < AUTO_CATALYST_BUDGET; i++) {
+      var r = rows[i];
+      if (r.sym === "—" || catalystCache[r.sym]) continue;
+      if (r.pillarsMet >= 3) {
+        autoCatalystSpent++;
+        checkCatalyst(r.sym);
+      }
+    }
+  }
 
   function checkCatalyst(sym) {
     if (!mcp || catalystCache[sym] && catalystCache[sym].state === "loading") return;
@@ -1257,6 +1277,7 @@
         "");
     } else {
       paintRows();
+      autoCheckStrongRows();
     }
     var total = result.total_items;
     els.tCountNote.textContent = (typeof total === "number" && total > rows.length)
@@ -1266,6 +1287,7 @@
     ensureFundamentals(rows.map(function (r) { return r.sym; }), function () {
       rows = rows.map(deriveRow);
       paintRows();
+      autoCheckStrongRows();
     });
   }
 

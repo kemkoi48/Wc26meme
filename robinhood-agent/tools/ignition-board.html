@@ -773,10 +773,12 @@
         els.warnSlot.innerHTML =
           '<div class="warn-strip"><span class="ic">◐</span><div>' +
           '<strong>Outside regular hours.</strong> Robinhood\'s own Rel Vol field breaks right now (verified live: ' +
-          'flat 1x placeholder, or spikes into the thousands off a near-empty trailing average). Rows marked with ' +
-          '<b>*</b> are showing a Rel Vol this page computed itself instead, from real historical bars — ' +
-          'today\'s volume so far vs. the average by this same time on the last several trading days, the same ' +
-          'comparison a real scanner makes. Click "Check*" on any row to compute it on demand.' +
+          'flat 1x placeholder, or spikes into the thousands off a near-empty trailing average). Rows marked ' +
+          '<b>*</b> show a Rel Vol this page computed itself from real historical bars — today\'s volume so far ' +
+          'vs. the average by this same time on recent trading days. Rows marked <b>**</b> use a coarser fallback ' +
+          '(today\'s volume vs. the stock\'s own 30-day average full-day volume) for the earliest premarket window, ' +
+          'when today\'s own intraday bars aren\'t posted yet (verified live: zero bars back from the historicals ' +
+          'API this early, even for a real, already-moving stock). Click "Check*" on any row to compute it on demand.' +
           '</div></div>';
       }
     } else {
@@ -822,6 +824,31 @@
     };
   }
 
+  // Verified live 2026-08-28 ~7:11am ET: get_equity_historicals returns
+  // ZERO bars for the current session this early (AEMD was already up
+  // +50% on real 16.5M volume per run_scan/get_equity_quotes at that
+  // moment, but its own 5-minute bars for today simply weren't posted
+  // yet -- a real ingestion lag, not a bug in this page). The time-of-day
+  // comparison above needs today's bars to exist, so it can't work in
+  // that window. Fallback: today's cumulative volume (already known from
+  // the scan row, confirmed live and accurate) against the stock's own
+  // 30-day average volume (get_equity_fundamentals, no lag) -- coarser
+  // than a same-time-of-day comparison, but real and immediately usable
+  // right when the historicals gap actually happens.
+  function coarseRvolFallback(sym) {
+    var row = rows.filter(function (r) { return r.sym === sym; })[0];
+    var fc = fundCache[sym];
+    if (!row || row.vol === null || !fc || fc.state !== "done" || !fc.avgVol30d) {
+      rvolCache[sym] = { state: "error", msg: "not enough data yet (no intraday history, no 30d average)" };
+      paintRows();
+      return;
+    }
+    rvolCache[sym] = { state: "done", value: row.vol / fc.avgVol30d, coarse: true, at: Date.now() };
+    rows = rows.map(deriveRow);
+    paintRows();
+    autoCheckStrongRows();
+  }
+
   function computeRealRvol(sym, force) {
     if (!mcp) return;
     var c = rvolCache[sym];
@@ -838,7 +865,7 @@
       .then(function (res) {
         var p = res && res.payload;
         var bars = p && p.data && p.data.results && p.data.results[0] && p.data.results[0].bars;
-        if (!Array.isArray(bars) || !bars.length) { rvolCache[sym] = { state: "error", msg: "no bars" }; paintRows(); return; }
+        if (!Array.isArray(bars) || !bars.length) { coarseRvolFallback(sym); return; }
         var now = etParts(new Date());
         var byDay = {}; // ET date key -> cumulative volume up to now's minute-of-day
         bars.forEach(function (b) {
@@ -849,7 +876,7 @@
         });
         var todayVol = byDay[now.dateKey] || 0;
         var priorVols = Object.keys(byDay).filter(function (d) { return d !== now.dateKey; }).map(function (d) { return byDay[d]; });
-        if (priorVols.length < 2) { rvolCache[sym] = { state: "error", msg: "not enough trading-day history yet" }; paintRows(); return; }
+        if (todayVol === 0 || priorVols.length < 2) { coarseRvolFallback(sym); return; }
         var avgPrior = priorVols.reduce(function (a, b) { return a + b; }, 0) / priorVols.length;
         rvolCache[sym] = {
           state: "done",
@@ -861,7 +888,7 @@
         paintRows();
         autoCheckStrongRows(); // a resolved real RVOL can newly clear 3+ pillars
       })
-      .catch(function () { rvolCache[sym] = { state: "error", msg: "lookup failed" }; paintRows(); });
+      .catch(function () { coarseRvolFallback(sym); });
   }
 
   function autoComputeRvolForMovers() {
@@ -925,7 +952,7 @@
           var p = res && res.payload;
           var results = (p && p.data && p.data.results) || [];
           results.forEach(function (r) {
-            fundCache[r.symbol] = { float: num(r.float), state: "done", at: Date.now() };
+            fundCache[r.symbol] = { float: num(r.float), avgVol30d: num(r.average_volume_30_days), state: "done", at: Date.now() };
           });
         })
         .catch(function () {
@@ -1149,10 +1176,13 @@
       } else if (r.rvolRealState === "loading") {
         rvolCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
       } else if (r.rvolRealState === "done") {
-        rvolCell = '<div class="meter" title="Self-computed: today\'s volume so far vs. the average by this same time on the last ' + (rvolCache[r.sym].days || 0) + ' trading days -- Robinhood\'s own RVOL field is unreliable right now, this is a real number computed from real historical bars instead"><span class="track"><span class="fill' +
+        var rvTitle = rvolCache[r.sym].coarse
+          ? "Self-computed (coarse): today's volume so far vs. this stock's own 30-day average FULL-DAY volume -- used because today's intraday history isn't posted yet this early (verified live: get_equity_historicals returns zero bars for the current session before it catches up). Robinhood's own RVOL field is unreliable right now regardless."
+          : "Self-computed: today's volume so far vs. the average by this same time on the last " + (rvolCache[r.sym].days || 0) + " trading days -- Robinhood's own RVOL field is unreliable right now, this is a real number computed from real historical bars instead.";
+        rvolCell = '<div class="meter" title="' + esc(rvTitle) + '"><span class="track"><span class="fill' +
           (effRvol !== null && effRvol >= 5 ? " strong" : "") +
           '" style="width:' + fillPct.toFixed(0) + '%"></span></span>' +
-          '<span class="val">' + rvolTxt(effRvol) + '*</span></div>';
+          '<span class="val">' + rvolTxt(effRvol) + (rvolCache[r.sym].coarse ? "**" : "*") + '</span></div>';
       } else if (r.rvolRealState === "error") {
         rvolCell = '<button type="button" class="book-btn rvol-btn" data-sym="' + esc(r.sym) + '" title="' + esc((rvolCache[r.sym] && rvolCache[r.sym].msg) || "failed") + '">Retry</button>';
       } else {

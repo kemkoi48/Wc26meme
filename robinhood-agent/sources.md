@@ -2426,3 +2426,17 @@ Two real fixes shipped same session:
    of 1x, or spikes into the thousands off a near-zero off-hours
    denominator) -- the RVOL pillar is now excluded from scoring outside
    9:30am-4:00pm ET instead of firing off garbage numbers.
+
+## 2026-08-28 (~7:12am ET) — Momentum scan, first fire under new 7am schedule
+
+Top real mover: AEMD +50% premarket ($2.17 -> $3.25), real volume
+16.5M vs 30-day average 778K (21x). No catalyst -- confirmed directly
+via Stocktwits chatter: "AEMD - low float/getting volume - but no
+news - float under 1M" (685K float). Pure low-float squeeze, not a
+dated-catalyst setup. No alert sent (fails the catalyst gate).
+
+Also confirmed live: get_equity_historicals returns ZERO bars for
+today's session this early (~7:11am ET), even for an actively-moving
+stock -- a real data-availability gap, not specific to this symbol.
+Ignition Board's self-computed RVOL got a fallback for this (30-day
+average volume comparison) same session.

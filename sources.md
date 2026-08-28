@@ -33,3 +33,14 @@ high in under 30 minutes. Real reason confirmed via Stocktwits: a trader
 noted "massive dilution priced well below the current price... momentum
 cracked, lower highs followed." Real catalyst, already fully priced in
 and reversing -- not a fresh setup, no alert sent.
+
+## 2026-08-28 (~12:10pm ET) — Momentum scan, SWVL check
+
+SWVL: real, sustained grind all morning, $2.29 open -> fresh high $2.94
+(~12:05pm ET), currently ~$2.82-2.84, genuinely NOT faded (unlike
+AEMD/QNRX/AREN which have all continued fading since their morning
+peaks). But no confirmed dated catalyst: Stocklake news empty; real
+Stocktwits chatter cites a dilutive PIPE financing (real numbers -- share
+count roughly doubling) and pure technical-level chasing ("hit our
+desired zone 2.6-2.85"), not a nameable catalyst. Fails the 5th pillar
+(catalyst) despite clean price action -- no alert sent, per rule.

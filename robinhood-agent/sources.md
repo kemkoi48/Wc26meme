@@ -2440,3 +2440,50 @@ today's session this early (~7:11am ET), even for an actively-moving
 stock -- a real data-availability gap, not specific to this symbol.
 Ignition Board's self-computed RVOL got a fallback for this (30-day
 average volume comparison) same session.
+
+## 2026-08-28 (evening) — SPY/QQQ: what actually moved the market this week
+
+Real data (get_equity_historicals daily bars + get_equity_news, both symbols):
+
+**Thursday 2026-08-27 (the up day):** SPY +0.8% to 7,734.44, QQQ (Nasdaq
+100) +0.9% to ~29,500 -- NVDA's best day since April 2025, +9%, on
+guidance for ~70% revenue growth next fiscal year. Real, single dominant
+catalyst. Cybersecurity names melted up alongside it on agentic-AI demand
+optimism (CRM/CRWD both up double digits, already logged separately).
+Technology (XLK +2.9%) was the ONLY green S&P sector of 11 -- a narrow,
+tech-only rally, confirmed by real fund flow: $3.8B out of SPY / $3.7B
+into QQQ the same day (a real rotation, not broad buying). Backdrop:
+hawkish-leaning data already out that morning (jobless claims below
+forecast, wholesale inventories up more than expected, KC Fed
+manufacturing index at its highest since April 2022) -- bond yields held
+steady ahead of Friday's main event.
+
+**Friday 2026-08-28 (the reversal):** Fed Chair Kevin Warsh's FIRST
+Jackson Hole speech as chair (real, dated, scheduled event) came in
+hawkish: "this summer's inflation data is better than expected, but do
+not tell me underlying trends have meaningfully improved" -- dismissed
+the encouraging inflation prints, said financial conditions aren't
+restrictive and the labor market is at full employment. Real market
+reaction: September rate-hike odds jumped to 60% from ~35% pre-speech
+(CME FedWatch). 2-year yield +10bp to 4.34%, 10-year +4bp to 4.72%
+(intraday touched 4.7%), 30-year flat at 5.20% -- a front-end-led
+flattening, consistent with the market pricing a tighter Fed rather than
+inflation/term-premium fear. Nasdaq 100 fell ~1% to 29,359, giving back
+a chunk of Thursday's NVDA-powered rally; S&P 500 nearly flat (-0.1%) at
+7,721. Gold -2.0% to $4,509, silver -2.2% to $67.75, Bitcoin -2%+ toward
+$78K -- real risk-off move in alternative assets too. Also that morning:
+Univ. of Michigan consumer sentiment revised up to 51.7 but still down
+~6% from July; BLS revised payrolls (year through March 2026) down
+79,000, a much smaller haircut than last year's 911,000 revision.
+
+**On the "Trump" angle specifically:** no explicit Trump-administration
+headline (tariffs, shutdown, etc.) appeared in either symbol's real news
+feed this week. The real Trump connection is Kevin Warsh himself --
+Trump has publicly pushed for Warsh as Fed Chair in real life, and this
+was literally his first Jackson Hole speech in that seat. That's the
+government/Fed linkage, not a separate policy headline.
+
+Net read: the week's real move was NVDA-earnings-driven (narrow, tech-
+only) up through Thursday, reversed Friday by a real, dated, hawkish Fed
+speech -- not a broad economic or Trump-policy story beyond Warsh's own
+appointment.

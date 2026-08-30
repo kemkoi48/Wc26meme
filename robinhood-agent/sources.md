@@ -2487,3 +2487,43 @@ Net read: the week's real move was NVDA-earnings-driven (narrow, tech-
 only) up through Thursday, reversed Friday by a real, dated, hawkish Fed
 speech -- not a broad economic or Trump-policy story beyond Warsh's own
 appointment.
+
+## 2026-08-30 -- SPY/QQQ: real 4-week catalyst-annotated high/low walk (07/31-08/28)
+
+User asked for a table of the last 4 weeks' significant highs/lows with
+the real catalyst behind each, "not every high and low" -- so this filters
+to the moves that were actually catalyst-driven, not daily noise. Method:
+real daily OHLC bars (get_equity_historicals, day interval, both symbols)
+plus three full pages of real dated headlines (get_equity_news, both
+symbols, paginated back to 07/29). Every number below is a real close or
+intraday high/low from those bars -- nothing estimated.
+
+**The one surprise re-deriving this fresh turned up:** the single LOWEST
+close of the whole 4-week window for both SPY (747.03) and QQQ (687.99) is
+right at the START of the period (07/31), not during the mid/late-month
+pullbacks -- those only ever cooled the rally back to the high 760s/low
+710s, well above the 07/31 base. The single HIGHEST close for both is
+08/13 (SPY 777.88, QQQ 732.07). Worth saying plainly: the popular
+narrative of "up then a big selloff" undersells it -- this was net a
+one-way month (SPY +3.0%, QQQ +4.1% top-to-tail, 07/31 close to 08/28
+close) with two real but shallow pullbacks along the way.
+
+| Date(s) | SPY | QQQ | Move | Real catalyst |
+|---|---|---|---|---|
+| Fri 07/31 | close $747.03 (period low) | close $687.99 (period low) | -- | AMZN earnings beat offsets Apple weakness; market's footing the day after the 07/29 FOMC meeting. |
+| Mon 08/03 - Tue 08/04 | close $771.33 | close $723.85 | SPY +3.25%, QQQ +5.21% in 2 sessions | US-Iran truce hopes, then Strait of Hormuz reopening hopes -- oil-supply-risk premium unwinding, tech-led. |
+| Wed 08/05 - Thu 08/06 | intraday low $767.46 | gapped -0.9% at 08/06 open | shallow, single-sector dip | SanDisk/Western Digital earnings disappoint, SK Hynix "flash crash" -- chip-sector-specific, not broad. |
+| Fri 08/07 | close $773.26 | close $723.03 | SPY +0.61%, QQQ +1.17% | July nonfarm payrolls unexpectedly CONTRACTED -- market rallied anyway on rate-cut hope ("bad news is good news"). |
+| Wed 08/12 - Thu 08/13 | close $777.88 (period high) | close $732.07 (period high) | SPY +4.13%, QQQ +6.41% from the 07/31 low | Two straight cool inflation prints: July CPI in-line, then July PPI unchanged/below expectations -- market priced a more dovish Fed. |
+| Fri 08/14 | -- | -- | -- | "The Warsh rate-hike trade collapses" -- September hike odds fell to ~30% by 08/17, a dovish repricing that let the market coast near its highs. |
+| Tue 08/18 - Thu 08/20 | close $762.60 (-1.96% from the high) | close $710.93 (-2.89% from the high) | real but shallow pullback | Trump rejects extending the Iran ceasefire (08/18) -> "no talks" with Iran (08/19) -> Trump launches "Operation Economic Fury" on Iran (08/20), stacked with AI-bubble-fear commentary (Ray Dalio: 1929/2000 comparison; JPMorgan's Bill Eigen: 2008-crash warning). |
+| Mon 08/24 | close $763.47 | close $706.32 (period's 2nd-lowest close) | QQQ -0.65% from 08/20 | Samsung semiconductor-stock crash triggers chip-sector selling ahead of NVDA earnings, plus Bessent launches "Economic D-Day" sanctions escalation against Iran. |
+| Tue 08/25 | close $765.91 | close $710.72 | -- | Bessent expands Iran sanctions further, yet oil fell anyway ("toughest sanctions on record sent oil lower, not higher") -- a real "market shrugs off the headline" moment (also logged separately re: OXY). |
+| Thu 08/27 | close $771.10 | close $721.11 | SPY +0.66%, QQQ +1.37% | NVDA's best day since April 2025 (+9%), guided ~70% revenue growth -- but narrow: real fund flow shows $3.8B OUT of SPY, $3.7B INTO QQQ same day (rotation, not broad buying); tech (XLK) was the only green S&P sector of 11. |
+| Fri 08/28 | intraday high $775.30 (2nd-highest of the period), closed $769.35 | closed $716.43 | SPY -0.23%, QQQ -0.65% from 08/27's close | Fed Chair Kevin Warsh's first Jackson Hole speech as chair came in hawkish; September rate-hike odds jumped from ~35% to 60% (CME FedWatch); gave back a chunk of Thursday's NVDA rally. Already filed 2026-08-28 (see above). |
+
+Filed alongside the Ignition Board's professional redesign this same
+session (qualified-at timestamps, live candlestick charts, candlestick-
+reading education panel) -- the 08/28 shooting-star-shaped candle (spike
+to $775.30 intraday, closed near the day's low at $769.35) is a live,
+real example of exactly the pattern the new education panel teaches.

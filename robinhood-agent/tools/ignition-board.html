@@ -505,6 +505,66 @@
     .controls { width: 100%; }
     select { flex: 1; max-width: none; }
   }
+
+  /* ---------- live ticker ---------- */
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--up);
+    display: inline-block; animation: pulse 1.6s ease-in-out infinite; flex: none;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .live-wrap { display: inline-flex; align-items: center; gap: 6px; }
+  @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+
+  /* ---------- qualified-now strip ---------- */
+  .qnow {
+    margin-top: 18px;
+  }
+  .qnow-head {
+    display: flex; align-items: baseline; gap: 9px; margin-bottom: 10px;
+  }
+  .qnow-head h2 { margin: 0; font-size: 13.5px; font-weight: 600; }
+  .qnow-head .sub { font-size: 12px; color: var(--ink-faint); }
+  .qnow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 10px;
+  }
+  .qcard {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--up);
+    border-radius: var(--radius);
+    padding: 12px 13px;
+  }
+  .qcard .row1 { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .qcard .sym { font-family: var(--mono); font-weight: 600; font-size: 15px; }
+  .qcard .chg { font-family: var(--mono); font-size: 13.5px; }
+  .qcard .row2 { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; }
+  .qcard .price { font-family: var(--mono); font-size: 12.5px; color: var(--ink-muted); }
+  .qcard .qat {
+    font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+  .qcard canvas { display: block; margin-top: 8px; width: 100%; height: 34px; }
+  .qnow-empty {
+    padding: 16px; text-align: center; color: var(--ink-faint); font-size: 13px;
+    background: var(--surface); border: 1px dashed var(--line-strong); border-radius: var(--radius);
+  }
+
+  /* ---------- candle chart cell (table) ---------- */
+  .chart-cell canvas { display: block; }
+  .chart-cell { text-align: left !important; }
+
+  /* ---------- candlestick education panel ---------- */
+  .candle-edu { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 10px; }
+  .candle-fig { flex: 1 1 130px; min-width: 130px; text-align: center; }
+  .candle-fig svg { display: block; margin: 0 auto 8px; }
+  .candle-fig .name { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+  .candle-fig .meaning { font-size: 11.5px; color: var(--ink-muted); margin-top: 2px; line-height: 1.4; }
+  .anatomy-row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin: 12px 0 16px; }
+  .anatomy-row svg { flex: none; }
+  .anatomy-legend { font-size: 13px; color: var(--ink-muted); line-height: 1.7; }
+  .anatomy-legend b { color: var(--ink); }
 </style>
 
 <header class="mast">
@@ -548,7 +608,74 @@
         <b>Order Book</b> (click "Check" on any row) shows real resting Level-2 depth — how many shares are waiting to buy vs. sell in the top 10 price levels right now. This is <i>limit-order</i> pressure, not executed trade flow — Robinhood's data doesn't classify individual trades as buyer- or seller-initiated, so this is a real but partial picture of who wants to trade, not who already did.
       </div>
       <div class="rule">
-        Also: this board can't see intraday highs, so "is this already extended?" — the crowd already having moved on — is still on you; check a chart before entering. And your own order history, n=108 round trips: <b>60% win rate, still net negative</b>, because losses ran 1.6× bigger than wins. Trades held under 5 minutes were net <b>+$224</b>; every longer bucket was negative. Decide the exit before you enter.
+        <b>Qualified</b> stamps the first time today this row hit 4/4 pillars — permanent for the day even if it later cools. <b>Chart</b> is a real 5-minute candlestick chart (see the panel below on how to read it) — this is the "is this already extended?" check made visible instead of something you have to go find elsewhere.
+      </div>
+      <div class="rule">
+        Also: your own order history, n=108 round trips: <b>60% win rate, still net negative</b>, because losses ran 1.6× bigger than wins. Trades held under 5 minutes were net <b>+$224</b>; every longer bucket was negative. Decide the exit before you enter.
+      </div>
+    </div>
+  </details>
+
+  <section class="qnow" id="qnow" aria-label="Qualified now">
+    <div class="qnow-head">
+      <h2>Qualified now — all 4 pillars, right now</h2>
+      <span class="sub" id="qnow-sub">—</span>
+    </div>
+    <div class="qnow-grid" id="qnow-grid"><div class="qnow-empty">Nothing has cleared all 4 numeric pillars yet this scan.</div></div>
+  </section>
+
+  <details class="checks" id="candle-edu">
+    <summary>Reading the chart — candlestick basics (so "how did it qualify" isn't a guess)</summary>
+    <div class="checks-body">
+      <p style="margin:0 0 12px;color:var(--ink-muted)">
+        Every 5-minute candle on this page's charts is built the same way real trading platforms draw one —
+        this isn't a house style, it's the standard convention Warrior Trading, TradingView, and every broker
+        chart use. Once you can read a candle, the "Chart" column on the table below and the cards above stop
+        being decoration and start telling you <i>how</i> a stock got here, not just that it did.
+      </p>
+      <div class="anatomy-row">
+        <svg width="90" height="150" viewBox="0 0 90 150" aria-label="Candle anatomy">
+          <line x1="45" y1="10" x2="45" y2="50" stroke="var(--up)" stroke-width="2"></line>
+          <rect x="30" y="50" width="30" height="60" fill="var(--up)"></rect>
+          <line x1="45" y1="110" x2="45" y2="140" stroke="var(--up)" stroke-width="2"></line>
+        </svg>
+        <div class="anatomy-legend">
+          <div><b>Wick (the thin line):</b> the full high-to-low range traded during that candle's time window.</div>
+          <div><b>Body (the thick block):</b> the range between the open and the close.</div>
+          <div><b>Green/up body:</b> close finished <i>above</i> the open — buyers won that window.</div>
+          <div><b>Red/down body:</b> close finished <i>below</i> the open — sellers won that window.</div>
+          <div><b>Long wick, small body:</b> price got rejected — it traveled far, then got pushed back near where it started.</div>
+        </div>
+      </div>
+      <div class="candle-edu">
+        <div class="candle-fig">
+          <svg width="60" height="90" viewBox="0 0 60 90"><line x1="30" y1="8" x2="30" y2="30" stroke="var(--up)" stroke-width="2"></line><rect x="24" y="30" width="12" height="4" fill="var(--up)"></rect><line x1="30" y1="34" x2="30" y2="82" stroke="var(--up)" stroke-width="2"></line></svg>
+          <div class="name">Doji</div>
+          <div class="meaning">Open ≈ close, long wicks both ways. Indecision — buyers and sellers fought to a draw. Often marks a pause before the next real move.</div>
+        </div>
+        <div class="candle-fig">
+          <svg width="60" height="90" viewBox="0 0 60 90"><line x1="30" y1="8" x2="30" y2="45" stroke="var(--up)" stroke-width="2"></line><rect x="24" y="45" width="12" height="30" fill="var(--up)"></rect><line x1="30" y1="75" x2="30" y2="82" stroke="var(--up)" stroke-width="2"></line></svg>
+          <div class="name">Hammer</div>
+          <div class="meaning">Small body near the top, long lower wick. Sellers pushed price way down, buyers dragged it back up. Bullish, especially after a decline.</div>
+        </div>
+        <div class="candle-fig">
+          <svg width="60" height="90" viewBox="0 0 60 90"><line x1="30" y1="8" x2="30" y2="15" stroke="var(--down)" stroke-width="2"></line><rect x="24" y="15" width="12" height="30" fill="var(--down)"></rect><line x1="30" y1="45" x2="30" y2="82" stroke="var(--down)" stroke-width="2"></line></svg>
+          <div class="name">Shooting star</div>
+          <div class="meaning">Small body near the bottom, long upper wick. Buyers pushed price way up, sellers slammed it back down. Bearish, especially after a run-up — a classic sign a "qualified" mover is about to fade.</div>
+        </div>
+        <div class="candle-fig">
+          <svg width="60" height="90" viewBox="0 0 60 90"><rect x="20" y="20" width="10" height="20" fill="var(--down)"></rect><rect x="32" y="10" width="12" height="40" fill="var(--up)"></rect></svg>
+          <div class="name">Bullish engulfing</div>
+          <div class="meaning">A small red body immediately followed by a bigger green body that fully swallows it. Buyers overwhelmed the prior sellers in one candle — a real reversal-up signal, not just noise.</div>
+        </div>
+        <div class="candle-fig">
+          <svg width="60" height="90" viewBox="0 0 60 90"><rect x="20" y="20" width="10" height="20" fill="var(--up)"></rect><rect x="32" y="10" width="12" height="40" fill="var(--down)"></rect></svg>
+          <div class="name">Bearish engulfing</div>
+          <div class="meaning">A small green body immediately followed by a bigger red body that fully swallows it. Sellers overwhelmed the prior buyers in one candle — worth respecting on a row that already qualified, it can mean the move is over.</div>
+        </div>
+      </div>
+      <div class="rule">
+        <b>How to actually use this here:</b> a row qualifying (4/4 pillars) tells you the numbers lined up <i>at that instant</i> — the "Qualified" timestamp says when. The chart next to it tells you whether that instant looks like buyers still in control (green bodies, short upper wicks, each low higher than the last) or already fading (shooting stars, bearish engulfing, long upper wicks into the high). Warrior Trading's own scanner shows this exact combination — a live number plus a live chart next to it — because the number alone can't tell you if you're catching the move or catching the top of it.
       </div>
     </div>
   </details>
@@ -615,7 +742,7 @@
   </section>
 
   <div class="footbar">
-    <span id="updated">—</span>
+    <span class="live-wrap"><span class="live-dot" id="live-dot" hidden></span><span id="updated">—</span></span>
     <span class="legend">
       <span><i style="background:var(--up)"></i>volume confirms</span>
       <span><i style="background:var(--accent)"></i>moving, thin volume</span>
@@ -636,6 +763,10 @@
     25 lookups/day for the whole account, shared with anything else it's used for, so a full auto-refresh isn't
     possible. "N/A" means no headline was found in the last 3 days, not that nothing is happening — always worth
     a manual look on Stocktwits or elsewhere before trusting it either way.
+    <b>Chart</b> draws real 5-minute OHLC candles (get_equity_historicals). Same auto/manual split as Catalyst —
+    rows clearing 3+ pillars fetch automatically (up to 15 per page load), everything else needs a "Chart" click.
+    <b>Qualified</b> is the first time-of-day today this row hit all 4 numeric pillars at once; it stays even if
+    the row later cools off, so you can always see when a move actually ignited, not just that it did at some point.
   </p>
 </main>
 
@@ -671,7 +802,10 @@
     swingHead: document.getElementById("swing-head"),
     swingBody: document.getElementById("swing-body"),
     swingStateSlot: document.getElementById("swing-state-slot"),
-    swingUpdated: document.getElementById("swing-updated")
+    swingUpdated: document.getElementById("swing-updated"),
+    liveDot: document.getElementById("live-dot"),
+    qnowGrid: document.getElementById("qnow-grid"),
+    qnowSub: document.getElementById("qnow-sub")
   };
 
   // The real S9 growth-sleeve scan (verified via get_scans, 2026-08-21):
@@ -971,6 +1105,129 @@
     return scanFloat; // fundamentals not back yet -- use the scan's own value if it had one
   }
 
+  // ---------- qualified-at timestamp (per day, per symbol) ----------
+  // The user's explicit complaint: "no time stamp how the qualified stock
+  // move." The first moment a row clears all 4 numeric pillars in a given
+  // day gets stamped, once, and kept even if the row later drops a pillar
+  // (e.g. cools off) -- so "when did this actually ignite" stays answerable
+  // all day instead of only while it's still hot. Same localStorage pattern
+  // as loadSeenSwing()'s per-day key, below.
+  var qualifiedMap = null; // lazy-loaded { sym: isoTimestamp }, for today only
+
+  function qualifiedKey() { return "ib.qualified." + todayKey(); }
+
+  function ensureQualifiedLoaded() {
+    if (qualifiedMap) return;
+    qualifiedMap = {};
+    var raw = lsGet(qualifiedKey());
+    if (raw) { try { qualifiedMap = JSON.parse(raw) || {}; } catch (e) {} }
+  }
+
+  function markQualified(sym) {
+    ensureQualifiedLoaded();
+    if (!qualifiedMap[sym]) {
+      qualifiedMap[sym] = new Date().toISOString();
+      lsSet(qualifiedKey(), JSON.stringify(qualifiedMap));
+    }
+  }
+
+  function getQualifiedAt(sym) {
+    ensureQualifiedLoaded();
+    return qualifiedMap[sym] || null;
+  }
+
+  // ---------- candlestick chart (auto for strong movers, click for the rest) ----------
+  // The user's other explicit complaint: "it could be so much better" / no
+  // live view of how a qualified stock actually moved. Real 5-minute OHLC
+  // bars from get_equity_historicals (same tool/field names already
+  // verified for RVOL above -- open_price/high_price/low_price/close_price,
+  // begins_at), drawn as real candles on a <canvas>, not a sparkline
+  // approximation. Budget-gated the same way RVOL and catalyst are: auto
+  // for rows clearing 3+ pillars, "Chart" button for everyone else.
+  var CHART_TTL_MS = 5 * 60 * 1000;
+  var chartCache = {}; // sym -> { state:'loading'|'done'|'error', bars, msg, at }
+  var CHART_AUTO_BUDGET = 15;
+  var chartAutoSpent = 0;
+
+  function fetchChart(sym, force) {
+    if (!mcp) return;
+    var c = chartCache[sym];
+    if (!force && c && (c.state === "loading" || (c.state === "done" && Date.now() - c.at < CHART_TTL_MS))) return;
+    if (!force) {
+      if (chartAutoSpent >= CHART_AUTO_BUDGET) return;
+      chartAutoSpent++;
+    }
+    chartCache[sym] = { state: "loading" };
+    paintRows();
+    var start = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    mcp.callTool(SERVER, "get_equity_historicals",
+      { symbols: [sym], start_time: start, interval: "5minute", bounds: "trading" },
+      { cache: { staleTime: CHART_TTL_MS } })
+      .then(function (res) {
+        var p = res && res.payload;
+        var bars = p && p.data && p.data.results && p.data.results[0] && p.data.results[0].bars;
+        var real = (bars || []).filter(function (b) { return !b.interpolated; });
+        if (!real.length) { chartCache[sym] = { state: "error", msg: "no intraday bars yet" }; return; }
+        chartCache[sym] = { state: "done", bars: real.slice(-30), at: Date.now() };
+      })
+      .catch(function (err) {
+        var d = describe(err);
+        chartCache[sym] = { state: "error", msg: d.title };
+      })
+      .then(paintRows);
+  }
+
+  function autoFetchChartsForMovers() {
+    if (!mcp || chartAutoSpent >= CHART_AUTO_BUDGET) return;
+    for (var i = 0; i < rows.length && chartAutoSpent < CHART_AUTO_BUDGET; i++) {
+      var r = rows[i];
+      if (r.sym === "—" || chartCache[r.sym]) continue;
+      if (r.pillarsMet >= 3) fetchChart(r.sym);
+    }
+  }
+
+  // Draws real OHLC candles onto a small canvas -- wicks as lines, bodies
+  // as filled rects, colored from this page's own --up/--down tokens so
+  // both themes stay correct without a second code path.
+  function drawCandles(canvas, bars) {
+    if (!canvas || !bars || !bars.length) return;
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.clientWidth || 200, h = canvas.clientHeight || 34;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    var cs = getComputedStyle(document.documentElement);
+    var upColor = cs.getPropertyValue("--up").trim() || "#1a7f4e";
+    var downColor = cs.getPropertyValue("--down").trim() || "#c0392b";
+    var lo = Infinity, hi = -Infinity;
+    bars.forEach(function (b) {
+      var l = num(b.low_price), hh = num(b.high_price);
+      if (l !== null) lo = Math.min(lo, l);
+      if (hh !== null) hi = Math.max(hi, hh);
+    });
+    if (!isFinite(lo) || !isFinite(hi) || hi <= lo) return;
+    var pad = (hi - lo) * 0.08;
+    lo -= pad; hi += pad;
+    var n = bars.length;
+    var slot = w / n;
+    var bodyW = Math.max(1.5, Math.min(7, slot * 0.62));
+    function y(price) { return h - ((price - lo) / (hi - lo)) * h; }
+    bars.forEach(function (b, i) {
+      var o = num(b.open_price), c = num(b.close_price), hh = num(b.high_price), l = num(b.low_price);
+      if (o === null || c === null || hh === null || l === null) return;
+      var cx = slot * i + slot / 2;
+      var up = c >= o;
+      ctx.strokeStyle = ctx.fillStyle = up ? upColor : downColor;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx, y(hh)); ctx.lineTo(cx, y(l));
+      ctx.stroke();
+      var top = y(Math.max(o, c)), bot = y(Math.min(o, c));
+      ctx.fillRect(cx - bodyW / 2, top, bodyW, Math.max(1, bot - top));
+    });
+  }
+
   function shape(r) {
     var c = r.columns || {};
     var rvol = num(pluck(c, ["Relative volume (1, 1H)", "Relative volume"]));
@@ -1011,17 +1268,21 @@
     else if (o.pillarsMet >= o.pillarsOf) o.q = "q-strong";
     else if (o.pillarsMet >= 2) o.q = "q-watch";
     else o.q = "q-thin";
+    if (o.pillarsMet >= o.pillarsOf) markQualified(o.sym);
+    o.qualifiedAt = getQualifiedAt(o.sym);
     return o;
   }
 
   var COLS = [
     { key: "sym",        label: "Symbol" },
     { key: "pillarsMet", label: "Pillars ★" },
+    { key: "qualified",  label: "Qualified" },
     { key: "chg",        label: "% Chg" },
     { key: "last",       label: "Last" },
     { key: "rvol",       label: "Rel Vol" },
     { key: "vol",        label: "Volume" },
     { key: "float",      label: "Float" },
+    { key: "chart",      label: "Chart (5m)" },
     { key: "book",       label: "Order Book" },
     { key: "catalyst",   label: "Catalyst" }
   ];
@@ -1141,7 +1402,56 @@
   function sortVal(r, key) {
     if (key === "book") { var bc = bookCache[r.sym]; return bc && bc.state === "done" ? bc.pct : null; }
     if (key === "catalyst") { var cc = catalystCache[r.sym]; return cc && cc.state === "done" && cc.text ? 1 : 0; }
+    if (key === "qualified") return r.qualifiedAt ? new Date(r.qualifiedAt).getTime() : null;
+    if (key === "chart") { var ch = chartCache[r.sym]; return ch && ch.state === "done" ? 1 : 0; }
     return r[key];
+  }
+
+  // ---------- "Qualified now" strip ----------
+  // The user's ask made concrete: a glanceable, above-the-table answer to
+  // "what's actually ready right now," not a row buried in a 4/4 table
+  // among everything else. A card only appears here while pillarsMet is
+  // STILL 4/4 on the latest poll (cooling off drops it from the strip, even
+  // though its qualified-at timestamp in the table below is permanent for
+  // the day) -- "now" means now.
+  function renderQualifiedNow() {
+    var now = rows.filter(function (r) { return r.sym !== "—" && r.pillarsMet >= r.pillarsOf; });
+    els.qnowSub.textContent = now.length
+      ? now.length + " right now"
+      : (marketIsOpen ? "none right now" : "market closed — none right now");
+    if (!now.length) {
+      els.qnowGrid.innerHTML = '<div class="qnow-empty">Nothing has cleared all 4 numeric pillars yet this scan.</div>';
+      return;
+    }
+    now.sort(function (a, b) {
+      var ea = a.rvolUnreliable ? a.rvolReal : a.rvol, eb = b.rvolUnreliable ? b.rvolReal : b.rvol;
+      return (eb === null ? -1 : eb) - (ea === null ? -1 : ea);
+    });
+    els.qnowGrid.innerHTML = now.map(function (r) {
+      var cls = r.chg === null ? "zero" : r.chg > 0 ? "pos" : r.chg < 0 ? "neg" : "zero";
+      var qt = r.qualifiedAt
+        ? "qualified " + new Date(r.qualifiedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+        : "qualified —";
+      var chartHtml = '<button type="button" class="book-btn chart-btn" data-sym="' + esc(r.sym) + '">Chart</button>';
+      var ch = chartCache[r.sym];
+      if (ch && ch.state === "done") {
+        chartHtml = '<canvas class="row-chart" data-sym="' + esc(r.sym) + '" width="180" height="34" style="width:100%;height:34px"></canvas>';
+      } else if (ch && ch.state === "loading") {
+        chartHtml = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      }
+      return '<div class="qcard">' +
+        '<div class="row1"><span class="sym">' + esc(r.sym) + '</span><span class="chg ' + cls + '">' + pct(r.chg) + '</span></div>' +
+        '<div class="row2"><span class="price">' + money(r.last) + '</span><span class="qat">' + esc(qt) + '</span></div>' +
+        chartHtml +
+        '</div>';
+    }).join("");
+    Array.prototype.forEach.call(els.qnowGrid.querySelectorAll(".chart-btn"), function (btn) {
+      btn.addEventListener("click", function () { fetchChart(btn.getAttribute("data-sym"), true); });
+    });
+    Array.prototype.forEach.call(els.qnowGrid.querySelectorAll(".row-chart"), function (cv) {
+      var c = chartCache[cv.getAttribute("data-sym")];
+      if (c && c.state === "done") drawCandles(cv, c.bars);
+    });
   }
 
   function paintRows() {
@@ -1240,21 +1550,40 @@
         catCell = '<span title="' + esc(cc.text) + (cc.publishedAt ? " (" + esc(cc.publishedAt) + ")" : "") + '" style="text-align:left;display:inline-block;max-width:220px;white-space:normal">' + esc(short) + '</span>';
       }
 
+      var qCell = r.qualifiedAt
+        ? '<span class="num" title="First moment today this row cleared all 4 numeric pillars">' +
+          esc(new Date(r.qualifiedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })) + '</span>'
+        : '<span class="num" style="color:var(--ink-faint)">—</span>';
+
+      var ch = chartCache[r.sym];
+      var chartCell;
+      if (!ch) {
+        chartCell = '<button type="button" class="book-btn chart-btn" data-sym="' + esc(r.sym) + '">Chart</button>';
+      } else if (ch.state === "loading") {
+        chartCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      } else if (ch.state === "error") {
+        chartCell = '<button type="button" class="book-btn chart-btn" data-sym="' + esc(r.sym) + '" title="' + esc(ch.msg) + '">Retry</button>';
+      } else {
+        chartCell = '<canvas class="row-chart" data-sym="' + esc(r.sym) + '" width="120" height="34" style="width:120px;height:34px" title="Real 5-minute candles, last ' + ch.bars.length + ' bars"></canvas>';
+      }
+
       return '<tr class="' + r.q + '">' +
         '<td class="sym"><div class="ticker">' + esc(r.sym) + '</div>' +
           (r.name ? '<div class="coname">' + esc(r.name) + '</div>' : '') + '</td>' +
         '<td>' + pillarsCell + '</td>' +
+        '<td>' + qCell + '</td>' +
         '<td class="num ' + cls + '">' + pct(r.chg) + '</td>' +
         '<td class="num">' + money(r.last) + '</td>' +
         '<td>' + rvolCell + '</td>' +
         '<td class="num">' + compact(r.vol) + '</td>' +
         '<td>' + floatCell + '</td>' +
+        '<td class="chart-cell">' + chartCell + '</td>' +
         '<td>' + bookCell + '</td>' +
         '<td>' + catCell + '</td>' +
         '</tr>';
     }).join("");
 
-    Array.prototype.forEach.call(els.body.querySelectorAll(".book-btn:not(.cat-btn):not(.rvol-btn)"), function (btn) {
+    Array.prototype.forEach.call(els.body.querySelectorAll(".book-btn:not(.cat-btn):not(.rvol-btn):not(.chart-btn)"), function (btn) {
       btn.addEventListener("click", function () { checkBook(btn.getAttribute("data-sym")); });
     });
     Array.prototype.forEach.call(els.body.querySelectorAll(".cat-btn"), function (btn) {
@@ -1263,6 +1592,15 @@
     Array.prototype.forEach.call(els.body.querySelectorAll(".rvol-btn"), function (btn) {
       btn.addEventListener("click", function () { computeRealRvol(btn.getAttribute("data-sym"), true); });
     });
+    Array.prototype.forEach.call(els.body.querySelectorAll(".chart-btn"), function (btn) {
+      btn.addEventListener("click", function () { fetchChart(btn.getAttribute("data-sym"), true); });
+    });
+    Array.prototype.forEach.call(els.body.querySelectorAll(".row-chart"), function (cv) {
+      var c = chartCache[cv.getAttribute("data-sym")];
+      if (c && c.state === "done") drawCandles(cv, c.bars);
+    });
+
+    renderQualifiedNow();
 
     var movers = rows.filter(function (r) { return r.chg !== null && r.chg >= 0.05; });
     var loud = rows.filter(function (r) {
@@ -1282,8 +1620,20 @@
     var t = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" });
     els.updated.innerHTML = isStale
       ? '<span class="stale">Showing last good data — ' + esc(t) + '</span>'
-      : "Updated " + esc(t);
+      : "Updated " + esc(t) + '<span id="live-ago"></span>';
+    els.liveDot.hidden = !!isStale;
   }
+
+  // Ticks a running "Xs ago" next to the timestamp every second so the page
+  // visibly proves it's alive between polls -- the user's "no live updates"
+  // complaint, addressed without needing a poll to actually land.
+  setInterval(function () {
+    if (!lastStamp) return;
+    var secs = Math.max(0, Math.round((Date.now() - lastStamp) / 1000));
+    var ago = document.getElementById("live-ago");
+    if (!ago) return;
+    ago.textContent = " (" + (secs < 60 ? secs + "s" : Math.floor(secs / 60) + "m") + " ago)";
+  }, 1000);
 
   // ---------- states ----------
   function clearState() { els.stateSlot.innerHTML = ""; }
@@ -1416,6 +1766,7 @@
       paintRows();
       autoComputeRvolForMovers();
       autoCheckStrongRows();
+      autoFetchChartsForMovers();
     }
     var total = result.total_items;
     els.tCountNote.textContent = (typeof total === "number" && total > rows.length)
@@ -1427,6 +1778,7 @@
       paintRows();
       autoComputeRvolForMovers();
       autoCheckStrongRows();
+      autoFetchChartsForMovers();
     });
   }
 
@@ -1441,7 +1793,7 @@
         if (ev.type === "data") onResult(ev.result);
         else handleErr(ev.error);
       },
-      { cache: { staleTime: 45000 }, refetchInterval: 60000 }
+      { cache: { staleTime: 30000 }, refetchInterval: 30000 }
     );
   }
 

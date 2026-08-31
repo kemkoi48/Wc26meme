@@ -2736,3 +2736,35 @@ unlikely to carry a tradeable option chain at all, not screened.
 **Running S7 total: 13/13 real checks rejected, 0 trades.** No watchlist
 message needed beyond the WETO/ELMT note (already covered above); no S7
 position opened or closed.
+
+## 2026-08-31 ~10:12am ET -- Momentum scanner alert: 10am cycle, WETO explodes, RDHL new (unverified catalyst)
+
+Market open since 9:30am -- Robinhood's own Relative volume field is
+trustworthy now, no self-computed substitution needed this cycle.
+
+**WETO exploded to a real new high.** $7.90 at 9:36am -> $10.25-10.39 now
+(both run_scan and get_equity_quotes confirm), +79-82% vs Friday's
+close, RVOL 5.49x (real, market-hours field). Same catalyst as logged
+this morning ($75M dilutive share-sale agreement) -- this remains a
+dilution-bounce, now a genuinely enormous one, not a clean breakout.
+
+**NCRA continued: $2.42 -> $2.73-2.76** (+44-46%), RVOL 10.6x (real).
+Same clean JV catalyst (INERGX Energy) as logged this morning.
+
+**RDHL (RedHill Biopharma) -- new, huge, catalyst UNVERIFIED.** +64% to
+$1.08, RVOL huge, EXTREMELY_HIGH message volume (94), 97% bullish
+sentiment. Real short-squeeze mechanics visible in the actual Stocktwits
+posts (traders reporting real margin calls / short covering, real-time
+flip-flopping). Retail chatter cites "$18M cash upfront and royalties"
+from an unlinked forum post, but get_equity_news for RDHL returned
+NOTHING beyond mechanical "stock moved X%" premarket-movers roundups --
+no actual dated press release found. Flagged to the user explicitly as
+price-action-only / catalyst unverified, not presented as clean.
+
+AEHL real RVOL now confirms 4.61x (market-hours field, no longer
+ambiguous) but no new high since the 9:36am check -- not re-alerted.
+BRNX's real RVOL is actually BELOW 1x this hour (0.19x) despite price
+staying up -- genuinely cooling, not re-alerted. YDDL/WBUY/LGPS also
+newly appeared with real gains (42%/28%/21%) and elevated RVOL but were
+not individually catalyst-checked this cycle given time budget --
+picked up next cycle if they persist.

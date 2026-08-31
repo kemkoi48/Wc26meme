@@ -2642,3 +2642,17 @@ was independently confirmed via get_equity_quotes and Stocktwits' own
 live feed, both agreeing on ~$5.87-5.97, so this was not treated as
 unverified -- but no self-computed RVOL number could be produced from
 historicals for this one; said so rather than guessing a figure.
+
+## 2026-08-31 ~8:10am ET -- Momentum scanner alert: standing 8am cycle, XAIR continuation
+
+Standing hourly trigger fired (its own 8am cycle, ~5 min after the
+user's manual "scan again"). AEHL ($6.00, +69.5%), WETO ($7.29, +27.5%),
+BRNX ($4.45, +14.4%), MODD ($3.69, +6.6%) all roughly unchanged or
+fading further -- no material change, not re-alerted.
+
+**XAIR materially changed: real continuation, not just noise.** $5.87-
+5.97 five minutes ago -> $6.01-6.07 now (get_equity_quotes confirms,
+12:10:50 UTC), +34-35% vs Friday's $4.48 close. Same catalyst as before
+(FDA Breakthrough Device Designation for LungFit GO). Told the user
+briefly rather than staying silent, since this is exactly the "still
+igniting, not already printed" case the job is meant to catch.

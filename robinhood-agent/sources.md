@@ -2571,3 +2571,44 @@ this week.
 No high-market-cap earnings today overlapping the watchlist (SAIC
 reports am today, not on any list; PANW/DELL/MDB/CRDO/NIO report
 tomorrow 09/01).
+
+## 2026-08-31 ~7:10am ET -- Momentum scanner alert: 7am cycle, 4 names
+
+First hourly cycle of the day (7am-4pm ET job). Early Momentum Ignition
+(84 matches) and Warrior Trading Style scans both run; regular-hours
+bounds returned zero bars for today (expected, market not open until
+9:30am) so RVOL was self-computed from EXTENDED-hours 5-minute bars
+(today's premarket volume-so-far vs. the same time-of-day on the one
+prior day with comparable premarket data) instead of trusting Robinhood's
+own Relative volume field.
+
+**AEHL** $6.46, +80% vs Friday's close, self-computed RVOL ~22,100x
+(premarket volume already 2.66M vs. a ~120-share same-time baseline --
+directionally enormous, but the baseline sample is thin, 1 prior day).
+Real catalyst already logged this morning: mechanical bounce off
+Friday's dilution-driven crash. ~10% off today's premarket high ($7.18),
+made within the last few minutes.
+
+**NCRA** $2.67, +41% vs Friday's close. Real volume 3.15M shares already
+premarket -- more than 2x its entire 1.35M float has already turned over.
+No prior-day premarket baseline exists to compute a clean RVOL ratio, but
+that turnover alone is real and extreme. Real, clean catalyst: binding
+JV term sheet with INERGX Energy (logged this morning). ~11% off today's
+premarket high ($2.98).
+
+**WETO** $7.05-7.30, +26% vs Friday's close, self-computed RVOL ~5.5x.
+Real catalyst: $75M dilutive share-sale agreement (logged this morning).
+~8-11% off today's premarket high ($7.90).
+
+**BRNX** $4.48, +15% vs Friday's close, self-computed RVOL ~5.4x. NO
+DATED CATALYST FOUND -- Stocktwits shows EXTREMELY_HIGH message volume
+and EXTREMELY_BULLISH sentiment (94.7% bull), but the actual posts are
+pure speculation/chatter ("expected to see 7-8 today", short-squeeze
+claims), including one trader noting "shorting all the pumps on this has
+been a winning strategy. It always dumps." Flagged explicitly as price
+action only, not a clean setup.
+
+Messaged the user with all 4 (including BRNX's caveat) since AEHL/NCRA/
+WETO already clear every bar and BRNX's real, extreme message volume
+made it worth surfacing with the warning attached rather than silently
+dropping it.

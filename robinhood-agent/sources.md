@@ -2612,3 +2612,33 @@ Messaged the user with all 4 (including BRNX's caveat) since AEHL/NCRA/
 WETO already clear every bar and BRNX's real, extreme message volume
 made it worth surfacing with the warning attached rather than silently
 dropping it.
+
+## 2026-08-31 ~8:05am ET -- Momentum scanner alert: re-scan, one new name (XAIR)
+
+User asked to re-scan ~1 hour after the 7am cycle. Re-ran both scans.
+
+**AEHL, NCRA, WETO, BRNX** (all alerted last cycle): none made a new
+high since -- AEHL rolled over hard (was $6.46/+80% at 7:10am, now
+$5.86/+66%, ~18% off its premarket high of $7.18); NCRA faded the most,
+down from $2.67-2.77/+41-46% to $2.25-2.26/+19%, a real ~24% pullback
+off its $2.98 high -- squarely the "already printed, faded off the high"
+case the job excludes, not re-alerted. WETO and BRNX roughly flat, no
+material change. Per the job's own rule (skip unless materially
+changed), none were re-alerted.
+
+**XAIR (Beyond Air) -- new, real catalyst, alerted.** +34% to $5.87-5.97
+(Stocktwits real-time price + get_equity_quotes bid/ask both confirm;
+Friday close $4.48). Real, clean, dated catalyst quoted directly in
+Stocktwits posts and corroborated independently: "Beyond Air Receives
+FDA Breakthrough Device Designation for LungFit GO to Treat
+Nontuberculous Mycobacterial Pulmonary Disease (NTM-PD)." Float ~700K
+(tight). Message volume EXTREMELY_HIGH, sentiment 93% bullish.
+
+Note on data quality: get_equity_historicals for XAIR returned almost
+entirely interpolated (flat, zero-volume) bars for today even as of
+8:04am ET -- a real ingestion lag on this symbol specifically (the same
+known issue documented for AEMD 08-28), not a broken move. Real price
+was independently confirmed via get_equity_quotes and Stocktwits' own
+live feed, both agreeing on ~$5.87-5.97, so this was not treated as
+unverified -- but no self-computed RVOL number could be produced from
+historicals for this one; said so rather than guessing a figure.

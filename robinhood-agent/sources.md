@@ -2832,3 +2832,24 @@ AEHL ($6.24, down from $6.565), WETO ($9.50, continuing to fade from
 its $12.55 peak), RDHL ($1.049, flat), CVKD ($1.751, flat), MOBX
 ($1.33, modest continuation) -- no material change on any, not
 re-alerted.
+
+## 2026-08-31 ~3:08pm ET -- Momentum scanner alert: NCRA breaks its own high; SQFT flagged as pump chatter, not a real mover
+
+**NCRA broke above its earlier session high.** $2.90-2.93 an hour ago
+-> **$2.97-2.99 now** (get_equity_quotes, 19:09:24 UTC), +58.7% vs
+Friday's close (prior best today was $2.98, set ~7-9am) -- a genuine
+new high, not a stale number. RVOL 28.4x. Same clean JV catalyst
+(INERGX Energy) all day.
+
+**SQFT (Presidio Property Trust) appeared in the scan (+18.5%, RVOL
+416x) but is flagged, NOT presented as a real setup.** Checked
+Stocktwits per the standing catalyst-verification step: the entire
+recent post history is a SINGLE account ("johnrivers0110") spamming
+~10 near-identical promotional messages in the last hour, including
+explicit coordinated pump language ("Move all gains to $SQFT," a fake
+"FIB buy chart," and -- directly relevant -- posts telling followers to
+"open short" on NCRA, WETO, RDHL, and AEHL, the exact names already
+tracked today, then move the proceeds into SQFT). No real news found.
+This is textbook pump/manipulation chatter targeting today's real
+movers, not a catalyst -- explicitly flagged to the user rather than
+silently dropped, since it names symbols already on watch.

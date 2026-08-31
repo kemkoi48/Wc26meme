@@ -2684,3 +2684,55 @@ with the standing distrust of that field before 9:30am.
 WETO ($7.01, +22.5%, fading from its $7.90 high), BRNX ($4.51, +15.9%,
 flat), MODD ($3.59, +3.8%, further fading) -- no material change, not
 re-alerted.
+
+## 2026-08-31 ~9:36am ET -- Pre-open watchlist rectify + S7 daily screen (13/13 rejected)
+
+**Part A, watchlist rectify (list 28897739..., "August 31"):** real
+quotes on all 12 names since the 6:30am build. Nuclear/growth core (LEU,
+SMR, ACAD, ET, RRC, OKLO, UUUU, CCJ) flat, no material change. NCRA
+($2.42, +28%), AEHL ($6.49, +83%) still real and live. **WETO hit a
+fresh high** ($7.90, +38%, up from $7.01 25 min earlier). **Dropped
+ELMT**: its premarket earnings-beat pop (+10.5%) fully round-tripped to
+flat/-0.4% by 9:36am -- no edge left for a day-trade list. Checked
+Stocktwits trending for anything new: MOVE (Movano) was real (+10.8%,
+3.9M volume) but had already faded hard from a $17.18 intraday high to
+$12.73 -- the "already printed" case, not added.
+
+**Part B, S7 options screen. Flat (no open position), ran the
+dated-catalyst track.** get_earnings_calendar (high-market-cap,
+next 3 days): only SAIC reports today, and it already reported this
+AM (real EPS beat, $3.01 vs $2.30 est, stock +6.7% premarket) -- the
+mismatch_ratio methodology is built for BEFORE a report (comparing
+priced-in IV move to history), not chasing an already-realized gap, so
+SAIC wasn't a fit for this track today. Real upcoming reporters (09-01,
+09-02): PANW/DELL/MDB/CRDO/SNOW/AVGO/FIVE/NTAP all trade well above the
+confirmed ~$50-60 cap/delta danger zone (BMNR/AAOI/BABA/OXY pattern) --
+skipped without spending calls on them. Checked the two price-eligible
+ones:
+
+- **NIO** ($4.40, reports 09-01 AM): 6 real historical earnings-day
+  moves (get_equity_historicals, 2025-03 through 2026-05) -- median
+  absolute move 3.74%. ATM ($4.50) straddle for the 09-04 expiry:
+  call mid $0.165, put mid $0.26, IV ~110%. Expected move 8.2%
+  (straddle) to 11.5% (IV formula) -- mismatch_ratio 2.20-3.09 vs the
+  0.85 cap. **Rejected: options price 2-3x more movement than NIO's own
+  earnings history justifies** -- rich, not cheap. (Premium $16.50-26/ct
+  and delta 0.45-0.55 both would have cleared the $150/0.30 gates --
+  this rejection is purely a pricing call, not a structural cap
+  conflict.)
+- **GTLB** ($45.13, reports 09-01 PM): 6 real historical moves
+  (2025-03 through 2026-06) -- median 8.975%. ATM ($45) straddle for
+  09-04: call mid $3.45 ($345/ct), put mid $3.525 ($352.50/ct), IV
+  173-187%. **Rejected on premium alone** (both legs >2.3x the $150
+  cap) **and on mismatch_ratio** (1.46-2.10 vs 0.85) -- doubly
+  rejected. Real data point against assuming the cap/delta conflict is
+  purely a share-price problem: GTLB is well under $60/share and still
+  fails on premium because of very high IV (173-187%).
+
+Soft-catalyst track not run today -- the morning's real movers (AEHL/
+NCRA/WETO/XAIR, already logged) are ultra-low-price/low-liquidity names
+unlikely to carry a tradeable option chain at all, not screened.
+
+**Running S7 total: 13/13 real checks rejected, 0 trades.** No watchlist
+message needed beyond the WETO/ELMT note (already covered above); no S7
+position opened or closed.

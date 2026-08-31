@@ -2789,3 +2789,26 @@ volume," "RSI taking a breather") -- noted, not omitted.
 AEHL ($6.23-6.26, +76-77%, still below its earlier $6.56-6.58 peak),
 NCRA ($2.47-2.48, +30-31%, down from $2.73-2.76), RDHL ($1.10-1.11,
 +64-68%, roughly flat) -- no material change on any, not re-alerted.
+
+## 2026-08-31 ~12:08pm ET -- Momentum scanner alert: noon cycle, AEHL fresh high, CVKD new (real FDA catalyst)
+
+**AEHL made a genuine new high, above every earlier peak today.**
+$6.23-6.26 at 11:11am -> **$6.73 now**, +90.1% vs Friday's close, RVOL
+6.47x (real). Same dilution-bounce catalyst as all day, but this is its
+best print of the session by a real margin (prior best was $6.56-6.58).
+
+**CVKD (Cadrenal Therapeutics) -- new, clean, real FDA catalyst.** +15%
+to $1.77, RVOL 376x. Confirmed via the actual Globe Newswire/RTPR
+release (pushed 8:00am ET today): "Cadrenal Therapeutics Announces
+Positive Outcome from FDA Type D Meeting for Phase 3 Registration Study
+of CAD-1005 in Heparin-Induced Thrombocytopenia" -- a real regulatory
+catalyst, the cleanest of today's names. Some bearish chatter present
+too ("careful of an offering," "massive dumping") -- normal mixed retail
+sentiment on a biotech pump, noted not omitted.
+
+**WETO pulled back from its high** ($12.50-12.55 at 11:11am -> $10.54
+now, RVOL still 12.6x) -- its high is now over an hour old and hasn't
+been retested, so per the job's own "already printed" rule this was not
+re-alerted, though flagged here since it had been the day's biggest
+mover. NCRA ($2.73, flat) and RDHL ($1.07, flat) unchanged, not
+re-alerted.

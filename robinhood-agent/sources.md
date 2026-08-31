@@ -2527,3 +2527,47 @@ session (qualified-at timestamps, live candlestick charts, candlestick-
 reading education panel) -- the 08/28 shooting-star-shaped candle (spike
 to $775.30 intraday, closed near the day's low at $769.35) is a live,
 real example of exactly the pattern the new education panel teaches.
+
+## 2026-08-31 ~6:35am ET -- Premarket watch: watchlist rebuilt for the day
+
+Trigger fired. Renamed "August 28" -> "August 31" (list
+28897739-a4e8-40fa-ac57-6fb0eb30137b). Very quiet premarket overall
+(6:35am ET, well before the 7am+ window the user flagged as when most
+real moves happen) -- checked Early Momentum Ignition, Warrior Trading
+Style, Daily Movers - Fastest Growers, and Daily gainers scans plus
+Stocktwits trending, all cross-checked against get_equity_quotes.
+
+**Dropped: the whole 08/27-PM earnings-reaction cluster** (IREN, RBRK,
+AFRM, MRVL, PYPL, CRWD, CRM, NVDA) -- verified via get_equity_quotes all
+are flat (within ~1%) vs Friday's close, 3 days after their earnings
+reactions; fully priced in, no edge left for a day-trade list.
+
+**Dropped: XPON** -- real activity still present (8.1M volume) but now
+-3.6% and cooling, not the breakout mover it was on 08/27-28; multi-day
+run has played out.
+
+**Kept: the nuclear/growth core** (LEU, SMR, ACAD, ET, RRC, OKLO, UUUU,
+CCJ) -- no bearish news found, thesis intact, same as every prior day
+this week.
+
+**Added, all real and dated (Benzinga premarket-movers article,
+2026-08-31 04:53am ET, cross-checked against the scan data):**
+- **NCRA** (Nocera) +21.7% premarket to $2.30 -- real, clean catalyst: a
+  binding term sheet with INERGX Energy to form a 50/50 joint venture.
+- **AEHL** (Antelope Enterprise) +73.5% premarket to $6.14 -- real but
+  risky: this is a mechanical bounce off Friday's 30% dilution-driven
+  crash (an $18.99M private placement, 15M shares at $1.266). Flagged as
+  volatile chop, not a clean directional setup.
+- **WETO** (Wetour Robotics) +25% premarket to $7.15 -- same pattern as
+  AEHL: real catalyst is a $75M share-sale agreement with Rodman &
+  Renshaw (dilutive), and its last week of prints ($15 -> $8.92 -> $10.81
+  -> crash -> bounce) is pure whipsaw, not trend. Same risk flag.
+- **ELMT** (The Elmet Group) +10.5% premarket to $18.39 -- real catalyst:
+  better-than-expected quarterly results, distinguishing it from AEHL/
+  WETO's dilution-bounce pattern. Largest/most stable name of the four
+  adds ($509M market cap vs. single-digit-to-low-double-digit millions
+  for the others).
+
+No high-market-cap earnings today overlapping the watchlist (SAIC
+reports am today, not on any list; PANW/DELL/MDB/CRDO/NIO report
+tomorrow 09/01).

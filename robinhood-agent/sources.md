@@ -2656,3 +2656,31 @@ fading further -- no material change, not re-alerted.
 (FDA Breakthrough Device Designation for LungFit GO). Told the user
 briefly rather than staying silent, since this is exactly the "still
 igniting, not already printed" case the job is meant to catch.
+
+## 2026-08-31 ~9:10am ET -- Momentum scanner alert: 9am cycle -- XAIR fully reverses, AEHL fresh high
+
+**XAIR round-tripped completely.** Peaked $6.01-6.07 at 8:10am (real, FDA
+Breakthrough Device Designation catalyst); by 9:10am it's back to
+$4.58-4.59, essentially Friday's $4.48 close (+2.2% only) -- the entire
++34% move gave back in under an hour. A real, clean example of exactly
+the risk the standing reminder warns about (trades held past 5 minutes
+net negative in the user's own history): the catalyst was real and the
+early move was real, but chasing it an hour in would have meant buying
+the top. Logged for the record, not re-alerted (no longer clears the
+bar -- fully faded, catalyst already priced out).
+
+**AEHL made a fresh high, materially changed since the 8:10am note.**
+$6.00-6.07 at 8:10am -> $6.56-6.58 now (get_equity_quotes, 13:10:41 UTC),
+a real ~9% continuation, back above its earlier $7.18 high's approach
+range. Same catalyst as logged this morning (mechanical bounce off
+Friday's dilution crash). Notably dropped OUT of the Early Momentum
+Ignition scan's results this cycle even as price climbed -- Robinhood's
+own Relative volume (1, 1H) field for AEHL has read a static
+3.677398522899389 across all three checks this morning (7:10, 8:10,
+9:10am), which looks stuck/stale rather than tracking the real
+continuation; flagged here rather than trusted at face value, consistent
+with the standing distrust of that field before 9:30am.
+
+WETO ($7.01, +22.5%, fading from its $7.90 high), BRNX ($4.51, +15.9%,
+flat), MODD ($3.59, +3.8%, further fading) -- no material change, not
+re-alerted.

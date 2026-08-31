@@ -2812,3 +2812,23 @@ been retested, so per the job's own "already printed" rule this was not
 re-alerted, though flagged here since it had been the day's biggest
 mover. NCRA ($2.73, flat) and RDHL ($1.07, flat) unchanged, not
 re-alerted.
+
+## 2026-08-31 ~1:10pm ET -- Momentum scanner alert: quiet cycle, nothing re-alerted
+
+Everything (WETO $10.85, AEHL $6.565, RDHL $1.05, NCRA $2.53, CVKD
+$1.75, MOBX $1.275) flat-to-fading from its earlier peak, no new highs.
+Correctly quiet, no user message sent.
+
+## 2026-08-31 ~2:09pm ET -- Momentum scanner alert: NCRA second wind, real jump
+
+**NCRA re-ignited.** $2.53 (+34%) an hour ago -> **$2.90-2.93 now**
+(get_equity_quotes confirms, 18:09:49 UTC), +53.4% vs Friday's close,
+RVOL 26.9x -- a real, fresh acceleration back toward its session high
+($2.98, set ~7-9am), not a stale number. Same clean JV catalyst
+(INERGX Energy) as logged all day. Materially changed enough from the
+last cycle (+34% -> +53%) to re-alert.
+
+AEHL ($6.24, down from $6.565), WETO ($9.50, continuing to fade from
+its $12.55 peak), RDHL ($1.049, flat), CVKD ($1.751, flat), MOBX
+($1.33, modest continuation) -- no material change on any, not
+re-alerted.

@@ -2768,3 +2768,24 @@ staying up -- genuinely cooling, not re-alerted. YDDL/WBUY/LGPS also
 newly appeared with real gains (42%/28%/21%) and elevated RVOL but were
 not individually catalyst-checked this cycle given time budget --
 picked up next cycle if they persist.
+
+## 2026-08-31 ~11:11am ET -- Momentum scanner alert: 11am cycle, WETO keeps running, MOBX new (real M&A catalyst)
+
+**WETO made ANOTHER real new high.** $10.25-10.39 at 10:12am -> $12.50-
+12.55 now (get_equity_quotes + run_scan both confirm), +119% vs
+Friday's close, RVOL 11.09x. Same $75M dilutive-offering catalyst as
+all day -- an extraordinary continuation of what started as a dilution
+bounce. Third consecutive cycle this has materially changed.
+
+**MOBX (Mobix Labs) -- new, real, dated catalyst.** +16% to $1.28,
+RVOL 68.99x. Real news, confirmed via Stocktwits (quoting the actual
+Business Wire/RTPR release, pushed 8:45am ET today): "Vision Aerial
+begins Vulcan drone production ahead of acquisition by Mobix Labs,
+projecting 46% revenue growth in 2026 and 93% in 2027." Real M&A/
+acquisition-progress catalyst, not chatter. Message volume cooling
+slightly in the last 15 minutes (skeptical posts appearing: "needs some
+volume," "RSI taking a breather") -- noted, not omitted.
+
+AEHL ($6.23-6.26, +76-77%, still below its earlier $6.56-6.58 peak),
+NCRA ($2.47-2.48, +30-31%, down from $2.73-2.76), RDHL ($1.10-1.11,
++64-68%, roughly flat) -- no material change on any, not re-alerted.

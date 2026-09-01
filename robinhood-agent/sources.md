@@ -2992,3 +2992,16 @@ also a real live dilution offering, mixed picture disclosed to user.
 
 BIAF (+44%) and LIDR (+27%) both already faded 20%+ off their highs made
 25-40 min ago -- "already printed," not alerted.
+
+## 2026-09-01 ~11:12am ET -- Momentum scanner alert cycle
+
+**PXS** (Pyxis Tankers) alerted -- real earnings-beat catalyst (reported
+2026-08-31 pm, EPS beat by $0.07, revenue topped estimates), continuing
+into today. Just printed a fresh intraday high ($6.32) after chopping
+$5.94-6.25 for over an hour -- genuinely igniting, not already printed.
+
+INBS (from last cycle) has cooled to -1.2%, confirming the dilution-
+ceiling read from the prior alert -- no new action, already logged.
+SSM/BIAF/FLYE/LIDR/WETO all recurring, no material change from earlier
+today's alerts. Rest of this cycle's scan matches (VIDA/PW/DFNS/BRNX/
+NCRA/AEHL/SST/SKYQ/TJGC/AUUD) either negative or below the % change bar.

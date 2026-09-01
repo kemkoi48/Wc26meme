@@ -3048,3 +3048,22 @@ session.
 
 Not wired into any live trigger yet -- built and tested only, same
 go-live discipline S7 itself followed.
+
+## 2026-09-01 ~12:10pm ET -- Momentum scanner alert cycle
+
+**OLOX** (Olenox Industries) -- real, sharp ignition: chopped quietly
+$1.00-1.10 for 3+ hours, then real volume exploded (269K, then 1.4-1.7M
+per 5-min bar vs prior <50K bars) and price ran $1.07 -> $1.46 (+36% in
+~30 min, ~12:20-12:50pm ET) on a real 1.6M float. No dated news catalyst
+found -- Stocktwits chatter itself has a user asking "what caused the
+short squeeze... any news??" with no real answer; reads as a genuine
+float squeeze, not a fundamental catalyst. High was ~50 min old by the
+time this was checked, price already back to ~$1.20 (18% off high) --
+already printed, not alerted as a fresh setup. Also noted: the same
+account posting OLOX chatter is simultaneously cross-pumping a different
+ticker (CTM) in identical copy-paste posts -- mild promo pattern, not
+treated as a real catalyst for either name.
+
+SST/WKHS from last cycle both continued fading, no new alert. Everything
+else (FLYE/BIAF/SSM/LIDR/DAIC/PXS/WETO/INBS/LABT/EMPD) recurring, no
+material change.

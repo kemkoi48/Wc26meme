@@ -2976,3 +2976,19 @@ realistically reach a 0.30-delta contract under the $150 cap -- not
 pursued further.
 
 Nothing passed. No new S7 position opened. Staying flat.
+
+## 2026-09-01 ~10:10am ET -- Momentum scanner alert cycle
+
+**FLYE** (Fly-E Group) -- biggest % mover this cycle, +51.5% at scan time,
+RVOL 1982x (self-reported). Real-time bars show it already gave back
+~28% off its $2.79 high (made ~14:00 UTC) by the time of this check, and
+chatter includes explicit "HALT DOWN" reports and a stock-promotion group
+("Temple of Boom") posting price-target graphics -- pattern consistent
+with pump chatter, same as SQFT earlier this week. No dated news catalyst
+found. Logged for the record, not alerted as a clean setup.
+
+**INBS** checked and alerted (see below) -- real FDA-data catalyst but
+also a real live dilution offering, mixed picture disclosed to user.
+
+BIAF (+44%) and LIDR (+27%) both already faded 20%+ off their highs made
+25-40 min ago -- "already printed," not alerted.

@@ -3067,3 +3067,17 @@ treated as a real catalyst for either name.
 SST/WKHS from last cycle both continued fading, no new alert. Everything
 else (FLYE/BIAF/SSM/LIDR/DAIC/PXS/WETO/INBS/LABT/EMPD) recurring, no
 material change.
+
+## 2026-09-01 ~1:10pm ET -- Momentum scanner alert cycle
+
+**PETZ** (TDH Holdings) -- real breakout on real volume (511K/724K per
+5-min bar vs ~10-90K prior) peaking $1.80 at ~2:35pm ET, but showing a
+clear fade since (lower highs each bar: 1.63 -> 1.59 -> 1.58 -> 1.56,
+now ~13% off high, ~35 min past the peak) -- past the fresh-ignition
+window, not alerted. No real dated catalyst found -- Stocktwits chatter
+has a user asking "why is this up?" and an unconfirmed "big inside buy;
+28 percent" claim alongside "scam"/"criminal" accusations; nothing
+verifiable. Logged for the record.
+
+OLOX continues fading from its earlier high, no new alert. Rest of
+today's recurring names (FLYE/BIAF/SSM/LIDR/DAIC/WETO/AUUD) unchanged.

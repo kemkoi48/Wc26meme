@@ -2902,3 +2902,28 @@ a real reason.
 No high-market-cap earnings today overlapping the watchlist; PANW,
 DELL, MDB, CRDO, NIO, GTLB, MDT all report today (09-01) but none on
 this list.
+
+## 2026-09-01 ~7:13am ET -- Momentum scanner alert: first cycle, SSM/WETO/LABT all real
+
+First hourly cycle of the day. All three of this morning's real
+watchlist adds/holds clear the bar with self-computed RVOL (regular-
+session historicals empty this early, extended-hours bars used
+instead, same substitution as every premarket cycle):
+
+**SSM** $4.01 (was $3.95 at watchlist build, now higher), today's high
+$4.77 (~16% off, recent). Real volume 1.79M shares premarket already
+-- more than its entire ~1.02M-share float has turned over. No prior-
+day premarket baseline exists to compute a clean RVOL ratio, but that
+turnover alone is extreme and real. Catalyst: real M&A letter of
+intent with Sports One (logged this morning).
+
+**WETO** $7.50, +37% vs Friday's actual last close ($5.48), RVOL 8.68x
+(self-computed). Today's high $8.20 (~8.5% off, recent). Same $75M
+dilutive-offering story -- flagged again as high-risk given it already
+round-tripped an entire similar rally yesterday.
+
+**LABT** $2.93, RVOL 75.37x (self-computed). Today's high $3.24 (~10%
+off, recent). Real US patent-allowance catalyst (logged this morning).
+
+All three within the last ~20-30 minutes of their highs -- "igniting,"
+not "already printed." Messaged the user with all three.

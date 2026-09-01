@@ -3120,3 +3120,25 @@ no real signal today.
 No ratchet, no resize, no close, no full technical signal on either
 position -- quiet cycle per the trigger's own rule, no user message.
 Logged per the standing requirement regardless of outcome.
+
+## 2026-09-01 ~4:08pm ET -- Momentum scanner alert cycle (last of the day, market closed at 4pm ET)
+
+**SSM** real, fresh acceleration right into the close: volume exploded
+from <25K/5-min bar to 500-800K starting ~3:15pm ET, price ran
+$3.95 -> $4.99 high (made in the final ~10-15 min before the close).
+Closed the regular session +75% ($4.69), up sharply from the ~44-52%
+level tracked earlier today. Same known catalyst (the real M&A LOI,
+already logged) -- no new dated news. Real risk color surfaced in
+today's chatter worth carrying forward: one detailed post flags the
+merger as "nonbinding... no disclosed sports assets, valuation or
+guaranteed closing," explicitly expecting a fade once "the pump is
+exhausted." Not alerted as an entry (market closed, nothing actionable
+tonight) -- logged as a real, large closing move for tomorrow's premarket
+review, with the dilution/nonbinding-deal risk flagged alongside the
+real catalyst.
+
+Rest of today's names (FLYE/BIAF/LIDR/PETZ/OLOX/WETO/DAIC) unchanged or
+continued fading, no other material closing moves.
+
+**This was the last momentum-scanner cycle of the day** (7am-4pm ET
+schedule, market now closed).

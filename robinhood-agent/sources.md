@@ -3081,3 +3081,42 @@ verifiable. Logged for the record.
 
 OLOX continues fading from its earlier high, no new alert. Rest of
 today's recurring names (FLYE/BIAF/SSM/LIDR/DAIC/WETO/AUUD) unchanged.
+
+## 2026-09-01 ~4:01pm ET -- Growth sleeve daily stop check (trig_01P3etqQpqYJc9J1w9jPqbzD)
+
+Positions verified real: LYFT 4sh (stop $14.74, order 6a8df543, confirmed
+resting), SMR 1sh (stop $8.41, order 6a909804, confirmed resting).
+Quantities match resting stops on both -- no manual-buy gap. SMCI
+closed earlier today (see the 11:17am ET entry), correctly absent from
+positions.
+
+**Peak check:** LYFT real peak-since-entry is still $17.97 (08-25) --
+today's high only $17.035 (30-min bars), no new peak, stop correctly
+left at $14.74. SMR real peak-since-entry is still $10.255 (08-26) --
+today's high only $9.31, no new peak, stop correctly left at $8.41. No
+ratchets needed.
+
+**Standing technical-signal check (RSI(14)/ADX(10)/MACD(12,26,9), daily,
+last 5 sessions):**
+
+LYFT: RSI declining 62.3 -> 58.6 -> 58.0 -> 61.5 -> 51.0 (08-31) -- still
+inside the 30-70 neutral band, not oversold, but losing momentum. ADX
+declining 29.4 -> 28.2 -> 26.9 -> 27.0 -> 24.5 (08-31) -- has dropped
+BELOW the 25 real-trend threshold as of the latest close. MACD histogram
+negative and worsening for 4 straight sessions: +0.012 -> -0.014 ->
+-0.038 -> -0.033 -> -0.084 (08-31), a real bearish momentum read. Does
+NOT meet the full standing-alert bar (needs ADX>25 AND MACD against the
+position) since ADX has fallen under 25 -- ADX no longer confirms a
+strong trend even though MACD is bearish. Read honestly: real weakening
+momentum worth watching, not yet a hard signal.
+
+SMR: RSI neutral, 55.0 -> 50.2 -> 54.0 -> 50.0 -> 49.9 (08-31). ADX
+rising but still below the trend threshold: 16.5 -> 17.9 -> 19.2 -> 19.9
+-> 20.3 (08-31). MACD histogram positive but shrinking: +0.043 -> +0.029
+-> +0.049 -> +0.029 -> +0.014 (08-31) -- still bullish, fading. No
+bearish signal, no ADX confirmation either way. Mixed/neutral, honestly
+no real signal today.
+
+No ratchet, no resize, no close, no full technical signal on either
+position -- quiet cycle per the trigger's own rule, no user message.
+Logged per the standing requirement regardless of outcome.

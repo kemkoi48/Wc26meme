@@ -611,6 +611,9 @@
         <b>Qualified</b> stamps the first time today this row hit 4/4 pillars — permanent for the day even if it later cools. <b>Chart</b> is a real 5-minute candlestick chart (see the panel below on how to read it) — this is the "is this already extended?" check made visible instead of something you have to go find elsewhere.
       </div>
       <div class="rule">
+        <b>VWAP</b> is the session's volume-weighted average price — the real average price paid so far today, weighted by volume, resetting every session. Price sitting <i>above</i> VWAP and holding there through pullbacks (dips bought back up, not sold through) is the real "still going up" tell — a single cross above it means little on its own. Price below VWAP means today's average trade is happening lower — sellers in control. Computed here from real 5-minute bars since today's open (typical price = (high+low+close)/3, weighted by each bar's real volume); same auto-for-movers/manual-"Check" budget as Catalyst and Chart.
+      </div>
+      <div class="rule">
         Also: your own order history, n=108 round trips: <b>60% win rate, still net negative</b>, because losses ran 1.6× bigger than wins. Trades held under 5 minutes were net <b>+$224</b>; every longer bucket was negative. Decide the exit before you enter.
       </div>
     </div>
@@ -765,6 +768,9 @@
     a manual look on Stocktwits or elsewhere before trusting it either way.
     <b>Chart</b> draws real 5-minute OHLC candles (get_equity_historicals). Same auto/manual split as Catalyst —
     rows clearing 3+ pillars fetch automatically (up to 15 per page load), everything else needs a "Chart" click.
+    <b>VWAP</b> is the real session volume-weighted average price, computed from real 5-minute bars since today's
+    open (typical price × volume per bar, summed and divided by total volume) — not a scan column, built the same
+    way a real trading platform computes it. Same auto/manual split and 15-per-load budget as Catalyst and Chart.
     <b>Qualified</b> is the first time-of-day today this row hit all 4 numeric pillars at once; it stays even if
     the row later cools off, so you can always see when a move actually ignited, not just that it did at some point.
   </p>
@@ -1186,6 +1192,71 @@
     }
   }
 
+  // ---------- VWAP (session volume-weighted average price) ----------
+  // User asked how to read VWAP as a "is this stock actually going up"
+  // signal (2026-09-01 chat), then asked for it on the board. Real number,
+  // not a heuristic: typical price (high+low+close)/3 per real 5-minute
+  // bar, weighted by that bar's real volume, summed across every real
+  // (non-interpolated) bar since TODAY's regular-session open only -- a
+  // fresh session-since-open VWAP, the same convention every broker/
+  // charting platform uses (it resets daily, unlike a moving average).
+  // Same auto-for-movers/manual-for-the-rest budget pattern as RVOL/Chart/
+  // Catalyst, and the same get_equity_historicals shape already verified
+  // live for those (open_price/high_price/low_price/close_price/volume,
+  // begins_at, interpolated).
+  var VWAP_TTL_MS = 5 * 60 * 1000;
+  var vwapCache = {}; // sym -> { state:'loading'|'done'|'error', value, bars, msg, at }
+  var VWAP_AUTO_BUDGET = 15;
+  var vwapAutoSpent = 0;
+
+  function computeVwap(sym, force) {
+    if (!mcp) return;
+    var c = vwapCache[sym];
+    if (!force && c && (c.state === "loading" || (c.state === "done" && Date.now() - c.at < VWAP_TTL_MS))) return;
+    if (!force) {
+      if (vwapAutoSpent >= VWAP_AUTO_BUDGET) return;
+      vwapAutoSpent++;
+    }
+    vwapCache[sym] = { state: "loading" };
+    paintRows();
+    var start = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    mcp.callTool(SERVER, "get_equity_historicals",
+      { symbols: [sym], start_time: start, interval: "5minute", bounds: "trading" },
+      { cache: { staleTime: VWAP_TTL_MS } })
+      .then(function (res) {
+        var p = res && res.payload;
+        var bars = p && p.data && p.data.results && p.data.results[0] && p.data.results[0].bars;
+        var todayEt = etParts(new Date()).dateKey;
+        var real = (bars || []).filter(function (b) {
+          return !b.interpolated && etParts(new Date(b.begins_at)).dateKey === todayEt;
+        });
+        if (!real.length) { vwapCache[sym] = { state: "error", msg: "no real bars yet today" }; return; }
+        var pvSum = 0, volSum = 0;
+        real.forEach(function (b) {
+          var hh = num(b.high_price), l = num(b.low_price), c2 = num(b.close_price), v = num(b.volume);
+          if (hh === null || l === null || c2 === null || v === null || v <= 0) return;
+          pvSum += ((hh + l + c2) / 3) * v;
+          volSum += v;
+        });
+        if (volSum <= 0) { vwapCache[sym] = { state: "error", msg: "no volume in today's bars yet" }; return; }
+        vwapCache[sym] = { state: "done", value: pvSum / volSum, bars: real.length, at: Date.now() };
+      })
+      .catch(function (err) {
+        var d = describe(err);
+        vwapCache[sym] = { state: "error", msg: d.title };
+      })
+      .then(paintRows);
+  }
+
+  function autoComputeVwapForMovers() {
+    if (!mcp || vwapAutoSpent >= VWAP_AUTO_BUDGET) return;
+    for (var i = 0; i < rows.length && vwapAutoSpent < VWAP_AUTO_BUDGET; i++) {
+      var r = rows[i];
+      if (r.sym === "—" || vwapCache[r.sym]) continue;
+      if (r.pillarsMet >= 3) computeVwap(r.sym);
+    }
+  }
+
   // Draws real OHLC candles onto a small canvas -- wicks as lines, bodies
   // as filled rects, colored from this page's own --up/--down tokens so
   // both themes stay correct without a second code path.
@@ -1279,6 +1350,7 @@
     { key: "qualified",  label: "Qualified" },
     { key: "chg",        label: "% Chg" },
     { key: "last",       label: "Last" },
+    { key: "vwap",       label: "VWAP" },
     { key: "rvol",       label: "Rel Vol" },
     { key: "vol",        label: "Volume" },
     { key: "float",      label: "Float" },
@@ -1404,6 +1476,7 @@
     if (key === "catalyst") { var cc = catalystCache[r.sym]; return cc && cc.state === "done" && cc.text ? 1 : 0; }
     if (key === "qualified") return r.qualifiedAt ? new Date(r.qualifiedAt).getTime() : null;
     if (key === "chart") { var ch = chartCache[r.sym]; return ch && ch.state === "done" ? 1 : 0; }
+    if (key === "vwap") { var vc = vwapCache[r.sym]; return vc && vc.state === "done" ? vc.value : null; }
     return r[key];
   }
 
@@ -1498,6 +1571,25 @@
       } else {
         rvolCell = '<button type="button" class="book-btn rvol-btn" data-sym="' + esc(r.sym) + '" title="Robinhood\'s RVOL field is unreliable outside regular hours -- click to compute a real one from historical bars">Check*</button>';
       }
+      var vc = vwapCache[r.sym];
+      var vwapCell;
+      if (!vc) {
+        vwapCell = '<button type="button" class="book-btn vwap-btn" data-sym="' + esc(r.sym) + '">Check</button>';
+      } else if (vc.state === "loading") {
+        vwapCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      } else if (vc.state === "error") {
+        vwapCell = '<button type="button" class="book-btn vwap-btn" data-sym="' + esc(r.sym) + '" title="' + esc(vc.msg || "failed") + '">Retry</button>';
+      } else {
+        var above = r.last !== null ? r.last >= vc.value : null;
+        var vwapRel = above === null ? "zero" : above ? "pos" : "neg";
+        var vwapArrow = above === null ? "" : above ? " ▲" : " ▼";
+        var vwapTitle = "Session VWAP from " + vc.bars + " real 5-min bars since today's open " +
+          "(typical price (H+L+C)/3, weighted by real volume). Price is currently " +
+          (above === null ? "unclear vs." : above ? "ABOVE" : "BELOW") +
+          " VWAP -- above and holding through pullbacks is the real 'still going up' tell, not a single cross.";
+        vwapCell = '<span class="num ' + vwapRel + '" title="' + esc(vwapTitle) + '">' + money(vc.value) + esc(vwapArrow) + '</span>';
+      }
+
       var tight = r.float !== null && r.float > 0 && r.float < 5e6;
 
       var floatCell = r.float !== null
@@ -1574,6 +1666,7 @@
         '<td>' + qCell + '</td>' +
         '<td class="num ' + cls + '">' + pct(r.chg) + '</td>' +
         '<td class="num">' + money(r.last) + '</td>' +
+        '<td>' + vwapCell + '</td>' +
         '<td>' + rvolCell + '</td>' +
         '<td class="num">' + compact(r.vol) + '</td>' +
         '<td>' + floatCell + '</td>' +
@@ -1583,7 +1676,7 @@
         '</tr>';
     }).join("");
 
-    Array.prototype.forEach.call(els.body.querySelectorAll(".book-btn:not(.cat-btn):not(.rvol-btn):not(.chart-btn)"), function (btn) {
+    Array.prototype.forEach.call(els.body.querySelectorAll(".book-btn:not(.cat-btn):not(.rvol-btn):not(.chart-btn):not(.vwap-btn)"), function (btn) {
       btn.addEventListener("click", function () { checkBook(btn.getAttribute("data-sym")); });
     });
     Array.prototype.forEach.call(els.body.querySelectorAll(".cat-btn"), function (btn) {
@@ -1594,6 +1687,9 @@
     });
     Array.prototype.forEach.call(els.body.querySelectorAll(".chart-btn"), function (btn) {
       btn.addEventListener("click", function () { fetchChart(btn.getAttribute("data-sym"), true); });
+    });
+    Array.prototype.forEach.call(els.body.querySelectorAll(".vwap-btn"), function (btn) {
+      btn.addEventListener("click", function () { computeVwap(btn.getAttribute("data-sym"), true); });
     });
     Array.prototype.forEach.call(els.body.querySelectorAll(".row-chart"), function (cv) {
       var c = chartCache[cv.getAttribute("data-sym")];
@@ -1767,6 +1863,7 @@
       autoComputeRvolForMovers();
       autoCheckStrongRows();
       autoFetchChartsForMovers();
+      autoComputeVwapForMovers();
     }
     var total = result.total_items;
     els.tCountNote.textContent = (typeof total === "number" && total > rows.length)
@@ -1779,6 +1876,7 @@
       autoComputeRvolForMovers();
       autoCheckStrongRows();
       autoFetchChartsForMovers();
+      autoComputeVwapForMovers();
     });
   }
 

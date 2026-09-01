@@ -1068,6 +1068,88 @@ and a put), but that is two fills at two prices, not one simultaneous spread
 fill — real legging risk that the book's straddle chapter assumes away.
 Worth knowing, not worth pretending it's the same trade.
 
+### S7 extended to non-earnings dated catalysts — event_catalog.py (2026-09-01)
+
+User asked (2026-09-01) whether SPY/QQQ puts could have been bought
+ahead of the real US-Iran/Strait-of-Hormuz escalation, then asked for
+AAPL's real historical pre-event price trend ahead of its Sept 9, 2026
+product event, then said: *"lets do it. but lets no focus on aapl. make
+it for everything."* S7's real gap, confirmed while answering: the
+existing entry screen (`option_math.evaluate_candidate` /
+`apply_filters_and_rank`) is already catalyst-agnostic — nothing in it
+is earnings-specific — but the only real, connected SOURCE of a dated
+catalyst was `get_earnings_calendar`/`get_earnings_results`
+(`option_scanner.py`'s `SYSTEM_PROMPT`). Product launches, Fed
+decisions, and other non-earnings dated events had no equivalent real
+source, so S7 structurally could not screen them even though the math
+already supported it.
+
+**Fix: `event_catalog.py`**, a pure (no-network) module, same posture as
+`option_math.py`:
+
+- `EventSeries` — one symbol's recurring/notable dated event
+  (`catalyst_type` is a free label, not a fixed enum — "everything" was
+  the point): symbol, catalyst_type, `am`/`pm` timing (same convention
+  as `option_math.catalyst_effective_date`), real verified past
+  occurrence dates, an upcoming date, and a `source_note` recording how
+  the dates were verified.
+- `EVENT_CATALOG` — the registry. **RULE ZERO applies exactly as
+  everywhere else in this repo: every date must be real and verified —
+  the user directly, or a real news check — never assumed from memory or
+  pattern ("it's usually the second Tuesday").** Deliberately NOT
+  pre-seeded with a large fabricated calendar of "every company's every
+  event" — that would bake unverified dates into a real-money screen.
+  Seeded 2026-09-01 with exactly one real, verified series: AAPL's fall
+  product event (`("AAPL", "product_event")`), 2018-2025 dates each
+  cross-checked against a real AAPL close via `get_equity_historicals`
+  the same day this was built — see sources.md "AAPL Sept-event trend."
+  2020 flagged in `source_note` as Watch/iPad-only (that year's iPhone
+  event was delayed to Oct 13 for COVID) — not silently averaged in as
+  equivalent to the other seven years.
+- `historical_moves_from_bars(series, daily_bars)` — takes REAL daily
+  bars the caller already fetched and returns one real close-to-close
+  percent move per past occurrence, in the exact list shape
+  `option_math.historical_move_pct()` expects. Discards
+  `interpolated=true` and zero-volume bars before computing anything —
+  the same WOLF-shaped failure mode `option_scanner.py`'s
+  `SYSTEM_PROMPT` already guards against by hand, now codified so it
+  cannot be silently skipped. `am` timing compares the event day's close
+  against the PRIOR close; `pm` compares the NEXT day's close against
+  the event day's close.
+
+`test_event_catalog.py` (8 tests, all passing) includes a real
+cross-check: replaying the actual AAPL bars pulled live 2026-09-01
+reproduces the exact eight per-year moves computed by hand that session
+(median absolute 1.07%), not just synthetic assertions.
+
+**Real worked example, AAPL, run live 2026-09-01** (today, incidentally,
+AAPL itself was already up +3.17% intraday on real volume — $316.85 →
+$326.88 — unrelated to the event screen but worth noting): nearest
+expiry that actually clears the effective catalyst date is **2026-09-11**,
+not 2026-09-09 itself — `catalyst_effective_date` on `am` timing returns
+the event date, and `min_days_after_catalyst=1` correctly excludes a
+same-day expiry as having no room after the move. Real $325 ATM
+straddle: put mark $4.775 + call mark $7.05 = $11.825 → expected move
+**3.07%** vs the real historical **1.07%** → **mismatch_ratio 2.87**,
+nearly 3.4x the 0.85 cap — REJECTED. Independently also rejected on
+premium: the $325 call alone is **$715/contract**, 4.8x the $150 cap —
+same cap/delta-conflict pattern already documented on GTLB/NIO/AAOI/OXY
+for anything trading well above the account's structural comfort zone,
+just at a more extreme scale for a $326 mega-cap. Also surfaced a real
+config gap: `OptionScanConfig`'s default `max_underlying_price=100.0`
+(tuned for the small/mid-cap names S7 has screened so far) rejects AAPL
+before the real math even runs — a mega-cap event scan needs that band
+widened via an explicit config override for THAT scan, not a change to
+the shared live default that the daily small-cap S7 trigger also uses.
+
+**Status: built and unit-tested, matching real historical data. NOT
+wired into the daily S7 trigger yet** — same posture S7 itself held
+between being coded and going live on 2026-08-19: a new, real capability
+needs an explicit go-live decision, not a silent addition to what
+already executes with real money. Adding a symbol/event to
+`EVENT_CATALOG` requires the same verification discipline as everything
+else here before it is trusted for a live screen.
+
 ### S7 mechanics — long calls/puts only, adapted to this account
 
 - **Direction comes from the existing regime/momentum signals** (S1's trend

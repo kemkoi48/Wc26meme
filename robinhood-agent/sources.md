@@ -3005,3 +3005,46 @@ ceiling read from the prior alert -- no new action, already logged.
 SSM/BIAF/FLYE/LIDR/WETO all recurring, no material change from earlier
 today's alerts. Rest of this cycle's scan matches (VIDA/PW/DFNS/BRNX/
 NCRA/AEHL/SST/SKYQ/TJGC/AUUD) either negative or below the % change bar.
+
+## 2026-09-01 ~11:50am ET -- AAPL Sept-event trend + generalized event_catalog.py built
+
+User asked (after the US-Iran SPY/QQQ puts question) for AAPL's real
+historical pre-event trend ahead of the Sept 9 2026 product event, then
+asked to generalize it into a real system "for everything," not just
+AAPL.
+
+**Real 8-year AAPL fall-event data** (get_equity_historicals, real daily
+closes, no interpolated bars):
+
+| Year | Event | T-20 | T-10 | T-5 | T-1 | Event->T+1 |
+|---|---|---|---|---|---|---|
+| 2018 | 09-12 | +5.40% | +0.62% | -2.56% | -1.24% | +2.42% |
+| 2019 | 09-10 | +8.09% | +4.94% | +5.35% | +1.18% | +3.18% |
+| 2020 | 09-15* | +0.81% | -10.46% | +2.41% | +0.16% | -2.95% |
+| 2021 | 09-14 | -1.99% | -3.27% | -5.47% | -0.96% | +0.61% |
+| 2022 | 09-07 | -5.43% | -6.74% | -1.86% | +0.93% | -0.96% |
+| 2023 | 09-12 | -1.76% | -2.16% | -7.06% | -1.71% | -1.19% |
+| 2024 | 09-09 | +2.16% | -2.61% | -3.53% | +0.04% | -0.36% |
+| 2025 | 09-09 | +3.16% | +3.17% | +2.02% | -1.48% | -3.23% |
+
+*2020 was Watch/iPad only -- that year's iPhone event moved to Oct 13
+(COVID). Averages: T-20 +1.31%, T-10 -2.06%, T-5 -1.34%, T-1 -0.39%,
+event->T+1 -0.31% (3/8 positive -- real "sell the news" lean, not a
+reliable pre-event melt-up). Also found while pulling this: Tim Cook has
+stepped down, John Ternus is now CEO as of ~2026-08-31 -- no historical
+precedent for that in this dataset.
+
+**Built `event_catalog.py`** (new module) + `test_event_catalog.py` (8
+tests, all real-data-verified) to generalize S7's existing
+`option_math.py` edge test beyond earnings to any real, verified dated
+event. Full design and the live AAPL worked-example verdict (REJECTED:
+mismatch_ratio 2.87 vs 0.85 cap, premium $715/ct vs $150 cap) logged in
+strategies.md under "S7 extended to non-earnings dated catalysts."
+
+Real, live, and unrelated to the event screen itself: AAPL was already
+up +3.17% intraday today ($316.85 -> $326.88) on real volume by the time
+this was checked (~11:50am ET) -- noted, not investigated further this
+session.
+
+Not wired into any live trigger yet -- built and tested only, same
+go-live discipline S7 itself followed.

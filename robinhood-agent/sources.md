@@ -2927,3 +2927,52 @@ off, recent). Real US patent-allowance catalyst (logged this morning).
 
 All three within the last ~20-30 minutes of their highs -- "igniting,"
 not "already printed." Messaged the user with all three.
+
+## 2026-09-01 ~9:15am ET -- Pre-open watchlist rectify (trig_01QfmBuxGvdEQ1ybadA2Ci1R Part A)
+
+Checked all 11 names on the "September 1" dated watchlist vs prior close, premarket:
+
+- **SSM** $3.86-3.94, +44% premarket (2.68->3.86), EXTREMELY_HIGH message
+  volume, 92.9% bullish sentiment. Real continuation of the M&A LOI thesis
+  already on the list -- no fresh negative news, though one real bear post
+  flags dilution risk tied to the deal itself (worth remembering, not a
+  reversal). Kept, no action.
+- **WETO** $7.35, +34% premarket (5.48->7.35), another real fresh pop
+  continuing the pattern already logged yesterday ("still real, fresh pop
+  again"). No new dated catalyst, pure momentum continuation. Kept as-is
+  (already flagged high-risk on the list).
+- **Nuclear complex pullback (real, sector-wide):** LEU -3.7%, SMR -4.3%,
+  OKLO -4.9%, UUUU -4.2%, CCJ -3.3%, all down together premarket. Checked
+  CCJ news specifically -- nothing bearish or name-specific, just routine
+  institutional position filings. No individual negative catalyst found on
+  any of the five; reads as a broad sector pullback/rotation, not a thesis
+  reversal. Not dropping any of them on this alone -- theses (uranium/SMR
+  demand) are unchanged, this is normal volatility. Logging because a -3
+  to -5% coordinated move across five names is material enough to note,
+  even though no list action follows.
+- ACAD, ET, RRC, LABT: no material premarket move since the 6:30am build.
+
+No watchlist edits made -- nothing cleared the bar for add/remove/drop.
+
+## 2026-09-01 ~9:35am ET -- S7 options screen (trig_01QfmBuxGvdEQ1ybadA2Ci1R Part B)
+
+Flat (no open S7 position -- get_option_positions shows only an expired
+8/24 QQQ contract at zero quantity). Ran the dated-catalyst entry screen.
+
+**GTLB** (reports today 9/1 pm, EPS est $0.13): underlying $45.835.
+$45 strike call/put (exp 2026-09-04, nearest post-earnings expiry):
+call mark $4.10 (delta 0.569, IV 2.21), put mark $3.50 (delta -0.431,
+IV 2.24). Straddle $7.60 -> expected move (x0.85) = 14.1%.
+Real historical move_pct: computed from GTLB's last 6 earnings reactions
+(report-day close -> next-day close): +11.64%, -10.60%, -7.35%, -12.78%,
+-6.18%, -2.80% -> median absolute = 8.975%.
+mismatch_ratio = 14.1/8.975 = 1.57 (cap is <0.85 to pass) -- REJECTED,
+options priced for a much bigger move than the stock has actually made.
+Also structurally over the $150/contract premium cap ($410/contract at
+the ATM strike) -- double rejection.
+
+**CRDO** (reports today 9/1 pm): underlying $216.19, too expensive to
+realistically reach a 0.30-delta contract under the $150 cap -- not
+pursued further.
+
+Nothing passed. No new S7 position opened. Staying flat.

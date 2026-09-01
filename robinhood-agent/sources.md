@@ -2853,3 +2853,52 @@ tracked today, then move the proceeds into SQFT). No real news found.
 This is textbook pump/manipulation chatter targeting today's real
 movers, not a catalyst -- explicitly flagged to the user rather than
 silently dropped, since it names symbols already on watch.
+
+## 2026-09-01 ~6:35am ET -- Premarket watch: watchlist rebuilt "September 1"
+
+Trigger fired. Renamed "August 31" -> "September 1" (list
+28897739-a4e8-40fa-ac57-6fb0eb30137b). Broad market red premarket too
+(SPY -0.44%, QQQ -0.84% per Stocktwits trending), continued Iran/Fed
+overhang from yesterday.
+
+**Kept: nuclear/growth core** (LEU, SMR, ACAD, ET, RRC, OKLO, UUUU,
+CCJ) -- all real quotes checked, essentially flat overnight, no
+bearish news, thesis intact.
+
+**Kept: WETO**, despite already round-tripping its entire Monday rally
+(peaked $12.55 intraday, closed back down at $5.48) -- now popping
+again premarket to $7.60-7.68 (+39%), RVOL(1h) 109x. Real but flagged
+as high-risk: this is a name that has now made and lost a huge move
+once already in 24 hours on the same underlying $75M dilutive
+share-sale story.
+
+**Dropped: AEHL and NCRA.** Both real, dated reversals confirmed via
+this morning's Benzinga premarket-movers digest -- AEHL down -16.6% to
+$5.41 "after gaining 83% on Monday. On Friday, the company announced
+$18.99 million private placement of 15 million Class A ordinary shares
+at $1.266 per share" (the dilution overhang finally winning out over
+the bounce). NCRA continued fading (-10.6% today) with no fresh
+catalyst found -- the INERGX JV thesis has run its course for now.
+
+**Added, both real and dated:**
+- **SSM** (Sono Group) -- real M&A catalyst: signed a non-binding
+  letter of intent to combine with Sports One (would acquire minority
+  stakes in NFL/NBA/MLB/NHL franchises plus a sports-intelligence
+  business), confirmed via MT Newswires' own article (published
+  2026-08-31 6:02pm ET) -- shares +62% after-hours Monday, +52%
+  premarket now to ~$4.08.
+- **LABT** (Lakewood-Amedex Biotherapeutics) -- real regulatory
+  catalyst: received a notice of allowance for a US patent
+  ("Antimicrobial Compounds, Compositions, and Uses Thereof"), +17.6%
+  premarket. Small/thin ($5.4M market cap) -- flagged as low liquidity.
+
+**Checked and excluded:** FRVO (Fervo Energy), real Stocktwits-trending
+mover (+16.4% premarket, from an independent source outside Robinhood's
+own scans, per the standing multi-angle check) -- but no dated catalyst
+found in the real news feed explaining today's move specifically (only
+older mid-August analyst-target and 13F stories), so not added without
+a real reason.
+
+No high-market-cap earnings today overlapping the watchlist; PANW,
+DELL, MDB, CRDO, NIO, GTLB, MDT all report today (09-01) but none on
+this list.

@@ -3209,3 +3209,12 @@ early-ingestion-lag issue documented before) and get_equity_fundamentals
 nothing genuinely fresh has printed for it yet this morning, the scan's
 own numbers are stale carryover from yesterday. No real premarket
 ignition this cycle. No alert.
+
+## 2026-09-02 ~8:11am ET -- Momentum scanner alert cycle (premarket)
+
+Quiet again. UPC reappeared at +11.9% -- already assessed last cycle
+(pump-group chatter, real 13G-filing overhang, no catalyst), no material
+change, not re-alerted. BRNX/NMAD unchanged from the stale-data finding
+last cycle. Everything else continuing yesterday's broad fade
+(SSM -10.4%, WETO -11.4%, SST -12.0%, AMOD -22.4%, LABT -10.5%). No
+alert.

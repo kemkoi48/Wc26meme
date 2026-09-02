@@ -3218,3 +3218,44 @@ change, not re-alerted. BRNX/NMAD unchanged from the stale-data finding
 last cycle. Everything else continuing yesterday's broad fade
 (SSM -10.4%, WETO -11.4%, SST -12.0%, AMOD -22.4%, LABT -10.5%). No
 alert.
+
+## 2026-09-02 ~4:01pm ET -- Growth sleeve daily check
+
+LYFT (4 sh, entry $17.58): resting stop verified $14.74, quantity
+matches real position (4=4), no manual-buy gap. Real peak close since
+entry across finalized daily bars (08-24 through 09-01) still $17.70
+(08-28) -- today's close ($17.35, last trade 19:59:59 UTC) didn't
+exceed it. `decide_stop_update`: computed trail from $17.70 is $14.514,
+<= the resting $14.74, so no ratchet -- correctly left alone.
+
+Standing technical-signal check (RSI(14)/ADX(10)/MACD(12,26,9), latest
+finalized daily bar 2026-09-01, today's bar not yet in the indicator
+series):
+- RSI(14): 49.70 -- neutral, cooling from 61.72 on 08-28.
+- ADX(10): 22.79 -- BELOW 25, declining from 26.68 (08-28). No real
+  confirmed trend by this account's own >25 convention.
+- MACD(12,26,9): histogram -0.1267, macd -0.3638 vs signal -0.4904 --
+  bearish and widening (was -0.0349 on 08-28).
+
+Read plainly: MACD is tilting bearish and has been for several sessions,
+but ADX is below the 25 trend-confirmation threshold and still falling
+-- this is NOT the real ADX>25-plus-MACD-turning combination this
+account treats as a genuine signal. Mixed/neutral, not manufactured into
+something stronger. No action taken; the resting $14.74 stop remains
+the only live exit.
+
+SMR (1 sh, entry $10.00): resting stop verified $8.41, quantity matches
+real position (1=1), no manual-buy gap. Real peak CLOSE since entry
+across finalized daily bars (08-26 through 09-01) is $9.74 (08-27) --
+`decide_stop_update` off the close basis computes $7.99, well below the
+resting $8.41 (which was set off the 08-26 intraday HIGH of $10.255, a
+more conservative/higher basis than the function's own close-only
+convention) -- no ratchet, correctly left alone either way.
+
+Technical signal check: RSI(14) 49.69 (neutral), ADX(10) 19.18 (well
+below 25, no real trend at all), MACD histogram +0.0003 (essentially
+flat, barely positive). No real signal -- clearly neutral/no-trend
+read, not manufactured into anything. No action taken.
+
+Both open growth-sleeve positions: quiet day, no ratchet, no signal,
+no message needed per the trigger's own step 8.

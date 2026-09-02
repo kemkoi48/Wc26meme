@@ -3192,3 +3192,20 @@ sustained chatter since. Thesis played out.
 
 No other real premarket movers cleared the bar for addition this
 morning.
+
+## 2026-09-02 ~7:14am ET -- Momentum scanner alert cycle (premarket)
+
+Quiet cycle, nothing fresh. Both scans dominated by red -- every name
+from yesterday's session continuing to fade this morning (SSM -6.4%,
+WETO -9.8%, FLYE -15.8%, OLOX -7.3%, PETZ -7.4%, DAIC -6.2%, LABT
+-10.5%, SST -12.7%, AMOD -21.3%), consistent with the broad overnight
+giveback already flagged in this morning's watchlist rebuild.
+
+Only two positive movers (BRNX +10.2%, NMAD +8.5%) both showed garbage
+premarket RVOL(1,1H) readings (3230x, etc.) -- checked BRNX specifically
+via get_equity_historicals (today's intraday bars not posted yet, same
+early-ingestion-lag issue documented before) and get_equity_fundamentals
+(market_date still shows 2026-09-01, overnight_volume 0) -- confirms
+nothing genuinely fresh has printed for it yet this morning, the scan's
+own numbers are stale carryover from yesterday. No real premarket
+ignition this cycle. No alert.

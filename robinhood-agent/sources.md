@@ -3142,3 +3142,53 @@ continued fading, no other material closing moves.
 
 **This was the last momentum-scanner cycle of the day** (7am-4pm ET
 schedule, market now closed).
+
+## 2026-09-02 ~6:34am ET -- Premarket watch: watchlist rebuilt "September 2"
+
+Trigger fired. Renamed "September 1" -> "September 2" (list
+28897739-a4e8-40fa-ac57-6fb0eb30137b).
+
+**Broad context, not on the watchlist itself:** GTLB +20.2% premarket
+($45.09 -> $54.20) on its real earnings report (09-01 pm); DELL +8.96%
+premarket ($425 -> $463.07), also real earnings; MDB -13.4% premarket
+($434.21 -> $376) though MDB doesn't report until today (09-02 pm) --
+reason for the pre-earnings drop not investigated further. SPY -0.26%,
+QQQ -0.50% premarket, consistent with last night's weak-ADX/negative-
+MACD read (see the ~4:08pm ET SPY/QQQ analysis in this file).
+
+**Kept: nuclear/growth core** (LEU, SMR, ACAD, ET, RRC, OKLO, UUUU, CCJ)
+-- all real quotes checked, flat premarket, no bearish news, thesis
+intact.
+
+**Kept, escalated caution: SSM.** The real skepticism flagged yesterday
+evening (merger "nonbinding... no disclosed valuation or guaranteed
+closing," expecting a fade) is now materializing exactly as predicted --
+real premarket price is $4.18, down -12.1% from yesterday's $4.79ish
+close (which itself was a +75% day). Real, still-live name, but the
+risk case is no longer hypothetical.
+
+**Kept: WETO, LIDR** -- both real, sustained, heavily-traded momentum
+names, both red premarket (-8.6%, -6.5%) continuing recent volatility.
+Not dropped for a single red premarket print alone, consistent with
+this list's standing curation rule.
+
+**Dropped: LABT.** Real US-patent-allowance catalyst from several days
+ago has fully faded -- price down -8.3% premarket with no fresh news or
+sustained chatter since. Thesis played out.
+
+**Checked and NOT added:**
+- **UPC** (+24.8% premarket, RVOL 19x) -- real move, but chatter is
+  dominated by penny-stock hype/price-target posts and an explicit
+  "Temple of Boom" pump-group invite (same pattern as SQFT/FLYE earlier
+  this week). One real, legitimate risk flag surfaced in the chatter
+  itself: a trader citing yesterday's 13G filings totaling 80% of shares
+  outstanding -- a real dilution/overhang concern. No dated catalyst
+  found. Skipped.
+- **SUNE** -- a Stocktwits post yesterday claimed "just got a Merger
+  Agreement," but this is unconfirmed (no news-source check corroborated
+  it) and SUNE is flat premarket ($2.38 -> $2.40), not showing the price
+  action a real merger announcement would produce. Not added without
+  independent confirmation.
+
+No other real premarket movers cleared the bar for addition this
+morning.

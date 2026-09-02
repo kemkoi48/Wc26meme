@@ -3259,3 +3259,20 @@ read, not manufactured into anything. No action taken.
 
 Both open growth-sleeve positions: quiet day, no ratchet, no signal,
 no message needed per the trigger's own step 8.
+
+## 2026-09-02 ~4:10pm ET -- Momentum scanner alert cycle (close)
+
+VIOT made its largest print of the day into the close, +84.7% ($1.79,
+up from the +70% peak checked at 15:12 UTC). Largest real % change this
+cycle -- checked catalyst per standing rule regardless of alert
+clearance. Found one genuinely real, dated item this time: an active
+Form F-3 "mixed shelf" registration filed today, real SEC EDGAR link
+(sec.gov/Archives/edgar/data/1742770/...formf-3.htm). This is NOT a
+bullish catalyst -- a shelf registration is dilution overhang (same
+shape as LHSW's follow-on this morning), and the rest of the thread is
+pure day-trader chatter (share counts, "let's break $2," "watch out for
+the rug"). No positive dated catalyst behind the move -- logged for the
+record per step 3, not alerted. BIAF/PPBT/LHAI/JLHL all faded off their
+earlier highs into the close (BIAF +48%, PPBT +18%, down from ~73%/43%
+peaks respectively) -- already covered, no re-alert. Last cycle of the
+day (4pm ET scanner window). No alert.

@@ -3341,3 +3341,27 @@ and DFNS +11.1% were fresh names this cycle, checked for real catalysts:
 
 DLTH already alerted this morning (real earnings catalyst, logged
 earlier). Quiet cycle otherwise.
+
+## 2026-09-03 ~2:09pm ET -- Momentum scanner alert cycle
+
+Early Momentum Ignition (46 items) + Warrior Trading Style (2 items).
+Top movers unchanged in character: AEHL +34.8% ($7.32, known no-catalyst,
+already covered), BIAF +23.0-23.8% ($11.995-12.07, real catalyst already
+logged earlier), DLTH +17.7% (already alerted, earnings catalyst logged),
+SST +19.1% (checked this hour, no catalyst), DFNS +9.1% (checked this
+hour, real modest catalyst, not alert-worthy). Two fresh names checked:
+
+- **GRI (GRI Bio)**: no catalyst for today's move. Stocklake news empty.
+  Stocktwits chat is pure price-target hype, no one citing news. A real
+  forward-dated catalyst exists (Phase 2a IPF data presentation at ERS
+  Congress, "September 2026," announced 08-24) but that's a future event,
+  not today's trigger. Real quote context: Last $2.385, +19.25%. Not
+  alerted -- price action only.
+- **ANY (Sphere 3D)**: no fresh catalyst for today. Real catalysts exist
+  in recent history (08-24/25 shareholder-approved name change to
+  DarkHorse Technologies/DRK; 08-31-09-01 Kentucky utility approval for a
+  50MW data-center buildout tied to its AI/HPC pivot) but both are 3-9
+  days stale, already priced in, nothing new dated to today. Real quote
+  context: Last $2.4473, +11.7%. Not alerted -- stale-news momentum.
+
+Quiet cycle. No message sent to user.

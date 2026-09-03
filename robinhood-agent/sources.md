@@ -3276,3 +3276,42 @@ record per step 3, not alerted. BIAF/PPBT/LHAI/JLHL all faded off their
 earlier highs into the close (BIAF +48%, PPBT +18%, down from ~73%/43%
 peaks respectively) -- already covered, no re-alert. Last cycle of the
 day (4pm ET scanner window). No alert.
+
+## 2026-09-03 ~6:35am ET -- Premarket watchlist rebuild ("September 2" -> "September 3")
+
+Real premarket check (get_equity_quotes) on the nuclear core (LEU, SMR,
+ACAD, ET, RRC, OKLO, UUUU, CCJ) -- all flat, <1% moves, kept unchanged.
+SSM (-9%, real risk still playing out) and WETO (+3%, stabilizing but
+still real elevated volume) also kept, consistent with their existing
+"real risk" flags. **Dropped LIDR** -- real momentum fully cooled to
+flat (0% premarket, no chatter), nothing left to watch.
+
+**Added RARE** (Ultragenyx Pharmaceutical) -- real, dated, MAJOR
+negative catalyst: Phase 3 neurogenetic-disorder study missed its
+primary endpoint (MT Newswires/Yahoo Finance, corroborated by a
+NewsImpact AI-impact-map link scoring 88% confidence negative), same-day
+Evercore ISI downgrade (Outperform -> In Line, PT $34 -> $16). Real
+-44.5% move, EXTREMELY_HIGH message volume, Stocktwits trending rank #5
+market-wide (get_trending_symbols, not just the low-float scanners).
+Genuinely dated, verified, not chat hype.
+
+**Added BIAF** (bioAffinity Technologies) -- NOT a fresh-catalyst add,
+a real-sustained-momentum add per the XPON-miss precedent: real,
+verified CyPath Lung commercial-expansion news from 2026-09-01 has now
+driven three consecutive real up days ($6.59 -> ~$11.66 -> $13.06
+premarket today), still on 46M+ shares volume and RVOL(1H) 58x this
+morning. Already covered extensively via yesterday's momentum-scanner
+alerts (see 2026-09-02 log entries) -- added here so the day-trade
+watchlist itself reflects a real, still-live multi-day mover, not just
+single-day scanner alerts.
+
+Skipped adding VIOT/PPBT/LHAI/JLHL/NCPL/CANF -- all real yesterday but
+faded hard overnight (VIOT $1.85 vs yesterday's $1.79 peak -- flat now;
+PPBT/LHAI/JLHL all near-flat or red) and/or already resolved as
+no-real-catalyst (VIOT's own dilution shelf filing, LHAI's explicit
+pump-and-dump warnings) -- nothing new to ground an add in this morning.
+
+Renamed the list in place (`update_watchlist`), removed LIDR
+(`remove_from_watchlist`), added RARE + BIAF (`add_to_watchlist`) -- all
+three calls confirmed `status: ok`. Final "September 3" list (12 items):
+SSM, WETO, LEU, SMR, ACAD, ET, RRC, OKLO, UUUU, CCJ, RARE, BIAF.

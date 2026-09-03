@@ -3315,3 +3315,29 @@ Renamed the list in place (`update_watchlist`), removed LIDR
 (`remove_from_watchlist`), added RARE + BIAF (`add_to_watchlist`) -- all
 three calls confirmed `status: ok`. Final "September 3" list (12 items):
 SSM, WETO, LEU, SMR, ACAD, ET, RRC, OKLO, UUUU, CCJ, RARE, BIAF.
+
+## 2026-09-03 ~1:09pm ET -- Momentum scanner alert cycle
+
+Early Momentum Ignition (38 items) + Warrior Trading Style (2 items) both
+run. Top movers: AEHL +34.6% ($7.31), BIAF +21.1% ($11.806) -- both
+already covered/known no-catalyst this session, no change. SST +19.3%
+and DFNS +11.1% were fresh names this cycle, checked for real catalysts:
+
+- **SST (System1 Inc.)**: no catalyst. Stocklake `get_stock_news` empty
+  (14-day window). Stocktwits chat is pure speculation -- short-squeeze
+  vs dilution debate, bull-flag chart calls, a bag-holder pump-and-dump
+  warning -- nobody citing a filing or release. Real quote: $3.6399 vs
+  $3.01 prev close (+20.9%). Not alerted -- price action only.
+- **DFNS (T3 Defense Inc.)**: real, dated catalyst but modest --
+  GlobeNewswire release dated 2026-09-03 (today): subsidiary Tiltan
+  exhibiting at MSPO 2026 (Poland defense trade show), NATO market-access
+  push for TOPS simulation / Majestic.ai / T-VERSE. Also a same-day
+  Noble Capital/Channelchek research note recapping a Q2 update. Sourced
+  via Stocktwits-linked release only -- Stocklake `get_stock_news`
+  returned empty for DFNS too, so not independently confirmed there.
+  Real quote: $10.39 vs $9.26 prev close (+12.2%). This is a small-caps
+  defense name reacting to a trade-show appearance, not major news --
+  flagged to user as modest, not a strong setup.
+
+DLTH already alerted this morning (real earnings catalyst, logged
+earlier). Quiet cycle otherwise.

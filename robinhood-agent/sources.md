@@ -3405,3 +3405,31 @@ the long, not against it. No real signal.
 Quiet day both positions -- no stop changes, no quantity gaps, no real
 technical signal on either. No message sent to user (per standing rule:
 quiet + no signal = no message needed).
+
+## 2026-09-03 ~4:09pm ET -- Momentum scanner alert cycle (close)
+
+Early Momentum Ignition (75 items) + Warrior Trading Style (3 items,
+added TENX but negative % change, skipped). Four fresh names checked:
+
+- **FCUV (Focus Universal)**: no catalyst for today. Real catalyst is
+  stale -- an SEC 8-K (~Aug 18) disclosing shareholder approval of a
+  $250M shelf registration, flagged by traders themselves as dilution
+  risk, not bullish. Today's chat is pure squeeze/momentum talk. Real
+  quote: $18.71, +23.4%. Not alerted.
+- **PRHI (Presurance Holdings)**: no catalyst. Only real dated item is a
+  Q2 earnings release ~Aug 12 (3 weeks stale). Today's chat is pure hype
+  with a trader literally asking "why this going up." Real quote: $7.55,
+  +17.1%. Not alerted.
+- **QNRX (Quoin Pharmaceuticals)**: real catalyst exists but is ~5-6 days
+  stale, not today's trigger -- positive interim Phase 2/3 trial data
+  (p=0.0087) + ~$50M Leerink-led raise, announced ~Aug 29-31, plus
+  insider Form 4 buys by CEO/CFO/COO. Today's move reads as continued
+  follow-through, not fresh news. Real quote: $7.70, +14.2%. Not alerted
+  -- catalyst too old to count as today's trigger.
+- **AKAN (Akanda)**: no catalyst -- confirmed by traders themselves
+  ("$AKAN nada news getting hits tho"), some flagging dilution/ATM
+  overhang as bearish. Real quote: $4.12, +10.2%. Not alerted.
+
+AEHL still top mover (+33.9%), unchanged no-catalyst pattern, already
+logged multiple times today. Quiet cycle -- last hourly scan of the
+trading day. No message sent to user.

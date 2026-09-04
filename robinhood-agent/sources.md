@@ -3937,3 +3937,54 @@ live dilution mechanism -- AKAN (Nasdaq equity deadline Dec 13 + $0.5M
 cash vs $14.2M debt), WETO ($75M ATM), IMRN (~$2.85M ATM), CDTG (125x
 authorized-share increase post-reverse-split). On this class of name the
 SEC filing index is not optional diligence; it is the primary read.
+
+## 2026-09-04 ~12:10pm ET -- ALERTED: AOUT, the day's only clean setup. Plus outcomes on the morning's names.
+
+Note: the 11:12am cycle and this 12:10pm cycle arrived together after a
+gap. Ran the CURRENT state once rather than replaying the stale 11:12
+snapshot -- an hour-old momentum read is not actionable and re-reporting
+it would be fabrication by staleness.
+
+**AOUT (American Outdoor Brands) -- +41.1% at $14.12. ALERTED.**
+This is the first name today to clear every gate at once.
+- **Real, dated catalyst, independently verified:** reported earnings
+  2026-09-03 **pm**. EPS estimate **-$0.25**, actual **+$0.03** -- a swing
+  from an expected loss to an actual profit. Confirmed from
+  get_earnings_calendar (verified: true), pulled this morning, not from
+  chat.
+- **Real volume:** RVOL **10.49** -- and this is the 9:30am-4pm window
+  where Robinhood's RVOL field is trustworthy, unlike the premarket
+  garbage documented earlier today. 3.30M shares vs a 10.44M float.
+- **Still near its high, and genuinely so:** session high **$14.45**
+  (14:00 UTC bar, 10:00am ET), now $14.05-14.12 -- only **2.7% off**.
+  Critically it has RETESTED that area repeatedly since: bar highs of
+  14.34 (14:30), 14.34 (14:40), 14.23 (15:40), 14.30 (15:50), 14.29
+  (16:00). This is consolidation near the high, NOT the abandoned-high
+  "already printed" pattern.
+- **Not a dilution shell:** $126M market cap, 10.44M float, a real
+  operating company -- categorically different from the sub-$2,
+  sub-1M-float, live-ATM names that dominated this morning.
+
+Honest qualifiers given to the user: the impulse is spent (volume decayed
+from ~295K/bar in the first 40 min to ~25K/bar now), so this is a holding
+pattern rather than an ignition; and +41% off a -0.25 -> +0.03 beat is a
+large move for a small absolute beat, so low-float mechanics are doing
+some of the work.
+
+**Outcomes on the morning's names -- all three resolved as warned:**
+- **AKAN**: $3.7688, **+2.7%** -- a FULL round trip. Alerted 8:15am at
+  $5.40 with spike high $6.09 and an explicit no-catalyst + dilution
+  warning; it has given back essentially the entire move to near flat.
+- **WETO**: $2.591, **-19.5%**, stable at the collapsed level. The $75M
+  ATM call was correct end to end.
+- **CDTG**: **$1.295, +43.9%** -- MATERIALLY CHANGED since the 10:15am
+  check (was $1.1139/+23.8%), with volume expanding 27.8M -> **71.6M**.
+  Re-flagged to the user, NOT as a setup: the 10:15am finding stands
+  unchanged -- no catalyst, 1-for-25 reverse split (06-01), authorized
+  shares raised 4,000,000 -> **500,000,000** on 07-28. A no-catalyst pump
+  running further does not become safer; it makes an offering into
+  strength more likely, not less. Explicitly logged that being "wrong" on
+  direction for an hour is not being wrong on risk.
+- **IMRN**: $1.695, +52.7%, volume now 102.2M. Real 6-K catalyst confirmed
+  earlier; drifting below its $1.99 high. No new alert -- already covered,
+  not making new highs.

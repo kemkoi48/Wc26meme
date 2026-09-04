@@ -3433,3 +3433,44 @@ added TENX but negative % change, skipped). Four fresh names checked:
 AEHL still top mover (+33.9%), unchanged no-catalyst pattern, already
 logged multiple times today. Quiet cycle -- last hourly scan of the
 trading day. No message sent to user.
+
+## 2026-09-04 ~1:24am ET -- Growth sleeve redeployment (gap fix)
+
+User pushback, verbatim gist: capital has been sitting idle since SMCI
+closed 2026-09-01, and the account should be actively redeployed rather
+than left flat waiting on the 18% trail alone. Real check: $461.46
+buying power confirmed idle (get_portfolio) since the SMCI close -- no
+new position opened in the ~2.5 days since, unlike every prior close
+(BTG -> same-day LYFT entry on 08-24). This was a real execution gap,
+not a strategy disagreement.
+
+Market is closed overnight (regular session ended 4pm ET 09-03, current
+time ~1:24am ET 09-04) so nothing could fill immediately -- but a queued
+limit order for the next open is the same mechanism used for SMCI
+(placed 08-25 evening, filled 08-26 09:30:00 ET at a better price than
+the ceiling).
+
+Re-ran the Growth Momentum scan live (2514847d-25cb-4628-9731-bb5b0ee7d246,
+55 real matches). Pulled real fundamentals on 10 whole-share-affordable
+candidates (HL, AYA, STNE, GME, TTD, DLO, BEKE, LFST, GGB, SDGR).
+Rejected: SDGR (PE -28.1, unprofitable, same pattern excluded before),
+AYA/GGB/LFST/DLO (all sitting at or within ~1% of their 52-week high --
+extended, chasing not entering), STNE/TTD/BEKE/GME (real ADX 20-22,
+below this account's own 25 threshold for "real trend," despite decent
+value).
+
+**Picked HL (Hecla Mining)**: PE 26.6 (profitable), ADX(14) 31.5 (real
+confirmed trend, only candidate checked clearing the 25 threshold with
+a non-extended price), RSI 63.16 (not overbought), real quote $21.03-
+21.21, mid-range of its 52wk band ($8.75-$34.17, room to run), real 1mo
+momentum +5.84%. Same precious-metals sector as BTG, this account's one
+clean win to date (+8.0%, closed on explicit profit-take).
+
+Placed limit buy: 20 sh, $22.00 ceiling (GFD, regular_hours) -- order id
+6a9a5620-363e-42db-b1c1-4bbd431e264e, verified state: queued (market
+closed, next-open queuing, not a rejection). ~$440 of $461.46 buying
+power committed (95%), consistent with prior deployment sizing
+(BTG/SMCI both ~90%+ of available buying power). Scheduled a same-session
+follow-up (trig_012Hzf3jTtQSJ2RMuzbWhesV, fires ~9:34am ET 09-04) to
+verify the real fill and place the GTC stop_market at 18% below entry
+within the same discipline as every other growth-sleeve trade.

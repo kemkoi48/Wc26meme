@@ -3988,3 +3988,70 @@ some of the work.
 - **IMRN**: $1.695, +52.7%, volume now 102.2M. Real 6-K catalyst confirmed
   earlier; drifting below its $1.99 high. No new alert -- already covered,
   not making new highs.
+
+## 2026-09-04 ~1:10pm ET -- BIAF: a CORRECTION to my own premature self-criticism, plus a real scanner defect
+
+**What I said first, and why it was wrong to say it.** BIAF ran from -11%
+($11.40) this morning to **+59% at its $20.3499 high** (~12:05pm). Because
+I had dropped it from the watchlist at the 6:35am build, I told the user
+"dropping BIAF this morning was a miss... I was wrong to remove it." **I
+said that BEFORE the catalyst check came back -- judging my own decision
+by the price outcome instead of by the facts.** That was the wrong order
+of operations, and the facts reversed it.
+
+**Verified facts (catalyst check):**
+- **NO new dated Sept 4 catalyst exists.** Most recent company release is
+  **2026-09-01** ("bioAffinity Advances CyPath Lung for Surveillance of
+  Lung Cancer Survivors," BusinessWire) -- the catalyst already known and
+  already traded. Stocklake 10-day window returns that single article. No
+  Sept 4 PR, 8-K, contract, FDA action, analyst note or index event. Last
+  8-Ks are Sept 3 and Sept 1. Today's only Benzinga item is the **8:05am
+  premarket LOSERS list** (-9.24%, $11.60).
+- **So the 6:35am drop reasoning -- "the 3-day catalyst run is rolling
+  over" -- was CORRECT and is now independently confirmed.** The news
+  cycle had in fact rolled over. What the drop missed was float/squeeze
+  MECHANICS, not fundamentals. Those are different errors and only the
+  second one occurred.
+
+**The bull thesis driving the squeeze is factually FALSE.** A poster
+claiming a Goldman M&A background circulated a **$38-51 "takeout" target**
+citing "effectiveness results announced this AM." **No such release
+exists.** He appears to have misread the **S-3 registration going
+EFFECTIVE** as clinical **EFFECTIVENESS**. Sentiment 91.7% bull, message
+volume EXTREMELY_HIGH (98/100). Traders themselves group it with
+GPRO/QCLS as a short-float squeeze.
+
+**Dilution risk: SEVERE -- the worst seen today, worse than WETO's $75M ATM.**
+- **1-for-15 reverse split effective 2026-08-24** (Nasdaq compliance).
+- Robinhood `financial_status_indicator` flags **"Noncompliant" (CC4)**.
+- **S-3 filed 08-27, S-3/A filed 09-03** (File 333-298597) registering
+  **1,692,408 shares for Armistice Capital = 282% of the 600,736 shares
+  outstanding**, against a 573K float.
+- 564,136 pre-funded warrants @ **$0.105**; 564,136 Series A + 564,136
+  Series B @ **$4.9757** -- ALL massively in-the-money at $17.85.
+
+Warrants struck at $4.98 with the stock at $17.85 and a shelf registering
+nearly 3x the shares outstanding is not a missed fundamental opportunity.
+It is a mechanically dangerous chase.
+
+**Price test also fails independently:** peaked $20.3499 (~12:05pm), now
+$17.85-17.96, **-12.3% off the high**, with strictly lower bar highs since
+(20.17 -> 19.29 -> 19.57 -> 19.55 -> 18.49 -> 18.33) and volume decaying
+739K -> 185K. High is an hour old and untested. Not an entry.
+
+**LESSON RECORDED (process, not markets): do not concede an error on the
+basis of price action before the facts are in.** Outcome != process. A
+correct decision can be followed by an adverse price move; that does not
+retroactively make it wrong. I published self-criticism one turn too
+early and had to retract it in the next breath. Check first, assess second.
+
+**REAL SCANNER DEFECT FOUND -- both saved scans have a $20 price ceiling.**
+"Early Momentum Ignition" filters Last BETWEEN **$2-20**; "Warrior Trading
+Style" filters Last BETWEEN **$1-20**. BIAF was trading **$20.0433** when
+the 12:10pm cycle ran -- ABOVE both ceilings -- so it appeared in NEITHER
+scan and **went invisible at exactly its session peak**, reappearing only
+after fading back under $20. Any name that runs THROUGH $20 drops off the
+momentum board precisely when it is most extended. Surfaced to the user
+with a proposed fix (raise the ceiling to ~$50); NOT changed unilaterally,
+since these are the user's own Legend-built scans and altering a filter
+mid-session silently changes alert behavior.

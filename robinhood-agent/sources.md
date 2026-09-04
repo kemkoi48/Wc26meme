@@ -4126,3 +4126,34 @@ before sizing. Price action is a low-float bounce off lows on thin volume
 FIVE had live dilution mechanics.** The only name today with a genuine
 verified dated catalyst was AOUT (9/3-pm earnings beat) -- the one that is
 also still holding its gains ($14.31, +43%, near its $14.45 high).
+
+## 2026-09-04 ~3:09pm ET -- Momentum cycle: quiet, no new names. Follow-through on the day's board.
+
+Warrior scan returned 7 items, ALL previously checked and logged today.
+No new name surfaced. Nothing clears step 2/3 -- no alert warranted.
+
+Real quotes at 19:09 UTC, follow-through on names actively discussed:
+
+| sym  | now      | vs close | note |
+|------|----------|----------|------|
+| IMRN | $1.7201  | +54.5%   | firm; vol now 114.4M (~22x its 5.14M float) |
+| CDTG | $1.315   | +46.2%   | off its $1.395 intraday push |
+| AOUT | $14.16   | +41.5%   | **holding**; alerted 12:10pm @ $14.12, still above entry |
+| BIAF | $17.65   | +38.1%   | stable, still ~13% under its $20.35 high |
+| GRI  | $2.8696  | +25.3%   | **STALLED** -- off the $2.98 high flagged at 2:15pm |
+
+**GRI follow-through matters.** At 2:15pm it was the only name still
+igniting (session high on the day's largest volume bar). One hour later
+it has failed to extend and is back to $2.87. The catalyst finding
+explains why the chart alone was not enough: the Phase 2a IPF data does
+not print until **Sunday 09-06**, so there is no news to sustain an
+intraday breakout -- only positioning ahead of a weekend binary, against
+a live $250M shelf being actively drawn (ATM supplement no. 7). Chart said
+go; structure said no; structure has been right so far.
+
+**AOUT remains the day's only verified-catalyst name and the only one
+still holding gains.** Alerted 12:10pm at $14.12 on a real 09-03-pm
+earnings beat (est -$0.25 vs actual +$0.03); now $14.16, having spent
+three hours between roughly $13.9 and $14.45 without breaking down. Every
+no-catalyst name checked today either round-tripped (AKAN), collapsed
+(WETO -21.7%), or stalled well off its high (BIAF, CDTG, GRI).

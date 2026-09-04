@@ -4055,3 +4055,74 @@ momentum board precisely when it is most extended. Surfaced to the user
 with a proposed fix (raise the ceiling to ~$50); NOT changed unilaterally,
 since these are the user's own Legend-built scans and altering a filter
 mid-session silently changes alert behavior.
+
+## 2026-09-04 ~2:15pm ET -- GRI: strongest price action of the day, WORST risk profile of the day
+
+**Price action (verified, real 10-min regular-session bars) was genuinely
+the best of any name today** -- and this is why it needed checking, not
+buying. GRI stair-stepped UP for four straight hours from a $2.34 open,
+and the 18:00 UTC (2:00pm ET) bar printed the **session high $2.98 on
+84,091 shares -- the largest volume bar of the day**. Volume EXPANDED into
+new highs (2-12K/bar this morning -> 45K -> 71K -> 84K). Every other name
+today peaked and faded; GRI was the only one still igniting at 2pm.
+
+**CATALYST CHECK: the Phase 2a IPF data has NOT been released.** The
+2026-08-24 GlobeNewswire release names the exact slot: ERS Congress,
+Barcelona, **Sept 5-9, 2026**; the late-breaking oral (OA2380, abstract
+63931, Session 12.04 Rare ILD/DPLD, presenter Helen Parfrey) is
+**Sunday 2026-09-06, 3:45-5:00 PM CEST** -- two days out. No 8-K, 6-K or
+PR dated 09-03 or 09-04; Stocklake returned zero articles in 14 days.
+Stocktwits' top-dated post today is a trader restating the Sept 5-9 window
+as "what I'm watching."
+
+**So today's +29% is pre-catalyst FRONT-RUNNING into a binary that prints
+over a WEEKEND.** That is a materially worse structure than any of the
+no-catalyst squeezes checked earlier today, because the position cannot be
+managed across the gap -- two days of no trading between entry and event.
+
+**Additional framing caveat that cuts the upside:** the 08-24 headline
+ALREADY reads "Highlighting Lung Function, Anti-Fibrotic Biomarkers and
+Favorable Tolerability," and GRI already released positive Phase 2a
+topline (2025) and gene-expression data (2026-01-28). ERS late-breaker
+rules require novel data, but with topline already public this may be a
+detail-add rather than a fresh readout -- i.e. the good news is largely
+pre-announced, so the "buy the rumor" payoff is capped while the
+disappointment risk is not.
+
+**DILUTION: severe, and the float is manufactured.**
+- **1-for-28 reverse split effective 2026-01-26** (15,960,229 -> 570,002
+  shares). This is GRI's **SECOND** reverse split (prior 1-for-7). The
+  2.19M float is an artifact of splits, not a natural scarcity.
+- **Active S-3 shelf effective 2026-01-29 for $250,000,000**, with a
+  424B5 ATM supplement up to $60M (H.C. Wainwright). The filing is
+  literally **"ATM prospectus supplement no. 7"** -- it is being ACTIVELY
+  DRAWN, not sitting dormant. **$6.8M already raised via ATM in Q1 2026.**
+- Dec 2025 offering left **8,063,336 pre-funded + 10,666,667 Series F
+  warrants** outstanding -- **18.7M warrants against a 2.19M float**.
+- Nov 2025 Nasdaq stockholders'-equity deficiency, cured only by that
+  offering.
+A pop into a conference is precisely when this ATM gets tapped.
+
+**Verdict delivered to user: strongest chart, worst structure.** Not
+alerted as a setup. A $5M-cap with a live $250M shelf being actively drawn,
+two reverse splits, 18.7M warrants, running two days BEFORE a binary that
+resolves over a weekend, with the positive framing already pre-announced.
+
+**BYRN -- no catalyst, but materially cleaner.** No PR/8-K/contract/analyst
+action dated 09-04; zero Stocklake articles in 10 days; Stocktwits is one
+"nice move" post, volume NORMAL, sentiment **100% BEAR**. Last real news is
+Q2 FY26 earnings **08-25**: revenue **-42% YoY**, **$10.1M net loss**;
+B. Riley cut PT $21 -> $12 (kept Buy). Dilution is materially cleaner --
+no reverse split, no S-3/ATM located, no warrant overhang, Nasdaq
+compliant. Real risk is cash burn ($9.6M cash at 2/28/26, down from
+$15.5M; $9.3M net loss for six months ended 5/31/26) with a $5M revolver
+and $15M delayed-draw term loan undrawn. Caveat carried honestly: absence
+of an S-3 in search is not proof of absence -- verify EDGAR CIK 0001354866
+before sizing. Price action is a low-float bounce off lows on thin volume
+(3,466 shares in the current bar). Not a setup either.
+
+**Day's scoreboard on catalyst verification: 6 low-float movers checked
+(AKAN, WETO, CDTG, BIAF, GRI, BYRN). ZERO had a real same-day catalyst.
+FIVE had live dilution mechanics.** The only name today with a genuine
+verified dated catalyst was AOUT (9/3-pm earnings beat) -- the one that is
+also still holding its gains ($14.31, +43%, near its $14.45 high).

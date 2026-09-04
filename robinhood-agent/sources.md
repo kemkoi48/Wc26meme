@@ -3474,3 +3474,100 @@ power committed (95%), consistent with prior deployment sizing
 follow-up (trig_012Hzf3jTtQSJ2RMuzbWhesV, fires ~9:34am ET 09-04) to
 verify the real fill and place the GTC stop_market at 18% below entry
 within the same discipline as every other growth-sleeve trade.
+
+## 2026-09-04 ~1:50am ET -- Robinhood's scanner exposes IV *and* HV as screenable fields (S7 candidate-starvation fix)
+
+User asked directly: "is there any website api for you to access or would
+signal you if any contract is really undervalued?" Answer, found by
+actually checking rather than assuming: **yes, and it was already in this
+account.**
+
+**The real finding.** `get_scanner_filter_specs` lists an OPTION filter
+group containing `FILTER_TYPE_IMPLIED_VOLATILITY` and
+`FILTER_TYPE_HISTORICAL_VOLATILITY` as first-class screenable fields,
+plus `FILTER_TYPE_AVERAGE_OPTIONS_VOLUME`, `FILTER_TYPE_TOTAL_OPEN_INTEREST`,
+`FILTER_TYPE_RELATIVE_OPTIONS_VOLUME`. The account's pre-existing "High
+options volume and IV" scan (ce0cc952-47c4-441d-ac50-029a5d37e335) already
+had `atmIv30Day` as a column -- the capability has been sitting unused
+since before this agent started. NOTE: no IV-RANK/IV-PERCENTILE filter
+exists in the spec list (the tool's prose guide mentions "IV rank" in
+passing among PERCENTAGE-unit filters, but it is NOT in the actual
+filter_specs array -- do not assume it is available).
+
+**Why this matters -- the real S7 diagnosis.** S7 has run 13 real live
+checks and produced 13 rejections and ZERO trades since going live
+2026-08-19. The standing explanation was the premium-cap/delta wall. That
+was real but incomplete. The bigger cause was **candidate starvation**:
+the screen was fed 1-2 hand-picked names per day off the earnings
+calendar. A screen with a genuine hit rate of even 1-in-30 will show 13
+straight rejections and look broken when it is merely underfed.
+
+**Built: scan "Cheap IV vs HV - S7 option candidates"**, scan_id
+`47f4f938-a4d9-413e-a1c7-e01855c09e45`. Filters (structural/liquidity
+only -- deliberately NO absolute IV threshold, since any absolute IV cut
+would be an invented number):
+  - Asset type = STOCK
+  - Last BETWEEN $5-$60 -- derived, not arbitrary: this account's own 13
+    rejections established a $150/contract cap cannot reach a 0.30-delta
+    strike much above ~$50-60/share (BMNR/AAOI/BABA/OXY pattern).
+  - Average options volume (1d, 30) > 2000 and Open interest > 5000 --
+    practical tradability floors (a real two-sided market to exit into),
+    explicitly NOT predictive thresholds.
+Columns: Implied volatility (`atmIv30Day`), Historical volatility,
+Market cap -- so ONE run_scan returns both vols per row.
+
+**First real run (2026-09-04, values are 09-03 CLOSE -- market shut, IV
+does not update until the 9:30am open per the documented 2026-08-20
+finding):** 396 total matches, 200 returned, **200/200 rows carried both
+a usable IV and HV** (zero missing-data rows). Applying this account's
+already-derived thresholds: **62 of 200 cleared iv_hv_ratio < 0.90**
+(S7's existing "cheap" cap), **38 cleared < 0.80** (McMillan Method-2
+threshold). Ten cheapest by IV/HV: EIX 0.357, PYPL 0.478, CELH 0.498,
+BROS 0.507, APTV 0.552, SEDG 0.558, FOUR 0.577, MDLN 0.621, TDS 0.625,
+LASR 0.640.
+
+**Caveats recorded, not buried:**
+  - Robinhood's HV column is a SINGLE window of undocumented length, so
+    this maps to `option_math.iv_hv_ratio()` (single-window), NOT the
+    stricter multi-window `iv_cheap_vs_multi_window_hv()` (McMillan
+    Method 2). Method 2 was NOT run here and must not be claimed.
+  - A very low ratio (under ~0.45, e.g. EIX at 0.357) is MORE OFTEN one
+    outsized historical gap inflating HV than genuinely cheap options.
+    Every top-ranked name needs a real-daily-bar outlier check before it
+    is trusted -- same class as RULE ZERO's concentration check.
+  - Cheap IV is NECESSARY, not SUFFICIENT, and says nothing about
+    DIRECTION. Survivors still face the unchanged gates: real catalyst,
+    >=0.30 delta, <=$150 premium, real contract-level spread/liquidity.
+
+**Wired in, not just noted:** the S7 trigger
+(trig_01QfmBuxGvdEQ1ybadA2Ci1R) now runs this sweep as TRACK 1, ahead of
+the dated-catalyst and soft-catalyst tracks, with the outlier check and
+all three caveats written into its standing instructions. It also now
+requires naming WHICH gate killed each top candidate on a zero-pass run,
+so the rejection pattern stays diagnosable rather than just accumulating.
+
+**Third-party alternatives checked (WebSearch), for the record:** paid or
+freemium IV-rank sources exist -- Barchart, FlashAlpha, Market Chameleon,
+Unusual Whales, ApexVol (free on ~13 tickers only), Option Strategist
+(free WEEKLY vol data). None was adopted: all are third-party feeds that
+can go stale (the 2026-08-17 Stocklake byte-identical-movers incident is
+the precedent), most paywall the useful breadth, and the broker's own
+scanner is the same feed our orders actually execute against. Revisit
+only if a real IV-PERCENTILE history (McMillan's preferred Method 1,
+~600-day IV series per symbol) is needed -- that is the one thing the
+Robinhood scanner genuinely cannot supply, and it is why
+`iv_cheap_vs_multi_window_hv`'s docstring calls itself a stand-in.
+
+## 2026-09-04 ~1:55am ET -- Growth-sleeve trigger: idle-capital redeployment made a standing step
+
+Follow-through on the same session's user pushback about capital sitting
+idle. The growth-sleeve trigger (trig_01P3etqQpqYJc9J1w9jPqbzD) now has a
+step 8 requiring a buying-power check EVERY run (not only after a close),
+with a same-cycle rescreen-and-redeploy if settled cash supports a
+whole-share position, explicit handling of the cash-account T+1
+unsettled-proceeds trap, the after-close queued-limit-order path so a
+4:05pm fire can still act, and a requirement to state the reason in one
+line whenever it deliberately does NOT redeploy. Step 3 was also
+sharpened to say plainly that the user's 2026-09-01 standing
+authorization means a real technical signal gets ACTED on, not surfaced
+and left waiting for permission.

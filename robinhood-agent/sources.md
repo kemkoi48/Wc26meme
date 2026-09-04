@@ -3664,3 +3664,57 @@ Nothing cleared step 2/3. Quiet cycle, no user alert. Reusable lesson
 recorded: on premarket fires, the scan's `dayVolume` can still be
 yesterday's total, and a row can show a large % change off purely
 interpolated bars -- the extended-hours bar check is not optional.
+
+## 2026-09-04 ~8:15am ET -- ALERTED: AKAN real premarket ignition (no catalyst, squeeze mechanics)
+
+First genuine alert-worthy name in several cycles. AKAN (Akanda Corp)
+went from +14.2% at the 7:12am cycle (where it was correctly rejected as
+faded -- peaked $4.80 at 5:30am ET, drifting at $4.16) to **+47.1% at
+$5.40** by 8:11am. Materially changed, so re-checked per the trigger's
+own rule rather than skipped as already-seen.
+
+**Volume test -- passed decisively, self-computed from real extended-hours
+10-min bars (NOT the broken premarket RVOL field, which read "1" on every
+row this cycle):**
+
+| bar (UTC) | open -> close | high | volume |
+|-----------|---------------|------|--------|
+| 11:50 | 4.299 -> 4.3197 | 4.32 | 19,384 |
+| **12:00** | **4.31 -> 5.3399** | **6.09** | **1,757,545** |
+
+That single 10-minute bar traded **3.27x the entire 537,665-share float**.
+The whole prior premarket session (08:00-11:59 UTC, ~4 hours) totalled
+only ~470,000 shares. ~50x volume expansion in one bar. High ($6.09) was
+made within ~10-15 min of the check -- the trigger's "igniting, not
+already printed" case, not the stale-high case.
+
+**Catalyst -- NONE. Verified, not assumed.** Stocklake: zero articles in
+14 days; widening to 30 days gives one stale item (2026-08-13 fiber-network
+PR). Stocktwits: ~70 messages read back to 04:33 ET, not one links a
+release or filing dated 09-03 or 09-04; most recent linked filing is
+**Aug 18** (6-K, Nasdaq equity-shortfall extension). Traders themselves
+confirm the vacuum -- "any news or why?", "strange movement", and one
+detailed post: "if there was any catalyst this would double within 3-5
+mins." Message volume only NORMAL (score 52) despite 94% bull sentiment
+-- retail-mechanical, not a news shock.
+
+**What is actually driving it (real, numbers cited overnight):**
+~264k shares short vs ~540k float = **~49% short float**, borrow fee
+**~202% annualized** as of 09-03, only ~90k shares available to borrow.
+Plus April-run nostalgia ($3.25 -> $57 in April 2026).
+
+**Dilution risk -- ELEVATED and specific, flagged in the alert:** no
+offering/ATM filing has appeared yet, but cash ~$0.5M vs ~$14.2M debt,
+and a **Dec 13 2026 Nasdaq equity-compliance deadline** requires $2.5M
+stockholders' equity. That is a direct structural incentive to issue
+equity into exactly this kind of squeeze. A trader flagged the pattern
+this morning: "run up stock with PR... once stock gets momentum they dump
+an offering mid day."
+
+Alerted to user with the no-catalyst status stated plainly, the dilution
+risk named, and the standing n=108 hold-time reminder. Explicitly NOT
+presented as a clean setup.
+
+Also this cycle: MODD (+8.5%) rejected again -- still mostly interpolated
+bars, best real bar only 25,477 sh. WETO (+19.6%, $3.86, real volume)
+not re-alerted -- already added to today's watchlist at the 6:35am build.

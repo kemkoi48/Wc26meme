@@ -3571,3 +3571,54 @@ line whenever it deliberately does NOT redeploy. Step 3 was also
 sharpened to say plainly that the user's 2026-09-01 standing
 authorization means a real technical signal gets ACTED on, not surfaced
 and left waiting for permission.
+
+## 2026-09-04 ~6:35am ET -- Premarket watchlist rebuild ("September 3" -> "September 4")
+
+Heavy 2026-09-03 post-close earnings night. Confirmed via
+`get_earnings_calendar` (days=-2, real verified est-vs-actual EPS) and
+cross-checked against real premarket quotes.
+
+**The real pattern this morning, worth naming:** every one of the eight
+reporters checked BEAT its EPS estimate, and five of the eight are DOWN
+premarket -- three of them sharply. This is a guidance-driven tape where
+an EPS beat is not enough:
+
+| sym  | 9/3 close | premkt   | %      | EPS est -> actual |
+|------|-----------|----------|--------|-------------------|
+| LULU | 121.77    | 98.37    | -19.2% | 2.51 -> 2.92 BEAT |
+| GWRE | 202.86    | 171.00   | -15.7% | 0.85 -> 0.99 BEAT |
+| ASAN | 10.09     | 8.92     | -11.6% | 0.05 -> 0.10 BEAT |
+| PATH | 18.22     | 16.77    | -8.0%  | 0.13 -> 0.15 BEAT |
+| ZS   | 177.80    | 172.80   | -2.8%  | 0.88 -> 1.19 BEAT |
+| AMBA | 63.38     | 65.01    | +2.6%  | 0.08 -> 0.18 BEAT |
+| PL   | 18.35     | 20.34    | +10.8% | -0.05 -> -0.03 BEAT |
+| IOT  | 38.75     | 44.02    | +13.6% | 0.13 -> 0.20 BEAT |
+
+**ADDED (6)** -- all real, dated 9/3-pm earnings catalysts with real
+premarket gaps: LULU, GWRE, ASAN (big gap-downs on beats), IOT, PL
+(clean gap-ups), PATH (gap-down, and cheap enough to size). GWRE noted
+with a caveat: $171/share and a wide premarket spread (164.53/174.49),
+so it is expensive to size and the quote is thin right now.
+
+**KEPT (7):** WETO -- real +15.9% premarket bounce ($3.7305 vs $3.22)
+after yesterday's -16.8%, genuinely still live. LEU (+0.7%), SMR (+1.8%),
+OKLO (+2.0%), UUUU (+2.3%), CCJ (+0.9%) -- the nuclear/uranium core, all
+modestly green, theme intact (SMR is also a held S9 position). RARE
+(+1.5%) -- still worth watching for post-crash volatility after the
+-44% Phase 3 miss two sessions ago.
+
+**DROPPED (5):** SSM (yesterday's -27% crash fully played out, now flat
+at $3.5422/+1.2%), ACAD (flat, quiet, no catalyst), ET (+0.8% but a
+21.20/23.60 premarket spread -- thin and unreliable), RRC (-0.9% with a
+36.95/47.62 spread, quote not trustworthy premarket), BIAF (**-7.0%**
+at $11.8857 vs $12.78 -- the 3-day catalyst run is rolling over; this is
+the curate-don't-accumulate case, dropped on the move ending rather than
+on absence of a fresh headline).
+
+Final "September 4" list (13): WETO, LEU, SMR, OKLO, UUUU, CCJ, RARE,
+LULU, GWRE, IOT, PL, PATH, ASAN. All three calls (`update_watchlist`,
+`remove_from_watchlist`, `add_to_watchlist`) confirmed `status: ok`.
+
+Note: only one high-market-cap name reports in the next 3 days (IRS,
+2026-09-04, unverified timing) -- the earnings wave largely emptied out
+last night, so today is about trading the gaps, not anticipating new ones.

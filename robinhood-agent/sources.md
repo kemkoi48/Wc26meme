@@ -3718,3 +3718,51 @@ presented as a clean setup.
 Also this cycle: MODD (+8.5%) rejected again -- still mostly interpolated
 bars, best real bar only 25,477 sh. WETO (+19.6%, $3.86, real volume)
 not re-alerted -- already added to today's watchlist at the 6:35am build.
+
+## 2026-09-04 ~9:15am ET -- WETO: live $75M ATM found. Corrects this morning's watchlist reasoning.
+
+WETO ran to **+28.9% ($4.15)**, making new highs over its $4.11 premarket
+high, on a 914,805-share float with genuinely real volume (verified in
+real extended-hours bars: 303K/180K/127K/370K/164K across 10-min bars --
+not interpolated). Cleared step 2 decisively, so a full catalyst check
+was run. It found something that changes the picture materially.
+
+**Catalyst: NONE.** Stocklake news `status: empty` (zero articles, 30
+days). SEC filing index since 2026-06-01: most recent filing is
+**2026-08-26** -- nothing on Sept 2, 3 or 4. Last company item was an
+Aug 31/Sept 1 sEMG-Vision demo blurb, 4 days stale. On Stocktwits a
+widely-followed trader tagged it at 9:00am, verbatim: **"surging atm, no
+news."** Nobody links a 09-03 or 09-04 release.
+
+**Dilution risk: SEVERE, ACTIVE, and confirmed in a real filing --**
+- **424B5 filed 2026-08-26**: prospectus supplement for **up to
+  $75,000,000 of ordinary shares** via a sales agreement with **Rodman &
+  Renshaw dated Aug 26, 2026**. That is a LIVE at-the-market offering.
+- $75M against a 914,805-share float at ~$4 is an overhang worth roughly
+  **20x the entire float**.
+- A second 424B5 sits at Aug 24. Context: 100:1 reverse split in late
+  July, Aug 24 EGM, then the new ATM.
+- The prior ATM was terminated Aug 19 mid-run and **replaced Aug 26 at a
+  much higher print** -- a textbook sell-into-strength setup.
+- A trader this morning: "Turn the ATM off please."
+
+**CORRECTION TO THIS MORNING'S 6:35am WATCHLIST BUILD.** WETO was KEPT on
+the "September 4" list with the stated reason "real +15.9% premarket
+bounce ... genuinely still live." That justification was price-action
+only -- no catalyst check and no filing check was run on it at build
+time. Had the filing index been pulled then, the live $75M ATM would have
+been visible (it has been on file since 08-26). The name is not
+disqualified from a WATCHlist -- but it should have been carried with the
+ATM flagged, not as an unqualified bounce. Standing lesson: for a
+sub-$5 microcap with a sub-1M float, run get_sec_filing_index at build
+time, not only when the name later spikes.
+
+Alerted the user with the no-catalyst status stated plainly, the $75M ATM
+named with its filing date, and the correction to this morning's reasoning.
+
+**AKAN follow-through (alerted 8:15am at $5.40, spike high $6.09):**
+round-tripped to **$4.39** by 9:13am -- **-28% off the spike high in
+under an hour**, still +19.6% on the day. No offering filed that would
+explain it; reads as the squeeze simply exhausting. The alert's explicit
+"decide the exit before entering" caveat was the operative one. Recorded
+as a real outcome of a real alert, not quietly dropped.

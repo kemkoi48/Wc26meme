@@ -4157,3 +4157,86 @@ earnings beat (est -$0.25 vs actual +$0.03); now $14.16, having spent
 three hours between roughly $13.9 and $14.45 without breaking down. Every
 no-catalyst name checked today either round-tripped (AKAN), collapsed
 (WETO -21.7%), or stalled well off its high (BIAF, CDTG, GRI).
+
+## 2026-09-04 ~4:05pm ET -- Growth sleeve daily check: HL stop ratcheted on day one
+
+Three positions, all quantity-verified against real resting stops (no
+manual-buy gap this cycle):
+
+| sym  | qty | avg cost | resting stop | qty match |
+|------|-----|----------|--------------|-----------|
+| LYFT | 4   | $17.58   | $14.74       | yes (4)   |
+| SMR  | 1   | $10.00   | $8.41        | yes (1)   |
+| HL   | 20  | $20.62   | $16.91 -> **$17.17** | yes (20) |
+
+**HL -- RATCHETED on its first day.** Real peak since this morning's
+09:30:01 entry is **$20.94** (15:00 UTC hourly bar high). Today's high
+across all bars: 20.675 / **20.940** / 20.910 / 20.860 / 20.7498 / 20.810.
+`growth_signal.trailing_stop_price(20.94)` = 17.1708 -> **$17.17**, above
+the resting $16.91, so `decide_stop_update` said ratchet. Cancelled the
+old stop (verified **`state: cancelled`**, cumulative_quantity 0), placed
+the new one, verified **`state: queued`** (placed 20:04 UTC, four minutes
+after the 4pm close -- next-open queuing, not a rejection, same as every
+prior post-close ratchet in this sleeve). HL closed $20.675, still above
+the $20.62 entry.
+
+Data-quality note recorded, not hidden: the 15:00 UTC bar that set the
+$20.94 high is oddly shaped -- a 2.5-cent range (20.915-20.940) on only
+50,743 shares, sitting between bars of 213K and 2.66M volume, with its LOW
+above the adjacent bars' highs. It is NOT flagged interpolated, so it is
+treated as real. Using the next-highest bar instead ($20.910) would give
+$17.15 rather than $17.17 -- a 2-cent difference that does not change the
+decision to ratchet either way.
+
+**LYFT -- real edge case: `decide_stop_update` said UPDATE, but the update
+is SUB-PENNY and correctly was NOT executed.** Peak since entry did
+advance, $17.97 (08-25) -> **$17.98** (09-03 high). But
+trailing_stop_price(17.98) = **14.7436**, which rounds to **$14.74** --
+exactly the resting stop. Robinhood rejects subpenny increments above $1
+(documented in CLAUDE.md), so a cancel/replace would have produced an
+identical order while leaving the position briefly unprotected for zero
+benefit. **Correct action: no change.** Worth remembering: a True from
+decide_stop_update is not automatically an order -- check that the new
+stop actually differs at the penny tick before touching a working stop.
+
+**SMR -- no change.** Peak since entry still $10.255 (08-26); today's high
+only $9.72. `decide_stop_update` -> should_update=False. Stop stays $8.41.
+
+**TECHNICAL SIGNAL CHECK (standing requirement, logged regardless of
+outcome). All readings as of the 09-03 finalized daily bar:**
+
+| sym  | RSI(14) | ADX(10) | MACD histogram (last 3) | real signal? |
+|------|---------|---------|--------------------------|--------------|
+| HL   | 63.46   | **36.06** | -0.066 -> -0.053 -> **-0.026** | **NO** |
+| LYFT | 54.98   | 21.24   | -0.125 -> -0.111 -> -0.106 | **NO** |
+| SMR  | 54.72   | 20.37   | -0.001 -> +0.012 -> **+0.031** | **NO** |
+
+Honest reads, no manufactured signals:
+- **HL** is the only position with a confirmed trend (**ADX 36.06**, well
+  above 25). Its MACD histogram is negative but **recovering three
+  sessions running** (-0.066 -> -0.053 -> -0.026), i.e. turning back IN
+  FAVOR of the long, not against it. RSI 63.5 is strong without being
+  overbought. This is constructive, not a warning. No action.
+- **LYFT**: ADX 21.24 is **below 25**, so by this account's own convention
+  there is no real trend, and the negative-but-shrinking MACD histogram
+  does not constitute a signal on its own. Mixed/neutral -- stated plainly
+  rather than dressed up. Note LYFT closed **$16.695, -3.4% on the day**
+  and is **-5.0% below its $17.58 entry**; the 18% trail at $14.74 is
+  nowhere near threatened.
+- **SMR**: ADX 20.37, no confirmed trend, but the MACD histogram has gone
+  positive and is **expanding** (+0.012 -> +0.031) -- mildly supportive of
+  the long. Closed $9.695, -3.1% below its $10.00 entry.
+
+Standing disclosure repeated: this account's own S11 backtest (44 real
+trading days, SPY/QQQ 5-min bars) found no exploitable edge in
+short-horizon technical-crossover signals. These are honest current
+momentum reads, not proven predictors.
+
+**REDEPLOY CHECK (step 8) -- no idle capital, and the reason is clean.**
+Real buying_power **$49.06**. That is not idle cash sitting unused: it is
+the residual after this morning's HL purchase consumed **$412.40** of the
+$461.46 that had been sitting since the SMCI close. The gap the user
+called out on 09-04 is now closed -- capital is deployed across three
+positions ($491.27 equity value vs $540.33 total account value). Nothing
+whole-share affordable at $49.06 among growth-scan candidates, so no
+redeployment this cycle, by arithmetic rather than by omission.

@@ -3766,3 +3766,33 @@ under an hour**, still +19.6% on the day. No offering filed that would
 explain it; reads as the squeeze simply exhausting. The alert's explicit
 "decide the exit before entering" caveat was the operative one. Recorded
 as a real outcome of a real alert, not quietly dropped.
+
+## 2026-09-04 ~9:35am ET -- HL filled, stop verified resting
+
+The overnight redeployment worked. Order 6a9a5620 (20 sh HL, GFD limit
+$22.00, placed ~1:24am while the market was closed, verified `queued`)
+**FILLED at the open: 09:30:01 ET, 20 shares @ $20.62**, single execution,
+zero fees. That is $1.38 under the $22.00 ceiling and under the prior
+session's $21.21 close -- a third real confirmation that a limit ceiling
+is a maximum, not an expected fill price (same as SMCI 08-26, filled
+$38.00 against a $39.50 ceiling). Cost $412.40 of the $461.46 that had
+been sitting idle.
+
+GTC stop_market placed at **$16.91** = `growth_signal.trailing_stop_price`
+on the real $20.62 fill (20.62 x 0.82 = 16.9084, rounded to the penny
+tick). First response came back **`state: unconfirmed`** -- per the
+standing post-IPST rule ("a stop that isn't verified resting is not a
+stop; it's a belief") the order state was re-checked in the same turn:
+**`state: confirmed`**, genuinely resting, covering all 20 shares.
+
+**Real process defect found, worth fixing:** stop latency was **318
+seconds**. The fill happened 09:30:01 but the fill-verification check had
+been scheduled for 09:34, so the position sat unprotected ~5 minutes.
+Nothing went wrong this time, but the exposure was real and avoidable.
+**Rule: when a limit order is queued overnight for the open, book the
+verification check at ~09:31, not 09:34.** Applied to any future
+overnight-queued entry.
+
+Growth sleeve now holds three positions: LYFT (4sh, stop $14.74), SMR
+(1sh, stop $8.41), HL (20sh, stop $16.91). Logged to trades.csv row 17
+and CLAUDE.md's S9 row (status updated to n=7, 3 open).

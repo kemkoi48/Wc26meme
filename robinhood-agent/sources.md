@@ -3868,3 +3868,72 @@ structural wall. This one died on a missing catalyst, with the wall
 reduced to 0.0095 of delta. That is a materially different failure, and it
 says the next real dated catalyst on a $5-60 underlying has a genuine
 chance of clearing every gate at once.
+
+## 2026-09-04 ~10:15am ET -- Momentum cycle: WETO's ATM warning validated; IMRN is the day's first REAL catalyst
+
+**WETO -- the 9:15am ATM warning played out within the hour.** Real
+regular-session 10-min bars from the open:
+
+| bar (UTC) | open -> close | high | low | volume |
+|-----------|---------------|------|-----|--------|
+| 13:30 | 4.12 -> 3.24 | 4.15 | 3.24 | 655,393 |
+| 13:40 | 3.24 -> 2.49 | 3.28 | **2.49** | 1,610,478 |
+| 13:50 | 2.70 -> 2.61 | 2.83 | 2.4301 | 1,082,356 |
+| 14:00 | 2.6101 -> 2.59 | 2.66 | 2.49 | 477,118 |
+
+**-41% from the $4.15 open high to the $2.4301 low in ~30 minutes**, now
+~$2.59 and **-20% vs yesterday's $3.22 close**. Anyone who chased the
+premarket strength above $4 is down ~37%. The live $75M ATM (424B5 filed
+2026-08-26, Rodman & Renshaw) was found by pulling the SEC filing index --
+NOT visible in price action, which looked like a clean bounce. The
+correction made at 9:15am ("run get_sec_filing_index at build time for
+sub-$5 microcaps with sub-1M floats") earned its keep inside one hour.
+
+**IMRN (Immuron) -- REAL, DATED, SAME-DAY CATALYST. First one today.**
+2026-09-04 press release: "Immuron to launch PROIBS(R) in the United
+States" -- exclusive U.S. distribution agreement with Calmino group AB.
+GlobeNewswire, filed as **Form 6-K (CIK 1660046, ex99-1)**, verified by
+reading the filing itself, not just the headline.
+
+Real volume, verified in regular-session bars: **~19.2M shares in the
+first 40 minutes** (8,376,681 / 5,995,665 / 2,936,077 / 1,933,937) against
+a **5,135,937-share float** -- plus premarket, ~87.5M on the day, roughly
+17x the float.
+
+**But three real qualifiers, none of them minor:**
+1. The release does **NOT** claim FDA approval or clearance. PROIBS is a
+   *European* CE-certified medical device; **no U.S. regulatory status is
+   disclosed**. A distribution agreement is not an approval, and that is a
+   thin basis for +62%.
+2. Short-seller Adam Gefvert (CFA) is **publicly attacking on exactly that
+   gap**, and the post is circulating in the Stocktwits stream.
+3. **Live ATM**: Form F-3 shelf 333-280667, ATM agreement with H.C.
+   Wainwright (July 2, 2024), 424B5 of Oct 3, 2025 raising capacity to
+   ~$2.85M. Baby-shelf limited (float <$75M) so far smaller than WETO's
+   $75M -- but they can absolutely print into this spike.
+
+**Price test FAILED anyway:** peaked **$1.99** in the 13:40 bar (~35 min
+before this check), now $1.82 (-8.5% off the high), with volume decaying
+**77%** across four bars (8.4M -> 1.9M). The ignition is spent, not
+building. Reported to the user as a real-catalyst name that is already
+past its impulse, explicitly NOT as an entry.
+
+**CDTG -- NO catalyst, and the WORST dilution profile seen today.**
+No news dated 09-03 or 09-04. Only 30-day items are an Aug 25 Jane Street
+13G (5.10%) and an Aug 25 Pep'd peptide investment. Stocktwits already
+rolling over ("it pumped, and now its dumped"), sentiment NEUTRAL 45,
+delta -28. Dilution:
+- **1-for-25 reverse split effective 2026-06-01**, explicitly for Nasdaq
+  minimum-bid compliance (75.5M -> 3.02M shares).
+- **EGM 2026-07-28 raised authorized share capital from 4,000,000 to
+  500,000,000** -- a **125x** issuance runway.
+- F-1 filed 2026-03-04; 424B3 2026-04-17 (62M Class A at $0.105, pre-split).
+Real price action confirms the fade: ran $0.9139 -> **$1.4227** high, now
+$1.1459, **-19% off the high**, volume halving (7.76M -> 3.64M). Rejected.
+
+**Pattern of the day, worth carrying forward:** four low-float movers
+checked (AKAN, WETO, IMRN, CDTG). Three had NO catalyst. All four had a
+live dilution mechanism -- AKAN (Nasdaq equity deadline Dec 13 + $0.5M
+cash vs $14.2M debt), WETO ($75M ATM), IMRN (~$2.85M ATM), CDTG (125x
+authorized-share increase post-reverse-split). On this class of name the
+SEC filing index is not optional diligence; it is the primary read.

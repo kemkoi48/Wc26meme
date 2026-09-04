@@ -3622,3 +3622,45 @@ LULU, GWRE, IOT, PL, PATH, ASAN. All three calls (`update_watchlist`,
 Note: only one high-market-cap name reports in the next 3 days (IRS,
 2026-09-04, unverified timing) -- the earnings wave largely emptied out
 last night, so today is about trading the gaps, not anticipating new ones.
+
+## 2026-09-04 ~7:12am ET -- Momentum scanner cycle (premarket) -- scan fields contradicted by real bars
+
+Early Momentum Ignition (82 items) + Warrior Trading Style (4 items).
+Textbook case of why the premarket RVOL substitution rule exists. Every
+row's "Relative volume" read exactly 1 (the documented broken premarket
+placeholder) and "Relative volume (1, 1H)" returned absurd values
+(XHLD 16,272; ASTI 4,790; NMAD 2,970) -- neither field usable.
+
+Four names screened >5% positive. Cross-checked each against REAL
+extended-hours 30-min bars (get_equity_historicals, bounds=extended,
+08:00-11:00 UTC). Result: **three of the four were not backed by real
+premarket trading at all.**
+
+| sym  | scan said        | REAL premkt volume (6 bars) | verdict |
+|------|------------------|------------------------------|---------|
+| DAIC | +9.6%, vol 3.85M | **6,780 sh** total           | reject  |
+| MODD | +8.8%, vol 680K  | **2,970 sh** (2 bars interpolated) | reject |
+| NMAD | +6.4%, vol 327K  | **0 sh -- ALL SIX BARS interpolated=true** | reject |
+| AKAN | +14.2%           | 470,773 sh (genuinely real)  | reject, faded |
+
+- **DAIC**: the scan's "Volume 3,847,193" is NOT today's premarket volume
+  -- it is carrying yesterday's session total (yesterday's 4:09pm row
+  showed 3,664,616). Real premarket tape is 6,780 shares. Real bar prices
+  ($3.39-3.50) also disagree with the scan's "Last $3.66".
+- **NMAD**: every single premarket bar is `interpolated: true` with
+  volume 0 -- zero real trades. Its "+6.4% / Last $3.89" is fabricated
+  gap-fill, precisely what RULE ZERO says to discard before computing
+  anything. A name can appear on this scan at +6% having never traded.
+- **AKAN**: the one with genuinely real premarket volume (470,773 sh).
+  But real bars show it peaked at **$4.80** in the 5:30am ET bar and has
+  declined since ($4.32 -> $4.16 now) -- the high is 1.5+ hours old and
+  untested, the textbook "already printed" case. Also already checked
+  2026-09-03: no catalyst, traders themselves citing ATM/warrant dilution
+  as an overhang.
+- **WETO** (+13.7%) not re-checked here -- already added to today's
+  watchlist at the 6:35am build on its real +15.9% bounce.
+
+Nothing cleared step 2/3. Quiet cycle, no user alert. Reusable lesson
+recorded: on premarket fires, the scan's `dayVolume` can still be
+yesterday's total, and a row can show a large % change off purely
+interpolated bars -- the extended-hours bar check is not optional.

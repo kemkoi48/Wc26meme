@@ -3796,3 +3796,75 @@ overnight-queued entry.
 Growth sleeve now holds three positions: LYFT (4sh, stop $14.74), SMR
 (1sh, stop $8.41), HL (20sh, stop $16.91). Logged to trades.csv row 17
 and CLAUDE.md's S9 row (status updated to n=7, 3 open).
+
+## 2026-09-04 ~9:40am ET -- S7 cycle: Track 1's FIRST live run. No trade, but the wall finally narrowed.
+
+Flat (get_option_positions returned []), so the entry screen ran. Market
+open, so IV is live -- not the stale-close problem documented 2026-08-20.
+
+**PART A (pre-open watchlist rectify): overtaken by events.** This trigger
+fired 09:36am, six minutes AFTER the open, so a "pre-open" pass was moot.
+The rectify effectively happened live across this morning's cycles
+instead: WETO's $75M ATM found and flagged, AKAN's round-trip tracked.
+Both logged above. No further churn applied.
+
+**TRACK 1 -- systematic IV/HV sweep, first live run.** 396 matches, 200
+returned, **200/200 usable** (both vols present on every row). **63 cleared
+iv_hv_ratio < 0.90**, **36 cleared < 0.80** -- closely matching last
+night's 62/38, so the candidate pool is stable, not a fluke.
+
+**The artifact check earned its place on run one -- it killed the #1 name.**
+Computed real 66-day close-to-close realized vol from real daily bars for
+the three lowest ratios, then recomputed excluding the single largest move:
+
+| sym  | biggest 1-day move | its share of variance | HV all | HV ex-outlier | IV/HV all | **IV/HV ex-outlier** | verdict |
+|------|--------------------|----------------------|--------|---------------|-----------|----------------------|---------|
+| AMLX | **+49.4%** (08-18) | **70.1%**            | 113.0% | 61.1%         | 0.516     | **0.954**            | **ARTIFACT -- REJECT** |
+| AAP  | -28.2% (08-20)     | 54.2%                | 74.0%  | 50.0%         | 0.585     | 0.866                | survives, marginal |
+| PYPL | +15.9% (07-15)     | 36.2%                | 50.8%  | 40.7%         | 0.500     | **0.624**            | survives, robust |
+
+AMLX's "cheapness" was ONE biotech gap (Aug 18: $21.43 -> $35.11 on 23.98M
+shares vs ~1-3M normal) carrying 70% of the variance. Strip it and IV/HV
+goes to 0.954 -- **above** the 0.90 cap, i.e. not cheap at all. Exactly the
+failure mode the check was written for, caught on the first live run.
+
+Note: my computed HV differs from the scan's column (AMLX 113.0% mine vs
+173.6% scan; PYPL 50.8% vs 53.0%) because Robinhood's HV window length is
+undocumented. Use the scan's HV for RANKING, my own 66-day computation for
+the artifact check -- the latter is reproducible, the former is not.
+
+**STRUCTURAL FINDING -- the cap/delta wall narrowed from a chasm to a
+near-miss.** Real live quotes, PYPL @ $55.34, 2026-10-16 expiry (42 DTE):
+
+| contract | delta | premium | gate result |
+|----------|-------|---------|-------------|
+| $57.50 call | **0.4127** (clears) | **$193** | FAILS premium ($150 cap) |
+| $60.00 call | 0.2730 | **$102.50** (clears) | FAILS delta by 0.027 |
+| $52.50 put  | -0.2905 | **$117.50** (clears) | **FAILS delta by 0.0095** |
+
+Compare to the historical pattern: AAOI needed **4.4x the cap** to reach
+delta 0.246; OXY needed 2.4x the cap for delta 0.463. Today a strike misses
+the 0.30 floor by **under one hundredth of a delta** with premium
+comfortably inside the cap. The $5-60 price band did precisely what it was
+designed to do. The wall is no longer structural -- it is now marginal.
+
+**NO TRADE. The gate that killed it: NO DATED CATALYST.** Neither PYPL nor
+AAP has a near-term dated catalyst (get_earnings_calendar shows only IRS
+reporting in the next 3 days among high-cap names; PYPL's -12.7% Aug 28
+move is already priced). Cheap IV is NECESSARY, NOT SUFFICIENT, and it
+says nothing about direction -- a long single-leg option with no catalyst
+and no directional thesis is a theta bleed, not a setup. Rejecting here is
+the screen working, not failing.
+
+Also learned, worth recording: the 2026-10-02 expiry returned an EMPTY
+instrument list for both $57.50 and $52.50 -- weekly expiries carry coarser
+strike sets. A future run wanting a shorter-DTE variant to shave premium
+must ENUMERATE available strikes first, not assume the monthly ladder
+exists on a weekly.
+
+**Running total: 14 checks, 14 rejections, 0 trades -- but the first
+rejection that is fully diagnosable.** Prior 13 died on an unfixable
+structural wall. This one died on a missing catalyst, with the wall
+reduced to 0.0095 of delta. That is a materially different failure, and it
+says the next real dated catalyst on a $5-60 underlying has a genuine
+chance of clearing every gate at once.

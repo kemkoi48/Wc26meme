@@ -1472,7 +1472,12 @@ is the correct output most hours and that false alerts are worse than none.
 Alert-only — cannot place orders; execution stays in S7/S9.
 
 **B. "Ignition Board" dashboard** —
-https://claude.ai/code/artifact/952415af-3876-453b-a469-db076662881e
+https://claude.ai/code/artifact/d6619239-807d-4ef3-9c3b-d9a400107c81
+(URL CORRECTED 2026-09-06. This section originally recorded
+952415af-3876-453b-a469-db076662881e, which is a SUPERSEDED first build of
+the same board, last updated 2026-08-21 and no longer maintained. The live
+board is the d6619239 URL above, favicon 🔥, last updated 2026-09-01. See
+the 2026-09-06 section at the end of this file.)
 A published artifact declaring the `mcp` capability scoped to
 `Robinhood: [run_scan, get_scans]` — **read-only by construction**; no order
 tool is in the manifest, so the page structurally cannot trade even if its
@@ -4240,3 +4245,97 @@ called out on 09-04 is now closed -- capital is deployed across three
 positions ($491.27 equity value vs $540.33 total account value). Nothing
 whole-share affordable at $49.06 among growth-scan candidates, so no
 redeployment this cycle, by arithmetic rather than by omission.
+
+## 2026-09-06 — Ignition Board: which URL is live, and whether its data layer actually works
+
+User asked: *"do you need a website to integrate the ignition board so that
+I can access it easily"*. Checked rather than assumed. Three real findings.
+
+**1. No website is needed — a published artifact IS a hosted page.** It has
+a permanent URL on claude.ai, opens in any browser (phone included), and
+survives this session ending. There is nothing to host, deploy, or pay for.
+
+**2. There are TWO published Ignition Boards, and this file pointed at the
+wrong one.** `Artifact action:list` returned both:
+- `d6619239-807d-4ef3-9c3b-d9a400107c81` — favicon 🔥, updated 2026-09-01.
+  **This is the live one.** 2,239 lines / 101,023 bytes.
+- `952415af-3876-453b-a469-db076662881e` — favicon ⚡, updated 2026-08-21.
+  Superseded first build. Still published (artifacts cannot be deleted from
+  here), so it will keep working and keep showing 08-21-era code — which is
+  exactly the trap, because it predates the RVOL fix of 08-28.
+The 2026-08-20 section of this file recorded only the 952415af URL and was
+never updated when the board was rebuilt. Corrected in place today. **If the
+user opens the ⚡ one they get the old board and won't be told so** — the
+favicon is the only visible difference. Told them to bookmark the 🔥 URL.
+
+**3. Whether live data renders is a real open question, and the page says
+so itself rather than faking it.** Read the published source directly. Its
+data layer is `window.claude.use("mcp")` + `mcp.callTool(SERVER, ...)` with
+`SERVER = "Robinhood"` (plus one `Stocklake` call at line 1433 for the
+catalyst column). Per the artifact-capabilities contract, that reaches the
+**viewer's claude.ai connectors** — NOT this session's locally-configured
+MCP servers. This session's own connector list reports none connected, but
+that describes THIS session, not the user's claude.ai account, so it does
+not settle the question either way. What can be verified: the board fails
+honestly. `boot()` at line 2181 branches on a null capability and paints
+"Live data isn't available in this view / This board reads your saved
+Robinhood scans directly. This view can't reach your connectors, so there's
+nothing to show." So the user's own screen answers the question in one look
+— tickers = connector live; that message = connector gone. Did NOT tell
+them it works, and did NOT tell them it's broken. Neither is known here.
+
+**Not republished.** A republish requires reading all 2,239 lines of the
+fetched copy first, and nothing about the page needed changing — the fix
+was to the record in this file, not to the code.
+
+## 2026-09-06 — Growth sleeve rule change: a technical signal now means TIGHTEN, not SELL
+
+Applied to `trig_01P3etqQpqYJc9J1w9jPqbzD` (growth-sleeve 4:05pm check),
+step 3. User's instruction was *"only if necessary if not let it be"* — so
+the bar was whether the change is justified on process grounds ALONE,
+independent of any trade's outcome. It is.
+
+**The defect, stated without reference to SMCI:** step 3 ended with *"Act on
+a real signal; do not sit on one waiting for permission."* That sentence
+authorized closing a position early on a technical-crossover signal. This
+account's own S11 backtest — EMA fan-out, 44 real trading days of SPY/QQQ
+5-minute bars, run in this repo — found **no exploitable edge** in exactly
+that class of signal. The same step 3 already required disclosing that
+finding when giving a recommendation, then instructed acting on the signal
+anyway, overriding an 18% trailing stop that carries no such measured
+defect. That is an internal contradiction that was in the trigger from the
+day the S11 result was written down, and it would have been worth fixing if
+SMCI had gone to $50.
+
+**The change (minimal, one bullet):**
+- A technical signal BY ITSELF → **tighten**: flag it, ratchet the stop up
+  ahead of the 18% schedule if warranted. Explicitly framed as a full
+  action, not as deferring — the user's 2026-09-01 standing authorization
+  (*"dont ask me to sell or stop. do you analysis and do what you have to
+  do"*) is untouched and restated. Nothing now waits for permission.
+- A full early **CLOSE** requires the signal **plus** a nameable, dated
+  corroborating fact: guidance cut, downgrade, dilution/ATM filing,
+  earnings miss, sector break — verified via `get_stock_news` /
+  `get_sec_filing_index` / Stocktwits. This is the same catalyst gate the
+  momentum-scanner job has always applied to entries; it now applies to
+  discretionary exits too, which is the consistency that was missing.
+- With corroboration: close it, no asking. Without: let the stop work, and
+  say in the message that the signal fired and no corroboration was found.
+
+**SMCI recorded as the illustration, explicitly NOT as the proof.** Closed
+2026-09-01 at $36.4822 on such a signal; 2026-09-04 close $39.59, intraday
+high $40.91; the trail at $32.37 was never threatened (low since $35.63);
+realized −$18.21 against +$19.08 for holding the rule. That is n=1 and does
+not establish the call was wrong — the S11 finding does the arguing. Same
+discipline as the BIAF lesson two days ago: **outcome is not process.**
+
+**Two smaller fixes folded into the same trigger update, both from real
+2026-09-04 observations:**
+- Step 4 now handles the LYFT sub-penny case: `decide_stop_update` can
+  return `should_update=True` when `trailing_stop_price` rounds to the same
+  cent as the resting stop. Compare to the resting price first; if
+  identical, do nothing — a cancel/replace would unprotect the position for
+  zero benefit.
+- Step 8 now says to book the post-open fill check at ~9:31am ET, not
+  later. HL's queued order filled at 9:30:01 while the check was set for
+  9:34 — 318 seconds unprotected.

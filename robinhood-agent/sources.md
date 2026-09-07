@@ -4339,3 +4339,67 @@ discipline as the BIAF lesson two days ago: **outcome is not process.**
 - Step 8 now says to book the post-open fill check at ~9:31am ET, not
   later. HL's queued order filled at 9:30:01 while the check was set for
   9:34 — 318 seconds unprotected.
+
+## 2026-09-07 (Labor Day) — premarket cycle SKIPPED; market-holiday guard added to all four triggers
+
+The 6:30am ET premarket-watch trigger fired into a fully closed market. **No
+watchlist was rebuilt and nothing was renamed** — dating a list "September 7"
+would have labelled it for a session that does not exist. The "September 4"
+list stays as it is; Tuesday's fire renames straight to September 8.
+
+**Verified, not assumed.** Two independent checks:
+1. Real tape: `get_equity_quotes` on SPY, HL, LYFT, SMR at 06:34 ET. Every
+   one had a newest print of **2026-09-05T00:00:00Z** (Friday 8pm ET) on both
+   `venue_last_trade_time` and `venue_last_non_reg_trade_time` — no premarket
+   activity at all, where a normal weekday shows prints from ~4am ET.
+   SPY $770.23, prior close $773.17 (2026-09-03, `interpolated: false`).
+2. NYSE holiday calendar via web search: US equity and fixed-income markets
+   closed Monday 2026-09-07 for Labor Day, reopening Tuesday 2026-09-08.
+   Corroborated by NYSE Group's own 2026-2028 holiday calendar release.
+The tape alone was deliberately not treated as sufficient — a data outage
+looks identical from the quote side.
+
+### The real defect this exposed
+All four cron triggers fire `* * 1-5` and have **no knowledge of market
+holidays**. Today alone they were scheduled to burn ~12 cycles on a closed
+tape: premarket (fired), momentum scanner (10 fires, 11:00-20:00 UTC), S7
+options screen (13:35 UTC), growth sleeve (20:00 UTC). Two of those four
+place real orders.
+
+The cost is not just wasted cycles. With the market closed, Robinhood's
+scanner rows, Relative-volume fields, IV/HV columns and option spreads go
+flat or stale — the exact same failure mode already documented for
+after-hours pulls (the 2026-08-20 scan returned 0% change and RVOL of
+exactly 1 on every row). Screening on that and acting is a RULE ZERO
+violation waiting to happen.
+
+**Fixed: a step-0 holiday guard added to all four triggers.** Each now, before
+anything else: pulls SPY, compares the newest print timestamp against the
+prior session, corroborates against the NYSE calendar via web search, and if
+closed does nothing — no rebuild, no scan, no screen, no orders, no
+trades.csv/CLAUDE.md edits — logs one line here and sends no user message.
+Per-trigger specifics: the premarket guard forbids renaming the list to a
+non-trading date; the momentum guard writes one sources.md line on the FIRST
+fire of a closed day and stays silent on the other nine; the growth guard
+notes explicitly that resting GTC stops stay resting across a holiday (the
+positions are NOT unprotected) and that "no new data" must not be read as a
+signal or a stale snapshot as today's high; the growth step-8 follow-up
+scheduler now skips a holiday when booking the next-open fill check.
+
+### Stocklake token expired — real, and it degrades the catalyst gate
+`get_economic_calendar` returned **"MCP server Stocklake requires
+re-authorization (token expired)"**. This is the news leg of the catalyst
+gate (`get_stock_news`) and the whole of S7's Track 3. Stocktwits and
+`get_sec_filing_index` still work, so the gate is degraded, not gone. All
+four triggers now carry a line saying to state plainly when Stocklake is
+unavailable rather than quietly proceeding on Stocktwits alone — and
+specifically, for the new growth-sleeve corroboration rule, NOT to read
+"couldn't check the news" as "no corroborating catalyst exists." That
+distinction is the difference between an honest hold and a fabricated one.
+Needs the user to re-authorize; cannot be done from a non-interactive
+session. Canva is also unauthorized, but nothing depends on it.
+
+### Positions across the long weekend — unchanged and protected
+LYFT 4sh (stop $14.74), SMR 1sh (stop $8.41), HL 20sh (stop $17.17). Friday's
+closes: LYFT $16.695, SMR $9.695, HL $20.675 (still above the $20.62 entry).
+GTC stops rest through the holiday. Next real session: Tuesday 2026-09-08.

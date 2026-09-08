@@ -4528,3 +4528,55 @@ full-day figure, not today's 222K — and `Relative volume` was the usual
 flat 1. So the rule is narrower than "don't trust the scan premarket":
 **price and % change are live; volume and RVOL are stale.** Both scans
 still need `get_equity_historicals` for any volume claim before 9:30.
+
+## 2026-09-08 ~9:13am ET — BUG FOUND AND FIXED: the S7 "pre-open" trigger has been running AFTER the open since it was created
+
+Found while checking the clock during a routine momentum cycle, not from a
+failure report — which is the only reason it surfaced at all.
+
+**The defect.** `trig_01QfmBuxGvdEQ1ybadA2Ci1R` carried
+`cron_expression: "35 13 * * 1-5"`. Cron is evaluated in **UTC**. During
+EDT (UTC-4) that is **9:35am ET** — five minutes AFTER the 9:30 open. The
+trigger's own prompt says, in its first line, *"~8:35am ET weekday (before
+the 9:30am open)"*, and its PART A is titled **"Pre-open watchlist
+rectify."** It has never once run pre-open.
+
+**Confirmed against real fire times, not inferred:** `last_fired_at`
+2026-09-04T13:36:03Z = 9:36am ET, and 2026-09-07T13:35:55Z = 9:35am ET.
+The trigger was created 2026-08-19, which is also EDT, so this has been
+wrong for its entire life — roughly three weeks of "pre-open" rectifies
+that were actually post-open.
+
+**Why it matters, concretely.** PART A exists to catch a watchlist name
+that faded hard in premarket BEFORE the bell, so the list is clean when
+the session starts. Running it at 9:35 means the open has already
+happened and the first five minutes — the most violent stretch of the day
+for exactly the low-float names this account trades — are gone. It also
+means PART B's option screen was pricing contracts into a live opening
+book rather than a quiet premarket one.
+
+**Fix applied:** cron changed to **`35 12 * * 1-5`** = 12:35 UTC = **8:35am
+EDT**, matching what the prompt always claimed. Schedule-only update, sent
+without a prompt so nothing was held back. Verified: `next_run_at` now
+**2026-09-09T12:35:00Z**. Prompt text left untouched — it was already
+correct; the schedule was the thing that lied.
+
+**Known follow-up, recorded so it is not a surprise:** cron here has no
+timezone, so when EDT ends (2026-11-01) 12:35 UTC becomes 7:35am EST — an
+hour early. That is the safe direction to be wrong (still pre-open, just
+early) and is the deliberate trade rather than an oversight, but the cron
+needs a re-check at the DST boundary. Same applies to every trigger in
+this account.
+
+**Audited the other three for the same class of error; all correct in EDT:**
+- Premarket watch `30 10` = 10:30 UTC = 6:30am ET ✓ (observed fire 10:34)
+- Momentum scanner `0 11-20` = 7:00am-4:00pm ET ✓
+- Growth sleeve `0 20` = 4:00pm ET ✓ (observed 20:01, prompt says ~4:05)
+Only S7 was wrong.
+
+**Momentum cycles this hour, for the record:** nothing cleared the >5% bar
+on either scan. CDTG continued to bleed after the 7:12am alert — $1.57
+(+18.9%) -> $1.4197 (+7.6%) at 8:12am -> $1.3698 (+3.8%) at 9:13am, never
+retesting the $1.47 spike high. The day-2 fade the bearish commenters
+described is what actually happened. Alerting it with "no catalyst — price
+action only" rather than as a setup was the right framing.

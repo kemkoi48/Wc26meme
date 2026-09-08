@@ -4403,3 +4403,75 @@ session. Canva is also unauthorized, but nothing depends on it.
 LYFT 4sh (stop $14.74), SMR 1sh (stop $8.41), HL 20sh (stop $17.17). Friday's
 closes: LYFT $16.695, SMR $9.695, HL $20.675 (still above the $20.62 entry).
 GTC stops rest through the holiday. Next real session: Tuesday 2026-09-08.
+
+## 2026-09-08 ~6:35am ET — Premarket watch: "September 8" built (first session after Labor Day)
+
+Holiday guard passed cleanly: SPY carried a live premarket print at
+**2026-09-08T10:34:16Z** with bid/ask refreshing at 10:35:21Z, session
+PRE_MARKET. Corroborating detail worth keeping — every symbol's
+`previous_close_date` rolled from 2026-09-03 to **2026-09-04**, never to
+09-07, which is independent confirmation from Robinhood's own data that
+Monday had no session at all.
+
+**List renamed in place** (28897739-a4e8-40fa-ac57-6fb0eb30137b),
+"September 4" -> "September 8". 13 items -> 9.
+
+### DROPPED (8)
+**The entire 9/3-post-close earnings cohort — ASAN, PATH, PL, IOT, GWRE,
+LULU.** Added 09-04 on real earnings reactions; three sessions on, every
+one is inside ±2% premarket and has gone quiet: ASAN 8.65 vs 8.81 close
+(-1.8%), PATH 15.09 vs 15.19 (-0.7%), PL 18.13 vs 18.12 (+0.1%), IOT
+40.00 vs 40.20 (-0.5%), GWRE 161.73 vs 162.42 (-0.4%), LULU 100.26 vs
+100.61 (-0.3%). This is the "move fully played out" criterion, not a
+fresh-catalyst-only cut.
+**RARE** — 15.25 vs 15.30 (-0.3%), quiet, no catalyst.
+**WETO** — dropped DESPITE being green (+3.9%, 2.6495 vs 2.55). The $75M
+ATM has been on file since 08-26, it already round-tripped -41% within an
+hour of that warning on 09-04, and today's scan still shows a 914,805
+float. A bounce inside live dilution mechanics is not a setup. This is the
+09-04 lesson applied rather than re-learned.
+
+### ADDED (4), each with a verified dated catalyst
+**SRPT $19.00, -15.6%** vs $22.50 close (108K premarket volume). Real,
+dated, this morning: **Novartis's late-stage del-desiran trial missed its
+primary endpoints**, and the failure is dragging the whole DM1/muscle-
+wasting mechanism cohort. Verified two ways — Stocktwits chatter named it
+first (user CDMO, 09:51Z: "novartis results are not great for sarepta...
+the underlying mechanism is the same"), then confirmed against real news
+(Seeking Alpha: "Novartis drops 13% on trial failure, dragging Dyne and
+Sarepta"). **Key framing: this is a COMPETITOR read-through, not SRPT's
+own data.** Visible "buy the dip" / "dead cat bounce" chatter already —
+treat as a knife, not a gift.
+**NVS $140.33, -12.3%** vs $159.99. The epicenter of the same event.
+Quoted directly, not inferred.
+**ORCL $164.71, +3.7%** vs $158.78. Running INTO Q1 FY27 earnings
+**2026-09-10 pm** — confirmed independently by Robinhood's own
+`get_earnings_calendar` (est EPS $1.67), not just by the news. Analyst PT
+raises ahead of the print. Also flagged for S7 Track 2, though at $164 it
+is far outside the $5-60 scan band the premium cap forces.
+**GME $19.17, flat premarket.** Reports **tonight (9/8 pm)**, est EPS
+$0.06. Added for the event, not for premarket action.
+
+**DYNE deliberately NOT added.** The news names it alongside SRPT, but
+`get_equity_quotes(["DYNE","NVS","GME"])` returned only NVS and GME — no
+row for DYNE. Rather than add a symbol on the strength of a news article
+with no quote of its own, it was left off. Worth a re-check if it resolves.
+
+### KEPT (5) — nuclear/uranium core
+LEU $173.93 (flat, last print 07:33Z), SMR $9.77 (+0.7%), OKLO $41.71
+(+1.1%), UUUU $14.51 (+0.3%), CCJ $100.00 (-0.7%, thin 08:53Z print with
+bid $101.03 ABOVE it). Kept under the XPON rule — durable multi-week theme
+still genuinely live — but stated honestly: only OKLO shows any real move,
+and the core has now been flat for several sessions. If it is still this
+quiet by mid-week it earns a trim, not another free pass.
+
+**Scanner note, expected and confirmed again:** "Early Momentum Ignition"
+returned 66 items with `Relative volume` flat at exactly 1 on nearly every
+row and % changes reflecting FRIDAY's session, not this morning's
+premarket (BIAF showing -24.4% at $11.54, FCUV -51%). Same documented
+pre-9:30 staleness. Not used for today's adds; every add above came from a
+real premarket quote plus a verified catalyst.
+
+**Positions across the long weekend, all well clear of stops:** HL $20.52
+(-0.8% vs $20.68, stop $17.17), LYFT $16.60 (-0.7% vs $16.72, stop
+$14.74), SMR $9.77 (+0.7% vs $9.70, stop $8.41).

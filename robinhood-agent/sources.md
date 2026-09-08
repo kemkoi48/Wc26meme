@@ -4580,3 +4580,67 @@ on either scan. CDTG continued to bleed after the 7:12am alert — $1.57
 retesting the $1.47 spike high. The day-2 fade the bearish commenters
 described is what actually happened. Alerting it with "no catalyst — price
 action only" rather than as a setup was the right framing.
+
+## 2026-09-08 ~10:13am ET — ALERTED: MOBX live ignition, no catalyst, HEAVY live dilution stack
+
+First cycle of the day with the market open, so `Relative volume` is finally
+a real number rather than the flat-1 placeholder. Five names matched; the
+RVOL column immediately proved it can mislead on its own.
+
+| sym | last | % chg | RVOL | float | day high | verdict |
+|-----|------|-------|------|-------|----------|---------|
+| MOBX | 1.4101 | +51.6% | **34.9** | 16.47M | 1.4799 | **ALERTED** |
+| BNC | 4.945 | +41.7% | 70.9 | 40.31M | 5.39 | rejected, already printed |
+| WYHG | 5.3147 | +30.9% | **495.9** | 6.96M | 5.87 | rejected, already printed |
+| CDTG | 1.6475 | +24.8% | 0.167 | 2.84M | — | reversed, see below |
+| ISPC | 1.785 | +15.9% | 1.69 | 2.52M | — | below the bar |
+
+**The RVOL-alone trap, demonstrated.** WYHG carries an RVOL of **495.9** —
+by far the highest number on the board — and BNC 70.9. Both were rejected.
+Real 5-min bars show why: WYHG's high $5.87 and BNC's high $5.39 were both
+printed in the **13:30Z opening bar** and neither has been retested in the
+35 minutes since; WYHG sits -9.9% off its high, BNC -8.3%. These are opening
+spikes that already faded. A screen that ranked on RVOL would have put the
+two worst candidates on top.
+
+**MOBX is the one that actually qualifies**, and it was verified on real
+bars, not the scan row: day high $1.4799 set at 13:55Z, then the most recent
+bar (14:05Z) ran to **$1.47 on 5,815,393 shares** — expanding volume pushing
+straight back into the high. Stocktwits confirms a new high of day at
+14:11:20Z. Igniting now, not printed.
+
+**Catalyst: NONE.** The entire message stream is chart talk — "break that
+1.48 for more! 80M VOL", "that 1.40 wall", "NHOD", "1.7 magnet" — plus a
+multi-ticker pump list ("$ATER $MOBX $NUR $PDSB $QCLS"). Not one message
+names news, a contract, a filing or an event. Alerted explicitly as **"no
+catalyst found — price action only."**
+
+**Dilution check: this is the real finding, and it is BAD — the opposite of
+CDTG's clean read this morning.** `get_sec_filing_index` since 2026-07-15:
+- **S-1 registration statement, 2026-08-28** — new shares being registered
+- **424B3 prospectus x2 on 2026-08-18**, plus another **2026-07-17** —
+  resale prospectuses, i.e. shares actively being registered for sale
+- **PRE 14A, 2026-08-28** — preliminary proxy, commonly a share-count
+  increase or reverse-split authorization
+- 8-Ks 08-31, 08-28, 08-13, 07-29; three insider Form 4s on 08-25
+An S-1 plus three 424B3s inside seven weeks, with a proxy on top, is a live
+and heavy supply overhang. A +51% move into an active resale registration is
+structurally the WETO setup — arguably worse, because WETO's was a single
+ATM and this is a stack. Said plainly in the alert rather than buried.
+
+**CDTG correction — it reversed after I described it as fading.** At 9:13am
+I reported it bleeding ($1.57 -> $1.4197 -> $1.3698) and said the day-2 fade
+was what happened. By 10:13am it is **$1.6475, +24.8%**, a new high above
+the $1.57 premarket spike. That call was right for the three hours it
+covered and wrong thereafter; recording it because the honest version of
+this log includes the reversals, not just the confirmations. Its RVOL reads
+**0.167** — below 1 — because Friday's anomalous 87.1M day inflates its
+trailing average, so today's real 14.5M looks small against it. Not alerted
+again: no catalyst has appeared, and the RVOL read is uninterpretable while
+that Friday bar sits in the average.
+
+**Note: today's S7 options screen did not run.** Fixing the S7 cron at
+13:13Z moved its next fire past today's 12:35Z slot to 2026-09-09T12:35:00Z,
+so the 13:35Z fire that would have happened under the old (wrong) schedule
+never came. That is a real side effect of my own fix, not a platform
+failure. Running the screen manually this cycle rather than skipping a day.

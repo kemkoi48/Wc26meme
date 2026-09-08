@@ -4644,3 +4644,65 @@ that Friday bar sits in the average.
 so the 13:35Z fire that would have happened under the old (wrong) schedule
 never came. That is a real side effect of my own fix, not a platform
 failure. Running the screen manually this cycle rather than skipping a day.
+
+## 2026-09-08 ~11:15am ET — S7 screen (run manually, missed by my own cron fix): the binding constraint has MOVED
+
+Ran the S7 check by hand because fixing the cron this morning skipped
+today's scheduled fire. Flat: `get_option_positions` (432805174, nonzero)
+returned **zero open option positions**.
+
+**Track 1 ran and worked.** Scan 47f4f938 returned **397 total matches, 200
+rows**. Computed iv_hv_ratio on every row: **58 cleared < 0.90**, **32
+cleared < 0.80**. Consistent with 09-04's 63/36 — the candidate-starvation
+fix is holding, this is a real candidate list.
+
+Top of the ranking:
+
+| tick | ratio | last | IV | HV |
+|------|-------|------|-----|-----|
+| AMLX | 0.3320 | 34.06 | 0.5758 | 1.7344 |
+| PYPL | 0.4733 | 53.29 | 0.2536 | 0.5357 |
+| AAP | 0.4786 | 42.70 | 0.4833 | 1.0098 |
+| EIX | 0.5072 | 59.06 | 0.5000 | 0.9859 |
+| BROS | 0.5501 | 46.56 | 0.4311 | 0.7837 |
+| CELH | 0.5561 | 30.34 | 0.5509 | 0.9906 |
+
+**AMLX rejected again, on the prior finding, and saying so rather than
+pretending to re-derive it.** It was the #1 rank on 09-04 too and was killed
+as a cheapness artifact (one day = 70.1% of the HV variance; ex-outlier
+ratio 0.954, above the cap). Its HV today is still **1.7344 (173%)** on a
+$34 stock, essentially unchanged, which indicates the same outlier is still
+inside the window. Not re-verified bar-by-bar this cycle — stating that
+plainly instead of implying fresh work.
+
+**THE REAL FINDING — the constraint that blocks S7 is no longer the premium
+cap.** `get_portfolio` (432805174): total value **$536.415**, equity
+**$487.355**, cash and buying power **$49.06**. The strategy's own cap is
+$150/contract, but the account can only spend **$49.06**. Maximum affordable
+premium is therefore **$0.49/share**, roughly **one third** of the cap the
+screen has been enforcing for three weeks.
+
+**Demonstrated on a real contract rather than argued.** CELH is the cheapest
+underlying in the qualifying group ($30.34, ratio 0.5561). Pulled its live
+chain: **CELH 2026-10-16 $35 call**, quoted 15:14:32Z — ask **$0.79
+($79.00/contract)**, mark $0.74, **delta 0.246756**, IV 0.5626, OI 3,115,
+bid/ask $0.69/$0.79 (a 12.7%-of-mark spread, itself wide). That contract
+fails on BOTH counts: it costs $79 against $49.06 available, and its delta
+of 0.2468 misses the 0.30 floor. Reaching 0.30 delta means moving closer to
+the money, which costs MORE, not less. So the gap is not marginal.
+
+**Root cause, stated because it is an allocation conflict and not a bug.**
+S9 (growth sleeve) holds $487.36 of the $536.42 account across LYFT, SMR and
+HL. S7 has now run **15 checks with 0 trades** since going live 08-19, and
+the reason has quietly changed: for the first ~13 it was the premium
+cap/delta wall; today it is simply that there is no capital. Two live
+sleeves are competing for one small cash account and S9 has won by default,
+because it deploys on every close while S7 waits for a setup.
+
+**Not acting on this unilaterally.** Freeing S7 capital means selling a
+growth position that is doing nothing wrong — HL is above entry, all three
+are well clear of their stops, and none has a signal against it under the
+rule narrowed on 09-06. That is a portfolio-allocation decision, not a
+trade the screen is authorized to make. Surfacing it to the user with a
+recommendation rather than either silently continuing to run a screen that
+structurally cannot fire, or quietly liquidating a sleeve to feed another.

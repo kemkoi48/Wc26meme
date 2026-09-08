@@ -4475,3 +4475,56 @@ real premarket quote plus a verified catalyst.
 **Positions across the long weekend, all well clear of stops:** HL $20.52
 (-0.8% vs $20.68, stop $17.17), LYFT $16.60 (-0.7% vs $16.72, stop
 $14.74), SMR $9.77 (+0.7% vs $9.70, stop $8.41).
+
+## 2026-09-08 ~7:12am ET — ALERTED: CDTG fresh premarket ignition, NO catalyst (price action only)
+
+**CDTG** (CDT Environmental Technology, foreign private issuer) $1.57
+bid/ask 1.56/1.57 at 11:11:49Z vs $1.32 Friday close = **+18.9%**.
+Float 2,838,044. Market cap $3.99M.
+
+**Why this cleared step 2 — real, self-computed, not the broken RVOL field.**
+Pulled `get_equity_historicals` 10-min bars, bounds extended, none
+interpolated. Total premarket volume 08:00-11:10Z = **222,386 shares**, and
+**115,927 of that (52%) landed in the single 11:00Z bar** — the most recent
+one. That bar ran $1.38 -> $1.4697 (high $1.47) on ~15x the prior bar's
+volume, and the live quote was already $1.57, ABOVE the bar's high. This is
+igniting inside the last ~12 minutes, not already printed — exactly the
+time-awareness carve-out in step 2, and the opposite of the "high was 1+
+hours ago" case.
+
+**Honest limit on the RVOL claim:** real premarket volume was measured, but
+a same-time-of-day average across 5-7 prior sessions was NOT computed, so
+no RVOL multiple is quoted. Friday's own 87.1M-share day is an anomaly and
+would poison a naive comparison anyway.
+
+**Step 3 FAILED: no catalyst.** Stocktwits carries zero dated news — it is
+momentum chatter plus an alert-service pump list ("Some Stocks to Watch for
+8 Sept: $ISPC $ATER $CDTG $IMRN $SLE", posted 00:01Z by an account selling
+an indicator). Alerted anyway, explicitly framed as **"no catalyst found —
+price action only,"** per the standing rule, never as a clean setup.
+
+**Dilution check (the WETO rule), and it comes back CLEANER than expected:**
+`get_sec_filing_index` since 2026-07-01 shows no offering, ATM, or shelf.
+Most recent are insider Form 3 and Form 4 (both 2026-08-25) and three 6-Ks
+(07-06, 07-07, 07-28). Stated caveat, not glossed: CDTG is a foreign
+private issuer filing 6-K rather than 8-K, so an offering could be
+disclosed via 6-K or a 424B prospectus supplement and might not surface in
+this index. "No dilution filing found" is not the same as "no dilution."
+
+**The real bear case, recorded because it is specific and probably right:**
+Friday CDTG traded 87.1M shares; a commenter (PeterTauscher, 10:56Z) says
+31.5M were shorted that day and argues today is the classic day-2 dump —
+"no more revenue, no momentum, no volume left." Another (09:16Z) calls it
+"the same one hit wonder for only 1 Day as all the other 95%." That is the
+same structure that killed AKAN and WETO on 09-04. The ignition is real;
+the durability is not established.
+
+**New scanner finding worth keeping — the staleness is PARTIAL, not total.**
+Earlier this session I judged the whole premarket scan stale. That was
+wrong and is corrected here: on "Warrior Trading Style" at 11:11Z, `Last`
+($1.57) and `% Change` (0.1894) matched the live quote exactly, so those
+two columns ARE live premarket. But `Volume` read 8.71e7 — Friday's
+full-day figure, not today's 222K — and `Relative volume` was the usual
+flat 1. So the rule is narrower than "don't trust the scan premarket":
+**price and % change are live; volume and RVOL are stale.** Both scans
+still need `get_equity_historicals` for any volume claim before 9:30.

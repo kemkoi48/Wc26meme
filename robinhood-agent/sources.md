@@ -4749,3 +4749,33 @@ Market-holiday guard: SPY real prints from 10:31-10:35 UTC today (premarket sess
 **Kept unchanged:** LEU, OKLO, UUUU, CCJ (nuclear core — no urgent reason to drop, sector still real, all roughly flat premarket, standing watch not single-day catalyst picks). SMR (open S9 growth position, real continuing story — see growth-sleeve log for yesterday's +15% breakout). ORCL — real catalyst (earnings) is tomorrow 2026-09-10 PM, held one more day rather than dropped, consistent with the list's existing "into 9/10 earnings" framing.
 
 Also checked per step 3's standing requirement: the day's single largest scan mover (SUNE, above) had a real catalyst not yet logged today — logged here. META (+3.6% premarket, Stocktwits trending #4) has real coverage (AI model unveiling commentary, an Australia regulatory story) but no single sharp dated catalyst and isn't this list's small-cap-momentum style — not added.
+
+## 2026-09-09 ~8:36am ET — S7 daily check: Track 1 IV/HV sweep run, real near-miss on TSN, no trade
+
+Market-holiday guard: SPY fresh premarket print (12:36 UTC), confirmed open. Part A (pre-open watchlist rectify): checked all 8 symbols on "September 9" against premarket quotes — nothing materially changed since this morning's build (nuclear core flat, ORCL flat, SUNE's fade already logged in the momentum-scanner cycle, CHWY quiet pre-earnings). No watchlist edits.
+
+**Part B — flat, no open S7 position.** Ran Track 1 (scan `47f4f938-a4d9-413e-a1c7-e01855c09e45`, 398 total matches, 200 returned). Computed iv_hv_ratio for every row, sorted ascending.
+
+**Outlier check on the 6 cheapest names — 5 of 6 rejected as HV-inflation artifacts**, same pattern as AMLX on 09-04, verified against real daily bars rather than assumed:
+- **AAP** (ratio 0.458): single -24.5% gap day (08-20, $56.18→$42.39) dominates the window — before it, calm $52-59 chop; after, calm $42-44 chop.
+- **PCG** (0.577): two-day real event (-8.9% 08-28, then -20% 08-31 on the same underlying story) — same shape.
+- **WEN** (0.609): +14.7% single-day spike (08-12, 45M vs ~6-8M normal volume) then a separate -13% gap (08-27).
+- **ETOR** (0.625): -14% two-day drop 08-10/08-11 against a series otherwise moving 1-3%/day.
+- **CRMD** (0.670): +14.6% single-day spike (08-13, 6.07M vs ~700K-1.3M normal volume).
+- **OMER** (0.722, checked out of order after TSN/RELY): +21.4% single-day spike (08-13, 13.4M vs ~1-2M normal volume). Also rejected as artifact.
+
+**RELY** (0.714) and **TSN** (0.742) checked as the more plausible survivors — no single dominant gap day in either series, genuine sustained chop instead of one outlier. Catalyst check: RELY has real news but it's mixed/bearish — two separate director stock sales this week (one lining up another as of 09-08) plus a piece questioning take-rate quality — no bullish dated catalyst, direction would argue put not call at best, and Stocklake hit its 25-call guest-limit mid-check (said so rather than silently proceeding TSN's news leg on Stocktwits alone). **TSN cleared the catalyst gate for real**: incoming President/CEO (Jeffrey K. Schomburger) filed a Form 4 buying **$1,001,617** (19,450 sh @ $51.50) on 2026-09-08, independently corroborated by multiple Stocktwits posters citing the actual filing (filingtracker.ai link, ceo-buys.com). Next earnings 11/16, not the driver here.
+
+**TSN 2026-10-16 calls checked against both gates — no strike clears both, one real near-miss:**
+| Strike | Delta | Ask (premium/ct) |
+|---|---|---|
+| $47.5 | 0.841 | $740 |
+| $50 | 0.710 | $400 |
+| $52.5 | 0.516 | $205 |
+| **$55** | **0.2988** | **$90** |
+
+$55c is a genuine near-miss in the PYPL 09-04 shape: premium comfortably inside the $150 cap, delta misses the 0.30 floor by 0.0012. Rejected, not chased.
+
+**Process defect surfaced, worth fixing:** these option quotes carry `updated_at: 2026-09-08T19:59:...` — yesterday's 4pm ET close, not live. This trigger fires ~8:35am ET, before the 9:30am open, and Robinhood option quotes are confirmed (again) not to refresh until the regular session opens (`extended_hours_state: disabled` on the chain) — the exact defect that got the OLD dedicated S7 trigger moved from 8am to 9:35am ET on 2026-08-20. The 2026-08-27 merge that folded S7 into this 8:35am combined trigger silently reintroduced it. TSN's own equity price is essentially unchanged premarket ($52.35 vs $52.28 close) so this particular near-miss likely still holds, but the staleness is real and should be fixed rather than relied on by luck next time. Not fixed unilaterally this cycle — flagging to the user, same posture as the known $1-20/$2-20 scan price-ceiling defect.
+
+Running total: 16/16 S7 checks, 0 trades.

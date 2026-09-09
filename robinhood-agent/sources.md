@@ -4731,3 +4731,21 @@ All six requested behaviors verified functionally (not just visually) via a scri
 **Honest caveat carried into the publish, not hidden:** the page still declares the `Stocklake` connector (used only for the Catalyst column, unchanged logic) but this session never made a live Stocklake call to re-verify its response shape — the publish tool flagged this itself. Not a new risk from tonight's edit (that code path wasn't touched), but worth saying plainly rather than implying more verification happened than actually did.
 
 Published to the same URL (https://claude.ai/code/artifact/d6619239-807d-4ef3-9c3b-d9a400107c81), same favicon, keeping the link the user already has stable.
+
+## 2026-09-09 ~6:35am ET — Premarket watchlist rebuilt to "September 9"
+
+Market-holiday guard: SPY real prints from 10:31-10:35 UTC today (premarket session active, not stale) — confirmed open, not a holiday.
+
+**Renamed "September 8" -> "September 9"**, id `28897739-a4e8-40fa-ac57-6fb0eb30137b`.
+
+**Added:**
+- **SUNE** (SUNation Energy) — +29% premarket ($3.07), real dated catalyst confirmed via web search cross-check (stocktitan, Seeking Alpha, Power Technology all corroborate): Suniva completed an **$835M capital raise** and is executing a **reverse merger** with SUNation Energy to build a second major US solar cell manufacturing facility (Laurens County, SC), more than quadrupling capacity to 5.5GW. Heavy real Stocktwits chatter citing the actual headline, not just price action. **Flagged, not treated as clean**: a $15M market-cap company absorbing an $835M raise via reverse merger is structurally dilutive to existing SUNE holders even though the news itself reads bullish — watch, don't chase, per this account's established "bullish catalyst the tape may still punish" posture.
+- **CHWY** — reports earnings today before the open (`get_earnings_calendar` confirmed, timing "am", estimate $0.36 EPS). Still flat premarket ($23.25 vs $23.27 close) as of the check — reaction hasn't happened yet, added as a live pre-earnings watch.
+
+**Removed:**
+- **GME** — real catalyst already fired and was checked directly, not assumed: `get_earnings_results` confirms it reported 2026-09-08 AM with actual EPS $0.27 vs estimate $0.06, a **4.5x beat**. Tape response: flat, +0.4% premarket. Per this account's standing rule (a bullish catalyst the tape rejects is a trap, not an opportunity, same MLTX precedent), the catalyst has already played out with no follow-through — nothing left to watch for today.
+- **NVS / SRPT** — both flat premarket (NVS -0.05%, SRPT -0.14%). Yesterday's Novartis del-desiran Ph3-miss read-through move fully priced in, no fresh catalyst today.
+
+**Kept unchanged:** LEU, OKLO, UUUU, CCJ (nuclear core — no urgent reason to drop, sector still real, all roughly flat premarket, standing watch not single-day catalyst picks). SMR (open S9 growth position, real continuing story — see growth-sleeve log for yesterday's +15% breakout). ORCL — real catalyst (earnings) is tomorrow 2026-09-10 PM, held one more day rather than dropped, consistent with the list's existing "into 9/10 earnings" framing.
+
+Also checked per step 3's standing requirement: the day's single largest scan mover (SUNE, above) had a real catalyst not yet logged today — logged here. META (+3.6% premarket, Stocktwits trending #4) has real coverage (AI model unveiling commentary, an Australia regulatory story) but no single sharp dated catalyst and isn't this list's small-cap-momentum style — not added.

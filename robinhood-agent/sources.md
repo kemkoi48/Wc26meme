@@ -4779,3 +4779,20 @@ $55c is a genuine near-miss in the PYPL 09-04 shape: premium comfortably inside 
 **Process defect surfaced, worth fixing:** these option quotes carry `updated_at: 2026-09-08T19:59:...` — yesterday's 4pm ET close, not live. This trigger fires ~8:35am ET, before the 9:30am open, and Robinhood option quotes are confirmed (again) not to refresh until the regular session opens (`extended_hours_state: disabled` on the chain) — the exact defect that got the OLD dedicated S7 trigger moved from 8am to 9:35am ET on 2026-08-20. The 2026-08-27 merge that folded S7 into this 8:35am combined trigger silently reintroduced it. TSN's own equity price is essentially unchanged premarket ($52.35 vs $52.28 close) so this particular near-miss likely still holds, but the staleness is real and should be fixed rather than relied on by luck next time. Not fixed unilaterally this cycle — flagging to the user, same posture as the known $1-20/$2-20 scan price-ceiling defect.
 
 Running total: 16/16 S7 checks, 0 trades.
+
+## 2026-09-09 ~4:03pm ET — Growth sleeve daily check: HL ratcheted, LYFT real -8.2% on CFO news (no formal signal)
+
+Market-holiday guard: SPY real close print (19:59:59Z), confirmed a normal trading day.
+
+**Technical readings, all three positions (logged every run per standing requirement):**
+- LYFT: RSI 42.67, ADX(10) 18.21 (no real trend, below the 25 threshold), MACD histogram -0.1872 (bearish, widening).
+- SMR: RSI 66.15, ADX(10) 24.00 (borderline, still below 25), MACD histogram +0.1402 (bullish).
+- HL: RSI 58.22, ADX(10) 33.60 (real trend present), MACD histogram -0.0902 (marginal negative, persisting from prior cycles).
+
+**HL — ratcheted.** Real intraday high today (30-min bars) was $21.17 at the 9:30-10:00am ET bar, a new peak over the prior $20.97 (09-04). `trailing_stop_price(21.17)` = $17.36, above the resting $17.17. Cancelled the old stop (verified `state: cancelled`), placed $17.36 (verified `state: queued`, market had just closed — next-open queuing, not a rejection, same pattern as every prior post-close ratchet). Follow-up booked for 2026-09-10 09:31am ET to verify it confirms.
+
+**LYFT — real, large, dated-catalyst-driven drop; no formal technical signal.** Closed $14.91 vs yesterday's $16.24 (**-8.2%**), now sitting just $0.17 above its $14.74 resting stop. Checked for a real cause rather than assuming: Lyft named a new CFO today (Michael Brous replacing retiring Erin Brewer, effective 09-28) while reaffirming Q3 guidance — real, dated, negative tape reaction, corroborated via Stocktwits (a linked news article) independent of Stocklake. However, ADX is only 18.21 — below this account's own 25 "real trend" threshold — so the formal signal criteria (ADX>25 AND MACD turning against) is NOT met. Per the standing rule, no signal is manufactured where the gate hasn't fired; no discretionary action taken. The mechanical 18% trail is doing its job on its own (very close to triggering now if the decline continues). SMR unchanged (today's high $11.26 stayed under the existing $11.37 peak, stop stays $9.32).
+
+**Idle capital — not redeployed**, same stated reason as yesterday: the $49.06 buying power is the exact amount already flagged as blocking S7, still awaiting the user's allocation call.
+
+Current state: LYFT (4sh, stop $14.74), SMR (1sh, stop $9.32), HL (20sh, stop $17.36).

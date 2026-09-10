@@ -4847,3 +4847,11 @@ No name cleared step 2/3 this cycle — everything that qualified on % change wa
 - **SKYQ** (high $3.80 @ 9:50am ET, now ~$3.33), **TPET** (high $2.34 @ 10:15am ET, now ~$2.11), **AHMA** (high $2.10 @ 9:35am ET, now ~$1.62, unchanged from last cycle's "already printed" call) — all faded off highs made 1+ hour ago, no fresh development.
 
 No user message sent (quiet cycle, correct per protocol). Running total this window: no new alerts since TNON/AHMA/SUNE/FTFT earlier fires.
+
+## 2026-09-10 ~2:10pm ET — Momentum-scanner ALERT: DBGI fresh breakout, no catalyst (flagged)
+
+Market-holiday guard: SPY fresh print (18:09 UTC), confirmed open.
+
+**DBGI (Digital Brands Group)** — alerted. $6.62, +77% on the day (prior close $3.75). Made a genuine FRESH new high of $7.15 at ~2:00pm ET (within the last ~10 min at alert time), well above the morning's $6.91 peak — real re-ignition, not the same already-covered move. Volume bars accelerated hard into the new high (332K/398K/409K/275K per 5-min bar in the last 20 min vs. 20-100K typical earlier), daily RVOL 220x. Pulled back ~7.4% off the freshest high by the time of the alert but still inside the ~15-20 min "igniting" window, not the "1+ hour unretested" already-printed case.
+
+**No catalyst found — price action only.** Checked Stocktwits: pure retail pump/meme chatter (an absurd, non-credible "$1B buyout / $1,659.94 per share" rumor, "77 tomorrow," SMA-target posts) — nothing sourced or dated. Flagged explicitly to the user as speculative momentum, not a clean setup. Float 574,639 (ultra-low) — pulled `get_sec_filing_index` since 2026-08-01: only a 10-Q (08-19) and three 8-Ks (09-02, 08-13, 08-06), no S-1/S-3/424B/ATM prospectus visible in the index (contents of the 8-Ks not individually read — not a full clearance, just no obvious dilution mechanism on file).

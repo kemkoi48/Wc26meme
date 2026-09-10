@@ -4836,3 +4836,14 @@ Market-holiday guard: SPY fresh premarket print (12:36 UTC), confirmed open. Par
 **Every single one of today's 7 cheapest names by IV/HV ratio is either an outlier artifact or lacks a real catalyst.** This is the same finding as yesterday, more pronounced (5 of 6 were artifacts on 09-09; 5 of 7 today, with the 2 survivors lacking catalysts). Worth naming plainly: the current scan universe's cheap tail is now consistently contaminated by real August volatility events still sitting in the historical-volatility window — this may ease as those days roll out of whatever window Robinhood's single-window HV uses.
 
 No trade. Running total: 17/17 S7 checks, 0 trades.
+
+## 2026-09-10 ~12:11pm ET — Momentum-scanner check: no alert, DBGI logged (largest mover, no catalyst)
+
+Market-holiday guard: SPY fresh print (16:11 UTC), confirmed open. Both scans run.
+
+No name cleared step 2/3 this cycle — everything that qualified on % change was already well past its intraday high (1+ hour, unretested):
+- **TNON** — high $4.98 at 9:45am ET, now ~$4.24-4.42, still fading. Same name covered last cycle, no material change.
+- **DBGI** — today's largest mover, +44.8%, high $6.91 at 11:10am ET, faded to $5.18-5.42 (~-25% off high) by 12:05pm ET. Checked Stocktwits per the "log the biggest mover regardless" rule: no verified dated catalyst — only unconfirmed retail "buyout" rumor chatter ("$7.7 buyout" mentioned, no source) and posters flagging heavy dilution since a prior buyout event. Float 574,639 (sub-1M, would trigger the dilution check if this were being alerted — not alerted, so index check skipped).
+- **SKYQ** (high $3.80 @ 9:50am ET, now ~$3.33), **TPET** (high $2.34 @ 10:15am ET, now ~$2.11), **AHMA** (high $2.10 @ 9:35am ET, now ~$1.62, unchanged from last cycle's "already printed" call) — all faded off highs made 1+ hour ago, no fresh development.
+
+No user message sent (quiet cycle, correct per protocol). Running total this window: no new alerts since TNON/AHMA/SUNE/FTFT earlier fires.

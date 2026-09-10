@@ -4816,3 +4816,23 @@ Market-holiday guard: SPY real premarket prints (10:31-10:35 UTC), confirmed ope
 **Unchanged:** nuclear core (LEU, OKLO, UUUU, CCJ) — still a standing sector watch, no fresh reason to touch. SMR — open S9 growth position.
 
 **Not added:** FTFT (-7.2% premarket, still no catalyst found since yesterday's "price action only" flag, continuing to fade) and YMAT (-2.6% premarket, same no-catalyst status) — both cooling off, no new reason to add.
+
+## 2026-09-10 ~8:36am ET — S7 daily check: Track 1 sweep, entire cheap end is outlier-contaminated, no trade
+
+Market-holiday guard: SPY fresh premarket print (12:36 UTC), confirmed open. Part A (pre-open watchlist rectify): nuclear core (LEU, CCJ, OKLO, UUUU) all down notably premarket (LEU -7%, CCJ -5%) but premarket bid/ask spreads are unusually wide (e.g. LEU $167/$169, CCJ $95.30/$98.50) suggesting thin-liquidity price discovery, and a web search found no dated news specific to today — the sector has been rotating lower since early August per real reporting (BofA cut CCJ's price target citing uranium market outlook), not a fresh catalyst. No watchlist edit made on this basis.
+
+**Part B — flat, no open S7 position.** Ran Track 1 (scan `47f4f938-a4d9-413e-a1c7-e01855c09e45`, 200 rows). Computed iv_hv_ratio for every row, sorted ascending, and checked the cheapest 7 against real daily bars for the single-dominant-gap-day artifact pattern (same method as 09-04's AMLX and 09-09's AAP/PCG/WEN/ETOR/CRMD/OMER):
+
+| Symbol | Ratio | Verdict |
+|---|---|---|
+| ALMS | 0.259 | **Artifact** — real -56.6% single-day crash 08-31→09-01 (28.4M vol vs ~1M normal) dominates the window |
+| CHPT | 0.417 | **Artifact** — real +75% single-day spike 09-02→09-03 (44M vol vs ~300-600K normal) |
+| EIX | 0.481 | **Artifact** — real -23% single-day crash 08-28→08-31 (24.8M vol vs 2-7M normal), same wildfire-liability shape as PCG |
+| HRL | 0.612 | **Artifact** — real -10.2% single-day drop 08-26→08-27 (18.6M vol vs 3-5M normal), calm since |
+| ABCL | 0.612 | **Artifact** — real +34.9% single-day spike 08-10 (46M vol vs 3-8M normal), calm since ($11-12.5 range) |
+| TH | 0.721 | No dominant single-day outlier found — the cleanest candidate today, but no catalyst identified (flat in this morning's scan, nothing on Stocktwits) |
+| CAVA | 0.728 | One real moderate outlier (08-11→08-12, +14.2%, likely earnings) plus a genuine sustained downtrend since ($74→$56.51) — not chased further, no catalyst surfaced |
+
+**Every single one of today's 7 cheapest names by IV/HV ratio is either an outlier artifact or lacks a real catalyst.** This is the same finding as yesterday, more pronounced (5 of 6 were artifacts on 09-09; 5 of 7 today, with the 2 survivors lacking catalysts). Worth naming plainly: the current scan universe's cheap tail is now consistently contaminated by real August volatility events still sitting in the historical-volatility window — this may ease as those days roll out of whatever window Robinhood's single-window HV uses.
+
+No trade. Running total: 17/17 S7 checks, 0 trades.

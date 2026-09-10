@@ -4796,3 +4796,23 @@ Market-holiday guard: SPY real close print (19:59:59Z), confirmed a normal tradi
 **Idle capital — not redeployed**, same stated reason as yesterday: the $49.06 buying power is the exact amount already flagged as blocking S7, still awaiting the user's allocation call.
 
 Current state: LYFT (4sh, stop $14.74), SMR (1sh, stop $9.32), HL (20sh, stop $17.36).
+
+## 2026-09-10 ~6:35am ET — Premarket watchlist rebuilt to "September 10"
+
+Market-holiday guard: SPY real premarket prints (10:31-10:35 UTC), confirmed open.
+
+**Renamed "September 9" -> "September 10"**, id `28897739-a4e8-40fa-ac57-6fb0eb30137b`.
+
+**Added:**
+- **TNON** (Tenon Medical) — +47% premarket ($3.59), float only 627K (already the mandatory dilution-check cohort). Real, dated, genuinely mixed catalyst: an 8-K filed 2026-09-09 confirms the company paid off $5.16M of debt — reduces near-term dilution pressure (a real positive for holders) but also reduces available cash on hand (a real liquidity concern), and Stocktwits posters are actively debating exactly that tension, not just hyping price. Also checked its recent filing history: multiple Form 3/4 insider transactions and a 424B3 prospectus since 08-31, consistent with an ongoing capital-structure story worth continued real scrutiny, not a clean squeeze play.
+
+**Removed:**
+- **CHWY** — reported Q2 EPS exactly in-line ($0.36 vs $0.36 est.) yesterday (09-09 AM, confirmed via `get_earnings_results`), yet the stock has fallen from ~$23.27 to ~$20.54 (~-12%) since Monday's close. The reaction has already happened and is no longer fresh news; today's premarket move is only -1%, not a new development. Catalyst played out, dropped.
+
+**Held one more day:**
+- **SUNE** — down -8.6% premarket to $4.12, well off yesterday's $4.36-4.81+ run, but volume remains enormous (123M shares on the day, still far above baseline) and this has been genuinely volatile for 2+ days straight. Not yet calling it "fully played out" — kept with the same dilution caution as before, watched not chased.
+- **ORCL** — reports earnings tonight (2026-09-10 PM per `get_earnings_calendar`), now the most immediately relevant catalyst on the list. Held through the report.
+
+**Unchanged:** nuclear core (LEU, OKLO, UUUU, CCJ) — still a standing sector watch, no fresh reason to touch. SMR — open S9 growth position.
+
+**Not added:** FTFT (-7.2% premarket, still no catalyst found since yesterday's "price action only" flag, continuing to fade) and YMAT (-2.6% premarket, same no-catalyst status) — both cooling off, no new reason to add.

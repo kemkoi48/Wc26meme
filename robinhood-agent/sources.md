@@ -4863,3 +4863,25 @@ Market-holiday guard: SPY fresh print (19:09 UTC), confirmed open.
 **TNON (Tenon Medical)** — alerted, new development. $5.24, +115% on the day (was +76-80% at prior cycles). Broke to a genuine fresh high of $5.96 at 2:45pm ET (~24 min before this alert), massive volume acceleration (2.66M/1.47M/1.11M shares per 5-min bar in that window vs. ~250-300K earlier), now consolidating $5.0-5.4, still near the highs — not faded off. Has a real, dated catalyst on file (2026-09-09 8-K, $5.16M debt payoff, already used to justify this morning's watchlist add) but that catalyst is a day old and doesn't explain this specific afternoon leg — Stocktwits shows this move is squeeze/momentum-driven in lockstep with DBGI ("Unstoppable $DBGI,$TNON,$PCLA... $AHMA, $PSIG"), not fresh name-specific news. Flagged both facts to the user. Dilution risk already on file from this morning's premarket check (multiple Form 3/4s, a 424B3 since 08-31) — not re-pulled this cycle, still applies.
 
 **DBGI** — continuation of the 2:10pm alert, materially changed (higher high). Extended to a fresh high of $7.48 at 3:00pm ET, still no real catalyst — same pure squeeze dynamic, explicitly correlated with TNON/PCLA/AHMA/PSIG in the chatter (a basket-style low-float squeeze, not stock-specific news for any of them).
+
+## 2026-09-10 ~4:02pm ET — Growth-sleeve daily check: LYFT stopped out, HL signal flagged (no corroboration)
+
+Market-holiday guard: SPY regular-session close printed exactly 20:00:00 UTC today, confirmed a real trading day (not a holiday false-fire).
+
+**LYFT closed** — the resting $14.74 GTC stop_market filled at 09:30:00 ET this morning (4 sh @ $14.71 avg), confirmed via `get_equity_orders` (order id 6a8df543..., state: filled). Realized -$11.49 on $70.33 cost basis (avg $17.5825/sh across the 3+1 share fills). Proceeds $58.84 unsettled T+1 — matches `get_accounts` unsettled_funds exactly. This was the mechanical trail doing its job on price action, not a discretionary signal-based close: the 09-09 CFO-departure catalyst never cleared this account's ADX>25 "real trend" floor (peaked at 18.2), so the formal signal gate never fired.
+
+**Remaining positions, quantity-verified** (SMR 1sh, HL 20sh, both match their resting stops — no manual-buy gap).
+
+Real peak-since-entry check (finalized daily bars through 09-09 + today's real intraday bars):
+- SMR: peak since 08-26 entry still $11.37 (09-08). Today's real high $10.685 (30-min bars) — no new peak. `decide_stop_update`: computed 11.37*0.82=$9.3234, rounds to same cent as resting $9.32 — no action (same edge case as the 09-04 LYFT precedent).
+- HL: peak since 09-04 entry still $21.17-21.18 (09-09). Today's real high $20.53 — no new peak. Stop correctly left at $17.36.
+
+**Technical signal check (required every cycle):**
+| Symbol | RSI(14) | ADX(10) | MACD histogram (last 5 sessions) | Read |
+|---|---|---|---|---|
+| SMR | 61.04 | 27.29 | 0.0155 -> 0.0343 -> 0.0406 -> 0.1364 -> 0.1648 | Real trend (ADX>25), MACD positive and rising — bullish, no signal |
+| HL | 60.30 | 33.76 | -0.0543 -> -0.0265 -> -0.0522 -> -0.0903 -> -0.0949 | Real trend (ADX>25) **plus MACD turning against the position** (negative, deepening) — genuine signal per the 2026-09-06 gate |
+
+**HL signal — checked for corroboration, found none.** Pulled Stocktwits: pure retail silver-sector chatter (oil/silver price speculation, no dated news, no downgrade, no filing). Per the narrowed rule, a technical signal without a nameable dated catalyst authorizes tightening only, not a close. Considered tightening the $17.36 stop ahead of the normal 18% schedule and declined: today's price (~$20.02-20.27 across the last few 30-min bars) is already only ~13-14% above the resting stop — tighter than a fresh 18% trail would produce — because price has drifted down from the $21.17 peak while the stop stayed pegged to that peak. Passive tightening already happened; no further action taken. Disclosed limitation repeated: this account's own S11 backtest found no exploitable edge in short-horizon technical-crossover signals, so this is a real, honest momentum read, not a proven predictor.
+
+**Idle capital (step 8):** settled buying power $49.06 — same figure flagged in every prior growth-sleeve check as the amount structurally blocking S7 allocation (still unresolved with the user). Not redeployed, same standing reason. LYFT's $58.84 proceeds settle ~09-11 morning, bringing uncommitted cash to roughly $108 — flagged as worth a fresh redeploy look once settled rather than force-fitting a sub-$50 pick today.

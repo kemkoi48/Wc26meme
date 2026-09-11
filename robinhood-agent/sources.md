@@ -4949,3 +4949,28 @@ Market-holiday guard: SPY fresh premarket print (12:11 UTC), confirmed open.
 **TNON — no fresh alert, flagged as already-printed spike-and-fade.** Since the 7:11am ET check (fresh high $7.76), price spiked violently to a real intraday high of **$9.35 at 7:45am ET** (5-min bar 11:45 UTC, volume 1,402,568 in that single bar vs. a 100-700K baseline) -- a genuine, dramatic second leg, +20% above the prior high in ~30 minutes. Has since faded hard: down to $7.75-8.10 by 8:11am ET, giving back nearly the entire spike (from $9.35 to ~$7.78, a ~17% retracement) within ~26 minutes. This is now past the 15-20 min "igniting" window and has already round-tripped most of its gain -- textbook already-printed/spike-and-fade, not a fresh setup to alert on. No new catalyst emerged; same story as prior cycles (real sustained squeeze, 09-09 debt-payoff 8-K, extremely bullish Stocktwits chatter already logged). Noted for the record given the size of the move, but no user alert sent -- would be chasing a top, exactly what this job exists to avoid presenting as clean.
 
 DBGI (+4.0%) and FTFT (+9.4%) both modest, neither clears the bar this cycle.
+
+## 2026-09-11 ~8:36am ET — S7 daily check: Part A no rectify needed, Part B flat, no trade
+
+Market-holiday guard: SPY fresh premarket print (12:36 UTC), confirmed open.
+
+**Part A (pre-open watchlist rectify):** checked TNON, ORCL, LEU, SMR, OKLO, UUUU, CCJ against the ~6:30am ET build. TNON and ORCL stories unchanged qualitatively (TNON still the dominant real mover, now $8.32 after the $9.35 spike-and-fade already logged this cycle's earlier momentum-scanner check; ORCL still holding its earnings-beat pop). Nuclear core flat-to-mixed, no fresh catalyst. No watchlist edit made — nothing material changed since the build.
+
+**Part B — flat, no open S7 position.** Ran Track 1 (scan `47f4f938-a4d9-413e-a1c7-e01855c09e45`, 200 of 397 real rows). Computed iv_hv_ratio for every row: 38 cleared the 0.90 cap, 18 cleared 0.80, only 2 under the 0.45 outlier-suspicion line. Checked the cheapest candidates against real daily bars / Stocktwits / earnings data:
+
+| Symbol | Ratio | Verdict |
+|---|---|---|
+| ALMS | 0.280 | **Artifact** (already known — real single-day crash dominates) |
+| CHPT | 0.410 | **Artifact** (already known — real single-day spike dominates) |
+| EIX | 0.456 | **Artifact** (already known — wildfire-liability crash dominates) |
+| ONON | 0.477 | **Artifact, newly confirmed** — real -20.3% single-day crash 08-10→08-11 (43.9M vol vs 3-10M normal) dominates the HV window; calm chop $26-32 since, no fresh catalyst today |
+| COO | 0.485 | **Rejected, two independent reasons** — real -25% two-day crash (09-09→09-10) on a real, dated, verified catalyst (Q3 report 09-09 PM: EPS actually beat $1.15 vs $1.12 est, but a real revenue miss + weak guidance + investor anger over not spinning off CooperSurgical drove the drop, confirmed via Stocktwits). But (1) the reaction already happened 2 days ago — chasing an already-printed move, same class of rejection as PDD/XPEV 08-24 and SAIC 08-31, and (2) the cheap IV/HV ratio is itself an artifact of that same 2-day crash dominating the HV window, same failure mode as ALMS/CHPT/EIX |
+| HRL | 0.620 | **Artifact** (already known) |
+| RELY | 0.634 | Real sustained decline (-18% over 2 weeks, accelerating), NOT a single-day artifact — but no dated catalyst found (Stocktwits: pure "what happened here" retail chatter, no news cited). Rejected on the catalyst gate |
+| CAVA | 0.742 | Real moderate outlier + genuine downtrend (already known), no catalyst surfaced |
+
+**Track 2 (dated earnings, next 3 days, high-market-cap):** only KR, which already reported this morning (EPS $1.09 actual vs $1.12 est, a slight miss) — already-reported, same chase-the-gap exclusion as every prior same-day earnings check. No forward candidates in the window.
+
+**Track 3 (soft catalyst):** Stocklake still returns "requires re-authorization" (confirmed again, unchanged since 09-07) — the news leg is unavailable, not silently skipped. Fell back to Stocktwits alone for RELY/COO above; neither survived.
+
+No trade. Running total: 18/18 S7 checks, 0 trades. No near-miss worth flagging this cycle (every candidate was rejected before reaching the option-chain/delta stage, on catalyst or artifact grounds, not a close cap/delta call).

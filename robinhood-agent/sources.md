@@ -5000,3 +5000,11 @@ Market-holiday guard: SPY regular-hours print (15:11 UTC), confirmed open.
 **Also worth naming plainly: a credible peer manipulation warning surfaced in the same chatter**, not from this account's own analysis but from another trader's real, detailed post: called this "rug pull week... our 4th in a row," named SWRD and BENF (both in the same low-float basket flagged repeatedly this morning alongside FTFT/TNON/PCLA) as having "doubled and tanked" already this week, referenced a real halt alert on one of them, and described the pattern as "these guys double the price, load up on shares, and pick up more shares at the bottom." BENF itself is on today's scan too (+5.2%, RVOL 179.7x) but per that same account has already played out (doubled, halted, dumped) -- not fresh, not covered separately.
 
 **Flagged to the user with full caveats, not presented as a clean setup** -- real move, real volume, but no catalyst, heavy dilution on file, and a specific credible warning about this exact basket's pattern this week.
+
+## 2026-09-11 ~12:10pm ET — Momentum-scanner check: quiet; BDRX rug-pull warning confirmed in real time
+
+Market-holiday guard: SPY regular-hours print (16:10 UTC), confirmed open.
+
+**BDRX** — collapsed from the $1.41-1.46 peak (11:11am ET) to $1.1425 now, -19% off high within the hour. Confirms the peer "rug pull week" warning logged last cycle played out exactly as described, same pattern as SWRD/BENF. No further action, already fully flagged last cycle.
+
+**TNON** ($9.26, +74.7%) still below its established $9.35 spike high — no fresh development. **FTFT** ($2.87) and **BENF** (-3.3%, confirming its own already-played-out move) unchanged from prior characterization. No user message this cycle.

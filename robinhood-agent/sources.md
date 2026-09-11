@@ -5016,3 +5016,15 @@ Market-holiday guard: SPY regular-hours print (17:09 UTC), confirmed open.
 **BDRX** — recovered from the $1.14 low (confirmed last cycle, -19% off its first peak) to a fresh high of **$1.51** (+128.8%, RVOL 520x, cumulative volume 105.5M vs. 87M last cycle) -- a real, larger second leg exceeding the original $1.46 peak. No new catalyst has surfaced; the dilution finding (13 prospectus filings since 07-01) and the "rug pull week" community warning both still stand unchanged, and the round-trip (peak->-19% crash->new higher peak) itself reinforces rather than contradicts that characterization -- this is exactly the volatile whipsaw pattern that warning described. Sent a brief update to the user rather than a full re-alert since the substance (no catalyst, heavy dilution, proven fragile) is unchanged from the 11:11am flag.
 
 TNON ($8.72, down from $9.26 last cycle, still below its $9.35 established peak) unchanged, no new development.
+
+## 2026-09-11 ~2:09pm ET — Momentum-scanner check: quiet, BDRX and TNON continuing to fade
+
+Market-holiday guard: SPY regular-hours print (18:09 UTC), confirmed open.
+
+Both scans run. Nothing clears the step-2/3 bar this cycle -- no message sent.
+
+**BDRX** $1.42 (+115.1%, RVOL 603x), down from the $1.51 new high logged last cycle (1:09pm) -- continued fade off that peak, not a fresh development, no catalyst change. **TNON** $5.91-5.95 (+11.5-12.3%), a real further fade -- down from $8.72 last cycle and well below the $9.35 spike high from this morning, now roughly -37% off that peak. Neither is a new high or fresh igniting move, so no alert.
+
+**FTFT** remains today's largest real % change (+42.9%, $2.93-2.99) but this was already fully logged at 10:11am ET (real day high $3.40 at 9:35am ET, no dated catalyst found, Stocktwits chatter only) -- pulled real 5-min bars (09:30 ET through now) to confirm: high of day is still $3.40 (9:35am ET, ~4.5 hours ago), price has been range-bound $2.67-3.15 since, currently $2.93-2.99 -- same already-printed, no-catalyst characterization, no re-log needed per the no-material-change rule.
+
+No other names in either scan clear even the raw %-change/RVOL screen meaningfully. Quiet cycle.

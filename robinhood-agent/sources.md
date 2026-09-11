@@ -5054,3 +5054,7 @@ Market-holiday guard: SPY fresh print (19:59:59Z regular, 20:02:19Z non-reg), co
 Placed a GFD limit buy, 2 sh, $53.00 ceiling (current price ~$51.87-51.98 ask) at 20:04:49 UTC -- market had just closed for the day, so this queues for Monday's open per the established after-close pattern. Verified `state: queued`. Scheduled a follow-up (send_later) for 09:31 ET Monday 2026-09-14 to confirm the real fill and place the GTC stop_market at 18% below entry -- booked at :31 not :34, per the process fix recorded after HL's 09-04 entry (318s stop latency from booking the check too late). Not yet logged to trades.csv (this sleeve logs at real fill time, not order-placement time); will log the fill + stop together once confirmed Monday.
 
 One growth position currently confirmed open (HL, 20sh, stop $17.36); GCT pending Monday's open.
+
+## 2026-09-11 ~4:10pm ET — Momentum-scanner fire past session close, no scan run
+
+Market-holiday guard: SPY confirms regular hours ended at 19:59:59.990Z (4:00:00pm ET); this cycle fired at 20:09:59Z (4:09:59pm ET), 10 minutes into post-market (last_non_reg_trade_time 20:10:07Z). Not a holiday -- just the scheduled 4pm slot landing after the bell, same as 2026-09-10's 4:10pm fire. RVOL/relative-volume fields are meaningless post-close (same unreliability window as premarket), so no scan run, no analysis, no user message. Last live cycle of the day was 3:09pm ET (XHLD alert).

@@ -4974,3 +4974,7 @@ Market-holiday guard: SPY fresh premarket print (12:36 UTC), confirmed open.
 **Track 3 (soft catalyst):** Stocklake still returns "requires re-authorization" (confirmed again, unchanged since 09-07) — the news leg is unavailable, not silently skipped. Fell back to Stocktwits alone for RELY/COO above; neither survived.
 
 No trade. Running total: 18/18 S7 checks, 0 trades. No near-miss worth flagging this cycle (every candidate was rejected before reaching the option-chain/delta stage, on catalyst or artifact grounds, not a close cap/delta call).
+
+## 2026-09-11 ~9:11am ET — Momentum-scanner check: quiet, TNON recovering within existing range
+
+Market-holiday guard: SPY fresh premarket print (13:11 UTC), confirmed open. TNON $8.25-8.26 (+55.8%), recovering from the earlier fade but still below the $9.35 spike high logged at 8:11am ET — no fresh high, no material change, no new alert. FTFT +14.6% modest, nothing else clears the bar. No user message needed.

@@ -4933,3 +4933,11 @@ Market-holiday guard: SPY fresh premarket print (10:34-10:35 UTC), confirmed ope
 **Nuclear core (LEU, SMR, OKLO, UUUU, CCJ) — unchanged.** Mixed, mild premarket moves (LEU +1.4%, SMR -3.9%, OKLO +1.2%, UUUU +1.0%, CCJ +0.2% on thin/wide premarket spreads) — no fresh catalyst, standing sector watch continues as-is.
 
 Final list (7 symbols): TNON, ORCL, LEU, SMR, OKLO, UUUU, CCJ.
+
+## 2026-09-11 ~7:11am ET — Momentum-scanner ALERT: TNON fresh premarket high, no new catalyst
+
+Market-holiday guard: SPY fresh premarket print (11:11-11:12 UTC), confirmed open.
+
+**TNON** — alerted. $7.24-7.30 (bid/ask), +36.6% vs yesterday's $5.30 close per the scan snapshot, but real-time price has already run further: 5-min bars show a fresh intraday high of **$7.76 at 7:00am ET** (~11 min before this check), on a real volume surge (692,389 and 294,424 shares in the last two 5-min bars vs. a 20K-220K/bar baseline through the rest of premarket) — genuine money showing up, not a thin print. Within the ~15-20 min "igniting" window, not already-printed. Premarket RVOL field unreliable pre-9:30am as usual; a precise same-time-of-day multi-day comparison wasn't available (prior days' pulled bars only started at 9am ET), so this alert leans on the real, visible intrabar volume acceleration instead of a computed ratio.
+
+No new catalyst beyond what's already on file (09-09 8-K debt payoff; extremely bullish, extremely-high-volume Stocktwits chatter already logged in this morning's premarket watchlist rebuild) — this is the same real, sustained squeeze continuing, not a fresh headline. Flagged as continuation, not a clean new setup.

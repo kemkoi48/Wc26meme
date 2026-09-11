@@ -5028,3 +5028,15 @@ Both scans run. Nothing clears the step-2/3 bar this cycle -- no message sent.
 **FTFT** remains today's largest real % change (+42.9%, $2.93-2.99) but this was already fully logged at 10:11am ET (real day high $3.40 at 9:35am ET, no dated catalyst found, Stocktwits chatter only) -- pulled real 5-min bars (09:30 ET through now) to confirm: high of day is still $3.40 (9:35am ET, ~4.5 hours ago), price has been range-bound $2.67-3.15 since, currently $2.93-2.99 -- same already-printed, no-catalyst characterization, no re-log needed per the no-material-change rule.
 
 No other names in either scan clear even the raw %-change/RVOL screen meaningfully. Quiet cycle.
+
+## 2026-09-11 ~3:09pm ET — Momentum-scanner ALERT: XHLD fresh breakout, no catalyst
+
+Market-holiday guard: SPY regular-hours print (19:09 UTC), confirmed open.
+
+**XHLD (TEN Holdings)** — real, fresh breakout. Was flat $10.6-10.9 all session (light volume, a few hundred-to-low-thousand shares per 5-min bar) until the 19:00 UTC (3:00pm ET) bar, which jumped $11.10->$13.01 on 67,678 shares, then the very next bar (3:05pm ET) pushed to a high of $13.84 on 59,442 shares -- both real volume spikes, nothing interpolated. Live quote confirms: $13.17 as of 19:10:28Z (fresh, ~1 min old), +21.5% vs. $10.84 prior close, only ~5% off the $13.84 intraday high made ~5 min ago -- squarely in the igniting window (well inside 15-20 min), not already-printed. Float 10.34M (scan), RVOL (1, 1H) 19.2-19.7x per the scan field, trustworthy at this hour (well past 9:30am).
+
+**Catalyst check: none found.** Stocklake `get_stock_news` hit the 25-call guest daily limit -- news leg unavailable this check, stated plainly rather than proceeding on Stocktwits alone. Stocktwits pulse: sentiment is actually BEARISH (72.7% bear) despite the price move, LOW current message volume (extremely high only on multi-month lookback), and the real posts describe this explicitly as unexplained/promotional action, not news -- "this artificial pump is almost over," "I really can't understand what's propping this up," "this becoming short sellers' nightmare," one chart-target hype post ("13.47 is next res then we could see 20.00... Join TOB") from a promotional trading-room account, and a mention it "halted up here" (a volatility halt, not a catalyst). One unrelated PR post noted XHLD is attending an investor conference Sept 14-16 -- a future date, generic conference-attendance announcement, not today's trigger. Float is 10.3M (not sub-1M) and price is $13 (not sub-$5), so the WETO-style dilution check doesn't apply here.
+
+**Flagged to the user as "no catalyst found -- price action only," not presented as a clean setup**, per protocol -- real move, real volume, but no dated news behind it and the community's own read is that this looks like an unexplained/promotional pump.
+
+TNON/BDRX/FTFT/SXTC unchanged from the pattern already on record (TNON/BDRX continuing to fade off their earlier peaks, FTFT still range-bound below its 9:35am high, SXTC's second leg peaked $3.00 at 2:20pm ET and has since faded ~10% off that high -- not fresh, no re-alert).

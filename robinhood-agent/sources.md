@@ -4913,3 +4913,23 @@ That, combined with the centered `max-width:1240px` `.wrap` on what is now a wid
 Published to the **same artifact URL** (`d6619239-807d-4ef3-9c3b-d9a400107c81`, now version 9) so the user's existing link/bookmark stays stable. Stripped the platform-injected `<!doctype html><html><head>...</head><body>`/`</body></html>` wrapper before publishing (present in the saved copy from `action:"read"`, per the Artifact tool's own rule not to double-wrap).
 
 **One honest caveat carried into the publish result:** the platform flagged the page's declared "Stocklake" connector capability as unobserved this session (only mocked in the Playwright test, no real live call made before publishing) — the catalyst-lookup code path is unchanged from before, but wasn't re-verified against a real Stocklake response in this pass.
+
+## 2026-09-11 ~6:35am ET — Premarket watchlist rebuilt to "September 11"
+
+Market-holiday guard: SPY fresh premarket print (10:34-10:35 UTC), confirmed open (Friday, real trading day).
+
+**Renamed "September 10" -> "September 11"**, id `28897739-a4e8-40fa-ac57-6fb0eb30137b`.
+
+**Top story — ORCL, real earnings beat.** Reported 2026-09-10 PM: EPS actual $1.92 vs estimate $1.67 (verified via `get_earnings_results`), a genuine ~15% surprise. Premarket +7.1% to $163.72-$163.87 (vs $152.94 close) — confirmed via Stocktwits trending (#1 rank, 70,688 watchers, change +7.08%) and real quote data, not a stale/rumored number. Held on the list, most conviction of anything today.
+
+**TNON — held, extends real momentum.** Premarket $6.90-6.92, +30.2-30.5% vs yesterday's $5.30 close (which was itself the close of a huge multi-day squeeze). Stocktwits pulse: EXTREMELY_HIGH message volume (score 95), EXTREMELY_BULLISH sentiment (88.2% bull / 11.8% bear). No fresh dated news catalyst beyond the 09-09 debt-payoff 8-K already logged — this is sustained real chatter/momentum, not a quiet fade, so kept per the standing rule that a watchlist can hold a name on real sustained interest alone.
+
+**Removed — SUNE.** Down -8.9% premarket to $3.07-3.08, on top of yesterday's real -18.4% to -21.7% decline (close $3.37, was $3.68 the session before, per a Stocktwits "top losers" roundup). Cumulative ~-40% over 2 sessions. Checked `get_sec_filing_index` since 2026-08-01: two Rule 425 filings (business-combination-related prospectuses/communications) plus an 8-K, all filed 2026-09-08 — a real, dated, disclosed corporate-action development that plausibly explains the volatility, not just hype cooling. Stocktwits chatter has turned genuinely distressed/capitulation-toned ("Borderline Chinese scam stock," "is it gonna break under $2," "chart is broken," explicit private-placement dilution concern drawing a comparison to TNON) versus TNON's still-euphoric tone — a real, checkable difference in character, not just a price move. Dropped as a day-trade momentum name; the merger-related filings make this a different (M&A-arb) situation now, outside this watchlist's scope.
+
+**KR (Kroger)** reports this morning (AM, confirmed via `get_earnings_calendar` high-market-cap filter) but premarket move is only +0.97% ($57.50 vs $56.95 close) — no real reaction yet, not watchlist-worthy for this list's low-float/momentum + nuclear-sector character. Not added.
+
+**DBGI** (yesterday's other huge mover, not on this list) continues fading: -3.8% premarket to $6.53-6.74, well off its $7.48 peak. No action — was never added to this dated list.
+
+**Nuclear core (LEU, SMR, OKLO, UUUU, CCJ) — unchanged.** Mixed, mild premarket moves (LEU +1.4%, SMR -3.9%, OKLO +1.2%, UUUU +1.0%, CCJ +0.2% on thin/wide premarket spreads) — no fresh catalyst, standing sector watch continues as-is.
+
+Final list (7 symbols): TNON, ORCL, LEU, SMR, OKLO, UUUU, CCJ.

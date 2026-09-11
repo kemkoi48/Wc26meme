@@ -4978,3 +4978,11 @@ No trade. Running total: 18/18 S7 checks, 0 trades. No near-miss worth flagging 
 ## 2026-09-11 ~9:11am ET — Momentum-scanner check: quiet, TNON recovering within existing range
 
 Market-holiday guard: SPY fresh premarket print (13:11 UTC), confirmed open. TNON $8.25-8.26 (+55.8%), recovering from the earlier fade but still below the $9.35 spike high logged at 8:11am ET — no fresh high, no material change, no new alert. FTFT +14.6% modest, nothing else clears the bar. No user message needed.
+
+## 2026-09-11 ~10:11am ET — Momentum-scanner check: quiet, FTFT logged (already-printed, no catalyst)
+
+Market-holiday guard: SPY regular-hours print (14:11 UTC), confirmed open. RVOL fields now reliable (market open past 9:30am).
+
+**FTFT** — today's largest real mover, +47%, $2.98-3.05 (real RVOL 2.19x/49.8x, genuinely elevated). Real day high $3.40 was at 9:35am ET, ~36 min before this check — already faded ~12% off that high, past the ~15-20 min igniting window. No dated catalyst found: Stocktwits is EXTREMELY_HIGH volume (score 94), EXTREMELY_BULLISH (81% bull) but pure low-float chatter and promotional trading-alert posts ("$FTFT ran +44% from 2.35 call!"), nothing news-based. Logged per the biggest-mover rule; does not qualify for an alert (already printed + no catalyst).
+
+TNON ($7.69, RVOL now thin at 0.35x post-open) unchanged, still below its $9.35 spike high, no new development. No user message this cycle.

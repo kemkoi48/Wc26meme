@@ -4986,3 +4986,17 @@ Market-holiday guard: SPY regular-hours print (14:11 UTC), confirmed open. RVOL 
 **FTFT** — today's largest real mover, +47%, $2.98-3.05 (real RVOL 2.19x/49.8x, genuinely elevated). Real day high $3.40 was at 9:35am ET, ~36 min before this check — already faded ~12% off that high, past the ~15-20 min igniting window. No dated catalyst found: Stocktwits is EXTREMELY_HIGH volume (score 94), EXTREMELY_BULLISH (81% bull) but pure low-float chatter and promotional trading-alert posts ("$FTFT ran +44% from 2.35 call!"), nothing news-based. Logged per the biggest-mover rule; does not qualify for an alert (already printed + no catalyst).
 
 TNON ($7.69, RVOL now thin at 0.35x post-open) unchanged, still below its $9.35 spike high, no new development. No user message this cycle.
+
+## 2026-09-11 ~11:11am ET — Momentum-scanner FLAG (not a clean alert): BDRX real move, no catalyst, heavy dilution, credible manipulation warning
+
+Market-holiday guard: SPY regular-hours print (15:11 UTC), confirmed open.
+
+**BDRX (Biodexa Pharmaceuticals)** — real, fresh breakout: flat $0.84-0.94 until 10:30am ET, then exploded on genuine volume acceleration (3.1M/4.3M/3.5M/1.8M/3.0M/3.3M/2.6M/2.7M shares per 5-min bar since 10:30am ET vs. a 50-750K baseline before). Now $1.41-1.46, +113.6% on the day, making fresh highs within the last few minutes -- genuinely igniting by the timing test. RVOL 332.8x (real field, market open).
+
+**No catalyst found.** Stocktwits pulse: EXTREMELY_HIGH volume, EXTREMELY_BULLISH sentiment (88.9% bull) -- but every post is pure low-float pump chatter ("low floater on fire," "INSANE PLAY... members in cord"), nothing news-based.
+
+**Dilution check (float ~1.03M, sub-$5 price -- exact WETO-shaped profile): heavy, active mechanics confirmed.** `get_sec_filing_index` since 2026-07-01 shows **13 prospectus filings** (seven 424B3 + one 424B5 on 08-04, six more 424B3/424B5 on 07-01) plus two 6-K current reports -- this is about as much live resale/offering registration activity as this account has seen on a single name.
+
+**Also worth naming plainly: a credible peer manipulation warning surfaced in the same chatter**, not from this account's own analysis but from another trader's real, detailed post: called this "rug pull week... our 4th in a row," named SWRD and BENF (both in the same low-float basket flagged repeatedly this morning alongside FTFT/TNON/PCLA) as having "doubled and tanked" already this week, referenced a real halt alert on one of them, and described the pattern as "these guys double the price, load up on shares, and pick up more shares at the bottom." BENF itself is on today's scan too (+5.2%, RVOL 179.7x) but per that same account has already played out (doubled, halted, dumped) -- not fresh, not covered separately.
+
+**Flagged to the user with full caveats, not presented as a clean setup** -- real move, real volume, but no catalyst, heavy dilution on file, and a specific credible warning about this exact basket's pattern this week.

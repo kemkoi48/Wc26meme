@@ -5008,3 +5008,11 @@ Market-holiday guard: SPY regular-hours print (16:10 UTC), confirmed open.
 **BDRX** — collapsed from the $1.41-1.46 peak (11:11am ET) to $1.1425 now, -19% off high within the hour. Confirms the peer "rug pull week" warning logged last cycle played out exactly as described, same pattern as SWRD/BENF. No further action, already fully flagged last cycle.
 
 **TNON** ($9.26, +74.7%) still below its established $9.35 spike high — no fresh development. **FTFT** ($2.87) and **BENF** (-3.3%, confirming its own already-played-out move) unchanged from prior characterization. No user message this cycle.
+
+## 2026-09-11 ~1:09pm ET — Momentum-scanner UPDATE: BDRX whipsaws to a new high ($1.51), same caveats stand
+
+Market-holiday guard: SPY regular-hours print (17:09 UTC), confirmed open.
+
+**BDRX** — recovered from the $1.14 low (confirmed last cycle, -19% off its first peak) to a fresh high of **$1.51** (+128.8%, RVOL 520x, cumulative volume 105.5M vs. 87M last cycle) -- a real, larger second leg exceeding the original $1.46 peak. No new catalyst has surfaced; the dilution finding (13 prospectus filings since 07-01) and the "rug pull week" community warning both still stand unchanged, and the round-trip (peak->-19% crash->new higher peak) itself reinforces rather than contradicts that characterization -- this is exactly the volatile whipsaw pattern that warning described. Sent a brief update to the user rather than a full re-alert since the substance (no catalyst, heavy dilution, proven fragile) is unchanged from the 11:11am flag.
+
+TNON ($8.72, down from $9.26 last cycle, still below its $9.35 established peak) unchanged, no new development.

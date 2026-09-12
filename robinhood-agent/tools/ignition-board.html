@@ -1,0 +1,2237 @@
+<title>Ignition Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ground:        #F7F5F2;
+    --surface:       #FFFFFF;
+    --surface-2:     #F1EEE9;
+    --line:          #E0DAD1;
+    --line-strong:   #CFC7BB;
+    --ink:           #1A1917;
+    --ink-muted:     #6B6862;
+    --ink-faint:     #948F86;
+    --accent:        #B3632F;
+    --accent-soft:   #F3E3D6;
+    --up:            #2A7355;
+    --up-soft:       #DFEDE6;
+    --down:          #A93E2A;
+    --down-soft:     #F7E2DC;
+    --flat:          #7C776F;
+
+    --radius: 7px;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #151417;
+      --surface:     #1D1C21;
+      --surface-2:   #26242A;
+      --line:        #322F37;
+      --line-strong: #46424C;
+      --ink:         #EDEAE4;
+      --ink-muted:   #9C978E;
+      --ink-faint:   #74706A;
+      --accent:      #DE9660;
+      --accent-soft: #3A2A1E;
+      --up:          #5FBF93;
+      --up-soft:     #1B3830;
+      --down:        #E8846B;
+      --down-soft:   #3B241E;
+      --flat:        #837E76;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #151417;
+    --surface:     #1D1C21;
+    --surface-2:   #26242A;
+    --line:        #322F37;
+    --line-strong: #46424C;
+    --ink:         #EDEAE4;
+    --ink-muted:   #9C978E;
+    --ink-faint:   #74706A;
+    --accent:      #DE9660;
+    --accent-soft: #3A2A1E;
+    --up:          #5FBF93;
+    --up-soft:     #1B3830;
+    --down:        #E8846B;
+    --down-soft:   #3B241E;
+    --flat:        #837E76;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0 0 64px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* ---------- masthead ---------- */
+
+  header.mast {
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .mast-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding-block: 14px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-right: auto;
+  }
+
+  .brand h1 {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+
+  .brand .sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  select, button {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--surface-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 7px 11px;
+    cursor: pointer;
+  }
+  select { max-width: 300px; }
+  button:hover:not(:disabled), select:hover { border-color: var(--accent); }
+  button:disabled { opacity: 0.5; cursor: default; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- market status ---------- */
+
+  .mkt {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 6px 11px;
+    border-radius: 100px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface-2);
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--flat); flex: none; }
+  .mkt.open   { color: var(--up); border-color: color-mix(in srgb, var(--up) 45%, transparent); background: var(--up-soft); }
+  .mkt.open .dot { background: var(--up); }
+  .mkt.pre    { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); background: var(--accent-soft); }
+  .mkt.pre .dot { background: var(--accent); }
+
+  /* ---------- after-hours warning ---------- */
+
+  .warn-strip {
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    border-radius: var(--radius);
+    padding: 12px 15px;
+    margin-top: 18px;
+    font-size: 13.5px;
+    color: var(--ink);
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+  }
+  .warn-strip strong { color: var(--accent); font-weight: 600; }
+  .warn-strip .ic { font-size: 15px; line-height: 1.3; flex: none; }
+
+  /* ---------- stat tiles ---------- */
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .tile {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 13px 15px;
+  }
+  .tile .k {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 5px;
+  }
+  .tile .v {
+    font-family: var(--mono);
+    font-size: 25px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .tile .v.hot { color: var(--accent); }
+  .tile .v.up  { color: var(--up); }
+  .tile .note { font-size: 11.5px; color: var(--ink-faint); margin-top: 3px; }
+
+  /* ---------- checks panel ---------- */
+
+  details.checks {
+    margin-top: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  details.checks summary {
+    cursor: pointer;
+    padding: 12px 15px;
+    font-size: 13.5px;
+    font-weight: 600;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  details.checks summary::-webkit-details-marker { display: none; }
+  details.checks summary::before {
+    content: "▸";
+    color: var(--accent);
+    font-size: 11px;
+    transition: transform 0.15s;
+  }
+  details.checks[open] summary::before { transform: rotate(90deg); }
+  .checks-body {
+    padding: 0 15px 15px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  .checks-body ol { margin: 0; padding-left: 19px; }
+  .checks-body li { margin-bottom: 10px; font-size: 13.5px; color: var(--ink-muted); }
+  .checks-body li:last-child { margin-bottom: 0; }
+  .checks-body li b { color: var(--ink); font-weight: 600; }
+  .checks-body .rule {
+    margin-top: 14px;
+    padding: 11px 13px;
+    background: var(--surface-2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  /* ---------- table ---------- */
+
+  .table-shell {
+    margin-top: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .table-scroll { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 780px; }
+
+  thead th {
+    position: sticky; top: 0;
+    background: var(--surface-2);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    font-weight: 500;
+    text-align: right;
+    padding: 10px 13px;
+    border-bottom: 1px solid var(--line-strong);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  thead th:first-child { text-align: left; }
+  thead th:hover { color: var(--accent); }
+  thead th .arrow { opacity: 0; margin-left: 3px; }
+  thead th.sorted .arrow { opacity: 1; color: var(--accent); }
+
+  tbody td {
+    padding: 11px 13px;
+    border-bottom: 1px solid var(--line);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--surface-2); }
+
+  td.sym { text-align: left; border-left: 3px solid transparent; }
+  tr.q-strong td.sym { border-left-color: var(--up); }
+  tr.q-watch  td.sym { border-left-color: var(--accent); }
+  tr.q-thin   td.sym { border-left-color: var(--line-strong); }
+  tr.q-down   td.sym { border-left-color: var(--down); }
+
+  .ticker { font-family: var(--mono); font-weight: 600; font-size: 14px; letter-spacing: -0.01em; }
+  .coname { font-size: 11.5px; color: var(--ink-faint); max-width: 210px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .num { font-family: var(--mono); }
+  .pos { color: var(--up); }
+  .neg { color: var(--down); }
+  .zero { color: var(--ink-faint); }
+
+  /* rvol meter */
+  .meter { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+  .meter .track {
+    width: 54px; height: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    overflow: hidden;
+    flex: none;
+  }
+  .meter .fill { height: 100%; background: var(--accent); display: block; }
+  .meter .fill.strong { background: var(--up); }
+  .meter .val { font-family: var(--mono); font-size: 12.5px; min-width: 44px; text-align: right; }
+
+  .chip {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2.5px 7px;
+    border-radius: 100px;
+    border: 1px solid var(--line-strong);
+    color: var(--ink-muted);
+    background: var(--surface-2);
+  }
+  .chip.tight { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); background: var(--accent-soft); }
+
+  .book-btn {
+    font-family: var(--mono); font-size: 11px; padding: 3px 9px;
+    background: var(--surface-2); border: 1px solid var(--line-strong);
+    border-radius: 100px; color: var(--ink-muted); cursor: pointer;
+  }
+  .book-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- alert bell ---------- */
+
+  .bell {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .bell .count {
+    position: absolute; top: -6px; right: -6px;
+    background: var(--accent); color: var(--surface);
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    min-width: 15px; height: 15px; border-radius: 100px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 3px; line-height: 1;
+  }
+  .bell[data-state="on"] { color: var(--up); border-color: color-mix(in srgb, var(--up) 45%, transparent); background: var(--up-soft); }
+  .bell[data-state="off"] { color: var(--ink-muted); }
+
+  /* ---------- swing section ---------- */
+
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 13px 15px;
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+  .info-card .head {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 9px;
+  }
+  .info-card h2 {
+    margin: 0; font-size: 13.5px; font-weight: 600; color: var(--ink);
+  }
+  .info-card .src {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+  .crit-list { display: flex; flex-wrap: wrap; gap: 7px; margin: 4px 0 0; padding: 0; list-style: none; }
+  .crit-list li {
+    font-family: var(--mono); font-size: 11.5px; color: var(--ink);
+    background: var(--surface-2); border: 1px solid var(--line-strong);
+    border-radius: 100px; padding: 3px 9px;
+  }
+  .info-card .note { margin-top: 10px; font-size: 12.5px; }
+  .info-card .note.warn2 { color: var(--accent); }
+
+  tr.new-row td { animation: newpulse 2.4s ease-out 2; }
+  @keyframes newpulse {
+    0%   { background: color-mix(in srgb, var(--up) 22%, transparent); }
+    100% { background: transparent; }
+  }
+  .newtag {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.05em;
+    color: var(--up); background: var(--up-soft);
+    border: 1px solid color-mix(in srgb, var(--up) 45%, transparent);
+    border-radius: 100px; padding: 1px 6px; margin-left: 7px;
+    vertical-align: middle;
+  }
+
+  .alert-log {
+    margin-top: 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .alert-log h3 {
+    margin: 0; padding: 9px 13px;
+    font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted);
+    background: var(--surface-2); border-bottom: 1px solid var(--line);
+  }
+  .alert-log ul { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow-y: auto; }
+  .alert-log li {
+    display: flex; gap: 10px; align-items: baseline;
+    padding: 8px 13px; border-bottom: 1px solid var(--line);
+    font-size: 12.5px;
+  }
+  .alert-log li:last-child { border-bottom: none; }
+  .alert-log time { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); white-space: nowrap; }
+  .alert-log .empty { padding: 16px 13px; color: var(--ink-faint); font-size: 12.5px; text-align: center; }
+
+  /* ---------- states ---------- */
+
+  .state {
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 14px;
+  }
+  .state .big { font-size: 15px; color: var(--ink); font-weight: 600; margin-bottom: 7px; }
+  .state code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--surface-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+  }
+  .state .fix { margin-top: 12px; font-size: 13.5px; }
+
+  .skel-row { display: flex; gap: 12px; padding: 11px 13px; border-bottom: 1px solid var(--line); }
+  .skel {
+    height: 13px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 50%, var(--surface-2) 75%);
+    background-size: 220% 100%;
+    animation: sweep 1.4s linear infinite;
+  }
+  @keyframes sweep { to { background-position: -220% 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .skel { animation: none; }
+    details.checks summary::before { transition: none; }
+  }
+
+  /* ---------- footer bar ---------- */
+
+  .footbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    align-items: center;
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    letter-spacing: 0.03em;
+  }
+  .footbar .stale { color: var(--accent); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-left: auto; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { width: 9px; height: 3px; border-radius: 2px; display: block; }
+
+  .disclaimer {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 640px) {
+    .brand { width: 100%; }
+    .controls { width: 100%; }
+    select { flex: 1; max-width: none; }
+  }
+
+  /* ---------- live ticker ---------- */
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--up);
+    display: inline-block; animation: pulse 1.6s ease-in-out infinite; flex: none;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .live-wrap { display: inline-flex; align-items: center; gap: 6px; }
+  @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+
+  /* ---------- qualified-now strip ---------- */
+  .qnow {
+    margin-top: 18px;
+  }
+  .qnow-head {
+    display: flex; align-items: baseline; gap: 9px; margin-bottom: 10px;
+  }
+  .qnow-head h2 { margin: 0; font-size: 13.5px; font-weight: 600; }
+  .qnow-head .sub { font-size: 12px; color: var(--ink-faint); }
+  .qnow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 10px;
+  }
+  .qcard {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--up);
+    border-radius: var(--radius);
+    padding: 12px 13px;
+  }
+  .qcard .row1 { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .qcard .sym { font-family: var(--mono); font-weight: 600; font-size: 15px; }
+  .qcard .chg { font-family: var(--mono); font-size: 13.5px; }
+  .qcard .row2 { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; }
+  .qcard .price { font-family: var(--mono); font-size: 12.5px; color: var(--ink-muted); }
+  .qcard .qat {
+    font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+  .qcard canvas { display: block; margin-top: 8px; width: 100%; height: 34px; }
+  .qnow-empty {
+    padding: 16px; text-align: center; color: var(--ink-faint); font-size: 13px;
+    background: var(--surface); border: 1px dashed var(--line-strong); border-radius: var(--radius);
+  }
+
+  /* ---------- candle chart cell (table) ---------- */
+  .chart-cell canvas { display: block; }
+  .chart-cell { text-align: left !important; }
+
+  /* ---------- candlestick education panel ---------- */
+  .candle-edu { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 10px; }
+  .candle-fig { flex: 1 1 130px; min-width: 130px; text-align: center; }
+  .candle-fig svg { display: block; margin: 0 auto 8px; }
+  .candle-fig .name { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+  .candle-fig .meaning { font-size: 11.5px; color: var(--ink-muted); margin-top: 2px; line-height: 1.4; }
+  .anatomy-row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin: 12px 0 16px; }
+  .anatomy-row svg { flex: none; }
+  .anatomy-legend { font-size: 13px; color: var(--ink-muted); line-height: 1.7; }
+  .anatomy-legend b { color: var(--ink); }
+</style>
+
+<header class="mast">
+  <div class="wrap mast-inner">
+    <div class="brand">
+      <h1>Ignition Board</h1>
+      <span class="sub">Live momentum scan</span>
+    </div>
+    <div class="controls">
+      <span id="mkt" class="mkt"><span class="dot"></span><span id="mkt-txt">—</span></span>
+      <select id="scan-pick" aria-label="Choose a saved scan"><option>Loading scans…</option></select>
+      <button id="refresh" type="button">Refresh</button>
+      <button id="alert-toggle" type="button" class="bell" data-state="off" title="Sound + flash when a new swing setup qualifies">
+        <span id="alert-label">🔔 Alerts: off</span><span id="alert-count" class="count" hidden>0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="warn-slot"></div>
+
+  <section class="tiles" id="tiles" aria-label="Summary">
+    <div class="tile"><span class="k">Matches</span><span class="v" id="t-count">—</span><div class="note" id="t-count-note">&nbsp;</div></div>
+    <div class="tile"><span class="k">Up &gt; 5%</span><span class="v up" id="t-movers">—</span><div class="note">real gainers</div></div>
+    <div class="tile"><span class="k">Volume behind it</span><span class="v hot" id="t-rvol">—</span><div class="note">elevated rel. volume</div></div>
+    <div class="tile"><span class="k">All pillars</span><span class="v" id="t-both">—</span><div class="note">every numeric S3 pillar met</div></div>
+  </section>
+
+  <details class="checks" id="checks">
+    <summary>Warrior Trading's 5 pillars — what "Pillars" and "Order Book" actually check</summary>
+    <div class="checks-body">
+      <ol>
+        <li><b>Relative volume ≥ 5x.</b> A big move on normal volume is thin — maybe a couple of prints. Scored automatically during regular hours from Robinhood's own live number. Outside regular hours that field breaks (verified: flat 1x, or spikes into the thousands), so a <b>*</b> marks a value this page computed itself instead from real historical bars (today's volume-so-far vs. the average by this time on recent prior days) — auto-computed for real movers, "Check*" on demand for the rest.</li>
+        <li><b>% change ≥ 10%.</b> Also scored automatically, from the scan's own number.</li>
+        <li><b>Price $2–$20.</b> Scored automatically from the Last column.</li>
+        <li><b>Float ≤ 20M.</b> Scored automatically — but only on the two scans that report float (Early Momentum Ignition, Warrior Trading Style). The Pillars column shows "n/a" for this one on scans that don't carry it, rather than silently failing it.</li>
+        <li><b>Catalyst — the 5th pillar, and it is NOT numeric.</b> Nothing here can automate it. Can you name the reason in one sentence? If you can't say it out loud, you're guessing what the crowd is doing and don't know if they're buying or selling into you. This is the one pillar you always have to check yourself.</li>
+      </ol>
+      <div class="rule">
+        <b>Order Book</b> (click "Check" on any row) shows real resting Level-2 depth — how many shares are waiting to buy vs. sell in the top 10 price levels right now. This is <i>limit-order</i> pressure, not executed trade flow — Robinhood's data doesn't classify individual trades as buyer- or seller-initiated, so this is a real but partial picture of who wants to trade, not who already did.
+      </div>
+      <div class="rule">
+        <b>Qualified</b> stamps the first time today this row hit 4/4 pillars — permanent for the day even if it later cools. <b>Chart</b> is a real 5-minute candlestick chart (see the panel below on how to read it) — this is the "is this already extended?" check made visible instead of something you have to go find elsewhere.
+      </div>
+      <div class="rule">
+        <b>VWAP</b> is the session's volume-weighted average price — the real average price paid so far today, weighted by volume, resetting every session. Price sitting <i>above</i> VWAP and holding there through pullbacks (dips bought back up, not sold through) is the real "still going up" tell — a single cross above it means little on its own. Price below VWAP means today's average trade is happening lower — sellers in control. Computed here from real 5-minute bars since today's open (typical price = (high+low+close)/3, weighted by each bar's real volume); same auto-for-movers/manual-"Check" budget as Catalyst and Chart.
+      </div>
+      <div class="rule">
+        Also: your own order history, n=108 round trips: <b>60% win rate, still net negative</b>, because losses ran 1.6× bigger than wins. Trades held under 5 minutes were net <b>+$224</b>; every longer bucket was negative. Decide the exit before you enter.
+      </div>
+    </div>
+  </details>
+
+  <section class="qnow" id="qnow" aria-label="Qualified now">
+    <div class="qnow-head">
+      <h2>Qualified now — all 4 pillars, right now</h2>
+      <span class="sub" id="qnow-sub">—</span>
+    </div>
+    <div class="qnow-grid" id="qnow-grid"><div class="qnow-empty">Nothing has cleared all 4 numeric pillars yet this scan.</div></div>
+  </section>
+
+  <details class="checks" id="candle-edu">
+    <summary>Reading the chart — candlestick basics (so "how did it qualify" isn't a guess)</summary>
+    <div class="checks-body">
+      <p style="margin:0 0 12px;color:var(--ink-muted)">
+        Every 5-minute candle on this page's charts is built the same way real trading platforms draw one —
+        this isn't a house style, it's the standard convention Warrior Trading, TradingView, and every broker
+        chart use. Once you can read a candle, the "Chart" column on the table below and the cards above stop
+        being decoration and start telling you <i>how</i> a stock got here, not just that it did.
+      </p>
+      <div class="anatomy-row">
+        <svg width="90" height="150" viewBox="0 0 90 150" aria-label="Candle anatomy">
+          <line x1="45" y1="10" x2="45" y2="50" stroke="var(--up)" stroke-width="2"></line>
+          <rect x="30" y="50" width="30" height="60" fill="var(--up)"></rect>
+          <line x1="45" y1="110" x2="45" y2="140" stroke="var(--up)" stroke-width="2"></line>
+        </svg>
+        <div class="anatomy-legend">
+          <div><b>Wick (the thin line):</b> the full high-to-low range traded during that candle's time window.</div>
+          <div><b>Body (the thick block):</b> the range between the open and the close.</div>
+          <div><b>Green/up body:</b> close finished <i>above</i> the open — buyers won that window.</div>
+          <div><b>Red/down body:</b> close finished <i>below</i> the open — sellers won that window.</div>
+          <div><b>Long wick, small body:</b> price got rejected — it traveled far, then got pushed back near where it started.</div>
+        </div>
+      </div>
+      <div class="candle-edu">
+        <div class="candle-fig">
+          <svg width="60" height="90" viewBox="0 0 60 90"><line x1="30" y1="8" x2="30" y2="30" stroke="var(--up)" stroke-width="2"></line><rect x="24" y="30" width="12" height="4" fill="var(--up)"></rect><line x1="30" y1="34" x2="30" y2="82" stroke="var(--up)" stroke-width="2"></line></svg>
+          <div class="name">Doji</div>
+          <div class="meaning">Open ≈ close, long wicks both ways. Indecision — buyers and sellers fought to a draw. Often marks a pause before the next real move.</div>
+        </div>
+        <div class="candle-fig">
+          <svg width="60" height="90" viewBox="0 0 60 90"><line x1="30" y1="8" x2="30" y2="45" stroke="var(--up)" stroke-width="2"></line><rect x="24" y="45" width="12" height="30" fill="var(--up)"></rect><line x1="30" y1="75" x2="30" y2="82" stroke="var(--up)" stroke-width="2"></line></svg>
+          <div class="name">Hammer</div>
+          <div class="meaning">Small body near the top, long lower wick. Sellers pushed price way down, buyers dragged it back up. Bullish, especially after a decline.</div>
+        </div>
+        <div class="candle-fig">
+          <svg width="60" height="90" viewBox="0 0 60 90"><line x1="30" y1="8" x2="30" y2="15" stroke="var(--down)" stroke-width="2"></line><rect x="24" y="15" width="12" height="30" fill="var(--down)"></rect><line x1="30" y1="45" x2="30" y2="82" stroke="var(--down)" stroke-width="2"></line></svg>
+          <div class="name">Shooting star</div>
+          <div class="meaning">Small body near the bottom, long upper wick. Buyers pushed price way up, sellers slammed it back down. Bearish, especially after a run-up — a classic sign a "qualified" mover is about to fade.</div>
+        </div>
+        <div class="candle-fig">
+          <svg width="60" height="90" viewBox="0 0 60 90"><rect x="20" y="20" width="10" height="20" fill="var(--down)"></rect><rect x="32" y="10" width="12" height="40" fill="var(--up)"></rect></svg>
+          <div class="name">Bullish engulfing</div>
+          <div class="meaning">A small red body immediately followed by a bigger green body that fully swallows it. Buyers overwhelmed the prior sellers in one candle — a real reversal-up signal, not just noise.</div>
+        </div>
+        <div class="candle-fig">
+          <svg width="60" height="90" viewBox="0 0 60 90"><rect x="20" y="20" width="10" height="20" fill="var(--up)"></rect><rect x="32" y="10" width="12" height="40" fill="var(--down)"></rect></svg>
+          <div class="name">Bearish engulfing</div>
+          <div class="meaning">A small green body immediately followed by a bigger red body that fully swallows it. Sellers overwhelmed the prior buyers in one candle — worth respecting on a row that already qualified, it can mean the move is over.</div>
+        </div>
+      </div>
+      <div class="rule">
+        <b>How to actually use this here:</b> a row qualifying (4/4 pillars) tells you the numbers lined up <i>at that instant</i> — the "Qualified" timestamp says when. The chart next to it tells you whether that instant looks like buyers still in control (green bodies, short upper wicks, each low higher than the last) or already fading (shooting stars, bearish engulfing, long upper wicks into the high). Warrior Trading's own scanner shows this exact combination — a live number plus a live chart next to it — because the number alone can't tell you if you're catching the move or catching the top of it.
+      </div>
+    </div>
+  </details>
+
+  <div class="table-shell">
+    <div class="table-scroll">
+      <table id="tbl">
+        <thead><tr id="head"></tr></thead>
+        <tbody id="body"></tbody>
+      </table>
+    </div>
+    <div id="state-slot"></div>
+  </div>
+
+  <section id="swing" aria-label="Swing setups" style="margin-top:30px">
+    <div class="info-card">
+      <div class="head">
+        <h2>Swing setups</h2>
+        <span class="src">Real scan: Growth Momentum (long-run)</span>
+      </div>
+      This is a different universe from the table above — larger, steadier
+      companies screened for a multi-day/multi-week hold, not a day trade.
+      A row only appears here because it <b>already clears every one</b> of
+      this saved scan's real filters:
+      <ul class="crit-list">
+        <li>Market cap ≥ $1B</li>
+        <li>RSI(14) 50–70</li>
+        <li>ADX(14) ≥ 20</li>
+        <li>Avg. volume ≥ 500K</li>
+        <li>1-month change ≥ +5%</li>
+      </ul>
+      <div class="note">
+        <b>Float</b> is shown for reference (live, via per-symbol fundamentals,
+        not a filter of this scan) — but it isn't the risk that matters here
+        the way it is on the low-float momentum table above. These are
+        large, liquid companies; float scarcity isn't why a row appears in
+        this list.
+      </div>
+      <div class="note warn2">
+        <b>Honest limit on "about to be met":</b> Robinhood's scan tool only
+        returns full matches, not near-misses, so this page can't reliably
+        show a stock that's <i>close</i> to qualifying before it actually
+        does. What it <i>can</i> do — and does — is flag the moment a symbol
+        newly appears in this list, which is the earliest this data lets it
+        know.
+      </div>
+    </div>
+
+    <div class="table-shell">
+      <div class="table-scroll">
+        <table id="swing-tbl">
+          <thead><tr id="swing-head"></tr></thead>
+          <tbody id="swing-body"></tbody>
+        </table>
+      </div>
+      <div id="swing-state-slot"></div>
+    </div>
+    <div class="footbar"><span id="swing-updated">—</span></div>
+
+    <div class="alert-log">
+      <h3>Alert log</h3>
+      <ul id="alert-list"><li class="empty">Nothing yet this session.</li></ul>
+    </div>
+  </section>
+
+  <div class="footbar">
+    <span class="live-wrap"><span class="live-dot" id="live-dot" hidden></span><span id="updated">—</span></span>
+    <span class="legend">
+      <span><i style="background:var(--up)"></i>volume confirms</span>
+      <span><i style="background:var(--accent)"></i>moving, thin volume</span>
+      <span><i style="background:var(--down)"></i>red</span>
+      <span><i style="background:var(--line-strong)"></i>quiet</span>
+    </span>
+  </div>
+
+  <p class="disclaimer">
+    Rows come straight from your own saved Robinhood scans — this page reads them, it never places orders.
+    A row appearing here is not a recommendation; it only means the stock cleared that scan's numeric filters.
+    Relative-volume figures are defined by the scan itself, not by this page.
+    <b>Alerts (flash, sound, tab title) only fire while this tab is open in your browser</b> — this page runs
+    inside claude.ai's frame, which does not reliably support real operating-system push notifications, so
+    no promise is made here that you'll see it if the tab or browser is closed.
+    <b>Catalyst</b> pulls a real dated headline (Stocklake). Rows clearing 3+ pillars check automatically, up to
+    15 lookups per page load; everything else needs a manual "Check" click — the connector's free tier caps at
+    25 lookups/day for the whole account, shared with anything else it's used for, so a full auto-refresh isn't
+    possible. "N/A" means no headline was found in the last 3 days, not that nothing is happening — always worth
+    a manual look on Stocktwits or elsewhere before trusting it either way.
+    <b>Chart</b> draws real 5-minute OHLC candles (get_equity_historicals). Same auto/manual split as Catalyst —
+    rows clearing 3+ pillars fetch automatically (up to 15 per page load), everything else needs a "Chart" click.
+    <b>VWAP</b> is the real session volume-weighted average price, computed from real 5-minute bars since today's
+    open (typical price × volume per bar, summed and divided by total volume) — not a scan column, built the same
+    way a real trading platform computes it. Same auto/manual split and 15-per-load budget as Catalyst and Chart.
+    <b>Qualified</b> is the first time-of-day today this row hit all 4 numeric pillars at once; it stays even if
+    the row later cools off, so you can always see when a move actually ignited, not just that it did at some point.
+  </p>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var SERVER = "Robinhood";
+  var LS_SCAN = "ib.scan";
+  var LS_SORT = "ib.sort";
+
+  var els = {
+    pick: document.getElementById("scan-pick"),
+    refresh: document.getElementById("refresh"),
+    head: document.getElementById("head"),
+    body: document.getElementById("body"),
+    tableShell: document.getElementById("tbl").closest(".table-shell"),
+    stateSlot: document.getElementById("state-slot"),
+    warnSlot: document.getElementById("warn-slot"),
+    updated: document.getElementById("updated"),
+    mkt: document.getElementById("mkt"),
+    mktTxt: document.getElementById("mkt-txt"),
+    checks: document.getElementById("checks"),
+    tCount: document.getElementById("t-count"),
+    tCountNote: document.getElementById("t-count-note"),
+    tMovers: document.getElementById("t-movers"),
+    tRvol: document.getElementById("t-rvol"),
+    tBoth: document.getElementById("t-both"),
+    alertBtn: document.getElementById("alert-toggle"),
+    alertLabel: document.getElementById("alert-label"),
+    alertCount: document.getElementById("alert-count"),
+    alertList: document.getElementById("alert-list"),
+    swingHead: document.getElementById("swing-head"),
+    swingBody: document.getElementById("swing-body"),
+    swingStateSlot: document.getElementById("swing-state-slot"),
+    swingUpdated: document.getElementById("swing-updated"),
+    liveDot: document.getElementById("live-dot"),
+    qnowGrid: document.getElementById("qnow-grid"),
+    qnowSub: document.getElementById("qnow-sub")
+  };
+
+  // The real S9 growth-sleeve scan (verified via get_scans, 2026-08-21):
+  // market cap > $1B, RSI(14) 50-70, ADX(14) > 20, avg volume > 500K,
+  // 1-month change > 5%. Every row shown here already cleared all five.
+  var SWING_SCAN_ID = "2514847d-25cb-4628-9731-bb5b0ee7d246";
+
+  var mcp = null;
+  var unwatch = null;
+  var swingUnwatch = null;
+  // Verified live 2026-08-28 (overnight session): Robinhood's own scan
+  // engine breaks its relative-volume math outside regular hours -- every
+  // one of 95 real matches came back with plain "Relative volume" flat at
+  // exactly 1 (a placeholder, not a real reading) while "Relative volume
+  // (1, 1H)" spiked into the hundreds or hundreds-of-thousands (e.g. MODD
+  // 203,143x) -- a divide-by-near-zero against the thin off-hours 1h
+  // average. This is upstream data, not something this page can compute
+  // around. So the RVOL pillar is gated on market state: outside regular
+  // hours it never counts toward pillarsMet, so a garbage RVOL spike can't
+  // paint a row as a false "strong" setup before the bell.
+  var marketIsOpen = false;
+  var rows = [];
+  var swingRows = [];
+  var lastGood = null;
+  var lastStamp = null;
+  var isStale = false;
+  var retried = false;
+  var swingRetried = false;
+  // Default view answers "which is most favorable ATM": most pillars
+  // cleared first, real relative volume as the tiebreaker.
+  var sort = { key: "pillarsMet", dir: -1 };
+  var swingSort = { key: "chg1mo", dir: -1 };
+  var freshUntil = {};      // symbol -> timestamp; drives the newpulse row animation
+  var alertsOn = false;
+  var unseenSinceBlur = 0;
+  var audioCtx = null;
+  var seenSwingToday = null; // Set, loaded lazily once we know today's key
+
+  // ---------- tiny local prefs (per viewer, best effort) ----------
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } }
+
+  // ---------- formatting ----------
+  function num(v) {
+    if (v === null || v === undefined || v === "") return null;
+    var n = typeof v === "number" ? v : parseFloat(v);
+    return isFinite(n) ? n : null;
+  }
+  function pct(n) {
+    if (n === null) return "—";
+    return (n >= 0 ? "+" : "") + (n * 100).toFixed(1) + "%";
+  }
+  function money(n) { return n === null ? "—" : "$" + n.toFixed(n < 1 ? 3 : 2); }
+  function compact(n) {
+    if (n === null) return "—";
+    var a = Math.abs(n);
+    if (a >= 1e9) return (n / 1e9).toFixed(a >= 1e10 ? 0 : 1) + "B";
+    if (a >= 1e6) return (n / 1e6).toFixed(a >= 1e7 ? 0 : 1) + "M";
+    if (a >= 1e3) return (n / 1e3).toFixed(a >= 1e4 ? 0 : 1) + "K";
+    return String(Math.round(n));
+  }
+  function rvolTxt(n) {
+    if (n === null) return "—";
+    if (n >= 100) return compact(n) + "×";
+    return n.toFixed(n < 10 ? 1 : 0) + "×";
+  }
+  function esc(s) {
+    return String(s === null || s === undefined ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // ---------- market clock (US Eastern) ----------
+  function marketState() {
+    var now = new Date();
+    var f = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York", weekday: "short",
+      hour: "numeric", minute: "numeric", hour12: false
+    });
+    var parts = {};
+    f.formatToParts(now).forEach(function (p) { parts[p.type] = p.value; });
+    var wd = parts.weekday;
+    var mins = parseInt(parts.hour, 10) * 60 + parseInt(parts.minute, 10);
+    if (wd === "Sat" || wd === "Sun") return { k: "closed", label: "Weekend — market closed" };
+    if (mins >= 570 && mins < 960) return { k: "open", label: "Market open" };
+    if (mins >= 240 && mins < 570) return { k: "pre", label: "Premarket" };
+    if (mins >= 960 && mins < 1200) return { k: "pre", label: "After hours" };
+    return { k: "closed", label: "Market closed" };
+  }
+
+  function paintMarket() {
+    var m = marketState();
+    els.mkt.className = "mkt " + (m.k === "closed" ? "" : m.k);
+    els.mktTxt.textContent = m.label;
+    var wasOpen = marketIsOpen;
+    marketIsOpen = m.k === "open";
+    if (m.k !== "open") {
+      if (!els.warnSlot.firstChild) {
+        els.warnSlot.innerHTML =
+          '<div class="warn-strip"><span class="ic">◐</span><div>' +
+          '<strong>Outside regular hours.</strong> Robinhood\'s own Rel Vol field breaks right now (verified live: ' +
+          'flat 1x placeholder, or spikes into the thousands off a near-empty trailing average). Rows marked ' +
+          '<b>*</b> show a Rel Vol this page computed itself from real historical bars — today\'s volume so far ' +
+          'vs. the average by this same time on recent trading days. Rows marked <b>**</b> use a coarser fallback ' +
+          '(today\'s volume vs. the stock\'s own 30-day average full-day volume) for the earliest premarket window, ' +
+          'when today\'s own intraday bars aren\'t posted yet (verified live: zero bars back from the historicals ' +
+          'API this early, even for a real, already-moving stock). Click "Check*" on any row to compute it on demand.' +
+          '</div></div>';
+      }
+    } else {
+      els.warnSlot.innerHTML = "";
+    }
+    if (wasOpen !== marketIsOpen && rows.length) {
+      rows = rows.map(deriveRow);
+      paintRows();
+      if (!marketIsOpen) autoComputeRvolForMovers();
+    }
+    return m;
+  }
+
+  // ---------- self-computed relative volume (pre/after hours) ----------
+  // Robinhood's own RVOL field breaks outside regular hours (verified live
+  // 2026-08-28: flat 1x placeholder, or spikes into the thousands off a
+  // near-zero trailing-1h average -- a real, upstream data problem, not
+  // fixable by reading the field differently). But the RAW per-bar volume
+  // underneath it is real even premarket (verified same session: PPCB's
+  // actual 2026-08-27 premarket bar showed real volume 19,161,603, not
+  // broken). A professional scanner (this is genuinely how Warrior
+  // Trading-style tools do it) doesn't compare against a noisy few-minute
+  // trailing window -- it compares volume-so-far-today against volume-by-
+  // this-same-time-of-day on recent prior days, which stays meaningful at
+  // any hour including premarket. That's a real, computable number from
+  // get_equity_historicals, built here instead of just disabling the
+  // pillar. Gated to real movers only (RVOL_AUTO_BUDGET), 5-min cache.
+  var RVOL_TTL_MS = 5 * 60 * 1000;
+  var rvolCache = {};   // sym -> { state:'loading'|'done'|'error', value, days, msg, at }
+  var RVOL_AUTO_BUDGET = 12;
+  var rvolAutoSpent = 0;
+
+  function etParts(d) {
+    var f = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "numeric", minute: "numeric", hour12: false
+    });
+    var parts = {};
+    f.formatToParts(d).forEach(function (p) { parts[p.type] = p.value; });
+    return {
+      dateKey: parts.year + "-" + parts.month + "-" + parts.day,
+      mins: parseInt(parts.hour, 10) * 60 + parseInt(parts.minute, 10)
+    };
+  }
+
+  // Verified live 2026-08-28 ~7:11am ET: get_equity_historicals returns
+  // ZERO bars for the current session this early (AEMD was already up
+  // +50% on real 16.5M volume per run_scan/get_equity_quotes at that
+  // moment, but its own 5-minute bars for today simply weren't posted
+  // yet -- a real ingestion lag, not a bug in this page). The time-of-day
+  // comparison above needs today's bars to exist, so it can't work in
+  // that window. Fallback: today's cumulative volume (already known from
+  // the scan row, confirmed live and accurate) against the stock's own
+  // 30-day average volume (get_equity_fundamentals, no lag) -- coarser
+  // than a same-time-of-day comparison, but real and immediately usable
+  // right when the historicals gap actually happens.
+  function coarseRvolFallback(sym) {
+    var row = rows.filter(function (r) { return r.sym === sym; })[0];
+    var fc = fundCache[sym];
+    if (!row || row.vol === null || !fc || fc.state !== "done" || !fc.avgVol30d) {
+      rvolCache[sym] = { state: "error", msg: "not enough data yet (no intraday history, no 30d average)" };
+      paintRows();
+      return;
+    }
+    rvolCache[sym] = { state: "done", value: row.vol / fc.avgVol30d, coarse: true, at: Date.now() };
+    rows = rows.map(deriveRow);
+    paintRows();
+    autoCheckStrongRows();
+  }
+
+  function computeRealRvol(sym, force) {
+    if (!mcp) return;
+    var c = rvolCache[sym];
+    if (c && (c.state === "loading" || (c.state === "done" && Date.now() - c.at < RVOL_TTL_MS))) return;
+    if (!force) {
+      if (rvolAutoSpent >= RVOL_AUTO_BUDGET) return;
+      rvolAutoSpent++;
+    }
+    rvolCache[sym] = { state: "loading" };
+    var start = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+    mcp.callTool(SERVER, "get_equity_historicals",
+      { symbols: [sym], start_time: start, interval: "5minute", bounds: "trading" },
+      { cache: { staleTime: RVOL_TTL_MS } })
+      .then(function (res) {
+        var p = res && res.payload;
+        var bars = p && p.data && p.data.results && p.data.results[0] && p.data.results[0].bars;
+        if (!Array.isArray(bars) || !bars.length) { coarseRvolFallback(sym); return; }
+        var now = etParts(new Date());
+        var byDay = {}; // ET date key -> cumulative volume up to now's minute-of-day
+        bars.forEach(function (b) {
+          if (b.interpolated) return;
+          var et = etParts(new Date(b.begins_at));
+          if (et.mins > now.mins) return; // same time-of-day window only, apples to apples
+          byDay[et.dateKey] = (byDay[et.dateKey] || 0) + (num(b.volume) || 0);
+        });
+        var todayVol = byDay[now.dateKey] || 0;
+        var priorVols = Object.keys(byDay).filter(function (d) { return d !== now.dateKey; }).map(function (d) { return byDay[d]; });
+        if (todayVol === 0 || priorVols.length < 2) { coarseRvolFallback(sym); return; }
+        var avgPrior = priorVols.reduce(function (a, b) { return a + b; }, 0) / priorVols.length;
+        rvolCache[sym] = {
+          state: "done",
+          value: avgPrior > 0 ? todayVol / avgPrior : null,
+          days: priorVols.length,
+          at: Date.now()
+        };
+        rows = rows.map(deriveRow);
+        paintRows();
+        autoCheckStrongRows(); // a resolved real RVOL can newly clear 3+ pillars
+      })
+      .catch(function () { coarseRvolFallback(sym); });
+  }
+
+  function autoComputeRvolForMovers() {
+    if (marketIsOpen || !rows.length) return;
+    for (var i = 0; i < rows.length && rvolAutoSpent < RVOL_AUTO_BUDGET; i++) {
+      var r = rows[i];
+      if (r.sym !== "—" && r.chg !== null && r.chg >= PILLAR.chg) computeRealRvol(r.sym);
+    }
+  }
+
+  // ---------- row shaping ----------
+  // Column labels are defined by each saved scan, so look them up by name
+  // and fall back gracefully when a given scan does not carry one.
+  function pluck(cols, names) {
+    for (var i = 0; i < names.length; i++) {
+      if (Object.prototype.hasOwnProperty.call(cols, names[i])) return cols[names[i]];
+    }
+    return null;
+  }
+
+  // Warrior Trading's 5 pillars, as this repo documents them
+  // (strategies.md S3 / CLAUDE.md): relative volume, % change, price range,
+  // float, catalyst. Thresholds below are S3's own numeric pillars --
+  // rel. vol >=5x, % change >=10%, price $2-20, float <=20M -- not this
+  // page's own invention. The 5th, catalyst, is explicitly NOT numeric and
+  // cannot be automated; it stays a manual check (see the panel below).
+  var PILLAR = {
+    rvol: 5,        // relative volume >= 5x
+    chg: 0.10,       // % change >= 10%
+    priceLo: 2, priceHi: 20,
+    float: 20e6      // float <= 20M
+  };
+
+  // ---------- float, universally, via per-symbol fundamentals ----------
+  // Some saved scans (Growth Momentum, Daily gainers, ...) simply don't
+  // carry a Float column -- that's a property of the scan's own config, not
+  // something this page can coax out of run_scan. get_equity_fundamentals
+  // reports float per symbol regardless of which scan found it, so it's
+  // used here as the real, universal source -- a scan's own Float column
+  // (when present) is only a same-poll placeholder until this resolves.
+  // Auto-fetched, not click-gated: unlike Stocklake, Robinhood's connector
+  // hasn't shown rate limits this session, and float doesn't need
+  // per-minute freshness the way price/volume do.
+  var FUND_TTL_MS = 5 * 60 * 1000;
+  var fundCache = {};    // sym -> { float, state: 'loading'|'done'|'error', at }
+  var fundInFlight = {};
+
+  function ensureFundamentals(syms, onDone) {
+    var now = Date.now();
+    var need = Array.from(new Set(syms)).filter(function (s) {
+      if (s === "—" || fundInFlight[s]) return false;
+      var c = fundCache[s];
+      return !c || c.state === "error" || (c.state === "done" && now - c.at > FUND_TTL_MS);
+    });
+    if (!need.length || !mcp) return;
+    for (var i = 0; i < need.length; i += 10) {
+      var batch = need.slice(i, i + 10);
+      batch.forEach(function (s) { fundInFlight[s] = true; });
+      mcp.callTool("Robinhood", "get_equity_fundamentals", { symbols: batch }, { cache: { staleTime: FUND_TTL_MS } })
+        .then(function (res) {
+          var p = res && res.payload;
+          var results = (p && p.data && p.data.results) || [];
+          results.forEach(function (r) {
+            fundCache[r.symbol] = { float: num(r.float), avgVol30d: num(r.average_volume_30_days), state: "done", at: Date.now() };
+          });
+        })
+        .catch(function () {
+          batch.forEach(function (s) { fundCache[s] = { float: null, state: "error", at: Date.now() }; });
+        })
+        .then(function () {
+          batch.forEach(function (s) { delete fundInFlight[s]; });
+          if (onDone) onDone();
+        });
+    }
+  }
+
+  function resolvedFloat(sym, scanFloat) {
+    var c = fundCache[sym];
+    if (c && c.state === "done") return c.float;
+    return scanFloat; // fundamentals not back yet -- use the scan's own value if it had one
+  }
+
+  // ---------- qualified-at timestamp (per day, per symbol) ----------
+  // The user's explicit complaint: "no time stamp how the qualified stock
+  // move." The first moment a row clears all 4 numeric pillars in a given
+  // day gets stamped, once, and kept even if the row later drops a pillar
+  // (e.g. cools off) -- so "when did this actually ignite" stays answerable
+  // all day instead of only while it's still hot. Same localStorage pattern
+  // as loadSeenSwing()'s per-day key, below.
+  var qualifiedMap = null; // lazy-loaded { sym: isoTimestamp }, for today only
+
+  function qualifiedKey() { return "ib.qualified." + todayKey(); }
+
+  function ensureQualifiedLoaded() {
+    if (qualifiedMap) return;
+    qualifiedMap = {};
+    var raw = lsGet(qualifiedKey());
+    if (raw) { try { qualifiedMap = JSON.parse(raw) || {}; } catch (e) {} }
+  }
+
+  function markQualified(sym) {
+    ensureQualifiedLoaded();
+    if (!qualifiedMap[sym]) {
+      qualifiedMap[sym] = new Date().toISOString();
+      lsSet(qualifiedKey(), JSON.stringify(qualifiedMap));
+    }
+  }
+
+  function getQualifiedAt(sym) {
+    ensureQualifiedLoaded();
+    return qualifiedMap[sym] || null;
+  }
+
+  // ---------- candlestick chart (auto for strong movers, click for the rest) ----------
+  // The user's other explicit complaint: "it could be so much better" / no
+  // live view of how a qualified stock actually moved. Real 5-minute OHLC
+  // bars from get_equity_historicals (same tool/field names already
+  // verified for RVOL above -- open_price/high_price/low_price/close_price,
+  // begins_at), drawn as real candles on a <canvas>, not a sparkline
+  // approximation. Budget-gated the same way RVOL and catalyst are: auto
+  // for rows clearing 3+ pillars, "Chart" button for everyone else.
+  var CHART_TTL_MS = 5 * 60 * 1000;
+  var chartCache = {}; // sym -> { state:'loading'|'done'|'error', bars, msg, at }
+  var CHART_AUTO_BUDGET = 15;
+  var chartAutoSpent = 0;
+
+  function fetchChart(sym, force) {
+    if (!mcp) return;
+    var c = chartCache[sym];
+    if (!force && c && (c.state === "loading" || (c.state === "done" && Date.now() - c.at < CHART_TTL_MS))) return;
+    if (!force) {
+      if (chartAutoSpent >= CHART_AUTO_BUDGET) return;
+      chartAutoSpent++;
+    }
+    chartCache[sym] = { state: "loading" };
+    paintRows();
+    var start = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    mcp.callTool(SERVER, "get_equity_historicals",
+      { symbols: [sym], start_time: start, interval: "5minute", bounds: "trading" },
+      { cache: { staleTime: CHART_TTL_MS } })
+      .then(function (res) {
+        var p = res && res.payload;
+        var bars = p && p.data && p.data.results && p.data.results[0] && p.data.results[0].bars;
+        var real = (bars || []).filter(function (b) { return !b.interpolated; });
+        if (!real.length) { chartCache[sym] = { state: "error", msg: "no intraday bars yet" }; return; }
+        chartCache[sym] = { state: "done", bars: real.slice(-30), at: Date.now() };
+      })
+      .catch(function (err) {
+        var d = describe(err);
+        chartCache[sym] = { state: "error", msg: d.title };
+      })
+      .then(paintRows);
+  }
+
+  function autoFetchChartsForMovers() {
+    if (!mcp || chartAutoSpent >= CHART_AUTO_BUDGET) return;
+    for (var i = 0; i < rows.length && chartAutoSpent < CHART_AUTO_BUDGET; i++) {
+      var r = rows[i];
+      if (r.sym === "—" || chartCache[r.sym]) continue;
+      if (r.pillarsMet >= 3) fetchChart(r.sym);
+    }
+  }
+
+  // ---------- VWAP (session volume-weighted average price) ----------
+  // User asked how to read VWAP as a "is this stock actually going up"
+  // signal (2026-09-01 chat), then asked for it on the board. Real number,
+  // not a heuristic: typical price (high+low+close)/3 per real 5-minute
+  // bar, weighted by that bar's real volume, summed across every real
+  // (non-interpolated) bar since TODAY's regular-session open only -- a
+  // fresh session-since-open VWAP, the same convention every broker/
+  // charting platform uses (it resets daily, unlike a moving average).
+  // Same auto-for-movers/manual-for-the-rest budget pattern as RVOL/Chart/
+  // Catalyst, and the same get_equity_historicals shape already verified
+  // live for those (open_price/high_price/low_price/close_price/volume,
+  // begins_at, interpolated).
+  var VWAP_TTL_MS = 5 * 60 * 1000;
+  var vwapCache = {}; // sym -> { state:'loading'|'done'|'error', value, bars, msg, at }
+  var VWAP_AUTO_BUDGET = 15;
+  var vwapAutoSpent = 0;
+
+  function computeVwap(sym, force) {
+    if (!mcp) return;
+    var c = vwapCache[sym];
+    if (!force && c && (c.state === "loading" || (c.state === "done" && Date.now() - c.at < VWAP_TTL_MS))) return;
+    if (!force) {
+      if (vwapAutoSpent >= VWAP_AUTO_BUDGET) return;
+      vwapAutoSpent++;
+    }
+    vwapCache[sym] = { state: "loading" };
+    paintRows();
+    var start = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    mcp.callTool(SERVER, "get_equity_historicals",
+      { symbols: [sym], start_time: start, interval: "5minute", bounds: "trading" },
+      { cache: { staleTime: VWAP_TTL_MS } })
+      .then(function (res) {
+        var p = res && res.payload;
+        var bars = p && p.data && p.data.results && p.data.results[0] && p.data.results[0].bars;
+        var todayEt = etParts(new Date()).dateKey;
+        var real = (bars || []).filter(function (b) {
+          return !b.interpolated && etParts(new Date(b.begins_at)).dateKey === todayEt;
+        });
+        if (!real.length) { vwapCache[sym] = { state: "error", msg: "no real bars yet today" }; return; }
+        var pvSum = 0, volSum = 0;
+        real.forEach(function (b) {
+          var hh = num(b.high_price), l = num(b.low_price), c2 = num(b.close_price), v = num(b.volume);
+          if (hh === null || l === null || c2 === null || v === null || v <= 0) return;
+          pvSum += ((hh + l + c2) / 3) * v;
+          volSum += v;
+        });
+        if (volSum <= 0) { vwapCache[sym] = { state: "error", msg: "no volume in today's bars yet" }; return; }
+        vwapCache[sym] = { state: "done", value: pvSum / volSum, bars: real.length, at: Date.now() };
+      })
+      .catch(function (err) {
+        var d = describe(err);
+        vwapCache[sym] = { state: "error", msg: d.title };
+      })
+      .then(paintRows);
+  }
+
+  function autoComputeVwapForMovers() {
+    if (!mcp || vwapAutoSpent >= VWAP_AUTO_BUDGET) return;
+    for (var i = 0; i < rows.length && vwapAutoSpent < VWAP_AUTO_BUDGET; i++) {
+      var r = rows[i];
+      if (r.sym === "—" || vwapCache[r.sym]) continue;
+      if (r.pillarsMet >= 3) computeVwap(r.sym);
+    }
+  }
+
+  // Draws real OHLC candles onto a small canvas -- wicks as lines, bodies
+  // as filled rects, colored from this page's own --up/--down tokens so
+  // both themes stay correct without a second code path.
+  function drawCandles(canvas, bars) {
+    if (!canvas || !bars || !bars.length) return;
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.clientWidth || 200, h = canvas.clientHeight || 34;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    var cs = getComputedStyle(document.documentElement);
+    var upColor = cs.getPropertyValue("--up").trim() || "#1a7f4e";
+    var downColor = cs.getPropertyValue("--down").trim() || "#c0392b";
+    var lo = Infinity, hi = -Infinity;
+    bars.forEach(function (b) {
+      var l = num(b.low_price), hh = num(b.high_price);
+      if (l !== null) lo = Math.min(lo, l);
+      if (hh !== null) hi = Math.max(hi, hh);
+    });
+    if (!isFinite(lo) || !isFinite(hi) || hi <= lo) return;
+    var pad = (hi - lo) * 0.08;
+    lo -= pad; hi += pad;
+    var n = bars.length;
+    var slot = w / n;
+    var bodyW = Math.max(1.5, Math.min(7, slot * 0.62));
+    function y(price) { return h - ((price - lo) / (hi - lo)) * h; }
+    bars.forEach(function (b, i) {
+      var o = num(b.open_price), c = num(b.close_price), hh = num(b.high_price), l = num(b.low_price);
+      if (o === null || c === null || hh === null || l === null) return;
+      var cx = slot * i + slot / 2;
+      var up = c >= o;
+      ctx.strokeStyle = ctx.fillStyle = up ? upColor : downColor;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx, y(hh)); ctx.lineTo(cx, y(l));
+      ctx.stroke();
+      var top = y(Math.max(o, c)), bot = y(Math.min(o, c));
+      ctx.fillRect(cx - bodyW / 2, top, bodyW, Math.max(1, bot - top));
+    });
+  }
+
+  function shape(r) {
+    var c = r.columns || {};
+    var rvol = num(pluck(c, ["Relative volume (1, 1H)", "Relative volume"]));
+    var chg = num(pluck(c, ["% Change"]));
+    var last = num(pluck(c, ["Last"]));
+    var o = {
+      sym: r.ticker || pluck(c, ["Symbol"]) || "—",
+      name: pluck(c, ["Name"]) || "",
+      chg: chg,
+      last: last,
+      rvol: rvol,
+      vol: num(pluck(c, ["Volume"])),
+      scanFloat: num(pluck(c, ["Float"])),
+      gap: num(pluck(c, ["Gap"]))
+    };
+    return deriveRow(o);
+  }
+
+  function deriveRow(o) {
+    var float = resolvedFloat(o.sym, o.scanFloat);
+    o.float = float;
+    o.floatLoading = float === null && (!fundCache[o.sym] || fundInFlight[o.sym]);
+    o.rvolUnreliable = !marketIsOpen;
+    var rc = rvolCache[o.sym];
+    o.rvolReal = rc && rc.state === "done" ? rc.value : null;
+    o.rvolRealState = rc ? rc.state : null;
+    var effRvol = marketIsOpen ? o.rvol : o.rvolReal;
+    var p = {
+      rvol: effRvol !== null && effRvol >= PILLAR.rvol,
+      chg: o.chg !== null && o.chg >= PILLAR.chg,
+      price: o.last !== null && o.last >= PILLAR.priceLo && o.last <= PILLAR.priceHi,
+      float: float !== null && float <= PILLAR.float
+    };
+    o.pillars = p;
+    o.pillarsMet = (p.rvol ? 1 : 0) + (p.chg ? 1 : 0) + (p.price ? 1 : 0) + (p.float ? 1 : 0);
+    o.pillarsOf = 4;
+    if (o.chg !== null && o.chg < 0) o.q = "q-down";
+    else if (o.pillarsMet >= o.pillarsOf) o.q = "q-strong";
+    else if (o.pillarsMet >= 2) o.q = "q-watch";
+    else o.q = "q-thin";
+    if (o.pillarsMet >= o.pillarsOf) markQualified(o.sym);
+    o.qualifiedAt = getQualifiedAt(o.sym);
+    return o;
+  }
+
+  var COLS = [
+    { key: "sym",        label: "Symbol" },
+    { key: "pillarsMet", label: "Pillars ★" },
+    { key: "qualified",  label: "Qualified" },
+    { key: "chg",        label: "% Chg" },
+    { key: "last",       label: "Last" },
+    { key: "vwap",       label: "VWAP" },
+    { key: "rvol",       label: "Rel Vol" },
+    { key: "vol",        label: "Volume" },
+    { key: "float",      label: "Float" },
+    { key: "chart",      label: "Chart (5m)" },
+    { key: "book",       label: "Order Book" },
+    { key: "catalyst",   label: "Catalyst" }
+  ];
+
+  // ---------- order-book buy/sell pressure (on demand, per symbol) ----------
+  // Real Level-2 depth (get_equity_price_book), summed over the top N
+  // resting levels each side. This is RESTING LIMIT-ORDER imbalance, not
+  // executed trade flow -- Robinhood's connector exposes no tick-level
+  // buy/sell classification, so "more sellers than buyers" is answered here
+  // as "more size waiting to sell than to buy right now," which is real and
+  // useful but a different (and partial) thing. Said plainly in the UI.
+  var BOOK_LEVELS = 10;
+  var bookCache = {};   // sym -> { state: 'loading'|'done'|'error', pct, bidSz, askSz }
+
+  function summarizeBook(book) {
+    var bidSz = (book.bids || []).slice(0, BOOK_LEVELS)
+      .reduce(function (s, l) { return s + (num(l.quantity) || 0); }, 0);
+    var askSz = (book.asks || []).slice(0, BOOK_LEVELS)
+      .reduce(function (s, l) { return s + (num(l.quantity) || 0); }, 0);
+    var total = bidSz + askSz;
+    return { bidSz: bidSz, askSz: askSz, pct: total > 0 ? bidSz / total : null };
+  }
+
+  function checkBook(sym) {
+    if (!mcp || bookCache[sym] && bookCache[sym].state === "loading") return;
+    bookCache[sym] = { state: "loading" };
+    paintRows();
+    mcp.callTool(SERVER, "get_equity_price_book", { symbols: [sym] }, { cache: false })
+      .then(function (res) {
+        var p = res && res.payload;
+        var book = p && p.data && p.data.books && p.data.books[0];
+        if (!book) { bookCache[sym] = { state: "error", msg: "no book returned" }; }
+        else { bookCache[sym] = Object.assign({ state: "done" }, summarizeBook(book)); }
+      })
+      .catch(function (err) {
+        var d = describe(err);
+        bookCache[sym] = { state: "error", msg: d.title };
+      })
+      .then(paintRows);
+  }
+
+  // ---------- catalyst (auto for strong rows, click for the rest) ----------
+  // Real dated news headlines via Stocklake, not a heuristic guess from
+  // social chatter -- matches how catalysts have been verified by hand all
+  // session (get_stock_news, checked live before this was wired in). The
+  // connector's guest tier caps at 25 calls/DAY, account-wide, shared with
+  // anything else Stocklake is used for, so this can't auto-check every row
+  // on every poll. Compromise, added 2026-08-28 after the user asked for
+  // the catalyst column to actually work like a real screener instead of
+  // requiring a click per row: auto-fire ONLY for rows clearing 3+ of the
+  // real numeric pillars (the names that matter), capped at AUTO_CATALYST_
+  // BUDGET lookups for this page's lifetime so manual clicks and any other
+  // Stocklake use today still have headroom. Once the budget is spent,
+  // remaining rows fall back to the manual "Check" button, same as before.
+  var catalystCache = {}; // sym -> { state, text, publishedAt } | { state:'error', msg }
+  var AUTO_CATALYST_BUDGET = 15;
+  var autoCatalystSpent = 0;
+
+  function autoCheckStrongRows() {
+    if (!mcp || autoCatalystSpent >= AUTO_CATALYST_BUDGET) return;
+    for (var i = 0; i < rows.length && autoCatalystSpent < AUTO_CATALYST_BUDGET; i++) {
+      var r = rows[i];
+      if (r.sym === "—" || catalystCache[r.sym]) continue;
+      if (r.pillarsMet >= 3) {
+        autoCatalystSpent++;
+        checkCatalyst(r.sym);
+      }
+    }
+  }
+
+  function checkCatalyst(sym) {
+    if (!mcp || catalystCache[sym] && catalystCache[sym].state === "loading") return;
+    catalystCache[sym] = { state: "loading" };
+    paintRows();
+    mcp.callTool("Stocklake", "get_stock_news", { symbol: sym, days: 3, limit: 3 }, { cache: { staleTime: 600000 } })
+      .then(function (res) {
+        var p = res && res.payload;
+        var articles = p && p.articles;
+        if (Array.isArray(articles) && articles.length) {
+          catalystCache[sym] = { state: "done", text: articles[0].title, publishedAt: articles[0].published_at };
+        } else {
+          catalystCache[sym] = { state: "done", text: null };
+        }
+      })
+      .catch(function (err) {
+        var msg = (err && err.message) || "";
+        if (/guest.?limit/i.test(msg)) msg = "Daily news-lookup limit hit (resets midnight UTC)";
+        else if (!msg) msg = "lookup failed";
+        catalystCache[sym] = { state: "error", msg: msg };
+      })
+      .then(paintRows);
+  }
+
+  function paintHead() {
+    els.head.innerHTML = COLS.map(function (c) {
+      var on = sort.key === c.key;
+      return '<th data-k="' + c.key + '" class="' + (on ? "sorted" : "") + '">' +
+             esc(c.label) + '<span class="arrow">' + (on && sort.dir === 1 ? "▲" : "▼") + '</span></th>';
+    }).join("");
+    Array.prototype.forEach.call(els.head.querySelectorAll("th"), function (th) {
+      th.addEventListener("click", function () {
+        var k = th.getAttribute("data-k");
+        if (sort.key === k) sort.dir = -sort.dir;
+        else { sort.key = k; sort.dir = k === "sym" ? 1 : -1; }
+        lsSet(LS_SORT, sort.key + ":" + sort.dir);
+        paintHead(); paintRows();
+      });
+    });
+  }
+
+  // "Most favorable ATM" is what the default sort answers: pillarsMet
+  // first (how many of the 4 real numeric S3 pillars this row clears),
+  // relative volume as the tiebreaker when pillar counts match, since RVOL
+  // is the pillar that actually means "real money showed up" rather than a
+  // thin print. Book/catalyst pull from their own on-demand caches, keyed
+  // by symbol, since they are not stored on the row itself.
+  function sortVal(r, key) {
+    if (key === "book") { var bc = bookCache[r.sym]; return bc && bc.state === "done" ? bc.pct : null; }
+    if (key === "catalyst") { var cc = catalystCache[r.sym]; return cc && cc.state === "done" && cc.text ? 1 : 0; }
+    if (key === "qualified") return r.qualifiedAt ? new Date(r.qualifiedAt).getTime() : null;
+    if (key === "chart") { var ch = chartCache[r.sym]; return ch && ch.state === "done" ? 1 : 0; }
+    if (key === "vwap") { var vc = vwapCache[r.sym]; return vc && vc.state === "done" ? vc.value : null; }
+    return r[key];
+  }
+
+  // ---------- "Qualified now" strip ----------
+  // The user's ask made concrete: a glanceable, above-the-table answer to
+  // "what's actually ready right now," not a row buried in a 4/4 table
+  // among everything else. A card only appears here while pillarsMet is
+  // STILL 4/4 on the latest poll (cooling off drops it from the strip, even
+  // though its qualified-at timestamp in the table below is permanent for
+  // the day) -- "now" means now.
+  function renderQualifiedNow() {
+    var now = rows.filter(function (r) { return r.sym !== "—" && r.pillarsMet >= r.pillarsOf; });
+    els.qnowSub.textContent = now.length
+      ? now.length + " right now"
+      : (marketIsOpen ? "none right now" : "market closed — none right now");
+    if (!now.length) {
+      els.qnowGrid.innerHTML = '<div class="qnow-empty">Nothing has cleared all 4 numeric pillars yet this scan.</div>';
+      return;
+    }
+    now.sort(function (a, b) {
+      var ea = a.rvolUnreliable ? a.rvolReal : a.rvol, eb = b.rvolUnreliable ? b.rvolReal : b.rvol;
+      return (eb === null ? -1 : eb) - (ea === null ? -1 : ea);
+    });
+    els.qnowGrid.innerHTML = now.map(function (r) {
+      var cls = r.chg === null ? "zero" : r.chg > 0 ? "pos" : r.chg < 0 ? "neg" : "zero";
+      var qt = r.qualifiedAt
+        ? "qualified " + new Date(r.qualifiedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+        : "qualified —";
+      var chartHtml = '<button type="button" class="book-btn chart-btn" data-sym="' + esc(r.sym) + '">Chart</button>';
+      var ch = chartCache[r.sym];
+      if (ch && ch.state === "done") {
+        chartHtml = '<canvas class="row-chart" data-sym="' + esc(r.sym) + '" width="180" height="34" style="width:100%;height:34px"></canvas>';
+      } else if (ch && ch.state === "loading") {
+        chartHtml = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      }
+      return '<div class="qcard">' +
+        '<div class="row1"><span class="sym">' + esc(r.sym) + '</span><span class="chg ' + cls + '">' + pct(r.chg) + '</span></div>' +
+        '<div class="row2"><span class="price">' + money(r.last) + '</span><span class="qat">' + esc(qt) + '</span></div>' +
+        chartHtml +
+        '</div>';
+    }).join("");
+    Array.prototype.forEach.call(els.qnowGrid.querySelectorAll(".chart-btn"), function (btn) {
+      btn.addEventListener("click", function () { fetchChart(btn.getAttribute("data-sym"), true); });
+    });
+    Array.prototype.forEach.call(els.qnowGrid.querySelectorAll(".row-chart"), function (cv) {
+      var c = chartCache[cv.getAttribute("data-sym")];
+      if (c && c.state === "done") drawCandles(cv, c.bars);
+    });
+  }
+
+  function paintRows() {
+    if (!rows.length) return;
+    var sorted = rows.slice().sort(function (a, b) {
+      if (sort.key === "sym") return String(a.sym).localeCompare(String(b.sym)) * sort.dir;
+      var x = sortVal(a, sort.key), y = sortVal(b, sort.key);
+      if (x === null && y === null) return 0;
+      if (x === null) return 1;
+      if (y === null) return -1;
+      if (x !== y) return (x - y) * sort.dir;
+      if (sort.key === "pillarsMet") {
+        var rx = a.rvol === null ? -1 : a.rvol, ry = b.rvol === null ? -1 : b.rvol;
+        return (rx - ry) * sort.dir; // tiebreak: more relative volume wins
+      }
+      return 0;
+    });
+
+    els.body.innerHTML = sorted.map(function (r) {
+      var cls = r.chg === null ? "zero" : r.chg > 0 ? "pos" : r.chg < 0 ? "neg" : "zero";
+      var effRvol = r.rvolUnreliable ? r.rvolReal : r.rvol;
+      // log-ish scale: these ratios span 1× to several thousand ×
+      var fillPct = effRvol === null ? 0 :
+        Math.max(4, Math.min(100, (Math.log10(Math.max(1, effRvol)) / 3) * 100));
+
+      var rvolCell;
+      if (!r.rvolUnreliable) {
+        rvolCell = '<div class="meter"><span class="track"><span class="fill' +
+          (effRvol !== null && effRvol >= 5 ? " strong" : "") +
+          '" style="width:' + fillPct.toFixed(0) + '%"></span></span>' +
+          '<span class="val">' + rvolTxt(effRvol) + '</span></div>';
+      } else if (r.rvolRealState === "loading") {
+        rvolCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      } else if (r.rvolRealState === "done") {
+        var rvTitle = rvolCache[r.sym].coarse
+          ? "Self-computed (coarse): today's volume so far vs. this stock's own 30-day average FULL-DAY volume -- used because today's intraday history isn't posted yet this early (verified live: get_equity_historicals returns zero bars for the current session before it catches up). Robinhood's own RVOL field is unreliable right now regardless."
+          : "Self-computed: today's volume so far vs. the average by this same time on the last " + (rvolCache[r.sym].days || 0) + " trading days -- Robinhood's own RVOL field is unreliable right now, this is a real number computed from real historical bars instead.";
+        rvolCell = '<div class="meter" title="' + esc(rvTitle) + '"><span class="track"><span class="fill' +
+          (effRvol !== null && effRvol >= 5 ? " strong" : "") +
+          '" style="width:' + fillPct.toFixed(0) + '%"></span></span>' +
+          '<span class="val">' + rvolTxt(effRvol) + (rvolCache[r.sym].coarse ? "**" : "*") + '</span></div>';
+      } else if (r.rvolRealState === "error") {
+        rvolCell = '<button type="button" class="book-btn rvol-btn" data-sym="' + esc(r.sym) + '" title="' + esc((rvolCache[r.sym] && rvolCache[r.sym].msg) || "failed") + '">Retry</button>';
+      } else {
+        rvolCell = '<button type="button" class="book-btn rvol-btn" data-sym="' + esc(r.sym) + '" title="Robinhood\'s RVOL field is unreliable outside regular hours -- click to compute a real one from historical bars">Check*</button>';
+      }
+      var vc = vwapCache[r.sym];
+      var vwapCell;
+      if (!vc) {
+        vwapCell = '<button type="button" class="book-btn vwap-btn" data-sym="' + esc(r.sym) + '">Check</button>';
+      } else if (vc.state === "loading") {
+        vwapCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      } else if (vc.state === "error") {
+        vwapCell = '<button type="button" class="book-btn vwap-btn" data-sym="' + esc(r.sym) + '" title="' + esc(vc.msg || "failed") + '">Retry</button>';
+      } else {
+        var above = r.last !== null ? r.last >= vc.value : null;
+        var vwapRel = above === null ? "zero" : above ? "pos" : "neg";
+        var vwapArrow = above === null ? "" : above ? " ▲" : " ▼";
+        var vwapTitle = "Session VWAP from " + vc.bars + " real 5-min bars since today's open " +
+          "(typical price (H+L+C)/3, weighted by real volume). Price is currently " +
+          (above === null ? "unclear vs." : above ? "ABOVE" : "BELOW") +
+          " VWAP -- above and holding through pullbacks is the real 'still going up' tell, not a single cross.";
+        vwapCell = '<span class="num ' + vwapRel + '" title="' + esc(vwapTitle) + '">' + money(vc.value) + esc(vwapArrow) + '</span>';
+      }
+
+      var tight = r.float !== null && r.float > 0 && r.float < 5e6;
+
+      var floatCell = r.float !== null
+        ? '<span class="chip' + (tight ? " tight" : "") + '" title="Live per-symbol float (get_equity_fundamentals)">' + compact(r.float) + '</span>'
+        : '<span class="num" style="color:var(--ink-faint)">' + (r.floatLoading ? "…" : "—") + '</span>';
+
+      var pillarClass = r.pillarsMet >= r.pillarsOf ? "tight" : "";
+      var rvolNote = r.rvolUnreliable
+        ? (r.rvolRealState === "done" ? (r.pillars.rvol ? "yes (self-computed*)" : "no (self-computed*)") : "not yet computed*")
+        : (r.pillars.rvol ? "yes" : "no");
+      var pillarTitle = "rel.vol ≥ 5x: " + rvolNote +
+        " · %chg ≥ 10%: " + (r.pillars.chg ? "yes" : "no") +
+        " · price $2-20: " + (r.pillars.price ? "yes" : "no") +
+        " · float ≤ 20M: " + (r.float === null ? "loading…" : (r.pillars.float ? "yes" : "no")) +
+        (r.rvolUnreliable ? " (* outside regular hours: self-computed vs. Robinhood's own broken field)" : "");
+      var pillarsCell = '<span class="chip ' + pillarClass + '" title="' + esc(pillarTitle) + '">' +
+        r.pillarsMet + '/' + r.pillarsOf + '</span>';
+
+      var bc = bookCache[r.sym];
+      var bookCell;
+      if (!bc) {
+        bookCell = '<button type="button" class="book-btn" data-sym="' + esc(r.sym) + '">Check</button>';
+      } else if (bc.state === "loading") {
+        bookCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      } else if (bc.state === "error") {
+        bookCell = '<button type="button" class="book-btn" data-sym="' + esc(r.sym) + '" title="' + esc(bc.msg || "failed") + '">Retry</button>';
+      } else if (bc.pct === null) {
+        bookCell = '<span class="num" style="color:var(--ink-faint)">no book</span>';
+      } else {
+        var buyPct = bc.pct * 100;
+        var sellPct = 100 - buyPct;
+        var lean = buyPct >= 55 ? "pos" : buyPct <= 45 ? "neg" : "zero";
+        bookCell = '<span class="num ' + lean + '" title="Top ' + BOOK_LEVELS + ' levels: ' +
+          compact(bc.bidSz) + ' sh waiting to buy vs ' + compact(bc.askSz) + ' sh waiting to sell">' +
+          buyPct.toFixed(0) + '% buy / ' + sellPct.toFixed(0) + '% sell</span>';
+      }
+
+      var cc = catalystCache[r.sym];
+      var catCell;
+      if (!cc) {
+        catCell = '<button type="button" class="book-btn cat-btn" data-sym="' + esc(r.sym) + '">Check</button>';
+      } else if (cc.state === "loading") {
+        catCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      } else if (cc.state === "error") {
+        catCell = '<button type="button" class="book-btn cat-btn" data-sym="' + esc(r.sym) + '" title="' + esc(cc.msg) + '">Retry</button>';
+      } else if (!cc.text) {
+        catCell = '<span class="num" style="color:var(--ink-faint)">N/A</span>';
+      } else {
+        var short = cc.text.length > 58 ? cc.text.slice(0, 57) + "…" : cc.text;
+        catCell = '<span title="' + esc(cc.text) + (cc.publishedAt ? " (" + esc(cc.publishedAt) + ")" : "") + '" style="text-align:left;display:inline-block;max-width:220px;white-space:normal">' + esc(short) + '</span>';
+      }
+
+      var qCell = r.qualifiedAt
+        ? '<span class="num" title="First moment today this row cleared all 4 numeric pillars">' +
+          esc(new Date(r.qualifiedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })) + '</span>'
+        : '<span class="num" style="color:var(--ink-faint)">—</span>';
+
+      var ch = chartCache[r.sym];
+      var chartCell;
+      if (!ch) {
+        chartCell = '<button type="button" class="book-btn chart-btn" data-sym="' + esc(r.sym) + '">Chart</button>';
+      } else if (ch.state === "loading") {
+        chartCell = '<span class="num" style="color:var(--ink-faint)">…</span>';
+      } else if (ch.state === "error") {
+        chartCell = '<button type="button" class="book-btn chart-btn" data-sym="' + esc(r.sym) + '" title="' + esc(ch.msg) + '">Retry</button>';
+      } else {
+        chartCell = '<canvas class="row-chart" data-sym="' + esc(r.sym) + '" width="120" height="34" style="width:120px;height:34px" title="Real 5-minute candles, last ' + ch.bars.length + ' bars"></canvas>';
+      }
+
+      return '<tr class="' + r.q + '">' +
+        '<td class="sym"><div class="ticker">' + esc(r.sym) + '</div>' +
+          (r.name ? '<div class="coname">' + esc(r.name) + '</div>' : '') + '</td>' +
+        '<td>' + pillarsCell + '</td>' +
+        '<td>' + qCell + '</td>' +
+        '<td class="num ' + cls + '">' + pct(r.chg) + '</td>' +
+        '<td class="num">' + money(r.last) + '</td>' +
+        '<td>' + vwapCell + '</td>' +
+        '<td>' + rvolCell + '</td>' +
+        '<td class="num">' + compact(r.vol) + '</td>' +
+        '<td>' + floatCell + '</td>' +
+        '<td class="chart-cell">' + chartCell + '</td>' +
+        '<td>' + bookCell + '</td>' +
+        '<td>' + catCell + '</td>' +
+        '</tr>';
+    }).join("");
+
+    Array.prototype.forEach.call(els.body.querySelectorAll(".book-btn:not(.cat-btn):not(.rvol-btn):not(.chart-btn):not(.vwap-btn)"), function (btn) {
+      btn.addEventListener("click", function () { checkBook(btn.getAttribute("data-sym")); });
+    });
+    Array.prototype.forEach.call(els.body.querySelectorAll(".cat-btn"), function (btn) {
+      btn.addEventListener("click", function () { checkCatalyst(btn.getAttribute("data-sym")); });
+    });
+    Array.prototype.forEach.call(els.body.querySelectorAll(".rvol-btn"), function (btn) {
+      btn.addEventListener("click", function () { computeRealRvol(btn.getAttribute("data-sym"), true); });
+    });
+    Array.prototype.forEach.call(els.body.querySelectorAll(".chart-btn"), function (btn) {
+      btn.addEventListener("click", function () { fetchChart(btn.getAttribute("data-sym"), true); });
+    });
+    Array.prototype.forEach.call(els.body.querySelectorAll(".vwap-btn"), function (btn) {
+      btn.addEventListener("click", function () { computeVwap(btn.getAttribute("data-sym"), true); });
+    });
+    Array.prototype.forEach.call(els.body.querySelectorAll(".row-chart"), function (cv) {
+      var c = chartCache[cv.getAttribute("data-sym")];
+      if (c && c.state === "done") drawCandles(cv, c.bars);
+    });
+
+    renderQualifiedNow();
+
+    var movers = rows.filter(function (r) { return r.chg !== null && r.chg >= 0.05; });
+    var loud = rows.filter(function (r) {
+      var eff = r.rvolUnreliable ? r.rvolReal : r.rvol;
+      return eff !== null && eff >= 5;
+    });
+    var both = rows.filter(function (r) { return r.pillarsMet >= r.pillarsOf; });
+    els.tCount.textContent = rows.length;
+    els.tMovers.textContent = movers.length;
+    els.tRvol.textContent = loud.length;
+    els.tBoth.textContent = both.length;
+    els.tBoth.className = "v" + (both.length ? " up" : "");
+  }
+
+  function setUpdated() {
+    var d = lastStamp ? new Date(lastStamp) : new Date();
+    var t = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" });
+    els.updated.innerHTML = isStale
+      ? '<span class="stale">Showing last good data — ' + esc(t) + '</span>'
+      : "Updated " + esc(t) + '<span id="live-ago"></span>';
+    els.liveDot.hidden = !!isStale;
+  }
+
+  // Ticks a running "Xs ago" next to the timestamp every second so the page
+  // visibly proves it's alive between polls -- the user's "no live updates"
+  // complaint, addressed without needing a poll to actually land.
+  setInterval(function () {
+    if (!lastStamp) return;
+    var secs = Math.max(0, Math.round((Date.now() - lastStamp) / 1000));
+    var ago = document.getElementById("live-ago");
+    if (!ago) return;
+    ago.textContent = " (" + (secs < 60 ? secs + "s" : Math.floor(secs / 60) + "m") + " ago)";
+  }, 1000);
+
+  // ---------- states ----------
+  function clearState() { els.stateSlot.innerHTML = ""; }
+
+  function skeleton() {
+    els.body.innerHTML = "";
+    clearState();
+    var w = [26, 12, 12, 18, 14, 12];
+    var html = "";
+    for (var i = 0; i < 7; i++) {
+      html += '<div class="skel-row">' + w.map(function (p) {
+        return '<span class="skel" style="flex:' + p + '"></span>';
+      }).join("") + '</div>';
+    }
+    els.stateSlot.innerHTML = html;
+  }
+
+  function showState(title, detail, fix) {
+    els.body.innerHTML = "";
+    els.stateSlot.innerHTML =
+      '<div class="state"><div class="big">' + esc(title) + '</div>' +
+      '<div>' + detail + '</div>' +
+      (fix ? '<div class="fix">' + fix + '</div>' : '') + '</div>';
+  }
+
+  // Each code gets the response that actually fixes it — never one catch-all.
+  function describe(err) {
+    var code = err && err.code ? err.code : "upstream_error";
+    switch (code) {
+      case "needs_reauth":
+        return { retract: true, title: "Robinhood needs reconnecting",
+          detail: "The connection to your Robinhood account has lapsed, so the scan can't run.",
+          fix: 'Reconnect <b>Robinhood</b> in claude.ai Settings → Connectors, then refresh.' };
+      case "server_not_connected":
+        return { retract: true, title: "Robinhood isn't connected",
+          detail: "This page reads your saved scans from the Robinhood connector, and it isn't available for this viewer.",
+          fix: 'Add <b>Robinhood</b> in claude.ai Settings → Connectors.' };
+      case "selection_required":
+        return { retract: true, title: "Pick which Robinhood connection to use",
+          detail: "There's more than one Robinhood connector on this account, so the page doesn't know which to read.",
+          fix: "Choose one when prompted, then hit Refresh." };
+      case "blocked_by_policy":
+        return { retract: true, title: "Blocked by policy",
+          detail: "An organization policy blocks this connector tool for this viewer.",
+          fix: "" };
+      case "approval_required":
+        return { retract: true, title: "Needs approval",
+          detail: "Policy requires per-call approval for this tool, which artifacts can't request yet.",
+          fix: "" };
+      case "not_in_manifest":
+        return { retract: true, title: "Tool not permitted here",
+          detail: "This page is only allowed to read scans, and the call fell outside that scope.",
+          fix: "" };
+      case "server_not_found":
+        return { retract: true, title: "Connector no longer exists",
+          detail: "The Robinhood connector this page points at isn't available upstream any more.",
+          fix: "" };
+      case "not_granted":
+      case "capability_disabled":
+      case "capability_removed":
+        return { retract: true, title: "Live data isn't available in this view",
+          detail: "This view can't reach your connectors, so the board has nothing to read.",
+          fix: "Open the artifact from claude.ai to see live scan data." };
+      case "server_unavailable":
+        return { retryable: true, title: "Robinhood didn't answer",
+          detail: "The upstream connection timed out or errored. This is usually brief.",
+          fix: "Retrying shortly — or hit Refresh." };
+      case "rate_limited":
+        return { retryable: true, title: "Too many requests",
+          detail: "The page hit its connector budget and paused.",
+          fix: "Give it a few seconds, then Refresh." };
+      case "tool_error":
+        return { title: "The scan reported an error",
+          detail: esc(err && err.message ? err.message : "Robinhood answered but couldn't run the scan."),
+          fix: "Try a different saved scan." };
+      case "bad_request":
+      case "transform_error":
+        return { title: "The request wasn't accepted",
+          detail: esc(err && err.message ? err.message : "The call was rejected before it ran."),
+          fix: "" };
+      default:
+        return { title: "Couldn't load the scan",
+          detail: esc(err && err.message ? err.message : "Something went wrong reaching the connector."),
+          fix: "Hit Refresh to try again." };
+    }
+  }
+
+  function handleErr(err) {
+    var d = describe(err);
+    if (d.retract || !lastGood) {
+      rows = [];
+      showState(d.title, d.detail, d.fix);
+      els.tCount.textContent = "—";
+      els.tMovers.textContent = "—";
+      els.tRvol.textContent = "—";
+      els.tBoth.textContent = "—";
+      els.tCountNote.textContent = "";
+    } else {
+      // transient with data already on screen: keep it, mark it stale
+      isStale = true;
+      setUpdated();
+    }
+    if (d.retryable && !retried) {
+      retried = true;
+      var wait = Math.min(60000, (err && err.retryAfterMs) || (1200 + Math.random() * 1800));
+      setTimeout(function () { start(els.pick.value, true); }, wait);
+    }
+  }
+
+  // ---------- data ----------
+  function onResult(res) {
+    var p = res && res.payload;
+    var result = p && p.data && p.data.result;
+    var list = result && result.results;
+    if (!Array.isArray(list)) {
+      showState("Unexpected response", "The scan came back in a shape this page doesn't recognize.", "");
+      return;
+    }
+    retried = false;
+    isStale = false;
+    lastStamp = (res.cache && res.cache.storedAt) || Date.now();
+    lastGood = true;
+    rows = list.map(shape);
+    clearState();
+    if (!rows.length) {
+      showState("No matches right now",
+        "This scan's filters returned nothing at the moment. That's an answer, not a failure — most hours nothing qualifies.",
+        "");
+    } else {
+      paintRows();
+      autoComputeRvolForMovers();
+      autoCheckStrongRows();
+      autoFetchChartsForMovers();
+      autoComputeVwapForMovers();
+    }
+    var total = result.total_items;
+    els.tCountNote.textContent = (typeof total === "number" && total > rows.length)
+      ? "of " + total + " matching" : " ";
+    setUpdated();
+
+    ensureFundamentals(rows.map(function (r) { return r.sym; }), function () {
+      rows = rows.map(deriveRow);
+      paintRows();
+      autoComputeRvolForMovers();
+      autoCheckStrongRows();
+      autoFetchChartsForMovers();
+      autoComputeVwapForMovers();
+    });
+  }
+
+  function start(scanId, isRetry) {
+    if (!scanId) return;
+    if (unwatch) { try { unwatch(); } catch (e) {} unwatch = null; }
+    if (!isRetry) { lastGood = null; skeleton(); }
+    lsSet(LS_SCAN, scanId);
+    unwatch = mcp.watchTool(
+      SERVER, "run_scan", { scan_id: scanId },
+      function (ev) {
+        if (ev.type === "data") onResult(ev.result);
+        else handleErr(ev.error);
+      },
+      { cache: { staleTime: 30000 }, refetchInterval: 30000 }
+    );
+  }
+
+  // ---------- alerts ----------
+  // Three independent channels, deliberately not relying on any one of them:
+  // (1) an in-page flash + sound + a running log -- works regardless of frame
+  //     sandboxing, this is the channel actually guaranteed to work.
+  // (2) the document title, which updates even when this tab isn't focused
+  //     (but the browser/tab must still be open).
+  // (3) a best-effort OS notification, attempted only if the platform grants
+  //     it -- inside claude.ai's frame this commonly will NOT be available,
+  //     so it is never the only mechanism anything depends on.
+  var BASE_TITLE = document.title;
+
+  function todayKey() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") +
+      "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  function loadSeenSwing() {
+    var key = "ib.seen.swing." + todayKey();
+    var raw = lsGet(key);
+    var set = new Set();
+    if (raw) { try { JSON.parse(raw).forEach(function (s) { set.add(s); }); } catch (e) {} }
+    return { key: key, set: set };
+  }
+
+  function beep() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      var now = audioCtx.currentTime;
+      [880, 1320].forEach(function (freq, i) {
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        var t = now + i * 0.13;
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.18, t + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.18);
+      });
+    } catch (e) { /* audio unavailable -- flash + log still fire */ }
+  }
+
+  function updateTitle() {
+    document.title = (unseenSinceBlur > 0 ? "(" + unseenSinceBlur + ") 🔔 " : "") + BASE_TITLE;
+  }
+  window.addEventListener("focus", function () { unseenSinceBlur = 0; updateTitle(); });
+
+  function logAlert(sym, msg) {
+    if (els.alertList.querySelector(".empty")) els.alertList.innerHTML = "";
+    var li = document.createElement("li");
+    var t = document.createElement("time");
+    t.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    var body = document.createElement("span");
+    body.innerHTML = "<b>" + esc(sym) + "</b> " + esc(msg);
+    li.appendChild(t); li.appendChild(body);
+    els.alertList.insertBefore(li, els.alertList.firstChild);
+    while (els.alertList.children.length > 20) els.alertList.removeChild(els.alertList.lastChild);
+  }
+
+  function fireAlert(sym, msg) {
+    freshUntil[sym] = Date.now() + 5000; // drives the newpulse animation on next paint
+    logAlert(sym, msg);
+    if (!alertsOn) return; // logged either way; sound/flash/title only if the user opted in
+    beep();
+    if (document.hidden || !document.hasFocus()) {
+      unseenSinceBlur += 1;
+      updateTitle();
+    }
+    els.alertCount.hidden = false;
+    els.alertCount.textContent = String(unseenSinceBlur || "•");
+    // Best-effort OS notification. Frequently unavailable inside claude.ai's
+    // frame (iframes are not reliably granted this permission) -- never the
+    // only channel anything above depends on, and any failure here is silent.
+    try {
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification("Swing setup: " + sym, { body: msg, tag: "ib-" + sym });
+      }
+    } catch (e) {}
+  }
+
+  function setAlertsUI() {
+    els.alertBtn.dataset.state = alertsOn ? "on" : "off";
+    els.alertLabel.textContent = alertsOn ? "🔔 Alerts: on" : "🔔 Alerts: off";
+    if (!alertsOn) { els.alertCount.hidden = true; unseenSinceBlur = 0; updateTitle(); }
+  }
+
+  function toggleAlerts() {
+    alertsOn = !alertsOn;
+    lsSet("ib.alerts", alertsOn ? "1" : "0");
+    setAlertsUI();
+    if (alertsOn) {
+      // Unlock audio on this real click gesture so beep() can fire later
+      // without a gesture of its own.
+      try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch (e) {}
+      if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission().catch(function () {});
+      }
+      logAlert("Alerts on", "You'll get a flash, a sound, and a log entry when a new swing setup qualifies.");
+    }
+  }
+
+  // ---------- swing panel ----------
+  var SWING_COLS = [
+    { key: "sym",    label: "Symbol" },
+    { key: "chg1mo", label: "1mo %" },
+    { key: "chg",    label: "Today %" },
+    { key: "rsi",    label: "RSI" },
+    { key: "adx",    label: "ADX" },
+    { key: "last",   label: "Last" },
+    { key: "mktcap", label: "Mkt Cap" },
+    { key: "avgvol", label: "Avg Vol" },
+    { key: "float",  label: "Float" }
+  ];
+
+  function shapeSwing(r) {
+    var c = r.columns || {};
+    var sym = r.ticker || pluck(c, ["Symbol"]) || "—";
+    return {
+      sym: sym,
+      name: pluck(c, ["Name"]) || "",
+      chg: num(pluck(c, ["% Change"])),
+      chg1mo: num(pluck(c, ["% Change (1MO, close)"])),
+      rsi: num(pluck(c, ["RSI"])),
+      adx: num(pluck(c, ["Average directional index (14)", "ADX"])),
+      last: num(pluck(c, ["Last"])),
+      mktcap: num(pluck(c, ["Market cap"])),
+      avgvol: num(pluck(c, ["Average volume"])),
+      float: resolvedFloat(sym, null) // this scan has no Float column of its own -- fundamentals-only
+    };
+  }
+
+  function paintSwingHead() {
+    els.swingHead.innerHTML = SWING_COLS.map(function (c) {
+      var on = swingSort.key === c.key;
+      return '<th data-k="' + c.key + '" class="' + (on ? "sorted" : "") + '">' +
+             esc(c.label) + '<span class="arrow">' + (on && swingSort.dir === 1 ? "▲" : "▼") + '</span></th>';
+    }).join("");
+    Array.prototype.forEach.call(els.swingHead.querySelectorAll("th"), function (th) {
+      th.addEventListener("click", function () {
+        var k = th.getAttribute("data-k");
+        if (swingSort.key === k) swingSort.dir = -swingSort.dir;
+        else { swingSort.key = k; swingSort.dir = k === "sym" ? 1 : -1; }
+        paintSwingHead(); paintSwingRows();
+      });
+    });
+  }
+
+  function paintSwingRows() {
+    var now = Date.now();
+    var sorted = swingRows.slice().sort(function (a, b) {
+      var x = a[swingSort.key], y = b[swingSort.key];
+      if (swingSort.key === "sym") return String(x).localeCompare(String(y)) * swingSort.dir;
+      if (x === null && y === null) return 0;
+      if (x === null) return 1;
+      if (y === null) return -1;
+      return (x - y) * swingSort.dir;
+    });
+    els.swingBody.innerHTML = sorted.map(function (r) {
+      var cls = r.chg1mo === null ? "zero" : r.chg1mo > 0 ? "pos" : r.chg1mo < 0 ? "neg" : "zero";
+      var tcls = r.chg === null ? "zero" : r.chg > 0 ? "pos" : r.chg < 0 ? "neg" : "zero";
+      var isFresh = freshUntil[r.sym] && freshUntil[r.sym] > now;
+      return '<tr' + (isFresh ? ' class="new-row"' : '') + '>' +
+        '<td class="sym"><div class="ticker">' + esc(r.sym) +
+          (isFresh ? '<span class="newtag">NEW</span>' : '') + '</div>' +
+          (r.name ? '<div class="coname">' + esc(r.name) + '</div>' : '') + '</td>' +
+        '<td class="num ' + cls + '">' + pct(r.chg1mo) + '</td>' +
+        '<td class="num ' + tcls + '">' + pct(r.chg) + '</td>' +
+        '<td class="num">' + (r.rsi === null ? "—" : r.rsi.toFixed(0)) + '</td>' +
+        '<td class="num">' + (r.adx === null ? "—" : r.adx.toFixed(0)) + '</td>' +
+        '<td class="num">' + money(r.last) + '</td>' +
+        '<td class="num">' + compact(r.mktcap) + '</td>' +
+        '<td class="num">' + compact(r.avgvol) + '</td>' +
+        '<td class="num">' + (r.float === null ? '<span style="color:var(--ink-faint)">…</span>' : compact(r.float)) + '</td>' +
+        '</tr>';
+    }).join("");
+  }
+
+  function swingSetUpdated(stale) {
+    var t = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" });
+    els.swingUpdated.innerHTML = stale
+      ? '<span class="stale">Showing last good data — ' + esc(t) + '</span>'
+      : "Updated " + esc(t);
+  }
+
+  function swingShowState(title, detail) {
+    els.swingBody.innerHTML = "";
+    els.swingStateSlot.innerHTML = '<div class="state"><div class="big">' + esc(title) + '</div><div>' + detail + '</div></div>';
+  }
+
+  function onSwingResult(res) {
+    var p = res && res.payload;
+    var result = p && p.data && p.data.result;
+    var list = result && result.results;
+    if (!Array.isArray(list)) { swingShowState("Unexpected response", "The scan came back in a shape this page doesn't recognize."); return; }
+    swingRetried = false;
+    swingRows = list.map(shapeSwing);
+    els.swingStateSlot.innerHTML = "";
+
+    if (seenSwingToday) {
+      var newlyIn = swingRows.filter(function (r) { return r.sym !== "—" && !seenSwingToday.set.has(r.sym); });
+      newlyIn.forEach(function (r) {
+        var bits = [];
+        if (r.chg1mo !== null) bits.push("1mo " + pct(r.chg1mo));
+        if (r.rsi !== null) bits.push("RSI " + r.rsi.toFixed(0));
+        if (r.adx !== null) bits.push("ADX " + r.adx.toFixed(0));
+        fireAlert(r.sym, "just qualified — " + bits.join(", "));
+        seenSwingToday.set.add(r.sym);
+      });
+      if (newlyIn.length) lsSet(seenSwingToday.key, JSON.stringify(Array.from(seenSwingToday.set)));
+    }
+
+    if (!swingRows.length) {
+      swingShowState("No matches right now", "Nothing currently clears every filter. That's a real, quiet answer, not a failure.");
+    } else {
+      paintSwingRows();
+    }
+    swingSetUpdated(false);
+
+    ensureFundamentals(swingRows.map(function (r) { return r.sym; }), function () {
+      swingRows = swingRows.map(function (r) { r.float = resolvedFloat(r.sym, null); return r; });
+      paintSwingRows();
+    });
+  }
+
+  function startSwing() {
+    seenSwingToday = loadSeenSwing();
+    paintSwingHead();
+    swingUnwatch = mcp.watchTool(
+      SERVER, "run_scan", { scan_id: SWING_SCAN_ID },
+      function (ev) {
+        if (ev.type === "data") onSwingResult(ev.result);
+        else {
+          var d = describe(ev.error);
+          if (d.retract || !swingRows.length) swingShowState(d.title, d.detail);
+          else swingSetUpdated(true);
+          if (d.retryable && !swingRetried) {
+            swingRetried = true;
+            setTimeout(function () { startSwing(); }, 1500 + Math.random() * 1500);
+          }
+        }
+      },
+      { cache: { staleTime: 45000 }, refetchInterval: 60000 }
+    );
+  }
+
+  // Repaint periodically so the newpulse/NEW-tag window (freshUntil) expires
+  // even if no fresh data arrives in the meantime.
+  setInterval(function () { if (swingRows.length) paintSwingRows(); }, 4000);
+
+  // ---------- boot ----------
+  function bootPrefs() {
+    var s = lsGet(LS_SORT);
+    if (s) {
+      var bits = s.split(":");
+      if (bits.length === 2) {
+        var ok = COLS.some(function (c) { return c.key === bits[0]; });
+        if (ok) sort = { key: bits[0], dir: parseInt(bits[1], 10) === 1 ? 1 : -1 };
+      }
+    }
+    try { if (lsGet("ib.checks") === "1") els.checks.open = true; } catch (e) {}
+    els.checks.addEventListener("toggle", function () {
+      lsSet("ib.checks", els.checks.open ? "1" : "0");
+    });
+
+    alertsOn = lsGet("ib.alerts") === "1";
+    setAlertsUI();
+    els.alertBtn.addEventListener("click", toggleAlerts);
+  }
+
+  async function boot() {
+    paintMarket();
+    setInterval(paintMarket, 30000);
+    bootPrefs();
+    paintHead();
+    skeleton();
+    paintSwingHead();
+    swingShowState("Loading…", "Reading the Growth Momentum scan.");
+
+    mcp = await window.claude.use("mcp");
+    if (!mcp) {
+      els.pick.innerHTML = '<option>Unavailable</option>';
+      els.pick.disabled = true;
+      els.refresh.disabled = true;
+      showState("Live data isn't available in this view",
+        "This board reads your saved Robinhood scans directly. This view can't reach your connectors, so there's nothing to show.",
+        "Open the artifact from claude.ai to see live scan data.");
+      swingShowState("Live data isn't available in this view",
+        "This view can't reach your connectors, so there's nothing to show.");
+      return;
+    }
+
+    startSwing();
+
+    var scans;
+    try {
+      var res = await mcp.callTool(SERVER, "get_scans", {}, { cache: { staleTime: 300000 } });
+      var p = res && res.payload;
+      scans = p && p.data && p.data.scans;
+    } catch (e) {
+      els.pick.innerHTML = '<option>Unavailable</option>';
+      els.pick.disabled = true;
+      handleErr(e);
+      return;
+    }
+
+    if (!Array.isArray(scans) || !scans.length) {
+      els.pick.innerHTML = '<option>No saved scans</option>';
+      els.pick.disabled = true;
+      showState("No saved scans found",
+        "This board runs the scans saved on your Robinhood account, and none came back.",
+        "Create a scan in Robinhood, then refresh this page.");
+      return;
+    }
+
+    els.pick.innerHTML = scans.map(function (s) {
+      return '<option value="' + esc(s.scan_id) + '">' + esc(s.title || "Untitled scan") + "</option>";
+    }).join("");
+
+    var saved = lsGet(LS_SCAN);
+    var hasSaved = saved && scans.some(function (s) { return s.scan_id === saved; });
+    els.pick.value = hasSaved ? saved : scans[0].scan_id;
+
+    els.pick.addEventListener("change", function () { retried = false; start(els.pick.value); });
+    els.refresh.addEventListener("click", function () {
+      retried = false;
+      mcp.invalidate(SERVER, "run_scan").catch(function () {}).then(function () {
+        start(els.pick.value);
+      });
+    });
+
+    start(els.pick.value);
+  }
+
+  boot();
+})();
+</script>

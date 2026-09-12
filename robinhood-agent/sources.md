@@ -1,0 +1,5060 @@
+# Research sources
+
+A durable log of news/data sources evaluated for market research, so a future
+session doesn't have to re-test them from scratch. Each entry: what it is,
+whether it's directly fetchable, and how to actually use it.
+
+Format: `## <name>` — `status`, then notes. Status is one of:
+- **Live, fetchable** — WebFetch pulls real current content directly.
+- **Educational, not a feed** — useful for framework/method, no live data.
+- **Blocked** — direct fetch fails; may still surface via web search.
+
+---
+
+## Investing.com Economic Calendar
+`https://www.investing.com/economic-calendar/`
+**Status: Live, fetchable.**
+
+Tested 2026-08-06 — returned real, current-dated events with forecast/previous
+values and impact level (high/medium/low), e.g. that day's US Initial/
+Continuing Jobless Claims (high impact), German Factory Orders, Eurozone
+Retail Sales, etc. This is the primary macro-check source: ask for "today's
+high-impact events" or "this week's calendar" before acting on a signal.
+
+## Reuters Markets
+`https://www.reuters.com/markets/`
+**Status: Blocked (confirmed).**
+
+Direct WebFetch fails outright ("unable to fetch from reuters.com") — tested
+2026-08-06 across four variants (`www.reuters.com/markets/`,
+`reuters.com/markets/` without www, `www.reuters.com/markets/us/`, and a
+retry of the original URL): all four failed identically. This is a
+domain-wide block on Reuters' side, not a one-off glitch or a paywall
+message. High reputational quality as a source, but not usable as a direct-
+check tool. Don't keep retrying variants — this is settled.
+
+Workaround: Reuters-sourced content sometimes still surfaces through a
+general web search (which indexes the page rather than fetching it live). If
+you have a specific Reuters article you want analyzed, paste its text
+directly and I can work with that.
+
+## Investing.com Academy — "Stay Updated on the Stock Market"
+`https://www.investing.com/academy/trading/stay-updated-on-the-stock-market/`
+**Status: Educational, not a feed.**
+
+Recommends a "Signal vs. Noise" framework: earnings reports and scheduled
+economic data = signal; sensational headlines and minor price swings = noise.
+Recommends a three-layer routine (macro calendar check, portfolio alerts,
+curated analysis) and names WSJ, Financial Times, Reuters, and Investing.com
+itself as sources. **Caveat: WSJ and FT are paywalled** — full article text
+generally isn't fetchable unless pasted in directly.
+
+## stockmarketterminology.com — "Stock Market News: What It Means"
+`https://stockmarketterminology.com/stock-market-news-what-it-means/`
+**Status: Educational, not a feed.**
+
+Defines what counts as market-moving news (earnings, Fed actions,
+geopolitical events, mergers) and stresses that markets are forward-looking
+— news often confirms an already-priced-in expectation rather than surprising
+the market. Useful lens for weighing a headline's actual price impact, not a
+source of current headlines itself.
+
+---
+
+## Stocktwits (connector)
+**Status: Live, connected, verified.**
+
+Tested 2026-08-06: `whoami` confirms an authenticated session (real user
+account); `get_trending_symbols` returns real live top-movers with price, %
+change, intraday sparkline, watcher count, and extended-hours pricing (e.g.
+SOUN, SNDK, IONQ, RDW, DKNG at test time). `get_symbol_pulse` and
+`get_sentiment` return real aggregate sentiment for a symbol (bull/bear %, a
+0-100 score, a label like "EXTREMELY_BULLISH") plus message-volume metrics
+across multiple timeframes (now/15m/1D/1W/1M/3M/6M/1Y/ALL). Tested against
+AAPL: price $313.07, sentiment 82/100 "EXTREMELY_BULLISH", 987,224 watchers.
+
+Other available tools (not yet tested): `get_symbol_messages`,
+`get_message_volume`(+`_history`), `get_sentiment_history`,
+`get_following_feed`, `get_watchlist_feed`, `get_user_messages`,
+`get_symbol`.
+
+**Caveat — read before surfacing raw posts to a user:** the "top posts" in
+`get_symbol_pulse` is unmoderated, real user-generated content. In testing,
+AAPL's feed included off-topic, low-quality, and offensive material mixed in
+with genuine stock chatter. **The aggregate metrics (sentiment score, message
+volume, watcher count) are the reliable signal — don't relay raw post text
+without screening it first.**
+
+## Robinhood connector — no dedicated news tool
+Confirmed via tool search: none of the Robinhood tools is a `get_news` /
+article-feed endpoint. Closest equivalents are `get_earnings_calendar` /
+`get_earnings_results` / `get_financials` / `get_equity_fundamentals` —
+fundamentals and earnings data, not news articles. For actual news-adjacent
+signal, use Stocktwits sentiment/chatter (above) or a general web search.
+
+## Yahoo Finance — not actually connected
+User mentioned adding a Yahoo Finance connector alongside Stocktwits, but
+only Stocktwits tools appeared in the session (checked via tool search — no
+match). If a Yahoo Finance connector gets added later, re-check and log it
+here; don't assume it's present just because it was mentioned.
+
+## Stocklake (connector)
+**Status: Live, connected, verified — free tier.**
+
+Tested 2026-08-06. 17 tools total; account is on the **free tier** (200
+calls/day, 8 non-AI tools). Two tools require **Pro** ($20/mo, 7-day trial,
+5000 calls/day) and returned `pro_required` errors when tested:
+`get_news_feed` (market-wide AI-flagged news briefing) and `get_signals`
+(AI-screened trade signals with conviction/rationale). Both gave a useful
+`preview` of a few symbols even on free tier.
+
+**Confirmed working on free tier:**
+- `get_market_pulse` — VIX, Fear & Greed, market breadth (RSI distribution),
+  SPY/QQQ/IWM + RSI, TLT/GLD. One call, no AI cost. Real live data verified.
+- `get_market_movers` — gainers/losers/most-active with price, volume, RSI,
+  ATR%, market cap. Real live data verified.
+- `get_stock_news` — per-symbol news (docs say "1 article" on free tier;
+  observed 5 articles per call in testing — better than documented, but
+  don't rely on the discrepancy holding).
+- `get_screener` — most filters (RSI/SMA/MACD/performance/volume/market cap/
+  analyst rating) work on free tier; `min_flag_score` and the `high_conviction`
+  preset are Pro-only (silently ignored on free tier per its own docs).
+- `get_stock` — price/fundamentals/raw indicators on free tier; the four
+  *interpreted* blocks (rating, signals, stance_signals, ai overview) are Pro.
+
+**Not yet tested:** `get_earnings_calendar`, `get_earnings_intelligence`,
+`get_indicator_history`, `get_insider_activity`, `get_market_assessment`,
+`get_sector_intelligence`, `get_stock_history`, `get_stock_research`,
+`get_stocks`, `get_watchlist`.
+
+**Real finding worth remembering:** cross-referencing Stocklake's mover list
+against Stocktwits trending caught a data-quality issue. Two names on
+Stocklake's gainers list (CLBK +126.6%, VSCO +69.6%) had no same-day news
+that explained a move that size, AND neither appeared on Stocktwits
+trending at all. A third name, IOVA (+38.99% on Stocklake, +38.36% on
+Stocktwits independently), had same-day news (8-K filing + a same-morning
+article) and showed up on both platforms — that agreement is what makes it
+trustworthy. **Lesson: an extreme single-source % move with no matching
+same-day news and no cross-platform attention is a reason for suspicion, not
+excitement — verify large movers against a second source before treating
+them as real.**
+
+## Robinhood native scanner (`get_scans` / `run_scan`) — covers names Stocklake misses
+**Status: Live, verified — and catches a real gap.**
+
+Tested 2026-08-06: the account has saved scans including "Daily gainers"
+(294 matches, all Robinhood-tradable stocks, sorted % change desc).
+`run_scan` on it surfaced **WYHG at +540%** (a $10.2M market-cap ADS) —
+a move that **never appeared in Stocklake's `get_market_movers` gainers
+list** (top Stocklake gainer at the same moment was CLBK at 126.6%, not
+close). WYHG had zero news (`get_stock_news` returned empty) and classic
+retail-hype-driven chatter with no informational catalyst — textbook thin/
+low-float momentum spike, not a real opportunity, but the point stands
+regardless of that stock's quality: **Stocklake's ~3,300-name tracked
+universe does not cover everything Robinhood's own scanner does.**
+
+**Process lesson: check both `get_market_movers` (Stocklake) AND
+`run_scan` on Robinhood's "Daily gainers" (or equivalent) when looking for
+"what's moving today" — they cover different universes and can each miss
+names the other catches.** `run_scan` results can be large (200+ rows) and
+overflow the tool-result limit; save to file and extract with
+`python3`/`jq` rather than reading inline.
+
+## Robinhood consumer app — "Short interest" / "Trading Trends" panels
+**Status: Blocked — app-only, no MCP tool exposes it.**
+
+Confirmed 2026-08-07: the Robinhood mobile app's stock-detail screen has a
+"Short interest" chart (short interest in shares + short float %, ~2 months
+trailing) and a "Trading Trends" chart (net buy/sell % by Robinhood retail /
+Hedge funds / Insiders, weekly). Checked the full `Robinhood` MCP tool list
+(`get_equity_fundamentals`, `get_financials`, `get_equity_technical_indicators`,
+etc.) — none of them return short interest, short float, or ownership-flow
+data. This is because the connected server is the narrower **Agentic Trading
+API** (`agent.robinhood.com/mcp/trading`), not the full consumer-app backend;
+`get_equity_fundamentals` gives float/shares outstanding but stops there.
+
+**Workaround: read the values directly off a user-provided screenshot of the
+app screen** — no live fetch is possible, but a pasted image can be
+transcribed manually. Example (TSLA, screenshot dated through Aug 6 2026):
+short interest ran ~75–79M shares (2.8–3.0% of float) from early June through
+mid/late July, then dropped sharply ~Jul 25–28 to ~67–70M shares (2.4–2.6%
+float) and held there — a short-covering signal, not something any connected
+tool surfaced independently. Robinhood retail net-buy/sell trend for the same
+symbol was net-positive overall Jul 8–Aug 3 with two sharp sell days.
+
+If a dedicated short-interest data connector (e.g. Ortex, S3 Partners, or a
+FINRA short-interest feed) gets added later, re-check and replace this entry.
+
+## Warrior Trading — "Small Account Challenge" momentum strategy (YouTube + PDFs)
+**Status: Educational, not a feed. Incompatible with this repo's cash account for live use.**
+
+Reviewed 2026-08-08: a Ross Cameron / Warrior Trading YouTube class plus three
+companion PDFs (strategy guide, sample trading-plan worksheet, blank trade-log
+worksheet). This is promotional content for a paid course (PDF upsells, "check
+out my class" links) — the $600→$20M / $2K→$65K-in-30-days figures are the
+marketing hook; treat as a strategy description, not a performance claim.
+
+**The strategy — 5 steps:**
+1. **Stock selection** (scanner-driven): relative volume ≥5x (ideally ≥20x)
+   50-day average, high total volume, gapping/up ≥10% intraday, price in a
+   narrow band (video: $2–20; the trading-plan worksheet narrows this to
+   **$5–10** as the small-account "sweet spot"), float **<20M shares in a hot
+   market / <10M in a cold market** (lower = better). News preferred, not
+   required if other criteria are strong.
+2. **Entry — "first pullback" pattern**: buy the first candle to make a new
+   high after a pullback that (a) retraces ≤50% of the prior move, (b) shows
+   heavier volume on green than red candles, (c) holds above VWAP, (d) holds
+   above the 9 EMA. Stop-loss = low of the pullback.
+3. **Level 2 / tape** for entry timing and confirmation around psychological
+   price levels (half-dollar/whole-dollar).
+4. **Exit on indicators, not fixed targets**: a large resting sell wall, a
+   suspected iceberg/hidden seller, a burst of red tape, a topping-tail /
+   "jackknife rejection" candle, MACD crossing its signal line, or buying
+   visibly slowing.
+5. **Journal every trade** and mine the log for leaks (e.g. time-of-day
+   win-rate) — the log template tracks P/L, accuracy, float, relative volume,
+   news, hold time, and candlestick pattern per trade.
+
+**Concrete risk rules from the worksheets** (not stated in the video):
+7:00–11:00am ET trading window; risk ~5% of account per trade, profit target
+~10% (2:1 reward:risk); daily max loss 10% of account; **3 consecutive losers
+= stop for the day**; accuracy/P&L progression benchmarks from 40–50%
+accuracy / 0.5–1.0 P/L ratio (novice) up to 70%+ / 1.0+ P/L ratio sustained
+over 5+ weeks (pro).
+
+**Why this doesn't map onto this repo:**
+- It requires multiple same-day round trips (buy and sell the same low-float
+  stock within minutes) on a **cash account** — this causes good-faith
+  settlement violations regardless of the 2024 T+1 settlement change (T+1
+  speeds up when capital becomes available again, it does not permit same-day
+  round trips). Same restriction already documented for Pattern Scalp in the
+  README — this strategy has the identical conflict, more so (it's designed
+  around several round trips per session, not one).
+- Exit logic depends on reading Level 2 order flow and tape **in real time,
+  continuously** (spotting an iceberg seller, a burst of red tape). The
+  Robinhood connector's `get_equity_price_book` returns a real Level 2
+  snapshot, but only on-demand — a polling/interval-based bot cannot watch
+  continuous tick-by-tick order flow the way this strategy requires.
+- The target stock profile (float <20M, extreme relative volume, sometimes no
+  news) is exactly the profile already flagged as suspicious in the WYHG
+  entry above (extreme single-source move, no news, no cross-platform
+  confirmation = reason for caution, not excitement in that entry). This
+  strategy treats that same profile as the *goal* — the two takeaways only
+  don't contradict each other because Warrior Trading's edge depends on
+  discretionary skill/speed to tell a real squeeze from a pump, which isn't
+  something this bot's tools or architecture can replicate safely.
+
+## Warrior Trading — warriortrading.com/momentum-day-trading-strategy
+`https://www.warriortrading.com/momentum-day-trading-strategy/`
+**Status: Live via the AMP URL. Canonical URL is blocked (truncates).**
+
+**Use `https://www.warriortrading.com/amp/momentum-day-trading-strategy/`.**
+The canonical URL was tested twice on 2026-08-10 with different extraction
+prompts and both times returned only the page title followed by "[Content
+truncated due to length...]" — the body sits past nav/ad markup that eats the
+fetch window. The AMP copy strips that markup and returned the **complete,
+untruncated article** on the first try. Generalize this: for any content site
+that truncates, try `/amp/` before declaring it blocked.
+
+**Correction — an earlier WebSearch summary of this page got several numbers
+wrong.** Before the AMP read, a search-engine summary was logged claiming
+$1–10 price / <10M float / ≥5% change / 5x rel. volume. The actual article
+says none of those things except approximately the float ideal. Lesson: a
+search summary of a page is *not* a read of the page — label it as such and
+replace it once the real text is obtained. Do not cite those figures.
+
+**What the article actually says (read directly, 2026-08-10):**
+
+*Selection:* float **under 100M shares**, with **under 20M ideal**; relative
+volume **at least 2x** average; stocks moving **20–30%+** on the day; on the
+daily chart, price above its moving averages with **no nearby resistance**; a
+fundamental catalyst — PR, earnings, FDA news, activist investor, breaking
+news.
+
+*Entry patterns (named):* **Bull Flag** — buy the first candle to make a new
+high after the breakout — and **Flat Top Breakout**, where resistance forms
+across several candles before an explosive move.
+
+*Exits:* sell **half** the position at the first profit target; **the first
+candle to close red is an exit indicator**; exit into extension bars (spikes
+of $200–400+).
+
+*Risk:* **2:1 profit/loss ratio** required. Max stop distance **20 cents** —
+if the technical stop is further away, stop out at −20¢ anyway. Position size
+falls out of that: `shares = max_risk ÷ stop_distance` (their example: $500
+risk ÷ $0.20 = 2,500 shares).
+
+**The finding that matters most here: a hard time window of 9:30–11:30am ET,
+with the first hour called optimal, and 5-minute charts only after 11:30am.**
+
+This reframes a result from live testing the same day. Two scanner runs at
+**12:43pm and 1:07pm ET** — both more than an hour past this strategy's own
+cutoff — found that every "building" name from the earlier run had flipped to
+fading 24 minutes later, none breaking to a new high (WFF 20.9x→0.16x, VERU
+3.4x→0.26x, GLBS 1.9x→0.34x, HKIT 2.5x→0.34x). That was recorded as a
+weakness of the acceleration signal. Per this article it is at least partly
+the expected behavior of the *market* in that window, not only a defect in the
+metric: the strategy does not claim to work at 1pm. **Any future test of an
+intraday momentum signal should run inside 9:30–11:30am ET before its decay is
+attributed to the signal itself.**
+
+*Not from this page:* a "switch from Top Gainer to a High of Day Momentum
+Scanner as the day progresses" workflow appeared in search results, but the
+article text does not mention it — it belongs to Warrior's separate scanner
+pages (`/day-trading-scanners/`, `/how-to-use-stock-scanners/`), unread as of
+this entry. Worth reading before building a high-of-day strategy on it.
+
+**Where this conflicts with config.json** (which encodes the YouTube-class
+numbers — $2–20 price, <20M float, ≥10% change, ≥5x rel. volume): this page is
+looser on relative volume (2x vs 5x) and float (<100M vs <20M), and much
+tighter on the move size (20–30% vs 10%). It states no price band at all.
+These are two different write-ups of the same house strategy and they do not
+agree; treat neither as authoritative and keep config.json's numbers unless
+there's a reason to change them.
+
+## daytrading.com — Strategies overview
+`https://www.daytrading.com/strategies`
+**Status: Live, fetchable.**
+
+Tested 2026-08-11 — full page fetched cleanly, no truncation. A survey
+article naming six strategies plus a general risk-management section.
+Shallower than the Warrior Trading source (a few sentences per strategy, not
+a full walkthrough), but two pieces are concretely new and worth carrying
+forward.
+
+**The six strategies, briefly:**
+1. **Breakout** — close above resistance = long bias, close below support =
+   short bias; price target from the average size of recent swings. No
+   numeric thresholds given.
+2. **Scalping** — sell the instant a trade is profitable; needs a broker that
+   explicitly permits it (worth checking on the Robinhood Agentic account
+   before ever building toward this).
+3. **Momentum** — "there is always at least one stock that moves 20-30% each
+   day"; enter on news + high volume, exit on reversal signs or volume
+   drying up. This is the same shape as momentum_scanner.py's Strategy 1,
+   just without numeric filters — doesn't add anything config.json doesn't
+   already have more precisely.
+4. **Reversal / mean reversion** — trade pullbacks against the trend;
+   flagged in the article itself as needing more experience than the others.
+5. **Pivot points** — classic floor-trader formula: `P = (H+L+C)/3`,
+   `R1 = 2P-L`, `S1 = 2P-H`, `R2 = P+(R1-S1)`, `S2 = P-(R1-S1)`. Session
+   range often runs between P and the first support/resistance. More a
+   forex/futures tool per the article; untested against any of this repo's
+   equity candidates so far.
+6. **Moving average crossover** — three SMAs (20/60/100 period); buy when
+   the 20 crosses above the 60, sell on the cross below; the 100-period line
+   sets trend bias (price above it = uptrend context, below = downtrend).
+   **This is a direct, more specific version of the trend rule already coded
+   into `run.py`'s strategy prompt** (20-day above 50-day = uptrend) — same
+   idea, different period pair and an added third line for regime context.
+   Worth testing 20/60/100 against the existing 20/50 pair before assuming
+   either is better.
+
+**The two genuinely new things, not present anywhere else in this repo:**
+
+- **Position sizing formula, stated generally (1% risk convention, not
+  specific to any one strategy):** `position_size = max_risk ÷ (entry_price
+  − stop_price)`, with max_risk itself capped at ~1% of account equity per
+  trade (their example: £27,500 account → £275 max risk). This is a
+  *relative* (% of equity) sizing rule. config.json's
+  `risk.max_order_notional_usd` is a flat dollar cap (currently $5) —
+  fundamentally different logic (fixed dollar ceiling vs. stop-distance-based
+  sizing that shrinks or grows the share count with volatility). Not
+  contradictory, just a different risk model; worth deciding deliberately
+  which one this repo wants rather than defaulting to the flat-dollar one by
+  omission.
+- **Two-tier stop-loss:** a mental stop at the point the entry thesis breaks
+  (exit criteria, not a price), plus a hard physical stop at the maximum
+  tolerable dollar loss. Nothing in this repo currently encodes an exit rule
+  tied to *thesis invalidation* rather than price — every stop discussed so
+  far (Warrior Trading's 20¢, the momentum scan's pass/fail) is price- or
+  filter-based only.
+
+**Not tested against this session's actual data** (WXM, PLAG, GRI, etc.) —
+this was a read of the source, not yet an application of pivot points or the
+MA crossover to today's candidates. If asked to re-evaluate today's names
+against this framework, that's a separate step.
+
+## Michael Sincere — *Start Day Trading Now* (Adams Media, 2011)
+Uploaded as EPUB 2026-08-11 (ISBN 1440511861). ~281K chars, read in full.
+**Status: Educational, not a feed. The most directly relevant book-length
+source logged so far — and it contradicts this repo's current setup in two
+places that matter.**
+
+### ~~THE BLOCKER: Pattern Day Trader rule~~ — OBSOLETE, see correction
+
+The book's PDT chapter (>4 day trades in 5 business days ⇒ $25,000 minimum
+equity, 90-day freeze as penalty) **is no longer current law.** Verified by
+web search 2026-08-11:
+
+- **2026-04-14** — SEC approved FINRA's amendments to Rule 4210.
+- **2026-06-04** — rule took effect. The **$25,000 minimum equity requirement
+  and the "pattern day trader" designation itself are both eliminated**; day
+  trades are no longer counted.
+- Replaced by **proportional margin requirements** — equity must be
+  proportional to actual intraday market exposure during the session, rather
+  than a flat account-size gate.
+- **Brokerages have until 2026-10-20 (18 months) to implement.** So whether
+  the new framework is live *at Robinhood specifically* is a separate
+  question from whether it is law. Worth confirming before relying on it.
+
+**Two corrections to my own earlier analysis, not just the book's:**
+
+1. Sincere's book is 2011. Its regulatory content is 15 years stale and
+   should not be treated as current on *any* rule — check anything
+   regulatory against a live source before acting on it. (I initially logged
+   the PDT constraint as a live blocker; that was wrong.)
+2. More fundamentally: **PDT applied to margin accounts. This is documented
+   as a cash account.** So PDT was likely never the operative constraint here
+   even before the repeal — I conflated it with the real one.
+
+**The constraint that does still apply, and is unaffected by this change:**
+cash-account settlement. Same-day round trips on unsettled funds cause
+good-faith violations regardless of PDT — that limit comes from Reg T
+settlement mechanics, not Rule 4210, and is already documented in the
+Warrior Trading entry above. The 2024 move to T+1 speeds up when capital
+frees up; it does not permit same-day round trips.
+
+### The cheap/illiquid question — separate the regulation from the mechanics
+
+The PDT correction above does **not** transfer to the book's penny-stock
+advice, because the two are different kinds of claim. PDT was a *rule*, and
+rules get repealed. Bid/ask spread and halt risk are *market mechanics* —
+they don't have an effective date.
+
+That said, the book's "under $3" line is a 2011 heuristic and shouldn't be
+treated as a threshold either. The defensible version is the mechanism, and
+this session produced direct evidence for it rather than needing the book:
+
+- **WXM halted 9:44am and PLAG halted ~11:25am on 2026-08-11** — both were
+  full scanner passes, both sub-$10, neither had any confirmed news.
+- **TISI quoted $21.55 bid / $22.55 ask** — a ~4.5% spread on a $22 stock.
+  On a $28 account that spread is a larger cost than most realistic edges.
+
+So the actionable takeaway is not "avoid stocks under $3" — it's **measure
+spread and halt exposure directly instead of proxying them with a price
+floor.** A max-spread-percent filter does that honestly; `min_price: 2.0`
+only does it by accident, and (per the PLAG entry) also silently excluded a
+name that ran while it was below the floor.
+
+One open question raised by the new margin framework: it ties requirements
+to **intraday exposure** rather than account size, which in principle could
+make volatile, wide-spread names *more* expensive to hold than they were
+under the flat-$25K regime. Unverified — worth checking against Robinhood's
+actual implementation before assuming either direction.
+
+### THE CONFLICT: the book says avoid exactly what our scanner surfaces
+
+> "When looking for stocks to buy, avoid the cheap or illiquid stocks."
+> "If you see a wide spread, you're either in the after-hours market or
+> you're looking at a **penny stock trading for under $3**. As a day trader,
+> you need liquid stocks, which is why you want to **avoid most penny
+> stocks**."
+
+config.json's `momentum_scan.min_price` is **$2.00**. Every full pass the
+scanner produced on 2026-08-11 sat in or near the band this book tells you
+to avoid — PLAG $2.57, GRI $2.13, WXM $8.01 (thin 577K float), and the
+near-misses WAFU $1.74 / AIHS $1.79 were rejected *only* for being too
+cheap. Two of those (WXM, PLAG) halted the same session.
+
+The book also gives the diagnostic that would have flagged this
+independently: **a wide bid/ask spread is the tell for illiquidity.** Live
+example from the same session — TISI quoted **$21.55 bid / $22.55 ask, a
+$1.00 spread on a $22 stock (~4.5%)**. Nothing in momentum_scanner.py looks
+at spread at all; `get_equity_quotes` returns bid/ask and it is currently
+ignored. **Cheapest available improvement to the scanner: add a
+max-spread-percent filter.** It is a better liquidity proxy than either the
+price floor or the volume minimum, and it is one field away.
+
+Sincere's own target profile is different from Warrior Trading's: stocks
+that move **2-5% intraday** (he names APC, AIG, TTWO, BCSI as examples) —
+*not* the 20-30%+ low-float movers. Both books are "momentum day trading";
+they disagree about what to point it at.
+
+### Rules worth adopting regardless of the above
+
+*Risk:* minimum **1:2 risk-reward, 1:3 better** — with the honest caveat
+"as a day trader this may not always be realistic." Before entry, **the most
+important calculation is what to do if you're wrong** (position size follows
+from the stop, not the other way round). Never hold a losing stock overnight
+hoping it recovers. **Do not carry a hard stop overnight** — gap-down risk
+fills it far below the stop.
+
+*Orders:* limit orders, not market orders — a market order in a fast tape can
+fill "10, 15, or 20 points lower than you anticipated." Scale in (buy half,
+add the rest only if it works). One pro (Kurisko) uses a conditional order
+that won't trigger **until the market has been open at least 10 minutes**,
+avoiding the opening auction — relevant given the 9:35am scan runs.
+Toni Turner: place the protective stop **immediately on entry**, not later.
+
+*Exits:* "When in doubt, get out" — the moment you first think about selling
+is the signal. Trailing stop: after a 2-point gain, move the stop to +1 to
+lock profit, then raise in ~$0.50 increments. **Cockroach theory** — one bad
+piece of news about a position implies more you can't see yet.
+
+*Indicators (defaults he teaches):* RSI 14-period, >70 overbought / <30
+oversold, with 9-period and even 2-period as day-trading variants; explicitly
+"guidelines, not fixed rules." MACD = 12/26 EMA difference with a 9-period
+signal line; buy on cross above signal or above zero. Bollinger Bands default
+(20, 2); band squeeze = low volatility, expansion = high; piercing a band is
+"pay attention," *not* an actionable trade by itself. MA crossover: 8-day
+above 13-day as a buy signal; on intraday charts use *period* not *day*
+(20-period, 50-period). Timeframes: 5/15/30/60-minute intraday; one pro
+deliberately uses an **8-minute** chart to "get off the fives" where everyone
+else is looking.
+
+*Expectations:* **"No more than 5 percent of people who try make a
+consistently profitable living as a day trader."** And the Jim Rogers quote
+he closes on — do nothing until there is something to do.
+
+### What this does NOT resolve
+The book predates (2011) the current market structure and says nothing about
+trading halts, which is the single most consequential thing observed in live
+testing on 2026-08-11 (WXM and PLAG both halted; PLAG then reopened +71%).
+Its "avoid penny stocks" guidance points away from the names that halt, but
+it offers no framework for what to do when one is already in play.
+
+## Robert C. Miner — *High Probability Trading Strategies* (Wiley, 2009)
+Google Drive link supplied 2026-08-11. **The Drive `/view` page is a login
+wall and WebFetch cannot read it** — but the public direct-download endpoint
+works and returns the file:
+`curl -L "https://drive.google.com/uc?export=download&id=<FILE_ID>&resourcekey=<RK>"`
+290pp, 467K chars, text extracts cleanly (PyMuPDF; note `pypdf` fails in
+this container — broken system `cryptography`/`_cffi_backend`).
+**Status: Educational, not a feed. The most rigorous of the three trading
+sources logged, and it contradicts the other two in specific places.**
+
+### The core method: Dual Time Frame Momentum
+
+The organizing idea is that a setup requires **two timeframes of momentum
+agreeing**, and the rules are a 2x2 on the higher timeframe's state. Works
+with any oscillator that has overbought/oversold zones (he uses DTosc, shows
+the identical table for Stochastic), and for any timeframe pair "from
+weekly/daily to 15m/5m":
+
+| Higher TF momentum | Action on smaller TF |
+| --- | --- |
+| Bull, not OB | **Long** after a smaller-TF bullish reversal, provided that reversal happens *below* the OB zone |
+| Bull, **OB** | No new longs. Possible short after a smaller-TF bearish reversal |
+| Bear, not OS | **Short** after a smaller-TF bearish reversal, provided it happens *above* the OS zone |
+| Bear, **OS** | No new shorts. Possible long after a smaller-TF bullish reversal |
+
+Critical framing he repeats: **these are setup conditions, not execution
+signals.** The higher timeframe sets direction; the lower timeframe reversal
+is the filter. Execution is a separate step (below).
+
+Also: a higher-timeframe OB reading is *not* a reason to exit an existing
+long — only a reason not to open a new one.
+
+### Two entry strategies — both require confirmation, never a target price
+
+> "Never buy or sell at a target price. Always require the market to move in
+> the direction of the anticipated trend to execute a trade."
+
+1. **Trailing One-Bar entry (Tr-1BH/L):** buy-stop one tick above the
+   trailing one-bar high (mirror for shorts). Trade doesn't execute unless
+   the market takes out that bar high — smallest capital exposure of the two.
+2. **Swing entry (SE):** buy-stop one tick above the prior swing high. Wider
+   stop, therefore larger exposure, but a stronger confirmation.
+
+**"Stops are always placed at the exact price that will void the setup."**
+Because entry and stop are both defined by the setup, **capital exposure is
+known before the trade is placed** — which is what makes the position-size
+math below possible at all.
+
+### Position sizing — concrete, and different from what config.json does
+
+- **3% maximum capital exposure on any one trade; 6% across all open
+  trades.** He calls this "the accepted standard, and it is a good one."
+- `Maximum Position Size = (Available Capital × 3%) ÷ Capital Exposure per Unit`
+- Gann's old 10%-per-trade rule: "way too much" — he says he learned that
+  expensively.
+- **Circuit breaker: if closed trades draw the account down 10% in under a
+  month, stop trading for the rest of the month.** Nothing in this repo has
+  a drawdown-triggered halt of any kind.
+- Drawdown asymmetry as the justification: a 20% drawdown needs a 25% gain
+  to recover; 50% needs 100%.
+
+**How this sits against config.json:** `max_order_notional_usd: 5` on a ~$28
+account is ~18% of capital per order — but that is *notional*, not *risk*.
+Miner's 3% is risk (entry-to-stop distance), which on a stop a few percent
+wide would permit a much larger notional than $5. The two numbers are not
+comparable, and the repo currently has no concept of the one Miner cares
+about. **Adding stop-distance-based exposure would be a real change, not a
+retuning of the existing cap.**
+
+### Where Miner and Sincere directly disagree — do not silently merge them
+
+**Risk/reward ratios.** Sincere: minimum 1:2, "1:3 is even better." Miner
+devotes a section to calling the idea "basically a bogus idea":
+
+> "Most professional traders don't pay much attention to a risk/reward
+> ratio... it is only a best guess... avoid any trading educators who claim
+> they teach you how to only take trades with some minimum risk/reward
+> ratio."
+
+His replacement: "Focus on positive and logical trade management and the
+risk/reward will take care of itself," and a warning about "paralysis of
+analysis" from pre-trade ratio math. Both authors are credible; this is a
+genuine disagreement about method, not one of them being wrong on a fact.
+**Logged as a conflict; not resolved here.** Note the asymmetry that makes
+it decidable in principle: a minimum-ratio rule is testable against a trade
+log, and Miner's position is the one that predicts the filter adds nothing.
+
+**Indicator settings.** Sincere gives defaults (RSI 14/70/30, MACD 12-26-9).
+Miner explicitly rejects fixed settings: the right lookback varies by market
+*and* timeframe *and* changes over time. His selection procedure is concrete
+and worth stealing — test a few lookbacks over 2-3 different periods and
+pick the one where (1) the indicator reaches OB/OS at most reversals,
+(2) reversals land within a bar or two of the actual swing high/low, and
+(3) there are no false reversals mid-range. His worked example landed on 13
+over 8 (too many whipsaws) and 21 (too laggy, never reached OB/OS).
+
+### Expectations, stated plainly
+
+- **"If you get good at trading, you will have around a 30 to 40% win
+  percentage."** Better than 50% over time = "trader elite."
+- "The best professional traders rarely have a greater than 50% win record."
+
+This is a materially different claim from the accuracy benchmarks in the
+Warrior Trading worksheets logged above (40-50% novice rising to 70%+ pro).
+Worth holding both loosely; Miner's is the more conservative and comes with
+his position-sizing math attached, which only makes sense if most trades
+lose.
+
+### The one thing he says guarantees failure
+
+> "I believe there is one primary reason traders are not successful: They
+> lack a trade plan. All consistently successful traders have a written trade
+> plan... A trade plan does not guarantee success, but lack of one guarantees
+> failure."
+
+Paired with record-keeping: every successful trader he knows has a
+trade-record system; "a lack of it does ensure failure." Minimum contents of
+a plan per Miner: the conditions that must be met to *consider* a trade,
+objective entry strategies, and narrow guidelines for managing the trade
+through exit.
+
+**Relevance to this repo:** momentum_scanner.py implements the first third
+(conditions to consider) and nothing of the other two. That is a fair
+description of the actual gap — the scanner finds candidates; there is no
+written entry strategy, no stop rule, no exit rule, and no trade log.
+
+### Not applicable / untested here
+Chapters 3-5 (Elliott-pattern recognition, Fibonacci price retracements and
+projections, time-cycle projections) are the bulk of the book and are
+discretionary chart-reading methods. None of it has been tested against this
+session's data, and the connected tools expose no Fibonacci or wave
+analysis. Logged as read, not adopted.
+
+## WebSearch — cheap-option / catalyst-mismatch research (2026-08-12)
+
+The account asked specifically about buying cheap (sub-$2, sometimes
+sub-$0.10) option contracts ahead of a known catalyst. Researched via
+WebSearch rather than a user-provided book; cross-checked several
+independent sources rather than trusting one, per the "beware of wrong
+learning material" instruction. Findings written into S7 in
+`strategies.md`, not duplicated here — this entry is the source list.
+
+- **Expected-move mechanics**: ATM straddle price × 0.85 ≈ market's priced
+  expected move to expiry; equivalently `price × IV × sqrt(DTE/365)`.
+  [tradealgo.com](https://www.tradealgo.com/trading-guides/options/expected-move-calculator),
+  [MenthorQ](https://menthorq.com/guide/from-straddle-price-to-expected-move/),
+  [optionspilot.app](https://optionspilot.app/blog/expected-move-calculation-implied-volatility)
+- **IV Rank / IV Percentile** as the actual "cheap vs. expensive" metric —
+  compares current IV to its own 12-month range, not to a dollar price.
+  [Yahoo Finance](https://finance.yahoo.com/news/implied-volatility-rank-percentile-better-133416799.html),
+  [projectfinance](https://www.projectfinance.com/iv-rank-percentile/),
+  [MenthorQ](https://menthorq.com/guide/iv-rank-vs-percentile/)
+- **IV crush around earnings**: IV peaks the day before the event and
+  collapses (often 30-40%+) right after, independent of whether the
+  directional call was correct.
+  [EBC Financial Group](https://www.ebc.com/forex/implied-volatility-before-earnings-are-options-too-cheap),
+  [MenthorQ](https://menthorq.com/guide/iv-crush-understanding-the-earnings-driven-volatility-spike-and-how-to-capitalize-on-it/),
+  [Schwab](https://www.schwab.com/learn/story/trading-options-around-earnings-announcements)
+- **"Lotto ticket" base rate**: far-OTM option buyers lose roughly 91% of
+  the time on average — the honest floor under this whole category of
+  trade, independent of any individual mismatch read.
+  [Banyan Hill](https://banyanhill.com/losing-investors-trading-options-like-lottery-tickets/),
+  [greeks.live](https://learn.greeks.live/path/what-is-a-lotto-ticket-trade-in-the-context-of-options-trading/)
+- **Options Industry Council** (optionseducation.org) — free, non-commercial
+  options education body; confirmed as a credible baseline for IV/earnings
+  mechanics rather than relying solely on trading-blog summaries.
+  [optionseducation.org](https://www.optionseducation.org/)
+
+**Live verification, not just theory:** pulled ENVX's real option chain the
+same session (reports after today's close) and confirmed the pattern by
+hand — IV ~280-305% across strikes, ATM straddle pricing a ~15% expected
+move, and a 36%-OTM call at $0.04-0.07 that *looks* like the pattern being
+asked about but is actually IV correctly pricing in an earnings-sized
+move, not a mismatch. See S7 in `strategies.md` for the worked numbers.
+This is the standard applied going forward: a claimed mismatch needs a live
+chain pull to confirm, not just a price that looks cheap.
+
+## "Smart Money Concepts" (ICT) — Fair Value Gap — tested and rejected (2026-08-15)
+
+**Status: own empirical test, not a fetched source.** The user shared a
+social-media chart claiming an "SMT + IDM + FVG + OB = 6RR" setup. FVG (Fair
+Value Gap — a 3-candle price gap where candle 3's low sits above candle 1's
+high) is the only one of those four concepts with a fully mechanical,
+non-subjective definition; OB, IDM, and SMT all require a judgment call
+(what counts as an "obvious" liquidity pool, which correlated pair to use)
+that can't be made objective without just encoding personal bias into the
+test.
+
+**Method:** pulled 1 year of SPY daily bars (2025-08-15 to 2026-08-14, 251
+bars), detected every bullish and bearish FVG ≥$0.30 wide programmatically,
+and measured (a) whether price retraced back into the gap within 20 trading
+days, and (b) given a retest, whether the close 5 trading days later
+continued in the gap's direction — compared against the unconditional base
+rate for the same 5-day-forward move over the same sample.
+
+**Result:**
+
+| | n tested | Retested within 20d | Continuation after retest | Baseline (unconditional) |
+| --- | --- | --- | --- | --- |
+| Bullish FVG | 43 | 79.1% | 67.6% | 60.6% (5d-fwd-up rate) |
+| Bearish FVG | 28 | 100% | 42.9% | 39.4% (5d-fwd-down rate) |
+
+Two-proportion z-test on the bullish result (67.6%, n=34 retested vs.
+60.6%, n=246 baseline): **z ≈ 0.79 — not statistically distinguishable from
+noise.** The bearish side is weaker still. SPY spent this year in a strong
+uptrend (646 → 776); the "edge" bullish FVG appeared to show was mostly the
+trend itself, not the pattern.
+
+**Verdict: no measurable edge found.** OB/IDM/SMT were not tested — see
+above for why they can't be made objective with the tools available here.
+Logged so a future session doesn't re-spend a data pull re-testing FVG from
+scratch. See S8 in `strategies.md` for the standard this sets: a claimed
+pattern needs its own backtest against a real baseline, not just a
+retrospective chart that worked once.
+
+## S8 float-turnover disqualifier — backtested and demoted (2026-08-16)
+
+**Status: own empirical test, single day, n=11 — not independent.** S8's
+first draft used float turnover (day volume ÷ float) above ~20–30× as a
+disqualifier, reverse-engineered from about eight names rejected on
+2026-08-14. `run_scan` only evaluates live data and cannot be replayed
+against a past date, and it was the weekend, so no independent second
+sample was available. The test run instead: pull the full 8/14 daily bar
+for those same 11 names and check whether turnover magnitude actually
+predicted how much of the day's gain got given back — the outcome the
+disqualifier is implicitly trying to prevent.
+
+**Result:** no monotonic relationship between turnover and giveback-from-
+high (CGTL ran 1,172× and gave back 18.6%; STKH ran 49× and gave back
+44.1%). Worse, turnover was **lowest on the name that was observed
+actively halting** (AEHL, 2.0×) — halts cap tradeable volume, suppressing
+the exact metric meant to flag danger on the exact name that most needed
+flagging. Meanwhile LFS, at 2.5× turnover (well under any version of the
+threshold), failed just as hard as the high-turnover names — it was caught
+by the catalyst check ("$LFS news??" unanswered), not by any number.
+
+**Verdict: the specific threshold is not supported by this data, and the
+catalyst check — not turnover — is doing the real work.** Turnover was
+demoted in S8 from a co-equal numeric disqualifier to secondary supporting
+evidence. Full table and the one real miss (NMAX) are in S8's own
+"Float-turnover backtest" subsection in `strategies.md` — logged here so a
+future session knows this was tested, not assumed, before trusting either
+version of the rule. Single-day, non-independent sample: the next real
+step is repeating this same check on independent future trading days, not
+re-deriving it from the same eleven names.
+
+## 2026-08-16 — Execution audit: the formal strategies never ran
+
+Prompted by "we are not making profit" and a proposal to allocate across S1,
+S2 and S8 in parallel to see which performs best. Before splitting capital,
+audited whether the strategies had ever executed. **Two of the three had
+not.**
+
+- **S1:** its universe is `daily_allowlist.json`, written by `screener.py`.
+  That file does not exist in the repo. The universe is empty by
+  construction — the loop can run and will buy nothing. No state files, no
+  run logs. `deploy/crontab.example` is an example; nothing is scheduled,
+  and this container is ephemeral so cron would not survive the session.
+- **S2:** written for a single liquid equity/ETF, with SPY/QQQ/IWM named.
+  All trade above $150 against a `max_order_notional_usd` of 150, and stop
+  orders are whole-share. It cannot place one share. Also has no scheduler
+  and needs invoking every ~5 minutes through the open.
+- **Doc drift found in passing:** `strategies.md` asserted that S1 used "the
+  flat $5 notional cap" and that `config.pattern-scalp.json` "still carries
+  the old $5 cap." Both configs read `max_order_notional_usd: 150`. The
+  prose was stale in a way that would have misdirected the sizing fix.
+  Corrected in place.
+
+So the premise "the formal strategies underperform the ad hoc screen" was
+false. They never competed. Recorded in `CLAUDE.md` as a standing check:
+distinguish "it doesn't work" from "it never ran" before diagnosing edge.
+
+## 2026-08-16 — Trade log built and seeded from broker records
+
+`trades.csv` + `tradelog.py`. Seeded from `get_pnl_trade_history`,
+`get_equity_orders` (filled **and cancelled** — the cancelled stops are what
+recover each trade's *initial* stop price, without which R is not
+computable). Seven trades: five closed, two open.
+
+Results in R rather than dollars, because this account funds strategies
+unequally and dollar totals cannot rank them.
+
+- **Expectancy +0.28R** per closed trade, n=4 with recorded stops. Positive:
+  the process is not broken.
+- **No trade reached +1.00R** (best LNSR +0.71R, worst AIRO −0.29R). Every
+  winner was closed for less than the risk taken to earn it. Largest
+  correctable leak identified so far, and it is on the exit side, not entry
+  selection.
+- **Stop latency median 16s** across five trades — genuinely good execution
+  discipline — **except HHS at 675s (11m15s)**, the single S8 trade. The one
+  strategy-generated entry is the one that sat unprotected, independently
+  confirming the defect flagged in S8's section.
+- Also surfaced: HHS's protective stop is **GFD**, so it expires at every
+  close and must be re-placed nightly; AEYE's is **GTC** and does not. One
+  missed evening on the GFD leaves the position naked overnight.
+
+Statistical honesty recorded alongside the numbers: at ~5 closes/month,
+splitting across three strategies is ~1.7 trades each per month, and
+ranking edge needs n≈20–30 per arm. The log will not settle S1 vs S2 vs S8
+this quarter. What it settles within 1–3 trades is mechanical — fires/does
+not fire, order accepted/rejected, stop attached/missing — which is exactly
+what the audit above needed and what the next fixes should target.
+
+## 2026-08-16 — S2 backtested on real bars and rejected
+
+Follow-on from the execution audit. The plan was to unblock S2 by finding a
+sub-$100 underlying it could actually afford. Backtested it first, on the
+principle that the repo tests before it commits — and the result reversed
+the plan entirely.
+
+Setup: `backtest_pattern_scalp.py` against real Robinhood 5-minute bars,
+2026-06-15 → 2026-08-14 (29 trading days with a valid ATR), 12 underlyings
+(SPY, QQQ, IWM, TLT, EEM, ARKK, KRE, SOXL, TQQQ, XLF, SLV, GDX). Zero
+interpolated bars — checked explicitly, per the WOLF precedent.
+
+**Result at default settings: 74 trades, 27% win rate, −20.84R, avg
+−0.28R.** Exits 20 target / 51 stop / 3 time. Only 4 of 12 underlyings
+positive, and SLV's +10.24R rests on n=3 — excluding it, the other 71
+trades total −31.08R. QQQ and TQQQ were each 0-for-8.
+
+Two things made this decisive rather than merely discouraging:
+
+1. **It fails on SPY/QQQ/IWM**, the instruments it was written for. So the
+   sub-$100-underlying hunt was the wrong fix aimed at the wrong problem —
+   a cheaper ticker was never going to rescue it.
+2. **The premise is inverted.** A 5×4 sweep (atr_frac × entry window,
+   pooled across all 12) returned **0 of 20 parameter sets positive**, best
+   −0.25R. More telling than the sign: raising `atr_frac` from 0.20 to 0.40
+   degrades average R from −0.25 to −1.00 *monotonically*. The strategy's
+   thesis is that a larger opening range is a bigger liquidity grab and thus
+   a better reversal; the data says larger ranges reverse worse. The filter
+   meant to select the best setups selects the worst. Tuning cannot repair a
+   backwards premise.
+
+Stated limits: the entry is a reclaim approximation rather than an exact
+hammer/bullish-engulfing match, it is long-only (a real account
+constraint), and 29 days is a single regime with per-symbol n of 3–10. This
+does not prove opening-range reversal never works. It does establish that
+this specification loses at every setting tested.
+
+S2 moved from "VIABLE — top priority" to **do not fund**. Worth recording
+that S2 held top-priority status for four days on the strength of having
+the most complete written plan in the repo — entry, stop, target and time
+stop all specified. Completeness of specification turned out to be
+uncorrelated with profitability, and the blocker that stopped it trading
+(a $150 cap against $600 shares) was protective, not merely inconvenient.
+
+## 2026-08-16 — Exit analysis: 21% capture, and breakeven stops make it worse
+
+The trade log showed +0.28R expectancy with no trade ever reaching +1.00R,
+and this file had already called that "winners cut short." That phrasing was
+an assumption, not a measurement — a sub-1R average has two possible causes
+with opposite fixes (exits too early, or stops too wide for the move that
+existed). Measured it on real 5-minute bars for the four closed trades with
+recorded initial stops.
+
+**It is exits, not stops.** Average MFE available +1.32R against +0.28R
+captured — **21% capture efficiency**. Three of four trades offered ≥1.0R.
+SMWB was sold 09:34 on 08/13 and peaked at 15:15 the same day (+1.20R
+available, +0.21R taken). RSKD offered +2.21R and returned +0.50R.
+
+Rule simulation with an explicit time stop (so nothing gains from holding
+forever), stop winning within-bar ties: a fixed target anywhere in the
+**1.0–1.5R band roughly doubles expectancy** — +0.68R at 1.0R and +0.74R at
+1.25R with a same-session stop, +0.77R at 1.5R with a next-session stop,
+against +0.28R actual. The optimum moves with the horizon, which is what
+n=4 noise looks like, so the band is the finding and the peak is not.
+
+Two counter-findings that matter more than the headline:
+
+- **Breakeven/trailing stops were worse than doing nothing.** Break-even at
+  +1R then trail 1R returned +0.17R; arming at +0.5R returned −0.03R. Both
+  below the +0.28R hand-exit baseline. Moving the stop to breakeven turns
+  ordinary pullbacks into scratches and taxes precisely the trades that
+  later work. This is standard retail advice and it is the worst rule tested
+  here.
+- **Discretion helped on the loser.** AIRO was hand-closed at −0.29R; every
+  mechanical rule that let it run took −1.00R. So the correct fix is
+  asymmetric — mechanise the upside with a target, keep a same-session time
+  stop on the downside rather than always riding to the price stop.
+
+**Blocking constraint found while specifying the fix:** `place_equity_order`
+has no bracket/OCO — market, limit, stop_market, stop_limit, single-leg
+only. `get_advanced_orders` reads OCO but nothing places one. A resting stop
+and a resting target therefore cannot coexist on the same shares, which is
+precisely why Friday's $7.80 AEYE stop was rejected while the $7.08 GTC stop
+held all 19 shares. The target has to come from a manually-placed app
+bracket, or from intraday agent monitoring (same scheduling gap as S2), or
+be downgraded to a time stop.
+
+Limits: n=4, one week, one regime, one screen. Within-bar sequencing is
+assumed on 5-minute bars. Limit-target fills are realistic; stop fills can
+slip worse than modelled. Re-test at n≥15 before treating 1.0–1.5R as
+settled.
+
+## Also available (not from a user-provided link)
+
+- **Robinhood connector** (`get_earnings_calendar`, `get_earnings_results`,
+  `get_financials`) — earnings dates/results and fundamentals for specific
+  symbols. Already wired into research; see README.
+- **General WebSearch** — works for "what's happening with X today" style
+  queries; quality varies by query specificity.
+
+## 2026-08-17 S7 options screen — ZIM and BULL, both rejected on real numbers
+
+Ran the S7 catalyst-mismatch methodology manually (option_scanner.py's own
+process, executed via direct tool calls rather than the subprocess) against
+the two most promising near-term earnings names from the 14-day calendar.
+
+**ZIM** (reports 2026-08-19 am, Q2): 5 measurable past earnings-day moves
+(close-to-close, am timing) from 2025-05-19 through 2026-05-20: +5.67%,
+-1.41%, 0.0%, +4.67%, -1.53%. Mean |move| 2.66%, median 1.53% — smaller than
+its EPS-surprise reputation suggests; the stock's price doesn't react
+proportionally to trailing EPS beats/misses (freight-rate data likely leaks
+ahead of the print for a shipping name). ATM straddle for the 2026-08-21
+expiry ($29 call mid $0.80 + $29 put mid $0.875) implies a 4.95% expected
+move. Mismatch ratio 1.86 (mean) to 3.24 (median) — both far above the 0.85
+cutoff. IV is already pricing more than the stock's own history supports.
+The $31 OTM call (delta 0.20, inside the 0.10-0.55 band) additionally fails
+on spread: 40% vs the 15% max.
+
+**BULL** (reports 2026-08-19 pm, Q2): 4 measurable past moves (pm timing,
+report-close to next-close) from 2025-08-28 through 2026-05-21: -7.36%,
++0.48%, -5.60%, -6.51%. Mean 4.99%, median 6.06% — genuinely volatile,
+unlike ZIM. But the ATM straddle for 2026-08-21 ($8 call mid $0.415 + $8 put
+mid $0.315, haircut 0.85) implies a 7.66% expected move — still bigger than
+the historical average. Mismatch ratio 1.27 (median) to 1.54 (mean), both
+above 0.85. The $9 OTM call passes every structural filter (10.5% spread,
+12518 OI on the $8 side, delta 0.20) but fails the same edge test. This is
+IV correctly pricing a big mover, not a mismatch.
+
+Conclusion: no options trade today. Two real candidates checked with real
+option-chain data, both rejected on the actual math, not assumed. Matches
+the S7 track record: 0 of 4 prior contracts (ONDS, LUNR, STNE, NKTR) passed
+either; this makes it 0 of 6. The screen is built to say no most days — see
+option_scanner.py's own framing. Did not force a marginal trade to have
+something to report.
+
+## 2026-08-17 The user's own scalping — the first real edge in this repo
+
+The account's Investing account (••••7822, margin, NOT the Agentic account
+this agent trades) was up **+$137.44 / +36.29%** on 2026-08-17. The Agentic
+account was up $6.03 / 1.37% the same day on the same tape. That gap is the
+most useful data this repo has produced, and it is the user's own execution,
+not a book.
+
+Pulled the real fills with timestamps from `get_equity_orders` on ••••7822
+rather than reading the screenshots. Six IPST round trips:
+
+| # | Buy ET | Sell ET | Hold | Buy | Sell | P&L | % |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 10:21:51 | 10:27:02 | 5.2m | 6.84 | 7.26 | +8.45 | +6.2% |
+| 2 | 10:31:05 | 10:33:34 | 2.5m | 7.55 | 7.13 | −8.40 | −5.6% |
+| 3 | 10:57:45 | 10:59:53 | **2.1m** | 7.72 | 9.57 | **+36.96** | **+23.9%** |
+| 4 | 11:33:23 | 11:38:37 | 5.2m | 8.24 | 8.39 | +4.27 | +1.7% |
+| 5 | 11:45:32 | 11:46:19 | **0.8m** | 8.54 | 8.23 | −9.30 | −3.6% |
+| 6 | 12:23:28 | 12:25:04 | 1.6m | 7.71 | 7.63 | −2.40 | −1.0% |
+
+**IPST net +$29.58 on 3 wins / 3 losses.** Median hold **149 seconds**;
+fastest exit 46 seconds. Same pattern on WFF ($4.49 → $10.20 range traded
+repeatedly) and OSRH. This is the same instrument (IPST) this agent screened
+at 08:56 ET and rejected as "pump chatter, sit this window out."
+
+### What the minute bars say about entry and exit
+
+Trade 3, the +23.9% winner. Minute volume around the 10:57:45 entry:
+
+| Bar | Volume | vs prev | Close |
+| --- | --- | --- | --- |
+| 10:56 | 62,551 | — | 7.47 |
+| **10:57** | **251,916** | **4.0x** | 7.685 |
+| 10:58 | 283,689 | 1.1x | 7.881 |
+| 10:59 | 660,285 | 2.3x | **9.66** |
+| 11:00 | 420,764 | 0.6x | 8.645 |
+
+Entry was **into** the 4.0x volume-surge bar, filled at 7.7174 near that
+bar's 7.75 high. Exit at 9.5654 came 2m08s later, inside the 660k-share
+climax bar whose high was 9.66 — **sold within 1% of the absolute peak.**
+The very next minute closed 8.645, a −10% drop. Getting out on the climax
+rather than after it is the whole trade.
+
+Trade 2, the −5.6% loser, is the same setup entered one bar too late:
+
+| Bar | Volume | vs prev | Close |
+| --- | --- | --- | --- |
+| 10:30 | 368,036 | 3.3x | 7.615 |
+| **10:31** | **149,480** | **0.4x** | 7.58 |
+| 10:32 | 206,055 | 1.4x | 7.30 |
+
+The surge bar was 10:30. The 10:31 entry landed as volume collapsed to 0.4x
+— buying the extension after the buyers were gone. Cut 2.5 minutes later.
+
+**The mechanism, stated plainly:** buy *during* a volume surge that is
+breaking price upward; sell into the climax; and when volume does not follow
+within a minute or two, exit immediately for a small loss. Three losers
+averaged −3.4%; the one winner made +23.9%. **The asymmetry is manufactured
+by exit speed, not by entry accuracy** — a 50% hit rate is fine when losers
+are cut in ~90 seconds and the winner is allowed to go vertical.
+
+### Why this repo's rules produced the opposite
+
+Direct contradictions with `RULES.md`, all of them load-bearing:
+
+- **Rule 1 (name the news before buying)** is an entry gate built for a
+  position held over hours. It rejected IPST at 08:56 ET on correct
+  reasoning — the Stocktwits chatter genuinely was pump talk, and the stock
+  genuinely did round-trip. But a 2-minute trade does not need the narrative
+  to be *true*, only the volume to be *real*. Rule 1 is the right gate for
+  S8 and the wrong gate for a scalp.
+- **Rule 4 (target = entry + 1.25R)** caps the winner. Applied to trade 3 it
+  would have exited around 8.1 instead of 9.57 — turning +23.9% into roughly
+  +5%, throwing away three quarters of the day's profit on the single trade
+  that carried it.
+- **Rule 7 (close by the bell)** implies a hold measured in hours. The real
+  time stop here is ~90 seconds.
+
+Not a reason to delete those rules — they belong to S8, which is a different
+strategy with a different holding period. It is a reason to stop pretending
+one rule set covers both.
+
+### What this agent can and cannot do about it — stated honestly
+
+**Cannot:** replicate this. A 149-second median hold with a 46-second
+fastest exit requires reacting inside a single minute bar. This agent runs
+on scheduled check-ins and each one costs 30–60s of tool calls before a
+decision exists. By the time a 4x volume bar is detected, read, and acted
+on, the move it signalled is over. Promising to auto-scalp would be
+promising something the execution model cannot deliver, and the honest
+version of that promise is "no."
+
+For scale: at 11:45:32 ET the user bought IPST at 8.54; at 11:45:38 — six
+seconds later — this agent bought OCUL at 10.59. The user was flat 47
+seconds later for −3.6%. The agent held four hours for +0.36R (+$0.70).
+Same minute, same tape, two entirely different games.
+
+**Can:** watch far more names at once than a human, and compute the surge
+condition on live minute bars across a whole watchlist. The realistic
+division of labour is **agent detects, human executes** — this agent
+monitoring N symbols for the 3–4x volume-surge-with-price-breakout
+condition and surfacing it fast, the user pulling the trigger. That plays to
+what each side is actually good at instead of asking either to do the
+other's job badly.
+
+### The scanner built from it — `scalp_signal.py` + `scalp_scan.py` (2026-08-17)
+
+Thresholds derived by measuring 1,530 minute bars from the five symbols the
+user traded that day, NOT by picking round numbers. Entry modelled at the
+signal bar's close (the earliest a scanner can honestly act — a bar must
+finish before its volume is known).
+
+**The negative result came first and is the more useful half.** Volume surge
+alone is worse than random: bars at >=4x median volume had a median 5-bar
+MFE of +0.95% versus a +1.35% all-bars baseline. A volume spike with no
+price response is as often a selling climax as a breakout. The scanner
+enforces this — `detect_entry` reports a 10x-volume flat bar as an explicit
+non-signal, and `test_scalp_signal.py` asserts it.
+
+Volume only earns its place as *confirmation*. At bar return >= 2%:
+
+| filter | median MFE | median MAE | reach +3% |
+| --- | --- | --- | --- |
+| no volume filter | +4.31% | −3.76% | 61% |
+| **+ surge >= 3x** | **+7.52%** | **−2.84%** | **71%** |
+| + surge < 3x (control) | +3.57% | −4.15% | 57% |
+
+**The magnitudes are not trustworthy and the module says so in its own
+docstring.** Simulating the full rule over the 41 signals returns +709%,
+which is not an edge: 28 of 41 lost money, the median outcome is the −2%
+stop, three trades produced 86% of the profit, and +699.6% of the +709.4%
+came from a single symbol (WFF, $4.49 → $10.20 that session). IPST
+contributed +9.2%, OSRH −0.2%. Strip WFF and the rule is flat. One stock's
+trend on one day, caught three times.
+
+What survives is the *shape*: most signals lose a little, a few win a lot —
+the same asymmetry as the user's own day (three losers averaging −3.4%, one
+winner +23.9%).
+
+**Tested and rejected: mechanizing the user's climax exit.** The user sold
+the +23.9% trade at 9.5654 inside the 660k-share vertical bar, within 1% of
+its 9.66 high. The mechanical trailing rule (exit on a close below the prior
+bar's low) instead held through the pullback and exited at **+12.17%** —
+roughly half. Tempting to add "sell into any bar up X%" to close that gap.
+Tested across all 41 signals, it makes things much worse:
+
+| exit rule | total | best trade |
+| --- | --- | --- |
+| **trail only** | **+761.8%** | **+247.6%** |
+| + sell into any bar >= 5% | +186.4% | +50.8% |
+| + sell into any bar >= 10% | +165.9% | +50.8% |
+| + sell into any bar >= 20% | +410.1% | +121.6% |
+
+Every version truncates the fat tail that produces all the profit. **The
+user's discretionary climax read beat the mechanical rule on that one trade
+and would lose to it as a policy** — so it stays out of the code, and the
+judgment stays with the human. This is also why `decide_exit` has no profit
+target at all: this repo's own Rule 4 (target = entry + 1.25R) would have
+exited the user's winner near $8.10 instead of $9.57.
+
+**Live check:** replaying the scanner against the tape as of 10:57 ET fires
+on IPST and only IPST out of the five symbols — the same minute the user
+entered. The regression test in `test_scalp_signal.py` pins both sides: the
+10:57 bar (before the +23.9% winner) must fire, and the 10:31 bar (before
+the −5.6% loser, entered one bar after the surge had passed) must not.
+
+### Out-of-sample test — WETO, 2026-08-17, and why the +709% number is wrong
+
+Requested directly: "not just IPST, i trade wff, osrh, weto." WFF and OSRH
+were already inside the original 41-signal study (per-symbol: IPST +9.2%,
+WFF +699.6%, OSRH −0.2%, OABI +0.7%). WETO was not — it wasn't one of the
+five symbols the thresholds were derived from, which makes it the first
+real out-of-sample test the scanner has had.
+
+**It failed.** 11 signals fired on WETO's regular session ($10.16 → $24.79,
+arguably a bigger trend day than WFF's). Net result: **−4.4%, 3 wins of
+11, 8 of 11 hit the −2% hard stop.** Same entry logic, same real bars,
+opposite sign.
+
+**Diagnosing rather than re-tuning** (re-tuning after seeing the failure
+would be curve-fitting the failure away, exactly what Rule 0 forbids):
+traced WFF's four biggest signals (bars 35/38/39/40) and found every one
+exited on the **time cap**, not the trail — cut at 15 bars while still
+running +150% to +248%. The rule never told those trades to exit; the
+15-bar limit did, and the trend happened to still be climbing when it hit.
+That is a property of where the clock ran out, not a property of the
+entry signal.
+
+WETO's 11 signals fired at points inside its own comparably large trend
+that were *not* followed by a clean run — mid-trend pauses that rolled
+over, caught by the tight stop before anything developed.
+
+**Conclusion, stated as precisely as the evidence allows:** the rule
+reliably detects a real, volume-confirmed local breakout (that half is
+still supported — WETO's signal bars were genuine breaks, not noise, same
+shape as IPST's). It does **not** reliably distinguish the start of an
+hours-long move from a pause inside one that is about to fail. The
++709%/mostly-WFF backtest number should be read as one lucky mechanical
+accident, not a rate. `scalp_signal.py`'s `confidence` field now says this
+on every fired signal, not just in the docstring — the honest limitation
+travels with the alert, not just the source code.
+
+Pinned as a permanent regression test in `test_scalp_signal.py` against
+real WETO bars (21 minute bars ending 16:09 UTC, transcribed by script from
+`get_equity_historicals`, not by eye) so this cannot silently get
+oversold later: the signal bar correctly fires, and the very next real bar
+correctly hits the stop for −1.09%, matching the full-day simulation
+exactly.
+
+### Surge Watch dashboard — 2026-08-18, and the capability check behind it
+
+Before building: checked whether a published page could poll Robinhood
+directly on its own (no agent in the loop). It cannot, in this environment
+— the `mcp` artifact capability needs `mcp__claude_ai_*`-prefixed tools to
+exist for the target connectors, and none do here, even though
+Robinhood/Stocklake/Stocktwits are all connected for this agent's own tool
+calls. Checked via `ListConnectors` and `ToolSearch`, not assumed.
+
+So the page (`surge-watch.html`) is honest about what it actually is: a
+static artifact at one stable URL, refreshed by this agent pulling real
+data and republishing — not a page that live-polls the market in the
+viewer's browser. The UI says this explicitly ("This page updates when
+refreshed and republished — not on its own while you're looking at it").
+
+Two lean scheduled refreshes set for 2026-08-18: ~7:00 ET (early premarket)
+and ~8:40 ET (RULES.md's entry window open), each pulling live quotes +
+minute bars and re-running `scalp_signal.py`'s `detect_entry` for real,
+then republishing to the same artifact URL. Deliberately not a dense chain
+of wakeups overnight — nothing meaningful happens in the dead hours, and
+the user asked to keep this efficient.
+
+URL: https://claude.ai/code/artifact/0c00fa02-b7c2-47cd-8074-224d17f2fbcf
+
+### Robinhood's own scanners beat Stocklake's screener for this job — 2026-08-18
+
+The user's account already has saved scanners (`get_scans` / `run_scan`),
+built in Legend, not something this session created. One is called "Early
+Momentum Ignition" (scan_id `9d3566de-aca8-4b0e-8099-304a3e474d92`):
+price $2-20, day volume >300k, float <20M shares, **1-hour relative
+volume >3x**. That last filter is exactly the "surge" half of
+`scalp_signal.py`'s detection rule, computed by the broker on real
+intraday volume, not derived after the fact.
+
+Ran it live, premarket 2026-08-18: 98 matches, sorted by % change. Real
+verification, not assumed: **IPST and WFF — two of the user's own traded
+symbols — were both in the results**, IPST specifically flagged with
+1h relative volume of 3,753x. The top result, XOS (premarket +82%), was
+checked against real 5-minute bars (`get_equity_historicals`, not
+interpolated fill): $2.09 at 20:00 UTC on 8/17 to $4.69 by 21:30 UTC on
+volume climbing from ~300k to over 1M shares per 5-min bar. The move is
+real.
+
+This is a better coarse filter than Stocklake's `get_screener` for this
+specific use case: it's sourced directly from the broker (no second data
+vendor to go stale — see the 2026-08-13 Stocklake staleness note above),
+it already has float and hourly relative volume built in (Stocklake's
+screener doesn't), and it's the same feed the orders execute against.
+**Stocklake still has a job** — `get_stock_research` and
+`get_insider_activity` for catalyst/insider verification once a candidate
+is found — but it should not be the primary momentum scanner. Switched
+Surge Watch's "Today's market scan" section and both scheduled refreshes
+to run Robinhood's `run_scan` first.
+
+A second saved scan, "Warrior Trading Style - Low Float Volume Movers"
+(scan_id `32ff11e9-065f-40b0-99a0-c5971241c435`, float <50M, volume
+>500k AND >=10M, price $1-20) is a looser secondary net — not yet used,
+noted here in case Early Momentum Ignition's float cap of 20M ever proves
+too tight.
+
+### All saved Robinhood scans checked, 2026-08-18 overnight — account safety + full inventory
+
+User: "check my other saved scans too... anything that is similar and
+seems important do it." Ran every remaining saved scan live and checked
+account state before the user slept. Real results, not summarized from
+memory:
+
+**Account safety (both accounts checked directly):**
+- Agentic account (432805174): zero positions, and its order history's
+  only two non-terminal-looking entries (IVF, WETO buys) were both
+  `state: rejected` — never live. Flat, nothing at risk overnight.
+- Real trading account (5SH47822): one open position, `ACETQZZ` (200 sh,
+  avg $0.22). Checked, not assumed: `get_equity_quotes` returned
+  `inactive_instruments: ["ACETQZZ"]` and `search` found nothing — this
+  is a dead/delisted ticker, not a live holding with overnight risk, just
+  stuck. No open (non-terminal) orders on this account either — its two
+  non-terminal-looking entries (IVF, WETO) were also both rejected.
+
+**"Warrior Trading Style - Low Float Volume Movers"** (`32ff11e9...`,
+float <50M, volume >=10M): 10 matches live. Overlapped with Early
+Momentum Ignition on XOS/WFF/IPST, but also surfaced AUUD and IVF —
+genuinely new names the first scan didn't catch. Wired in as a second
+scan alongside Early Momentum Ignition (both scheduled refreshes updated
+2026-08-18 ~03:45 ET).
+
+**"Daily gainers"** (`4ace94c6...`, no real filter beyond asset type):
+generic sorted list, 100+ matches. Useful as an independent cross-check —
+it separately reconfirmed WETO as a real premarket mover (+40% shown),
+same symbol the user already flagged as "going crazy." Not wired in
+anywhere; redundant with the two scans above as a filter.
+
+**"High options volume and IV"** (`ce0cc952...`, relative options volume
+>2x): 112 matches (HDSN, NGEN, VNRX, WRAP, PROP at the top). Real and
+working. This belongs to the S7 options track, not the scalp dashboard —
+logged here for whenever options screening resumes, not merged into
+Surge Watch.
+
+**"Daily Movers - Fastest Growers (Quality Filtered)"** (`183fa533...`,
+mcap >$50M, RSI/ADX computed) and **"Building Momentum Candidates"**
+(`8083a928...`, RSI>55, ADX>25, MACD>0): both real and working, both
+surfaced genuine trending names with real RSI/ADX values (AMLX, DFSC,
+TNDM, CODI...). This is trend-following territory — S1 in CLAUDE.md's
+strategy index, which has been blocked since 2026-08-16 because its
+`daily_allowlist.json` doesn't exist. These two scans are a real,
+live-verified source that could fill that gap someday. Deliberately
+**not** wired into anything tonight — per CLAUDE.md's "strategies stay
+separate unless told to merge," this is S1's problem to solve when asked,
+not a reason to touch the scalp dashboard.
+
+**"Untitled Scan"** (`c3d98719...`, volume >1M only): not run — no
+distinguishing filter beyond what the others already cover, so running it
+would add API calls without new information. Noted here, not tested,
+consistent with Rule 0 (no claim is made about what it returns).
+
+---
+
+## 2026-08-19 ~07:00 ET — Premarket watch, "August 19" watchlist built
+
+Ran all three market scans live: "Early Momentum Ignition" (89 matches,
+top mover TNON +105.7%), "Warrior Trading Style" (14 matches, top movers
+TNON/BIVI/MSS), "Daily gainers" (202 matches, top real movers RDAC/DUKR —
+both too thin to trust, <15K shares volume — then TNON, MRNA +74.7%, BIVI,
+ZNB, BSEM, CAST +23.8%).
+
+**Catalyst-checked via Stocktwits pulse + Robinhood fundamentals before
+including anything, same discipline as the "August 11" list:**
+
+- **MRNA** — real, verified catalyst: Merck/Moderna's Intismeran melanoma
+  vaccine hit its Phase 3 primary endpoint (multiple independent Stocktwits
+  posts citing the same wire item, LiveSquawk). $25B cap, real liquidity,
+  broke through its own 52-week high on the news. Best pick of the day by
+  a wide margin.
+- **CAST** (FreeCast) — real business-development news cited (regained
+  full control of InvestorNewsChannel.com, cited DIRECTV/Starlink
+  distribution deals), but from a single Stocktwits-relayed source, not an
+  independently verified filing. 154M shares volume, real liquidity.
+  Included with that caveat.
+- **TNON** — the loudest mover (+105-109%) but flagged NEGATIVE on real
+  grounds, not excluded silently: `financial_status_indicator` =
+  Noncompliant, and the Stocktwits community itself is calling out a
+  "$100M mixed securities shelf filing Monday" (real dilution risk) and
+  "recycled old news" behind the Benzinga pickup. Included per the
+  "August 11" precedent of logging risky/no-real-catalyst movers with an
+  explicit warning rather than pretending they weren't checked.
+- **Excluded, no distinct catalyst found**: BIVI (BioVie) and MSS (Maison
+  Solutions) and TGL (Treasure Global) — all three showed up only in
+  generic "premarket movers" group-posts with no sourced news behind them,
+  tiny floats (BIVI 7.2M, MSS/TGL both under 2M), and MSS/TGL are both
+  down >98% from a 52-week high a year ago. RDAC (+188.9%) and DUKR
+  (+128.1%) excluded outright — real % moves but under 15,000 shares of
+  volume each, not tradeable size.
+
+Watchlist created: **"August 19"** (`c15a7e55-bc55-4869-bf4f-6eb82a04c3e4`),
+3 items (MRNA, CAST, TNON), description summarizes the catalyst/risk read
+above.
+
+**Options monitoring (watch-only, per the user's standing instruction that
+options stay agent-monitored but not agent-traded):** ran "High options
+volume and IV" (65 matches). Standout relative-options-volume names: CVX
+(6.99x, but only 26.9% IV — unusual combo for a mega-cap, worth noting),
+CMPX (7.06x, 133.7% IV), REI (5.93x), AS (5.25x), ASX (4.82x). Highest raw
+IV in the scan: ALEC 191.7%, BEEM 186.4%, QNC 182.1%, CEPO 144.8%, AVD
+146.8%. None cross-referenced further against S7's mismatch-ratio/IV-HV
+gates tonight — this is a report, not a screen run, per the trigger's own
+instruction to keep this separate from any entry decision.
+
+## 2026-08-20 ~00:35 ET — user-requested screen, "August 20" watchlist built
+
+User asked directly (not the scheduled trigger, ~4.5hrs before it would have
+fired anyway): teach Greeks, screen the market, build tomorrow's watchlist,
+delete "August 19" (no delete tool exists — repurposed in place, same as
+the "August 11" precedent), and check what time stocks usually start moving
+unusually.
+
+**Real-data sources used:** Stocktwits `get_trending_symbols` (overnight
+premarket movers), Robinhood `get_scans`/saved scan list, `get_earnings_calendar`
+(08-20/08-21 window), `get_symbol_messages` for catalyst verification on the
+two names actually added, `get_stock_news` (Stocklake) for BULL, real quotes
+via `get_equity_quotes`.
+
+- **MRNA** — dropped. Yesterday's real catalyst (Merck Phase 3 win, +75%)
+  already fully played out; overnight it's giving some back (-5% to ~$165
+  premarket off a $174.38 close). Rule: don't chase an already-printed move
+  (same rule the user set for S7 after the MRNA conversation yesterday,
+  applied here to equities too).
+- **CAST** — dropped. No fresh catalyst; flat/slightly down overnight
+  ($1.70 close -> ~$1.57).
+- **TNON** — dropped. Already flagged high-risk/no-real-catalyst on 08-19;
+  now actively crashing overnight (~-23%, $11.41 close -> ~$8.70). Confirms
+  the original caution was correct.
+- **BULL** (Webull) — added. Real, dated catalyst: Q2 earnings call
+  8/19 (`get_stock_news` confirms), then a short-covering squeeze on top
+  (Stocktwits community explicitly citing "short covering... as the
+  article says"). +14.6% premarket. Flagged as squeeze-driven, so
+  high-variance — a real catalyst, but one that can give back hard once
+  the squeeze is done.
+- **BMNR** (BitMine Immersion Technologies) — added. Real, verified,
+  directly traceable catalyst: it's a corporate ETH-treasury proxy, and
+  ETH itself is up ~18% today (Treasury buyback news, real ETF inflows,
+  short squeeze — see today's separate ETH research). BMNR +6.3%
+  premarket, tracking ETH's move; Fundstrat's Tom Lee thesis (BMNR
+  outperforms ETH after ETH outperforms BTC) referenced repeatedly in the
+  community as the reason people are in it, not just price action alone.
+
+Watchlist: renamed **"August 19" -> "August 20"** in place (same
+`c15a7e55-bc55-4869-bf4f-6eb82a04c3e4` id — no `delete_watchlist` tool
+exists in this MCP connector), now 2 items (BULL, BMNR).
+
+**Standing process change:** created a recurring weekday trigger ("Premarket
+watch: build the day's watchlist", 7:00 AM ET / `0 11 * * 1-5`) so this
+screen-and-rename process happens automatically each morning going forward,
+separate from the existing 8am ET S7 options trigger and 4pm ET growth-sleeve
+trigger. Previously this had only been done ad hoc / via one-off reminders.
+
+**"What time do stocks usually start moving unusually" — answered from real
+evidence gathered across this account's actual sessions, not just general
+knowledge:** the MRNA move (08-19) began at 6:00 AM ET premarket, right as
+premarket liquidity thickens. Tonight's BULL/BMNR moves are showing in the
+1-4 AM ET overnight session, but that window has much thinner volume and
+wider spreads than real premarket — a move seen at 2 AM ET is far less
+confirmed than the same move still holding by 7-8 AM ET. General pattern,
+not a hard rule: dated catalysts (earnings, trial results, FDA, M&A) tend to
+drop either right at the open/close of the *prior* session (after-hours PM
+releases, or a wire hitting right before the next day's premarket opens
+~4 AM ET) or get confirmed/extended in the 8:00-9:30 AM ET premarket ramp as
+volume builds toward the open. The riskiest window to trust a move in is
+the deep overnight (12-4 AM ET) — real names do move there, but thin volume
+means it's the least reliable point to judge whether a move will hold.
+
+## 2026-08-20 ~7:15 AM ET — recurring premarket-watch trigger, first real run
+
+First automatic firing of the new daily trigger (created a few hours after
+midnight the same night). "August 20" already existed from the earlier
+manual session, so no rename needed this cycle — just a refresh now that
+real premarket (not thin overnight) volume is in.
+
+**Real-data sources used:** Stocktwits `get_trending_symbols` (now `session:
+PRE_MARKET`, not overnight), `get_symbol_messages` for MSTR/WMT/HOOD,
+`get_earnings_calendar` (many 08-20 entries now show real `eps.actual`,
+confirming which reports already landed), Robinhood `run_scan` on "Daily
+Movers - Fastest Growers" and "Warrior Trading Style - Low Float Volume
+Movers".
+
+**The dominant real theme today: a dated, sourced macro/policy catalyst.**
+Stocktwits carried a same-morning item: Trump hosted crypto executives at
+the White House and urged Congress to pass the Clarity Act (crypto
+regulatory clarity); BTC named as up double digits intraday with a real
+short-squeeze component ($2.7B cited). This is a genuine, dated, sourced
+catalyst (not just "crypto is green today") and it mechanically explains
+the whole crypto-equity complex moving together: **MSTR** +10.5%
+(leveraged BTC balance-sheet proxy, community explicitly ties the move to
+BTC%), **COIN** +7.7% (the purest-play exchange name), **BMNR** +8%
+(already on the list, same ETH-proxy logic as last night), **BULL** still
++14-15% (its own earnings+squeeze catalyst from last night, now also
+riding the sector tailwind), **HOOD** +5.5% (crypto-trading-volume
+beneficiary, same White House news cited directly in its own feed).
+Smaller/less liquid names showing the identical pattern (CAN, UPXI, DFDV,
+BTBT, SBET, BKKT, ABTC, all +6-14%) were deliberately **not** added --
+same real catalyst, but redundant and lower quality/liquidity than
+MSTR/COIN/BMNR/HOOD; curating for quality, not stacking every ticker that
+moved on the same news.
+
+**WMT** -6.1% ($107.28 pm vs $114.30 close) -- added on a *different*,
+independently real catalyst: Q2 earnings actually **beat** (adj EPS $0.81
+vs $0.74 est, revenue beat), but management **cut Q3 guidance** (62-64c
+vs 68c est) and comp sales missed estimates. Confirmed via LiveSquawk and
+StocktwitsEarnings' verified data feeds inside the Stocktwits results, not
+rumor. A real "beat then guide down" divergence, not noise.
+
+**MRNA** -11.6% premarket, continuing to give back yesterday's spike
+(down from $174.38 close toward $154). Confirms last night's call to drop
+it -- the catalyst was already fully priced in, and it's now unwinding
+exactly as expected rather than offering a fresh entry.
+
+**Scans checked for anything missed:** "Warrior Trading Style - Low Float"
+(16 matches) -- all either no fresh catalyst or, in TNON's case, actively
+confirming the prior night's dilution-risk warning (now -30%). Nothing
+added from this scan. "Daily Movers - Fastest Growers" (large result,
+read via jq) -- top movers were entirely the same crypto-complex names
+already covered above, plus FUTU (+9.3%, real earnings today) which was
+considered and left off for now (lower profile, thinner liquidity than
+the six already on the list -- can revisit if it holds through the open).
+
+Watchlist: **"August 20"** now 6 items (BULL, BMNR, MSTR, COIN, HOOD,
+WMT), description updated in place (256-char cap, full reasoning here
+instead).
+
+## 2026-08-20 ~22:00 ET — scanner tooling built (user asked for a Warrior-style scanner)
+
+User linked warriortrading.com/scanners and asked "can you create a scanner
+like this? do you need api or what do you need?" Fetched their actual page
+rather than assuming: Day Trade Dash is a paid subscription — real-time
+alerts across strategies (momentum squeezes, reversals, gappers, halts),
+columns for Float, Volume, Relative Volume, Gap%, 52wk hi/lo, ATR, short
+interest, bundled news feed, audio alerts, third-party data vendor unnamed.
+
+**Answer on "do you need an API": no.** The Robinhood MCP connector already
+returns the same core fields via saved scans (`run_scan`) — Float, Volume,
+Relative Volume, Gap, % Change, RSI, ADX, MACD. What Warrior has that we
+don't: audio alerts, a self-updating table, 52wk hi/lo + short-interest
+columns, and news in the same pane. User said "lets do both" to the two
+options offered.
+
+**A. Alert trigger** (`trig_011uqSeqdqMoS3e5ZUTk13jN`, `0 14-20 * * 1-5`,
+hourly 10am-4pm ET). Runs both momentum scans, then filters hard: >5% change
+AND elevated RVOL AND not already faded off the high, then requires a
+nameable dated catalyst before alerting. Explicitly instructed that silence
+is the correct output most hours and that false alerts are worse than none.
+Alert-only — cannot place orders; execution stays in S7/S9.
+
+**B. "Ignition Board" dashboard** —
+https://claude.ai/code/artifact/d6619239-807d-4ef3-9c3b-d9a400107c81
+(URL CORRECTED 2026-09-06. This section originally recorded
+952415af-3876-453b-a469-db076662881e, which is a SUPERSEDED first build of
+the same board, last updated 2026-08-21 and no longer maintained. The live
+board is the d6619239 URL above, favicon 🔥, last updated 2026-09-01. See
+the 2026-09-06 section at the end of this file.)
+A published artifact declaring the `mcp` capability scoped to
+`Robinhood: [run_scan, get_scans]` — **read-only by construction**; no order
+tool is in the manifest, so the page structurally cannot trade even if its
+code were changed. Uses `watchTool` with a 60s refetch (Robinhood offers no
+push/streaming through this connector, so "live" = polling, stated plainly
+to the user). Built only against request/response shapes actually observed
+in-session for both tools — no guessed API shapes.
+
+Design decisions worth keeping: (1) the row "quality" stripe encodes
+direction + whether RVOL backs the move, which is the user's #1 misread;
+(2) an always-available panel restates the four pre-entry checks plus the
+n=108 holding-time finding, so the tool teaches the read instead of just
+listing tickers; (3) it detects non-regular-hours from an ET clock and warns
+that % change / RVOL go flat-or-inflated on thin prints — a real failure
+mode observed directly in the 08-20 after-hours scan pull, where every row
+showed 0% change and RVOL of exactly 1.
+
+## 2026-08-21 — "Bell to Bell": a standalone scanner with no Claude dependency
+
+User clarified what they actually wanted: *"I just need an independent
+scanner that I can use without claude."* The Ignition Board artifact,
+though it costs no model tokens, is hosted on claude.ai and reads data
+through the user's claude.ai Robinhood connector — so it is NOT
+independent. Correct answer required a different build.
+
+**First, the answer they already owned:** the saved scans ("Early Momentum
+Ignition", "Warrior Trading Style - Low Float Volume Movers") live in the
+user's own Robinhood account. The agent has been reading them through a
+connector, but the user can open them in the Robinhood app with zero
+Claude involvement. Told them this before building anything.
+
+**Built: `tools/bell-to-bell.html`** — a single self-contained local HTML
+file. No API key, no login, no server, no Claude. Uses TradingView's free
+embeddable widgets, whose script URLs were verified live rather than
+recalled: `embed-widget-hotlists.js` (day's gainers/losers/most active),
+`embed-widget-screener.js` (full US screener with its own toolbar), and
+`embed-widget-advanced-chart.js` (5-min chart, ET timezone).
+
+Design notes worth keeping:
+- **Widgets are mounted from JS, not pasted as static markup.** TradingView
+  reads its config from a script tag's text content at mount time, so a
+  theme toggle or symbol change requires re-mounting. Building them
+  programmatically is what makes both work.
+- **The chart section exists specifically to close check #3** ("early or
+  already extended?") — the one check the Ignition Board structurally
+  could not answer, because `run_scan` returns no intraday high.
+- Same after-hours warning as the Ignition Board, from the same real
+  observation (08-20 after-hours scan pull returned 0% change and RVOL of
+  exactly 1 on every row).
+- `defaultScreen` left at `most_capitalized`, the only preset value
+  verified from TradingView's own demo snippet. Rather than guess at
+  preset names like "top_gainers", the UI tells the user to switch presets
+  via the widget's toolbar, and the hotlists widget covers movers anyway.
+
+**Free-scanner landscape checked** (web search, 2026): TradingView free is
+the strongest free screener (~14k US stocks, saveable screens); Barchart
+free is good for unusual/relative volume; **Finviz free is 15-minute
+delayed — explicitly warned against for day-trade entries**, which matters
+for this user specifically.
+
+## 2026-08-21 ~7:20 AM ET — premarket watch, "August 21" built
+
+Second automatic firing of the daily premarket trigger. Renamed
+"August 20" -> "August 21" in place (5 items).
+
+**Dominant theme, day 2: the Bitcoin complex is extending, not fading.**
+Yesterday's catalyst (White House crypto event / Clarity Act push + BTC
+surge) has not exhausted — it accelerated overnight. Real premarket
+numbers vs 08-20 closes:
+
+| Symbol | Premarket | Close | Move |
+|---|---|---|---|
+| MSTR | $122.38 | $112.39 | **+8.9%** |
+| ROST | $247.50 | $228.99 | **+8.1%** |
+| COIN | $181.70 | $172.35 | **+5.4%** |
+| BMNR | $22.57 | $21.57 | **+4.6%** |
+| HOOD | $99.13 | $95.10 | **+4.2%** |
+| BULL | $9.01 | $8.85 | +1.9% |
+| WMT | $103.67 | $103.84 | -0.2% |
+
+Corroborating the theme rather than assuming it: Stocktwits trending has
+IBIT +6.6%, Grayscale BTC +6.7%, MSTY +8.6%, SBET +5.0% — the whole
+BTC-linked cohort, not one name.
+
+- **Kept: MSTR, COIN, HOOD, BMNR.** Same verified catalyst as yesterday,
+  still live and expanding. **But flagged extended** — MSTR at +8.9%
+  premarket on day 2 is exactly the "already printed" case S7 rule 4
+  excludes for a fresh entry. Kept as names to watch for a pullback, not
+  as clean entries.
+- **Added ROST.** The one genuinely *fresh*, independently-dated catalyst
+  today: Q2 earnings, reported 08-20 pm (confirmed on the earnings
+  calendar with `eps.actual` now populated), +8.1% premarket. Not part of
+  the crypto theme — independent.
+- **Dropped BULL.** Was +14.6% premarket yesterday on earnings + short
+  squeeze; today +1.9%. The squeeze has done its work. Textbook
+  already-printed — dropped rather than held out of attachment.
+- **Dropped WMT.** -0.2%, flat. The beat-then-guide-down repricing
+  happened yesterday; nothing left to trade.
+- **Considered and rejected: ASST** (Strive, +9.8% premarket). Checked
+  `get_symbol_messages` directly: the entire thread is squeeze hype
+  ("30% short", "squizee") with no independent dated catalyst — its move
+  is purely derivative of BTC plus short positioning. Same discipline as
+  08-20's rejection of the smaller crypto proxies: one theme does not
+  justify stacking every ticker riding it. IBIT/MSTY/Grayscale BTC
+  excluded as ETFs; SBET excluded as redundant to BMNR.
+
+**Also noted, growth sleeve:** BTG trading $5.51 premarket vs a $5.38
+close — above the $5.39 peak close that currently anchors the trailing
+stop. If it holds through the session, today's 4:05 PM check should
+ratchet the stop above $4.42 for the first time since 08-19.
+
+## 2026-08-21 09:35 ET — S7 daily screen: GRRR checked, rejected; delta-floor drift found
+
+Flat (no open S7 position), so ran the entry screen. Dated-catalyst track:
+next earnings are Mon 08-24 / Tue 08-25. Best fit by price and liquidity
+was **GRRR** (Gorilla Technology, $15.66 live, Q2 earnings 08-24 pm, so
+effective catalyst 08-25; the 09-11 expiry clears it with room).
+
+Real live chain, 09-11 calls, quoted 09:37 ET — **all rejected, and not
+narrowly:**
+
+| Strike | Ask | Cost | Delta | Spread | IV | OI / Vol |
+|---|---|---|---|---|---|---|
+| $16 | $1.80 | $180 | 0.52 | **61.8%** | 99% | 45 / 1 |
+| $17 | $2.20 | $220 | 0.45 | **132.1%** | 121% | 12 / 0 |
+| $18 | $1.65 | $165 | 0.37 | **138.5%** | 118% | 3 / 0 |
+| $19-21 | — | — | 0.02 | no bid at all | — | 0-2 / 0 |
+
+Run through `evaluate_candidate` rather than eyeballed; every one failed
+on **spread** before the premium cap even applied. Worth noting *why*
+that matters more than the price: at a 62-138% bid/ask spread these
+contracts cannot be entered and exited at a fair price at any size. Even
+with unlimited capital this is untradeable. IV of 99-121% into earnings
+is the IV-crush setup the rules explicitly exclude. Robinhood's own
+"chance of profit (long)" on the three: 29.6%, 25.2%, 21.1%.
+
+**Running total: 9 real live checks, 9 rejections, 0 trades.**
+
+### Defect found by this run: documented delta floor was never enforced
+
+Running the real code printed its actual config — `min_delta 0.10` —
+against a strategies.md section (written 08-19) asserting "no long option
+is bought below roughly 0.30 delta." **The 0.30 was never in the code.**
+Worse, `test_option_math.py` carries two fixtures the suite treats as
+genuine *passing* setups with deltas of **0.25** and **0.28** — a 0.30
+floor would reject both, so raising the gate would invalidate the suite's
+own definition of a good trade.
+
+Not silently reconciled, in either direction. Bumping a live-money gate
+to match a number this file asserted without validation is precisely the
+failure already caught once on S8's float-turnover threshold. Neither
+0.10 nor 0.30 is backed by outcomes — S7 has zero trades. Documented as
+open drift in strategies.md S7 with the enforced value (0.10) stated
+plainly, and surfaced to the user as a decision rather than an edit.
+
+## 2026-08-21 ~10:15 ET — Ignition Board: swing-setup panel + in-page alerts
+
+User feedback: TradingView's screener (in Bell to Bell) lags/isn't
+dependable. Real cause, not fixed by this session — it's a known
+limitation of TradingView's free-tier real-time entitlements, outside
+what an embedded widget can control. Pointed the user back to Ignition
+Board as the dependable one, since it reads the same live Robinhood data
+this session has used to actually operate the account all week, not a
+third-party feed.
+
+User then asked for two things: (1) a note on what's favorable for swing
+trades specifically (distinct from the existing day-trade momentum
+panel), including float; (2) an alert when that condition is met or about
+to be met, "on time."
+
+**Added a second, independent panel: "Swing setups."** Feeds from the
+real `Growth Momentum (long-run)` scan (`2514847d-25cb-4628-9731-bb5b0ee7d246`)
+-- the exact same scan `growth_signal.py`'s S9 sleeve is built on (market
+cap > $1B, RSI 50-70, ADX > 20, avg volume > 500K, 1-month change > 5%,
+all confirmed against `get_scans` output, not invented). Its own filters
+are stated on the page as the real favorability criteria, since a row
+only appears because it already cleared all five.
+
+Float deliberately **not** shown on this panel, with an explicit note
+why: this scan targets large/liquid names where float scarcity isn't the
+governing risk the way it is on the low-float day-trade panel above (which
+already showed float from the first build). Conflating the two would have
+been dishonest, not just cosmetic.
+
+**"About to be met" honestly scoped down.** `run_scan` only returns full
+matches, not near-misses -- there's no reliable way to see a stock closing
+in on the RSI/ADX band before it actually crosses. Said so on the page
+rather than faking a proximity score. What the page can do, and does: flag
+the instant a symbol newly appears in the scan's results, which is the
+earliest this data can know.
+
+**Alerting -- three channels, deliberately not resting on the least
+reliable one.** This artifact runs inside claude.ai's frame; a real OS
+push notification is often blocked there and can't be verified from this
+session. So the primary channels are ones that reliably work in a
+sandboxed frame: an in-page flash + a WebAudio beep + a running alert log
+(all always logged; sound/flash only if the user opts in via the header
+bell toggle) and the document title changing while the tab is unfocused.
+A `Notification()` call is attempted only if the browser already reports
+`permission: "granted"`, wrapped so any failure is silent -- never the
+only thing anything depends on. The page's own footer now states plainly
+that none of this works with the tab or browser closed.
+
+New-qualifier tracking persists in localStorage keyed to the calendar
+date, so a page reload during the same day doesn't re-fire alerts for
+names already seen, and the set naturally resets the next day when the
+scan's own results roll over.
+
+## 2026-08-21 ~11:00 ET — Ignition Board: real 5-pillar scoring, order-book pressure; insider blocked
+
+Three real asks: (1) float was showing empty for some scans, (2) score
+against the actual documented "5 pillars" rule, (3) add insider activity,
+(4, arrived mid-turn) track buy vs. sell pressure.
+
+**Float-empty diagnosed, not just patched.** Not every saved Robinhood
+scan carries a Float column at all (Growth Momentum, Daily gainers, etc.
+don't) -- picking one of those in the dropdown made every row's Float cell
+blank with no explanation, which reads as broken. Fixed two ways: the row
+shaper now distinguishes "this scan doesn't report float" (shows `n/a`,
+title-tipped) from "float is null for this specific row," and the page
+now surfaces an explicit banner naming the two scans that do carry it
+(Early Momentum Ignition, Warrior Trading Style) when the selected one
+doesn't.
+
+**Real 5-pillar scoring replaces the earlier ad hoc quality heuristic.**
+Pulled the actual numbers from strategies.md's S3 section rather than
+inventing new ones: rel. vol >= 5x, % change >= 10%, price $2-20,
+float <= 20M -- the four NUMERIC pillars. Each row now shows a real
+"N/4 pillars" chip (title-tipped with which ones passed) computed from
+these exact thresholds, and a row scores out of 3 rather than being
+silently marked as failing float when the underlying scan can't report
+it. The 5th pillar, catalyst, is explicitly non-numeric per S3's own
+documentation and is called out in the checks panel as something this
+page cannot automate -- same honesty as the earlier per-row date already
+established for "is this already extended."
+
+**Insider activity: genuinely blocked, not skipped.** Checked
+`get_insider_activity` live before promising anything -- **the Stocklake
+connector itself needs re-authorization (expired token)**, a session-level
+auth issue, not something fixable from inside this page. The tool's own
+description also says "Pro tier only," so even after reauth it may not
+answer without a paid tier -- flagged to the user rather than silently
+built around. Nothing shipped for this; told the user plainly instead.
+
+**Buy vs. sell pressure -- real, but scoped honestly.** Added a per-row,
+click-to-check "Order Book" column using the real `get_equity_price_book`
+tool (added to the artifact's manifest, tested live on SDOT before
+shipping). Sums resting share size across the top 10 bid and ask levels
+and shows e.g. "62% buy / 38% sell." Deliberately on-demand, not
+auto-polled per row -- Robinhood's connector hasn't shown Stocklake-style
+rate limits this session, but there's no reason to hammer 10+ symbols
+every 60s when a click answers the question. Explicitly labeled in the UI
+as RESTING LIMIT-ORDER imbalance, not executed trade flow -- this
+connector has no tick-level buyer/seller classification, so this answers
+"who wants to trade right now," a real but different question from "who
+already did."
+
+## 2026-08-21 ~11:20 ET — Ignition Board: favorability sort, real catalyst column; corrected Stocklake claim
+
+**User caught a real mistake:** the last entry said "Stocklake needs
+re-authorization," generalized from one failed `get_insider_activity`
+call. User pushed back ("you have stocklake mcp"). Retested live rather
+than argue from memory: `get_stock_news` succeeded immediately on the
+same account, same session. **Correction: Stocklake itself is fine.**
+Only `get_insider_activity` is blocked, and its own tool description says
+"Pro tier only" -- almost certainly a tier gate on that one premium
+endpoint, not a connector-wide auth failure. Recorded here so the
+overbroad claim doesn't stand uncorrected in the log.
+
+**Fixed a real bug from the previous edit, before a user ever hit it.**
+The "Pillars" column had been added to the sortable COLS list with a
+value that's an object (`{rvol,chg,price,float}`), but the sort
+comparator did `x - y` on it -- objects minus objects is `NaN`, so
+clicking that header would have silently done nothing. Caught while
+building the requested favorability sort, not shipped broken: renamed the
+sort key to the actual numeric `pillarsMet`, and extended the comparator
+with proper per-key handling (string compare for symbol, cache lookups
+for the two on-demand columns, tiebreak on relative volume for pillar
+ties -- more real volume outranks less when pillar counts match).
+
+**Default sort is now "most favorable ATM"** -- pillarsMet descending,
+RVOL as tiebreaker -- directly answering what was asked, and it's what
+loads first rather than something the user has to find.
+
+**Added a real Catalyst column**, Stocklake's `get_stock_news` (days=3,
+limit=3), click-to-check per symbol like the Order Book column -- never
+auto-polled, because the guest tier hard-caps at 25 calls/day for the
+whole account, shared with anything else this session uses Stocklake for
+today. Shows the first real headline (title + published_at in the
+tooltip) when one exists; **shows exactly "N/A" when none does**, per the
+user's own wording, not a softened "no catalyst found."
+
+## 2026-08-21 ~12:00 ET — Ignition Board: real float everywhere, via per-symbol fundamentals
+
+User: "why is there float data n/a? cant you pull float data at all?" -- a
+fair complaint about the earlier design (Swing panel omitted float on
+purpose; main panel showed "n/a" for any scan without a Float column,
+e.g. Growth Momentum). Rather than just explain it again, found a real
+fix: `get_equity_fundamentals` reports float per symbol directly,
+independent of which scan found the row -- confirmed live (NVDA, SDOT)
+before wiring it in.
+
+**Redesigned float sourcing end to end.** Added `ensureFundamentals()`:
+auto-fetched (not click-gated, unlike Order Book/Catalyst -- Robinhood
+hasn't shown rate limits this session, and float doesn't need per-minute
+freshness), batches up to 10 symbols per call, 5-minute cache TTL.
+`resolvedFloat(sym, scanFloat)` prefers the fundamentals value once it
+loads, falling back to a scan's own Float column (when present) only
+during the brief window before fundamentals responds -- avoids an empty
+flash on first paint.
+
+Refactored `shape()` into a pure column mapper plus a new `deriveRow()`
+that computes float/pillars from whatever's authoritative *right now*;
+called once synchronously after a scan result lands, and again after
+each fundamentals batch resolves, so pillar counts and the float column
+both self-correct without a manual refresh.
+
+**Consequence: `pillarsOf` is now always 4, not scan-dependent.** The
+earlier "3 of 3, this scan can't report float" carve-out is gone --
+float is answerable for any row on any scan now, so every row is judged
+against the same real bar.
+
+**Swing panel gets a real Float column too**, sourced the same way,
+replacing the earlier "intentionally omitted" framing (info-card copy
+updated to match -- shown for reference, still not the risk that
+matters for large-cap swing names, but no longer hidden).
+
+Caught and fixed two real bugs while making this change, before either
+reached the user: (1) the edit tool kept rejecting an exact-looking
+string match around `onResult`'s tail -- `cat -A` traced it to a
+non-breaking space (U+00A0) already sitting in the file, invisible in a
+normal read; worked around with a byte-safe Python replace instead of
+guessing at the visible text. (2) `floatLoading`'s condition had an
+operator-precedence bug (`!a || a.state === 'loading' && b`) that also
+referenced a `state: 'loading'` value the code never actually sets --
+simplified to check `fundInFlight` directly, which is the real signal.
+
+## 2026-08-21 ~4:03pm ET — S9 daily stop check: BTG ratcheted to $4.53
+
+Growth sleeve daily stop check trigger fired. BTG closed today at $5.525,
+a new high over both prior sessions ($5.27 close 08-19, $5.38 close 08-20).
+`decide_stop_update(4.42, 5.525)` said ratchet: new stop $4.5305 (18%
+below the new peak). Cancelled the resting $4.42 stop (verified
+`state: cancelled`), then hit a real constraint placing the new one —
+Robinhood rejected the raw $4.5305 stop_price ("Prices above $1.00 can't
+have subpenny increments"). Rounded to $4.53 and it placed clean. New
+order shows `state: queued`, same as the 08-19 ratchet — market was
+already closed (4:03pm ET) when this ran, so a regular_hours stop_market
+queues for tomorrow's open rather than resting live tonight. Not a
+rejection, same pattern as last time. CLAUDE.md's S9 row updated with the
+same detail.
+
+## 2026-08-24 ~2:20am ET — premarket catalyst check ahead of market open
+
+User asked me to find favorable option contracts on "quality trending
+assets" today. Checked real overnight movers (Stocktwits trending,
+Robinhood earnings calendar) at 2:20am ET, well before the 9:30am ET
+regular open. Two names cleared a real, dated catalyst check:
+
+- **BABA**: down ~4.7% overnight (~10% in HK trading) on a real, dated
+  news event — a $10B primary equity offering priced in Hong Kong,
+  reportedly the largest-ever follow-on by a HK-listed company. Dilution
+  fear, not just price action. No earnings scheduled today per
+  get_earnings_calendar.
+- **AAOI**: down ~12.3% overnight, the largest mover checked. Real
+  catalyst: an equity offering announcement plus retail chatter about
+  forced margin-call selling. No earnings today.
+
+Both would be PUT candidates given the negative catalyst, not the
+trend-follow calls the user may have expected. CRWV and KLAC were also
+checked and ruled out: CRWV's Stocktwits chatter was pure anonymous
+prediction-posting with no linked news; KLAC's weakness reads as broad
+semicap-sector sympathy, not a company-specific catalyst — flagged as
+"no catalyst, price action only" per the standing rule, not surfaced as
+a setup.
+
+Also excluded on sight: PDD, XPEV, TUYA, NSSC, PICS, AAPG all report
+earnings today (2026-08-24) per get_earnings_calendar — event risk,
+out of scope regardless of any move.
+
+Did NOT pull option chain data for BABA/AAOI at this hour — this repo
+already learned (S7, 2026-08-20) that quotes/greeks don't refresh until
+the 9:30am ET regular open, so anything pulled now would be stale
+extended-hours numbers. Real gate-checking (mismatch_ratio, iv_hv_ratio,
+delta floor, premium cap, no-chasing-an-already-printed-move) deferred
+to the already-scheduled 7:00am ET "Premarket watch" and 9:35am ET "S7
+options" triggers, which will re-verify with live data rather than
+trust this premarket read — a premarket move can reverse by the open.
+This entry exists so those triggers have a starting reference, not a
+conclusion to just carry forward uncritically.
+
+Also note: EMA fan-out backtest run tonight (S11, see strategies.md) --
+tested negative, not usable as an entry filter for today's picks.
+
+## 2026-08-24 ~7:20am ET — Premarket watch: watchlist rebuilt for the day
+
+Trigger fired. Renamed "August 21" -> "August 24" (list
+c15a7e55-bc55-4869-bf4f-6eb82a04c3e4).
+
+**Dropped (5): ROST, HOOD, COIN, MSTR, BMNR.** All flat premarket this
+morning (ROST +0.4%, HOOD -1.2%, MSTR +0.2%, BMNR +1.1%, COIN -0.8%) --
+Friday's "BTC complex day 2, already extended" catalyst and ROST's
+earnings pop are both fully digested over the weekend. No fresh
+information today, so per the no-chasing-an-already-printed-move rule
+these are out, not held over on inertia.
+
+**Added (4), all with a real dated catalyst verified today:**
+- PDD: reported Q2 this morning, EPS $2.85 actual vs $2.77 est (beat).
+  +3.4% premarket.
+- XPEV: reported Q2 this morning (EPS -0.19, no estimate given to
+  compare). -3.1% premarket -- down despite reporting, likely a
+  guidance/revenue read, not verified further at this hour.
+- BABA: -2.2% premarket, continuation of the $10B Hong Kong equity
+  offering / dilution story flagged at 2am -- still live, not faded.
+- AAOI: -12.8% premarket (previous close $124.82 -> $108.90 as of this
+  read), continuation of the equity-offering + margin-call chatter
+  flagged at 2am -- the single biggest real move on the list.
+
+**Checked and excluded:** SMCI (-2.9% premarket) -- Stocktwits chatter
+is pure "red across the board" sector-sympathy noise alongside NVDA/AMD/
+AVGO, no company-specific news found. TUYA/PICS/AAPG report PM today --
+event risk, excluded regardless of any move (none currently moving
+anyway). NSSC also reported this morning but wasn't a trending/notable
+mover.
+
+Time-sensitive note for the user: PDD, XPEV, NSSC already reported
+before this check ran -- their earnings reactions are live catalysts
+today, not scheduled events still pending. BABA and AAOI's moves are
+now ~1 trading day old (first surfaced 2am premarket) but neither has
+faded, so both stay live watchlist candidates. Full option-chain gate
+check (mismatch_ratio/iv_hv_ratio/delta/premium cap) deferred to the
+9:35am ET S7 trigger as planned -- quotes are still premarket/stale
+here.
+
+## 2026-08-24 ~9:40am ET — S7 daily screen: 9th/10th real checks, both rejected
+
+Market open. Flat (no open S7 position). User had directly asked me to
+find favorable option contracts today, on top of the standing 9:35am ET
+trigger, so this run covers both.
+
+**PDD and XPEV excluded before reaching the option chain.** Both
+reported Q2 earnings this morning (PDD beat, +3.4%; XPEV -3.1% despite
+reporting) -- the reaction already happened at the open. Buying either
+now is chasing an already-printed move, not a real mismatch_ratio setup
+(that track needs a catalyst still ahead, not one that already fired
+and already got priced in). Rejected on rule 4, not run through the
+chain math at all.
+
+**AAOI** (9th real check): equity-offering/margin-call story, down
+-17.5% by the open (accelerated from -12.8% premarket -- still live,
+not faded). realized_volatility from 250 real daily closes: 157%
+(20-day), 147% (60-day), 144% (90-day) -- already an extremely volatile
+name before today. Checked real option quotes, 08-28 expiry (4 DTE):
+  - $85p: mark $0.475, delta -0.071
+  - $80p: mark $0.275, delta -0.041
+  - $95p (much closer to ATM, current price $102.93): mark $2.20
+    (**$220/contract, 4.4x the $50 cap**), delta -0.246 -- still short
+    of the 0.30 floor even at 4.4x the allowed premium.
+No strike clears both the $50 cap and the 0.30 delta floor -- same
+structural conflict as BMNR (2026-08-20).
+
+**BABA** (10th real check): $10B HK equity offering / dilution story,
+-0.85% at the open (much of the premarket -2.2% faded by 9:38am --
+already showing signs of the already-printed pattern too).
+realized_volatility not separately needed once the delta problem showed
+up: 08-28 $100p mark $0.02 (delta -0.007), $95p mark $0.01-0.26
+range/illiquid (delta -0.003). Both essentially worthless-delta lottery
+tickets at the cap. Not checked closer to ATM given AAOI's result
+already proved the shape of the problem on a similarly-priced,
+similarly-volatile name.
+
+**Running total: 10/10 real checks rejected, 0 trades placed.** The
+screen is doing exactly what it's designed to do on a $50/contract cap
+against $100+ underlyings -- these two names were real, catalyst-backed,
+still-live moves, and they still don't clear the gates. CLAUDE.md's S7
+row updated with the running total.
+
+## 2026-08-24 ~12:45pm ET — Direct request: screen for calls/puts, sell-put feasibility, watchlist cleanup
+
+User directly asked me to screen for any option contract (buy calls or
+sell puts), clean up the watchlist, and flag anything worth watching.
+
+**Buying power check: $77.21 cash (account 432805174).** This
+effectively rules out selling puts on any real-quality name -- a
+cash-secured put needs strike x 100 in collateral, so even a $1 strike
+needs $100, more than the account has. Not a policy question, a hard
+capital constraint. Told the user plainly rather than screening for
+something the account cannot execute.
+
+**Re-checked PDD/BABA/XPEV/AAOI now that prices have moved since the
+9:35am screen:**
+- PDD: round-tripped from +3.4% premarket to -1.5% now ($87.06 vs
+  $88.38 close) -- the whole earnings pop reversed. No longer notable.
+- BABA: back to flat (+0.02%, $119.36 vs $119.34 close) -- the dilution
+  dip fully round-tripped too.
+- XPEV: still down -7.2% ($11.315), but real 5-min bars show it gapped
+  down at the open then sat dead-flat in an $11.28-11.40 range for
+  2.5+ hours, volume drying up from 300K+/bar to ~40K/bar. Checked its
+  08-28 $11 put anyway out of thoroughness: mark $0.135 ($13.50/
+  contract), delta -0.308 -- the FIRST contract all day to clear both
+  the $50 cap and the 0.30 delta floor. Rejected anyway on rule 4 --
+  the move is already fully printed and stalled, not a live edge, no
+  matter how clean the numbers look.
+- AAOI: bounced off its -17.5% intraday low back to -11.4% ($110.575),
+  still the one name with a real ongoing catalyst, but the earlier
+  09:40am chain check already showed the $50 cap can't reach a
+  qualifying delta on this underlying at its price level.
+
+**Watchlist cleanup ("August 24"):** removed PDD and BABA (both
+round-tripped to flat, no longer live). Kept AAOI and XPEV as the two
+still-real movers, flagged in the description that neither is a live
+S7 buy today.
+
+**Bottom line for the user:** nothing today clears every real gate for
+a real reason. The XPEV near-miss is the closest anything has come, and
+it's still a reject on the already-printed rule, not a close call worth
+funding.
+
+## 2026-08-24 ~12:47pm ET — BTG stop ratcheted mid-day, user-prompted
+
+User noticed BTG running and asked directly to check/raise the sell
+order, outside the normal 4pm ET scheduled check. Real intraday high
+today: $5.7005 (5-min bars), a new peak over the $5.525 close that set
+Friday's $4.53 stop. decide_stop_update(4.53, 5.7005) said ratchet:
+new stop $4.6744, rounded to $4.67 (penny tick). Cancelled the $4.53
+stop (verified state: cancelled), placed the new one -- this time the
+market was open, so it went straight to state: confirmed and rests
+live immediately, no next-open queuing like the two prior ratchets.
+Third ratchet on this position, same mechanism (decide_stop_update,
+18% trail) each time. CLAUDE.md's S9 row updated.
+
+## 2026-08-24 ~12:49pm ET — BTG stop manually tightened to $5.50, user override
+
+Two minutes after the systematic ratchet to $4.67, user said "let's
+take the profit? maybe increase the sell order to $5.50?" -- an
+explicit manual override of the 18% trail, not a decide_stop_update
+output. Confirmed BTG's live quote first ($5.695, so $5.50 is a valid
+stop below market). Cancelled the $4.67 stop (verified state:
+cancelled), placed a new one at $5.50 (verified state: confirmed,
+resting live). This locks in roughly +4.6% from the $5.26 average cost
+as a floor, trading the systematic trail's wider room for a firmer
+profit lock -- the user's explicit real-time call on their own
+position, not a strategy change to S9 itself. CLAUDE.md's S9 row noted
+this as a manual override, distinct from the mechanical ratchets.
+
+## 2026-08-24 ~2:40pm ET — S9: BTG closed outright, +$35.69 (+8.0%)
+
+User pushed back hard on the trailing-stop approach: sitting a stop
+below a running price and waiting for a pullback to sell is backwards
+when the goal is taking profit. Direct instruction: "take the profit.
+scan, check, compare, buy/sell and take profit." Also corrected my
+earlier framing -- the $4.67 ratchet WAS the stop sitting below a
+rising price waiting for a reversal, and that's exactly the pattern
+being pushed back on, even though it was later manually tightened to
+$5.50 per their own request minutes after.
+
+Executed: cancelled the resting $5.50 stop (verified state: cancelled),
+sold all 85 shares via marketable limit at the live bid ($5.68), GFD,
+regular_hours. Filled in full within 4 minutes, average $5.68, $0.02
+fee. Realized profit: (5.68 - 5.2599) x 85 - 0.02 = **+$35.69 (+8.0%)**
+on the $5.2599 average cost basis.
+
+This closes the second growth-sleeve position (first, PLTR, was
+reversed same-day on 08-18 after discovering fractional orders can't
+carry a stop). BTG is now the first growth-sleeve trade to close with
+a real, positive, deliberate exit rather than a reversal or a
+stop-out. trades.csv row 13 updated with full close detail. CLAUDE.md's
+S9 row updated: n=2, one reversed same-day, one closed +8.0%.
+
+Account is now flat on the growth sleeve -- no open position. Next
+step per the user's explicit direction ("scan, check, compare,
+buy/sell"): treat finding the next position as active work, not
+something to wait on. Will re-run the Growth Momentum scan
+(2514847d-25cb-4628-9731-bb5b0ee7d246) live to see what real
+candidates exist right now.
+
+## 2026-08-24 ~2:50pm ET — S9: new position, LYFT (3 sh, $17.5779, stop $14.42)
+
+Same afternoon BTG was closed, acted on the user's direct instruction
+to keep finding the next opportunity rather than sit flat. Real
+constraint: buying power was only $57.13 -- BTG's $482.78 sale
+proceeds are unsettled (T+1, cash account), so this had to work within
+the small settled-cash figure. Flagged the limited-margin upgrade path
+to the user (eligible=true) as a permanent fix for this T+1 lag going
+forward; not yet acted on.
+
+Re-ran the Growth Momentum scan live (356 real matches, up from the
+prior runs). Sorted by price, checked real fundamentals on 12
+whole-share-affordable names: SNAP, RIG, PSKY, NXE, OWL, UEC, PATH,
+LYFT, ARCC, CDE, AG, S. Most were unprofitable on a real PE basis
+(SNAP -28.2, RIG -3.3, PSKY -18.3, NXE -35.6, UEC -58.3, S -22.2).
+LYFT stood out: PE 2.44, unusually cheap for a name that's actually
+profitable, with momentum already confirmed by the scan's own filters
+(RSI 50-70, ADX>20, 1mo change >5%, market cap $6.65B).
+
+Bought 3 whole shares at $17.5779 (marketable limit at the $17.58 ask,
+filled immediately, no fee). Placed GTC stop_market at $14.42
+(growth_signal.trailing_stop_price, 18% below entry) -- verified
+state: confirmed within 8 seconds, resting live (market open). Third
+growth-sleeve trade overall; first same-day rotation (close one
+position, open the next, same afternoon) rather than a standalone
+entry. trades.csv row 14, CLAUDE.md's S9 row updated to n=3.
+
+## 2026-08-24 ~4:11pm ET — S9 daily stop check: LYFT ratcheted + resized, real gap caught
+
+Scheduled trigger fired. Its stored instructions still referenced BTG
+(closed earlier today) -- ran the real check against the actual
+current position (LYFT) instead, and updated the trigger's own prompt
+afterward so it stops drifting from reality.
+
+Real intraday high since entry: $17.8698 (5-min bars). decide_stop_update(14.42,
+17.8698) said ratchet to $14.6532 (rounded $14.65).
+
+While doing this, get_equity_positions showed LYFT quantity=4, not the
+3 the agent bought -- get_equity_orders confirmed a 4th share was
+bought directly by the user (placed_agent: user, 2026-08-24T19:05:32Z,
+$17.585), right around the time the agent explained buying power
+couldn't cover another share. The resting $14.42 stop was still sized
+for only 3 shares, meaning the 4th sat unprotected all afternoon until
+this check caught it.
+
+Cancelled the 3-share $14.42 stop, placed a new 4-share stop at $14.65
+covering the full real position. Verified via get_equity_orders:
+state: queued (market closed right as the order went in, same
+next-open queuing pattern as every other post-close ratchet today, not
+a rejection).
+
+Updated the growth-sleeve trigger's own stored prompt (via
+update_trigger) to explicitly check resting-stop quantity against real
+position quantity every run, not just price -- the user trading
+directly on this account is apparently a real, recurring thing, not a
+one-off, so the standing check needs to catch it going forward rather
+than relying on this session catching it by chance.
+
+trades.csv row 14 and CLAUDE.md's S9 row both updated with the full
+detail.
+
+## 2026-08-25 ~7:21am ET — Premarket watch: watchlist rebuilt for the day
+
+Trigger fired. Renamed "August 24" -> "August 25" (list
+c15a7e55-bc55-4869-bf4f-6eb82a04c3e4).
+
+**Kept: AAOI.** +4.8% premarket ($112.85 vs $107.63 close) -- bouncing
+off yesterday's lows, the equity-offering/dilution story from earlier
+this week is stabilizing rather than continuing to fall. Still the one
+real, live name on the list.
+
+**Dropped: XPEV.** Flat overnight (+0.9%), the earnings-reaction
+catalyst from 08-24 has fully played out -- no longer notable.
+
+**Added: OXY.** Real, sourced, sector-wide catalyst discovered earlier
+this session (via direct user question, not the scanner): crude oil
+extending its fall despite new US sanctions on Iran -- the market
+"shrugging off" what would normally be a bullish supply-tightening
+signal. Confirmed broad -- XOM, CVX, OXY, SLB, HAL, COP, DVN, APA all
+down 0.6-2.0% premarket together, not one name. OXY picked as the
+representative name (highest oil-price sensitivity of the group,
+clearest mover at -2.0%).
+
+**Checked and excluded:** AMIX -- real volatility (hit $16 after-hours,
+now $7.40, already faded hard), but the only "catalyst" circulating is
+retail chatter about an unverified "patent catalyst" and warrant
+mechanics, no linked/sourced news article found. Sentiment on the name
+is also split (some calling it a pumper, real disagreement in the
+thread) -- not a clean, verifiable setup. DAIC, PMI, BTCT, LUCY, DXST,
+SUGP, SDOT all checked via the scan, all lack a fresh catalyst beyond
+"still moving."
+
+No high-market-cap earnings scheduled today that overlap the current
+watchlist names. ZM/NCNO/QFIN/BOX/HEI/SMTC report PM today -- noted,
+none currently on the watchlist.
+
+## 2026-08-25 ~9:40am ET — S7 daily screen: 11th/12th real checks, both rejected
+
+Market open. Flat (no open S7 position). Checked today's watchlist:
+AAOI and OXY.
+
+**AAOI** (11th check): now $111.45, bouncing off yesterday's lows.
+08-28 $100p: mark $125/contract (2.5x the cap), delta -0.168 -- worse
+than yesterday's rejection, not better, despite the higher price. Same
+structural wall.
+
+**OXY** (12th check): real, fresh, sector-wide catalyst (oil extending
+its fall despite new Iran sanctions, confirmed broad across 8 major
+names yesterday). realized_volatility from real daily closes: 30.4%
+(20d), 33.6% (60d) -- much calmer than AAOI, worth checking properly.
+09-04 $58p: mark $48.50 (clears the cap), delta -0.241 (misses the
+0.30 floor). 09-04 $59p: delta -0.463 (clears the floor with real
+conviction), but mark $121.50 (2.4x the cap). IV ~33.5% vs realized
+vol ~30-34% -- roughly fair pricing, not the deciding factor here; the
+cap/delta conflict alone is enough to reject.
+
+**Pattern now confirmed across four different underlyings** (BMNR
+08-20, AAOI 08-24/08-25, BABA 08-24, now OXY): whenever the underlying
+trades much above ~$50-60/share, the $50/contract premium cap and the
+0.30 delta floor are structurally incompatible -- no strike satisfies
+both regardless of how good the catalyst is. This isn't a screening
+failure, it's a real, repeatedly-confirmed fact about what this cap
+can reach. Running total: 12/12 rejected, 0 trades.
+
+CLAUDE.md's S7 row updated with the running total and pattern note.
+
+### 2026-08-25 ~4:04pm ET -- S9 daily stop check, LYFT ratchet
+Position verified: 4 sh, avg $17.58, resting stop $14.65 covered all 4 shares
+(quantity check passed, no gap this cycle). Real intraday high today (5-min
+bars) was $17.97, a new peak over yesterday's $17.8698 -- `decide_stop_update`
+said ratchet. Cancelled the $14.65 stop (verified `state: cancelled`), placed
+$14.74 (18% below $17.97, verified resting/queued not rejected). Order landed
+4 minutes after the 4pm close, so it shows `state: queued` for next-open --
+same as the 08-24 precedent, not a problem.
+
+### 2026-08-25 ~10:55pm ET -- S9 fourth position, SMCI (order placed, pending fill)
+User: "you have more money to spend so go for options stock and anything
+that you can hunt" -- real settled buying power $489.67 (confirmed via
+get_portfolio, unsettled_funds $0). Market closed (10:55pm ET), so this is
+a queued entry for tomorrow's 9:30am open, not a live fill tonight.
+
+Re-ran the Growth Momentum scan live (2514847d-25cb-4628-9731-bb5b0ee7d246,
+360 real matches). Filtered to whole-share-affordable (<$60), liquid
+(avg vol >500k) names, sorted by 1-month change: mostly silver/gold miners
+(HL, CDE, AG, HBM) and uranium (UEC) riding a real sector rally (matches
+the CCJ/UUUU/OKLO story from earlier today), plus SMCI, SNAP, ZETA, GTLB.
+Checked real fundamentals on 7: SNAP (PE -31.8), UEC (PE -60.7), ZETA
+(PE -2020), GTLB (PE -278.7) all unprofitable -- same pattern as every
+prior growth pick. SMCI stood out: PE 10.79 (cheap for +35.8% 1mo),
+RSI 55 (not yet overbought, unlike the 65-70 RSI mining names), ADX 25.2,
+$66.9M avg volume, still well off its 52wk high ($58.78 vs $38.57 now).
+HL/CDE also real and profitable (PE 26/17) but more extended (RSI 66-67).
+
+Placed: BUY 12 sh SMCI, limit $39.50 (above tonight's $38.57 close, price
+protection against an overnight gap), regular_hours, gfd. Verified state:
+queued (not rejected -- market closed, this is the expected next-open
+queuing behavior, same as every stop order placed after 4pm this week).
+Scheduled a check for ~9:31am ET tomorrow (trig_01RA1izVEShePzEdWd5t9ETh)
+to verify the real fill and place the initial 18% GTC stop immediately,
+per the fractional-share/unprotected-position lessons from PLTR and the
+Rule Zero standard of never assuming a queued order becomes a real fill.
+
+Also raised the S7 options premium cap $50 -> $150/contract this same
+session per direct user instruction (see CLAUDE.md's S7 row and
+strategies.md's Governing rules section for the full record).
+
+### 2026-08-26 ~2:15am ET -- Watchlist rebuild: "August 25" closed, "August 26" created
+User asked for a fresh watchlist after screening the market, moving over
+anything from "August 25" that's still good. Real research, not a coin
+flip on which to keep:
+
+**CCJ/UUUU/OKLO (uranium/nuclear)** -- carried forward. All three closed
+higher than their mid-day levels yesterday (CCJ $106.96 vs $107.39
+intraday, UUUU $15.97 vs $16.04, OKLO $44.27 vs $44.13) -- the sector
+rally kept running overnight into premarket (CCJ #4 on Stocktwits
+trending, +0.27% in the overnight/premarket session). No pullback
+materialized yet, but the thesis is intact and real, not stale.
+
+**AAOI dropped** -- real, fresh, specific risk found on the tape tonight
+(2-3 posts within the last ~3 hours): "AAOI is the company desperate to
+raise money", explicit speculation about an imminent dilutive secondary
+offering, with a cited historical precedent (an unrelated company's
+50->24 offering-driven crash in 3-4 days used as the cautionary
+comparison). Real bullish catalyst also present (potential FCC ban on
+Chinese optical transceivers, AI datacenter demand) but the acute
+dilution risk right now outweighs it for a "still good" call.
+
+**OXY dropped** -- real bearish technical (a trader's "head and shoulders
+on the one week" call) plus a sourced negative-impact article ("oil
+extends fall as investors shrug off latest US sanctions on Iran", 79%
+confidence negative for OXY) confirm the original bounce thesis has
+turned; Stocktwits' own sentiment score flipped to BEARISH (26/100)
+despite bullish-leaning post volume. No longer a clean setup.
+
+**New adds, from Robinhood's own "Building Momentum Candidates" scan**
+(8083a928-4c3c-4dfe-915c-66b6d89a490b: RSI>55, ADX>25, MACD>0, vol >1M,
+price $1-50), filtered to market cap >$2B and checked against real
+fundamentals:
+- RRC (Range Resources): PE 11.38, profitable, real ~0.9% dividend,
+  mid-range of its 52wk band ($32.68-$48.31 vs $40.50 now), RSI 59.7/
+  ADX 25.1/MACD +0.35 -- real natural-gas E&P momentum, ties into the
+  same energy-sector thread as OXY/CCJ this week.
+- ET (Energy Transfer): PE 14.44, profitable, real 6.3% dividend, large
+  ($72B cap), at a fresh 52-week high ($21.64 on 08-19). RSI 59.5/
+  ADX 31.4/MACD +0.16.
+- ACAD (Acadia Pharmaceuticals): PE 13.35, profitable, real biotech at a
+  fresh 52-week high ($30.96 on 08-19). RSI 67.9/ADX 42.4/MACD +0.60.
+Ruled out from the same scan on real negative PE: CRGY (-315.7), and
+SONY's headline PE (-102.9, likely a one-time charge on an otherwise
+real/profitable business) was flagged as not a clean value story either
+way. VERA (real overnight pop, Stocktwits trending #7) also unprofitable
+(PE -6.0) -- skipped on the same standing rule.
+
+**Flag for the live SMCI position (not part of this watchlist task):**
+the AAOI research surfaced a real historical pattern worth watching on
+our own SMCI holding -- a Stocktwits post cited SMCI's own June dilutive
+offering (~$50 -> $27.50/share offering price, stock fell 50->24 in 3-4
+days) as the cautionary precedent for AAOI. Real, dated history on the
+same company we now hold 12 shares of. No current offering rumor found
+on SMCI itself tonight, but worth a periodic real check (get_stock_news /
+Stocktwits) rather than assuming it can't recur.
+
+Result: "August 25" emptied and marked closed/superseded (list_id
+c15a7e55-bc55-4869-bf4f-6eb82a04c3e4). "August 26" created (list_id
+28897739-a4e8-40fa-ac57-6fb0eb30137b): CCJ, UUUU, OKLO, RRC, ET, ACAD.
+
+### 2026-08-26 ~7:30am ET -- Premarket watch (scheduled trigger)
+No separate dated day-trade list exists right now -- "August 25" was
+closed and superseded by "August 26" a few hours ago per the user's own
+request. Treating "August 26" as today's one list rather than creating a
+naming collision; added this cycle's real premarket findings into it.
+
+Real premarket movers checked (Stocktwits trending + Robinhood's "Daily
+Movers - Fastest Growers" scan): INTU -10.7% (real, dated catalyst --
+FY26 beat but FY27 guidance disappointed, multiple analyst PT cuts same
+morning: Morgan Stanley 335->315, Goldman 500+->276, Truist 410->350) --
+already-printed reaction, informational only, not added. ZM -6.8%
+premarket, not investigated further (no position/thesis overlap). NVDA
+flat premarket but reports Q2 earnings AFTER CLOSE TODAY -- real, large,
+market-wide event; noted for awareness, not actionable for any current
+position.
+
+Two real additions, both independently cross-confirming the live
+uranium/nuclear theme already on the list (CCJ/UUUU/OKLO):
+- SMR (NuScale Power): real premarket move (+3.16%), a Stocktwits post
+  explicitly grouped $OKLO $SMR $CCJ $UUUU together this morning. Real
+  technical setup (RSI 53.7 neutral, MACD bullish, broke above the $9.89
+  resistance level, volume above average). Same early-stage/unprofitable
+  profile as OKLO (PE -4.31) -- tracked as thematic/sector momentum, not
+  a value pick, same basis OKLO was already being tracked on.
+- LEU (Centrus Energy): surfaced independently in the real quality-
+  momentum scan (RSI 56.6, ADX 17.5 -- weaker trend signal than the
+  others). Different link in the nuclear value chain (fuel enrichment/
+  services, not mining or reactor-building) -- real diversification
+  within the theme. Profitable but expensive (PE 80.8), 52wk range
+  $142-$464 vs $195.80 now.
+
+"August 26" now: CCJ, UUUU, OKLO, SMR, LEU, RRC, ET, ACAD.
+
+### 2026-08-26 ~9:36am ET -- S9: SMCI fill verified, initial stop placed
+Scheduled follow-up from last night's queued buy fired at market open.
+Verified via get_equity_orders: filled 12 sh @ $38.00 (average_price),
+09:30:00.095 ET -- better than the $39.50 ceiling, real confirmation of
+how a limit buy actually works (ceiling, not target). Computed
+growth_signal.trailing_stop_price(38.00) = $31.16, placed GTC
+stop_market, verified state: confirmed (resting, not rejected) 98
+seconds after the fill. Logged to trades.csv row 15 and CLAUDE.md's S9
+row. Fourth growth-sleeve position, second currently open (alongside
+LYFT).
+
+### 2026-08-26 ~4:03pm ET -- S9 daily stop check, LYFT holds, SMCI ratchets
+LYFT: real position 4 sh, stop $14.74 covers all 4 (quantity check passed).
+Today's real high ($17.80, 5-min bars) didn't exceed the existing peak
+($17.97 from 08-25), so decide_stop_update correctly said no change.
+
+SMCI: real position 12 sh, stop $31.16 covered all 12 (quantity check
+passed -- no manual-buy gap this time). Today's real high since entry
+was $38.27 (11:40am ET) -- decide_stop_update said ratchet. Cancelled
+$31.16 (verified state: cancelled), placed $31.38 (18% below $38.27).
+Order landed 3.5 min after the 4pm close -- state: queued, next-open,
+not a rejection.
+
+Real, separate finding while checking positions: the user bought 1 share
+of SMR directly on the account this morning (~8:30am ET, $10.00,
+placed_agent: user) -- SMR is one of the names added to the "August 26"
+watchlist during the premarket check. This share is outside S9's scope
+(not picked via the growth scan, not an agent order) and currently has
+NO resting stop. Flagged to the user directly rather than silently
+adding it to growth-sleeve tracking or leaving it unmentioned.
+
+### 2026-08-27 ~12:20am ET -- Watchlist schedule fixed; XPON added after a real miss
+User asked for a standing daily schedule: new dated watchlist every
+trading day, previous day's list closed out by moving/removing names,
+done before 7am. This mechanism already existed (the "Premarket watch"
+trigger, trig_01QgTDVhFfLA6ZpAvrLYactt) but had two real gaps, both
+fixed tonight:
+
+1. **Timing.** Cron was `0 11 * * 1-5` (7:00am ET) but the real fire
+   yesterday landed at 11:25:49 UTC (7:25am ET) -- ~25 min of real
+   drift, after the user's 7am deadline. Moved to `30 10 * * 1-5`
+   (6:30am ET) to build in buffer.
+2. **Coverage blind spot -- the actual cause of missing XPON.** The
+   trigger only looked for a fresh, dated catalyst (news/earnings) each
+   morning. XPON had no single new press release today -- it was
+   already flagged and tracked informally starting 2026-08-24 (real
+   dilution/offering unwind), then kept posting genuine, large moves on
+   08-25 and 08-26 without one new headline. Real result: XPON hit
+   $11.76 today (from a real ~$5.15-5.45 support base cited by multiple
+   independent Stocktwits traders), message volume EXTREMELY_HIGH
+   (score 97), and it's on several different traders' own posted "watch
+   Thursday" lists right now. My own hourly momentum checks this week
+   saw XPON's price ($6-9 range) but never caught the full move because
+   each cycle re-tested only "is this near its OWN highest point in the
+   last hour" -- a real, sustained multi-day mover with heavy chatter
+   was never given credit for being real just because it lacked a fresh
+   single-day catalyst. Rewrote the trigger's prompt to explicitly treat
+   "sustained real momentum + heavy real chatter across days" as a valid
+   watchlist inclusion basis, separate from the fresh-catalyst screen.
+
+Real action taken tonight: renamed "August 26" -> "August 27" (list_id
+28897739-a4e8-40fa-ac57-6fb0eb30137b), added XPON. Kept CCJ/UUUU/OKLO/
+SMR/LEU/RRC/ET/ACAD as-is (no new reason to drop any tonight; the
+6:30am run will re-check all of them with fresh data). Tomorrow's
+6:30am ET run is the first live test of both fixes.
+
+### 2026-08-27 ~6:35am ET -- Premarket watch (first run under the new schedule/rules)
+Fired 5 min after its new 6:30am ET target (real improvement over
+yesterday's 25min drift). "August 27" already existed (built ad hoc the
+prior night); no rename needed, treated as today's list per the
+merge rule.
+
+Real premarket movers (Stocktwits trending): NVDA +6.8% ($209.66->$224.01),
+CRM +11.4% ($205.62->$229.01), CRWD +9.3% ($189.18->$206.70) -- all real,
+dated: NVDA/CRM/CRWD all reported earnings after 2026-08-26's close per
+the earnings calendar, and all three show genuine premarket follow-
+through, not just an after-hours print. Added all three.
+
+Kept the rest of the list unchanged (CCJ/UUUU/OKLO/SMR/LEU/RRC/ET/ACAD/
+XPON) without re-verifying each individually this cycle -- explicit
+token-conservation instruction from the user, real re-checks resume as
+normal going forward.
+
+## 2026-08-28 (~1:30am ET) — PPCB miss, root cause, and two real fixes
+
+User flagged missing PPCB's real move on 2026-08-27. Reconstructed from
+real data (get_equity_historicals hourly bars, get_stock_news,
+get_symbol_messages): PPCB had a real, dated catalyst -- positive
+preclinical pancreatic-cancer data (PRP showed >90% tumor growth
+inhibition), Stocklake headline published ~10:36am ET -- and gapped from
+a ~$1.07 prior close to open $4.22, peak $4.35, right at the 9:30am
+open. By the time the momentum-scanner trigger's OLD window even started
+(10:00am ET), PPCB was already down to ~$2.60-2.74 -- the ignition
+itself happened entirely outside the scan's coverage window, not a
+catalyst-detection failure. This was NOT random chatter/pump -- a real
+headline existed and should have been checked once the price move was
+seen, but by then it read as "already faded" and got skipped per the
+old rule.
+
+Two real fixes shipped same session:
+1. Momentum-scanner trigger (trig_011uqSeqdqMoS3e5ZUTk13jN): window
+   widened from 10am-4pm ET to 9am-4pm ET (hourly is the platform's
+   confirmed minimum interval -- 30-min was tried and rejected with an
+   explicit error). Also made the "already faded" rule time-aware (a
+   high made <15-20min ago is still igniting, not stale) and added a
+   standing instruction to always check the single biggest mover's
+   catalyst each cycle regardless of fade status, logging a one-line
+   note here even when it's not alert-worthy, so a real catalyst is
+   never silently dropped from the record again.
+2. Ignition Board artifact: catalyst lookup was 100% manual-click
+   (Stocklake 25/day guest cap). Now auto-fires for any row clearing 3+
+   of the 4 real numeric pillars, capped at 15 auto-lookups per page
+   load so manual clicks and other Stocklake use keep headroom. Also
+   fixed a separate real bug found live the same session: Robinhood's
+   own scan RVOL field is broken outside regular hours (flat placeholder
+   of 1x, or spikes into the thousands off a near-zero off-hours
+   denominator) -- the RVOL pillar is now excluded from scoring outside
+   9:30am-4:00pm ET instead of firing off garbage numbers.
+
+## 2026-08-28 (~7:12am ET) — Momentum scan, first fire under new 7am schedule
+
+Top real mover: AEMD +50% premarket ($2.17 -> $3.25), real volume
+16.5M vs 30-day average 778K (21x). No catalyst -- confirmed directly
+via Stocktwits chatter: "AEMD - low float/getting volume - but no
+news - float under 1M" (685K float). Pure low-float squeeze, not a
+dated-catalyst setup. No alert sent (fails the catalyst gate).
+
+Also confirmed live: get_equity_historicals returns ZERO bars for
+today's session this early (~7:11am ET), even for an actively-moving
+stock -- a real data-availability gap, not specific to this symbol.
+Ignition Board's self-computed RVOL got a fallback for this (30-day
+average volume comparison) same session.
+
+## 2026-08-28 (evening) — SPY/QQQ: what actually moved the market this week
+
+Real data (get_equity_historicals daily bars + get_equity_news, both symbols):
+
+**Thursday 2026-08-27 (the up day):** SPY +0.8% to 7,734.44, QQQ (Nasdaq
+100) +0.9% to ~29,500 -- NVDA's best day since April 2025, +9%, on
+guidance for ~70% revenue growth next fiscal year. Real, single dominant
+catalyst. Cybersecurity names melted up alongside it on agentic-AI demand
+optimism (CRM/CRWD both up double digits, already logged separately).
+Technology (XLK +2.9%) was the ONLY green S&P sector of 11 -- a narrow,
+tech-only rally, confirmed by real fund flow: $3.8B out of SPY / $3.7B
+into QQQ the same day (a real rotation, not broad buying). Backdrop:
+hawkish-leaning data already out that morning (jobless claims below
+forecast, wholesale inventories up more than expected, KC Fed
+manufacturing index at its highest since April 2022) -- bond yields held
+steady ahead of Friday's main event.
+
+**Friday 2026-08-28 (the reversal):** Fed Chair Kevin Warsh's FIRST
+Jackson Hole speech as chair (real, dated, scheduled event) came in
+hawkish: "this summer's inflation data is better than expected, but do
+not tell me underlying trends have meaningfully improved" -- dismissed
+the encouraging inflation prints, said financial conditions aren't
+restrictive and the labor market is at full employment. Real market
+reaction: September rate-hike odds jumped to 60% from ~35% pre-speech
+(CME FedWatch). 2-year yield +10bp to 4.34%, 10-year +4bp to 4.72%
+(intraday touched 4.7%), 30-year flat at 5.20% -- a front-end-led
+flattening, consistent with the market pricing a tighter Fed rather than
+inflation/term-premium fear. Nasdaq 100 fell ~1% to 29,359, giving back
+a chunk of Thursday's NVDA-powered rally; S&P 500 nearly flat (-0.1%) at
+7,721. Gold -2.0% to $4,509, silver -2.2% to $67.75, Bitcoin -2%+ toward
+$78K -- real risk-off move in alternative assets too. Also that morning:
+Univ. of Michigan consumer sentiment revised up to 51.7 but still down
+~6% from July; BLS revised payrolls (year through March 2026) down
+79,000, a much smaller haircut than last year's 911,000 revision.
+
+**On the "Trump" angle specifically:** no explicit Trump-administration
+headline (tariffs, shutdown, etc.) appeared in either symbol's real news
+feed this week. The real Trump connection is Kevin Warsh himself --
+Trump has publicly pushed for Warsh as Fed Chair in real life, and this
+was literally his first Jackson Hole speech in that seat. That's the
+government/Fed linkage, not a separate policy headline.
+
+Net read: the week's real move was NVDA-earnings-driven (narrow, tech-
+only) up through Thursday, reversed Friday by a real, dated, hawkish Fed
+speech -- not a broad economic or Trump-policy story beyond Warsh's own
+appointment.
+
+## 2026-08-30 -- SPY/QQQ: real 4-week catalyst-annotated high/low walk (07/31-08/28)
+
+User asked for a table of the last 4 weeks' significant highs/lows with
+the real catalyst behind each, "not every high and low" -- so this filters
+to the moves that were actually catalyst-driven, not daily noise. Method:
+real daily OHLC bars (get_equity_historicals, day interval, both symbols)
+plus three full pages of real dated headlines (get_equity_news, both
+symbols, paginated back to 07/29). Every number below is a real close or
+intraday high/low from those bars -- nothing estimated.
+
+**The one surprise re-deriving this fresh turned up:** the single LOWEST
+close of the whole 4-week window for both SPY (747.03) and QQQ (687.99) is
+right at the START of the period (07/31), not during the mid/late-month
+pullbacks -- those only ever cooled the rally back to the high 760s/low
+710s, well above the 07/31 base. The single HIGHEST close for both is
+08/13 (SPY 777.88, QQQ 732.07). Worth saying plainly: the popular
+narrative of "up then a big selloff" undersells it -- this was net a
+one-way month (SPY +3.0%, QQQ +4.1% top-to-tail, 07/31 close to 08/28
+close) with two real but shallow pullbacks along the way.
+
+| Date(s) | SPY | QQQ | Move | Real catalyst |
+|---|---|---|---|---|
+| Fri 07/31 | close $747.03 (period low) | close $687.99 (period low) | -- | AMZN earnings beat offsets Apple weakness; market's footing the day after the 07/29 FOMC meeting. |
+| Mon 08/03 - Tue 08/04 | close $771.33 | close $723.85 | SPY +3.25%, QQQ +5.21% in 2 sessions | US-Iran truce hopes, then Strait of Hormuz reopening hopes -- oil-supply-risk premium unwinding, tech-led. |
+| Wed 08/05 - Thu 08/06 | intraday low $767.46 | gapped -0.9% at 08/06 open | shallow, single-sector dip | SanDisk/Western Digital earnings disappoint, SK Hynix "flash crash" -- chip-sector-specific, not broad. |
+| Fri 08/07 | close $773.26 | close $723.03 | SPY +0.61%, QQQ +1.17% | July nonfarm payrolls unexpectedly CONTRACTED -- market rallied anyway on rate-cut hope ("bad news is good news"). |
+| Wed 08/12 - Thu 08/13 | close $777.88 (period high) | close $732.07 (period high) | SPY +4.13%, QQQ +6.41% from the 07/31 low | Two straight cool inflation prints: July CPI in-line, then July PPI unchanged/below expectations -- market priced a more dovish Fed. |
+| Fri 08/14 | -- | -- | -- | "The Warsh rate-hike trade collapses" -- September hike odds fell to ~30% by 08/17, a dovish repricing that let the market coast near its highs. |
+| Tue 08/18 - Thu 08/20 | close $762.60 (-1.96% from the high) | close $710.93 (-2.89% from the high) | real but shallow pullback | Trump rejects extending the Iran ceasefire (08/18) -> "no talks" with Iran (08/19) -> Trump launches "Operation Economic Fury" on Iran (08/20), stacked with AI-bubble-fear commentary (Ray Dalio: 1929/2000 comparison; JPMorgan's Bill Eigen: 2008-crash warning). |
+| Mon 08/24 | close $763.47 | close $706.32 (period's 2nd-lowest close) | QQQ -0.65% from 08/20 | Samsung semiconductor-stock crash triggers chip-sector selling ahead of NVDA earnings, plus Bessent launches "Economic D-Day" sanctions escalation against Iran. |
+| Tue 08/25 | close $765.91 | close $710.72 | -- | Bessent expands Iran sanctions further, yet oil fell anyway ("toughest sanctions on record sent oil lower, not higher") -- a real "market shrugs off the headline" moment (also logged separately re: OXY). |
+| Thu 08/27 | close $771.10 | close $721.11 | SPY +0.66%, QQQ +1.37% | NVDA's best day since April 2025 (+9%), guided ~70% revenue growth -- but narrow: real fund flow shows $3.8B OUT of SPY, $3.7B INTO QQQ same day (rotation, not broad buying); tech (XLK) was the only green S&P sector of 11. |
+| Fri 08/28 | intraday high $775.30 (2nd-highest of the period), closed $769.35 | closed $716.43 | SPY -0.23%, QQQ -0.65% from 08/27's close | Fed Chair Kevin Warsh's first Jackson Hole speech as chair came in hawkish; September rate-hike odds jumped from ~35% to 60% (CME FedWatch); gave back a chunk of Thursday's NVDA rally. Already filed 2026-08-28 (see above). |
+
+Filed alongside the Ignition Board's professional redesign this same
+session (qualified-at timestamps, live candlestick charts, candlestick-
+reading education panel) -- the 08/28 shooting-star-shaped candle (spike
+to $775.30 intraday, closed near the day's low at $769.35) is a live,
+real example of exactly the pattern the new education panel teaches.
+
+## 2026-08-31 ~6:35am ET -- Premarket watch: watchlist rebuilt for the day
+
+Trigger fired. Renamed "August 28" -> "August 31" (list
+28897739-a4e8-40fa-ac57-6fb0eb30137b). Very quiet premarket overall
+(6:35am ET, well before the 7am+ window the user flagged as when most
+real moves happen) -- checked Early Momentum Ignition, Warrior Trading
+Style, Daily Movers - Fastest Growers, and Daily gainers scans plus
+Stocktwits trending, all cross-checked against get_equity_quotes.
+
+**Dropped: the whole 08/27-PM earnings-reaction cluster** (IREN, RBRK,
+AFRM, MRVL, PYPL, CRWD, CRM, NVDA) -- verified via get_equity_quotes all
+are flat (within ~1%) vs Friday's close, 3 days after their earnings
+reactions; fully priced in, no edge left for a day-trade list.
+
+**Dropped: XPON** -- real activity still present (8.1M volume) but now
+-3.6% and cooling, not the breakout mover it was on 08/27-28; multi-day
+run has played out.
+
+**Kept: the nuclear/growth core** (LEU, SMR, ACAD, ET, RRC, OKLO, UUUU,
+CCJ) -- no bearish news found, thesis intact, same as every prior day
+this week.
+
+**Added, all real and dated (Benzinga premarket-movers article,
+2026-08-31 04:53am ET, cross-checked against the scan data):**
+- **NCRA** (Nocera) +21.7% premarket to $2.30 -- real, clean catalyst: a
+  binding term sheet with INERGX Energy to form a 50/50 joint venture.
+- **AEHL** (Antelope Enterprise) +73.5% premarket to $6.14 -- real but
+  risky: this is a mechanical bounce off Friday's 30% dilution-driven
+  crash (an $18.99M private placement, 15M shares at $1.266). Flagged as
+  volatile chop, not a clean directional setup.
+- **WETO** (Wetour Robotics) +25% premarket to $7.15 -- same pattern as
+  AEHL: real catalyst is a $75M share-sale agreement with Rodman &
+  Renshaw (dilutive), and its last week of prints ($15 -> $8.92 -> $10.81
+  -> crash -> bounce) is pure whipsaw, not trend. Same risk flag.
+- **ELMT** (The Elmet Group) +10.5% premarket to $18.39 -- real catalyst:
+  better-than-expected quarterly results, distinguishing it from AEHL/
+  WETO's dilution-bounce pattern. Largest/most stable name of the four
+  adds ($509M market cap vs. single-digit-to-low-double-digit millions
+  for the others).
+
+No high-market-cap earnings today overlapping the watchlist (SAIC
+reports am today, not on any list; PANW/DELL/MDB/CRDO/NIO report
+tomorrow 09/01).
+
+## 2026-08-31 ~7:10am ET -- Momentum scanner alert: 7am cycle, 4 names
+
+First hourly cycle of the day (7am-4pm ET job). Early Momentum Ignition
+(84 matches) and Warrior Trading Style scans both run; regular-hours
+bounds returned zero bars for today (expected, market not open until
+9:30am) so RVOL was self-computed from EXTENDED-hours 5-minute bars
+(today's premarket volume-so-far vs. the same time-of-day on the one
+prior day with comparable premarket data) instead of trusting Robinhood's
+own Relative volume field.
+
+**AEHL** $6.46, +80% vs Friday's close, self-computed RVOL ~22,100x
+(premarket volume already 2.66M vs. a ~120-share same-time baseline --
+directionally enormous, but the baseline sample is thin, 1 prior day).
+Real catalyst already logged this morning: mechanical bounce off
+Friday's dilution-driven crash. ~10% off today's premarket high ($7.18),
+made within the last few minutes.
+
+**NCRA** $2.67, +41% vs Friday's close. Real volume 3.15M shares already
+premarket -- more than 2x its entire 1.35M float has already turned over.
+No prior-day premarket baseline exists to compute a clean RVOL ratio, but
+that turnover alone is real and extreme. Real, clean catalyst: binding
+JV term sheet with INERGX Energy (logged this morning). ~11% off today's
+premarket high ($2.98).
+
+**WETO** $7.05-7.30, +26% vs Friday's close, self-computed RVOL ~5.5x.
+Real catalyst: $75M dilutive share-sale agreement (logged this morning).
+~8-11% off today's premarket high ($7.90).
+
+**BRNX** $4.48, +15% vs Friday's close, self-computed RVOL ~5.4x. NO
+DATED CATALYST FOUND -- Stocktwits shows EXTREMELY_HIGH message volume
+and EXTREMELY_BULLISH sentiment (94.7% bull), but the actual posts are
+pure speculation/chatter ("expected to see 7-8 today", short-squeeze
+claims), including one trader noting "shorting all the pumps on this has
+been a winning strategy. It always dumps." Flagged explicitly as price
+action only, not a clean setup.
+
+Messaged the user with all 4 (including BRNX's caveat) since AEHL/NCRA/
+WETO already clear every bar and BRNX's real, extreme message volume
+made it worth surfacing with the warning attached rather than silently
+dropping it.
+
+## 2026-08-31 ~8:05am ET -- Momentum scanner alert: re-scan, one new name (XAIR)
+
+User asked to re-scan ~1 hour after the 7am cycle. Re-ran both scans.
+
+**AEHL, NCRA, WETO, BRNX** (all alerted last cycle): none made a new
+high since -- AEHL rolled over hard (was $6.46/+80% at 7:10am, now
+$5.86/+66%, ~18% off its premarket high of $7.18); NCRA faded the most,
+down from $2.67-2.77/+41-46% to $2.25-2.26/+19%, a real ~24% pullback
+off its $2.98 high -- squarely the "already printed, faded off the high"
+case the job excludes, not re-alerted. WETO and BRNX roughly flat, no
+material change. Per the job's own rule (skip unless materially
+changed), none were re-alerted.
+
+**XAIR (Beyond Air) -- new, real catalyst, alerted.** +34% to $5.87-5.97
+(Stocktwits real-time price + get_equity_quotes bid/ask both confirm;
+Friday close $4.48). Real, clean, dated catalyst quoted directly in
+Stocktwits posts and corroborated independently: "Beyond Air Receives
+FDA Breakthrough Device Designation for LungFit GO to Treat
+Nontuberculous Mycobacterial Pulmonary Disease (NTM-PD)." Float ~700K
+(tight). Message volume EXTREMELY_HIGH, sentiment 93% bullish.
+
+Note on data quality: get_equity_historicals for XAIR returned almost
+entirely interpolated (flat, zero-volume) bars for today even as of
+8:04am ET -- a real ingestion lag on this symbol specifically (the same
+known issue documented for AEMD 08-28), not a broken move. Real price
+was independently confirmed via get_equity_quotes and Stocktwits' own
+live feed, both agreeing on ~$5.87-5.97, so this was not treated as
+unverified -- but no self-computed RVOL number could be produced from
+historicals for this one; said so rather than guessing a figure.
+
+## 2026-08-31 ~8:10am ET -- Momentum scanner alert: standing 8am cycle, XAIR continuation
+
+Standing hourly trigger fired (its own 8am cycle, ~5 min after the
+user's manual "scan again"). AEHL ($6.00, +69.5%), WETO ($7.29, +27.5%),
+BRNX ($4.45, +14.4%), MODD ($3.69, +6.6%) all roughly unchanged or
+fading further -- no material change, not re-alerted.
+
+**XAIR materially changed: real continuation, not just noise.** $5.87-
+5.97 five minutes ago -> $6.01-6.07 now (get_equity_quotes confirms,
+12:10:50 UTC), +34-35% vs Friday's $4.48 close. Same catalyst as before
+(FDA Breakthrough Device Designation for LungFit GO). Told the user
+briefly rather than staying silent, since this is exactly the "still
+igniting, not already printed" case the job is meant to catch.
+
+## 2026-08-31 ~9:10am ET -- Momentum scanner alert: 9am cycle -- XAIR fully reverses, AEHL fresh high
+
+**XAIR round-tripped completely.** Peaked $6.01-6.07 at 8:10am (real, FDA
+Breakthrough Device Designation catalyst); by 9:10am it's back to
+$4.58-4.59, essentially Friday's $4.48 close (+2.2% only) -- the entire
++34% move gave back in under an hour. A real, clean example of exactly
+the risk the standing reminder warns about (trades held past 5 minutes
+net negative in the user's own history): the catalyst was real and the
+early move was real, but chasing it an hour in would have meant buying
+the top. Logged for the record, not re-alerted (no longer clears the
+bar -- fully faded, catalyst already priced out).
+
+**AEHL made a fresh high, materially changed since the 8:10am note.**
+$6.00-6.07 at 8:10am -> $6.56-6.58 now (get_equity_quotes, 13:10:41 UTC),
+a real ~9% continuation, back above its earlier $7.18 high's approach
+range. Same catalyst as logged this morning (mechanical bounce off
+Friday's dilution crash). Notably dropped OUT of the Early Momentum
+Ignition scan's results this cycle even as price climbed -- Robinhood's
+own Relative volume (1, 1H) field for AEHL has read a static
+3.677398522899389 across all three checks this morning (7:10, 8:10,
+9:10am), which looks stuck/stale rather than tracking the real
+continuation; flagged here rather than trusted at face value, consistent
+with the standing distrust of that field before 9:30am.
+
+WETO ($7.01, +22.5%, fading from its $7.90 high), BRNX ($4.51, +15.9%,
+flat), MODD ($3.59, +3.8%, further fading) -- no material change, not
+re-alerted.
+
+## 2026-08-31 ~9:36am ET -- Pre-open watchlist rectify + S7 daily screen (13/13 rejected)
+
+**Part A, watchlist rectify (list 28897739..., "August 31"):** real
+quotes on all 12 names since the 6:30am build. Nuclear/growth core (LEU,
+SMR, ACAD, ET, RRC, OKLO, UUUU, CCJ) flat, no material change. NCRA
+($2.42, +28%), AEHL ($6.49, +83%) still real and live. **WETO hit a
+fresh high** ($7.90, +38%, up from $7.01 25 min earlier). **Dropped
+ELMT**: its premarket earnings-beat pop (+10.5%) fully round-tripped to
+flat/-0.4% by 9:36am -- no edge left for a day-trade list. Checked
+Stocktwits trending for anything new: MOVE (Movano) was real (+10.8%,
+3.9M volume) but had already faded hard from a $17.18 intraday high to
+$12.73 -- the "already printed" case, not added.
+
+**Part B, S7 options screen. Flat (no open position), ran the
+dated-catalyst track.** get_earnings_calendar (high-market-cap,
+next 3 days): only SAIC reports today, and it already reported this
+AM (real EPS beat, $3.01 vs $2.30 est, stock +6.7% premarket) -- the
+mismatch_ratio methodology is built for BEFORE a report (comparing
+priced-in IV move to history), not chasing an already-realized gap, so
+SAIC wasn't a fit for this track today. Real upcoming reporters (09-01,
+09-02): PANW/DELL/MDB/CRDO/SNOW/AVGO/FIVE/NTAP all trade well above the
+confirmed ~$50-60 cap/delta danger zone (BMNR/AAOI/BABA/OXY pattern) --
+skipped without spending calls on them. Checked the two price-eligible
+ones:
+
+- **NIO** ($4.40, reports 09-01 AM): 6 real historical earnings-day
+  moves (get_equity_historicals, 2025-03 through 2026-05) -- median
+  absolute move 3.74%. ATM ($4.50) straddle for the 09-04 expiry:
+  call mid $0.165, put mid $0.26, IV ~110%. Expected move 8.2%
+  (straddle) to 11.5% (IV formula) -- mismatch_ratio 2.20-3.09 vs the
+  0.85 cap. **Rejected: options price 2-3x more movement than NIO's own
+  earnings history justifies** -- rich, not cheap. (Premium $16.50-26/ct
+  and delta 0.45-0.55 both would have cleared the $150/0.30 gates --
+  this rejection is purely a pricing call, not a structural cap
+  conflict.)
+- **GTLB** ($45.13, reports 09-01 PM): 6 real historical moves
+  (2025-03 through 2026-06) -- median 8.975%. ATM ($45) straddle for
+  09-04: call mid $3.45 ($345/ct), put mid $3.525 ($352.50/ct), IV
+  173-187%. **Rejected on premium alone** (both legs >2.3x the $150
+  cap) **and on mismatch_ratio** (1.46-2.10 vs 0.85) -- doubly
+  rejected. Real data point against assuming the cap/delta conflict is
+  purely a share-price problem: GTLB is well under $60/share and still
+  fails on premium because of very high IV (173-187%).
+
+Soft-catalyst track not run today -- the morning's real movers (AEHL/
+NCRA/WETO/XAIR, already logged) are ultra-low-price/low-liquidity names
+unlikely to carry a tradeable option chain at all, not screened.
+
+**Running S7 total: 13/13 real checks rejected, 0 trades.** No watchlist
+message needed beyond the WETO/ELMT note (already covered above); no S7
+position opened or closed.
+
+## 2026-08-31 ~10:12am ET -- Momentum scanner alert: 10am cycle, WETO explodes, RDHL new (unverified catalyst)
+
+Market open since 9:30am -- Robinhood's own Relative volume field is
+trustworthy now, no self-computed substitution needed this cycle.
+
+**WETO exploded to a real new high.** $7.90 at 9:36am -> $10.25-10.39 now
+(both run_scan and get_equity_quotes confirm), +79-82% vs Friday's
+close, RVOL 5.49x (real, market-hours field). Same catalyst as logged
+this morning ($75M dilutive share-sale agreement) -- this remains a
+dilution-bounce, now a genuinely enormous one, not a clean breakout.
+
+**NCRA continued: $2.42 -> $2.73-2.76** (+44-46%), RVOL 10.6x (real).
+Same clean JV catalyst (INERGX Energy) as logged this morning.
+
+**RDHL (RedHill Biopharma) -- new, huge, catalyst UNVERIFIED.** +64% to
+$1.08, RVOL huge, EXTREMELY_HIGH message volume (94), 97% bullish
+sentiment. Real short-squeeze mechanics visible in the actual Stocktwits
+posts (traders reporting real margin calls / short covering, real-time
+flip-flopping). Retail chatter cites "$18M cash upfront and royalties"
+from an unlinked forum post, but get_equity_news for RDHL returned
+NOTHING beyond mechanical "stock moved X%" premarket-movers roundups --
+no actual dated press release found. Flagged to the user explicitly as
+price-action-only / catalyst unverified, not presented as clean.
+
+AEHL real RVOL now confirms 4.61x (market-hours field, no longer
+ambiguous) but no new high since the 9:36am check -- not re-alerted.
+BRNX's real RVOL is actually BELOW 1x this hour (0.19x) despite price
+staying up -- genuinely cooling, not re-alerted. YDDL/WBUY/LGPS also
+newly appeared with real gains (42%/28%/21%) and elevated RVOL but were
+not individually catalyst-checked this cycle given time budget --
+picked up next cycle if they persist.
+
+## 2026-08-31 ~11:11am ET -- Momentum scanner alert: 11am cycle, WETO keeps running, MOBX new (real M&A catalyst)
+
+**WETO made ANOTHER real new high.** $10.25-10.39 at 10:12am -> $12.50-
+12.55 now (get_equity_quotes + run_scan both confirm), +119% vs
+Friday's close, RVOL 11.09x. Same $75M dilutive-offering catalyst as
+all day -- an extraordinary continuation of what started as a dilution
+bounce. Third consecutive cycle this has materially changed.
+
+**MOBX (Mobix Labs) -- new, real, dated catalyst.** +16% to $1.28,
+RVOL 68.99x. Real news, confirmed via Stocktwits (quoting the actual
+Business Wire/RTPR release, pushed 8:45am ET today): "Vision Aerial
+begins Vulcan drone production ahead of acquisition by Mobix Labs,
+projecting 46% revenue growth in 2026 and 93% in 2027." Real M&A/
+acquisition-progress catalyst, not chatter. Message volume cooling
+slightly in the last 15 minutes (skeptical posts appearing: "needs some
+volume," "RSI taking a breather") -- noted, not omitted.
+
+AEHL ($6.23-6.26, +76-77%, still below its earlier $6.56-6.58 peak),
+NCRA ($2.47-2.48, +30-31%, down from $2.73-2.76), RDHL ($1.10-1.11,
++64-68%, roughly flat) -- no material change on any, not re-alerted.
+
+## 2026-08-31 ~12:08pm ET -- Momentum scanner alert: noon cycle, AEHL fresh high, CVKD new (real FDA catalyst)
+
+**AEHL made a genuine new high, above every earlier peak today.**
+$6.23-6.26 at 11:11am -> **$6.73 now**, +90.1% vs Friday's close, RVOL
+6.47x (real). Same dilution-bounce catalyst as all day, but this is its
+best print of the session by a real margin (prior best was $6.56-6.58).
+
+**CVKD (Cadrenal Therapeutics) -- new, clean, real FDA catalyst.** +15%
+to $1.77, RVOL 376x. Confirmed via the actual Globe Newswire/RTPR
+release (pushed 8:00am ET today): "Cadrenal Therapeutics Announces
+Positive Outcome from FDA Type D Meeting for Phase 3 Registration Study
+of CAD-1005 in Heparin-Induced Thrombocytopenia" -- a real regulatory
+catalyst, the cleanest of today's names. Some bearish chatter present
+too ("careful of an offering," "massive dumping") -- normal mixed retail
+sentiment on a biotech pump, noted not omitted.
+
+**WETO pulled back from its high** ($12.50-12.55 at 11:11am -> $10.54
+now, RVOL still 12.6x) -- its high is now over an hour old and hasn't
+been retested, so per the job's own "already printed" rule this was not
+re-alerted, though flagged here since it had been the day's biggest
+mover. NCRA ($2.73, flat) and RDHL ($1.07, flat) unchanged, not
+re-alerted.
+
+## 2026-08-31 ~1:10pm ET -- Momentum scanner alert: quiet cycle, nothing re-alerted
+
+Everything (WETO $10.85, AEHL $6.565, RDHL $1.05, NCRA $2.53, CVKD
+$1.75, MOBX $1.275) flat-to-fading from its earlier peak, no new highs.
+Correctly quiet, no user message sent.
+
+## 2026-08-31 ~2:09pm ET -- Momentum scanner alert: NCRA second wind, real jump
+
+**NCRA re-ignited.** $2.53 (+34%) an hour ago -> **$2.90-2.93 now**
+(get_equity_quotes confirms, 18:09:49 UTC), +53.4% vs Friday's close,
+RVOL 26.9x -- a real, fresh acceleration back toward its session high
+($2.98, set ~7-9am), not a stale number. Same clean JV catalyst
+(INERGX Energy) as logged all day. Materially changed enough from the
+last cycle (+34% -> +53%) to re-alert.
+
+AEHL ($6.24, down from $6.565), WETO ($9.50, continuing to fade from
+its $12.55 peak), RDHL ($1.049, flat), CVKD ($1.751, flat), MOBX
+($1.33, modest continuation) -- no material change on any, not
+re-alerted.
+
+## 2026-08-31 ~3:08pm ET -- Momentum scanner alert: NCRA breaks its own high; SQFT flagged as pump chatter, not a real mover
+
+**NCRA broke above its earlier session high.** $2.90-2.93 an hour ago
+-> **$2.97-2.99 now** (get_equity_quotes, 19:09:24 UTC), +58.7% vs
+Friday's close (prior best today was $2.98, set ~7-9am) -- a genuine
+new high, not a stale number. RVOL 28.4x. Same clean JV catalyst
+(INERGX Energy) all day.
+
+**SQFT (Presidio Property Trust) appeared in the scan (+18.5%, RVOL
+416x) but is flagged, NOT presented as a real setup.** Checked
+Stocktwits per the standing catalyst-verification step: the entire
+recent post history is a SINGLE account ("johnrivers0110") spamming
+~10 near-identical promotional messages in the last hour, including
+explicit coordinated pump language ("Move all gains to $SQFT," a fake
+"FIB buy chart," and -- directly relevant -- posts telling followers to
+"open short" on NCRA, WETO, RDHL, and AEHL, the exact names already
+tracked today, then move the proceeds into SQFT). No real news found.
+This is textbook pump/manipulation chatter targeting today's real
+movers, not a catalyst -- explicitly flagged to the user rather than
+silently dropped, since it names symbols already on watch.
+
+## 2026-09-01 ~6:35am ET -- Premarket watch: watchlist rebuilt "September 1"
+
+Trigger fired. Renamed "August 31" -> "September 1" (list
+28897739-a4e8-40fa-ac57-6fb0eb30137b). Broad market red premarket too
+(SPY -0.44%, QQQ -0.84% per Stocktwits trending), continued Iran/Fed
+overhang from yesterday.
+
+**Kept: nuclear/growth core** (LEU, SMR, ACAD, ET, RRC, OKLO, UUUU,
+CCJ) -- all real quotes checked, essentially flat overnight, no
+bearish news, thesis intact.
+
+**Kept: WETO**, despite already round-tripping its entire Monday rally
+(peaked $12.55 intraday, closed back down at $5.48) -- now popping
+again premarket to $7.60-7.68 (+39%), RVOL(1h) 109x. Real but flagged
+as high-risk: this is a name that has now made and lost a huge move
+once already in 24 hours on the same underlying $75M dilutive
+share-sale story.
+
+**Dropped: AEHL and NCRA.** Both real, dated reversals confirmed via
+this morning's Benzinga premarket-movers digest -- AEHL down -16.6% to
+$5.41 "after gaining 83% on Monday. On Friday, the company announced
+$18.99 million private placement of 15 million Class A ordinary shares
+at $1.266 per share" (the dilution overhang finally winning out over
+the bounce). NCRA continued fading (-10.6% today) with no fresh
+catalyst found -- the INERGX JV thesis has run its course for now.
+
+**Added, both real and dated:**
+- **SSM** (Sono Group) -- real M&A catalyst: signed a non-binding
+  letter of intent to combine with Sports One (would acquire minority
+  stakes in NFL/NBA/MLB/NHL franchises plus a sports-intelligence
+  business), confirmed via MT Newswires' own article (published
+  2026-08-31 6:02pm ET) -- shares +62% after-hours Monday, +52%
+  premarket now to ~$4.08.
+- **LABT** (Lakewood-Amedex Biotherapeutics) -- real regulatory
+  catalyst: received a notice of allowance for a US patent
+  ("Antimicrobial Compounds, Compositions, and Uses Thereof"), +17.6%
+  premarket. Small/thin ($5.4M market cap) -- flagged as low liquidity.
+
+**Checked and excluded:** FRVO (Fervo Energy), real Stocktwits-trending
+mover (+16.4% premarket, from an independent source outside Robinhood's
+own scans, per the standing multi-angle check) -- but no dated catalyst
+found in the real news feed explaining today's move specifically (only
+older mid-August analyst-target and 13F stories), so not added without
+a real reason.
+
+No high-market-cap earnings today overlapping the watchlist; PANW,
+DELL, MDB, CRDO, NIO, GTLB, MDT all report today (09-01) but none on
+this list.
+
+## 2026-09-01 ~7:13am ET -- Momentum scanner alert: first cycle, SSM/WETO/LABT all real
+
+First hourly cycle of the day. All three of this morning's real
+watchlist adds/holds clear the bar with self-computed RVOL (regular-
+session historicals empty this early, extended-hours bars used
+instead, same substitution as every premarket cycle):
+
+**SSM** $4.01 (was $3.95 at watchlist build, now higher), today's high
+$4.77 (~16% off, recent). Real volume 1.79M shares premarket already
+-- more than its entire ~1.02M-share float has turned over. No prior-
+day premarket baseline exists to compute a clean RVOL ratio, but that
+turnover alone is extreme and real. Catalyst: real M&A letter of
+intent with Sports One (logged this morning).
+
+**WETO** $7.50, +37% vs Friday's actual last close ($5.48), RVOL 8.68x
+(self-computed). Today's high $8.20 (~8.5% off, recent). Same $75M
+dilutive-offering story -- flagged again as high-risk given it already
+round-tripped an entire similar rally yesterday.
+
+**LABT** $2.93, RVOL 75.37x (self-computed). Today's high $3.24 (~10%
+off, recent). Real US patent-allowance catalyst (logged this morning).
+
+All three within the last ~20-30 minutes of their highs -- "igniting,"
+not "already printed." Messaged the user with all three.
+
+## 2026-09-01 ~9:15am ET -- Pre-open watchlist rectify (trig_01QfmBuxGvdEQ1ybadA2Ci1R Part A)
+
+Checked all 11 names on the "September 1" dated watchlist vs prior close, premarket:
+
+- **SSM** $3.86-3.94, +44% premarket (2.68->3.86), EXTREMELY_HIGH message
+  volume, 92.9% bullish sentiment. Real continuation of the M&A LOI thesis
+  already on the list -- no fresh negative news, though one real bear post
+  flags dilution risk tied to the deal itself (worth remembering, not a
+  reversal). Kept, no action.
+- **WETO** $7.35, +34% premarket (5.48->7.35), another real fresh pop
+  continuing the pattern already logged yesterday ("still real, fresh pop
+  again"). No new dated catalyst, pure momentum continuation. Kept as-is
+  (already flagged high-risk on the list).
+- **Nuclear complex pullback (real, sector-wide):** LEU -3.7%, SMR -4.3%,
+  OKLO -4.9%, UUUU -4.2%, CCJ -3.3%, all down together premarket. Checked
+  CCJ news specifically -- nothing bearish or name-specific, just routine
+  institutional position filings. No individual negative catalyst found on
+  any of the five; reads as a broad sector pullback/rotation, not a thesis
+  reversal. Not dropping any of them on this alone -- theses (uranium/SMR
+  demand) are unchanged, this is normal volatility. Logging because a -3
+  to -5% coordinated move across five names is material enough to note,
+  even though no list action follows.
+- ACAD, ET, RRC, LABT: no material premarket move since the 6:30am build.
+
+No watchlist edits made -- nothing cleared the bar for add/remove/drop.
+
+## 2026-09-01 ~9:35am ET -- S7 options screen (trig_01QfmBuxGvdEQ1ybadA2Ci1R Part B)
+
+Flat (no open S7 position -- get_option_positions shows only an expired
+8/24 QQQ contract at zero quantity). Ran the dated-catalyst entry screen.
+
+**GTLB** (reports today 9/1 pm, EPS est $0.13): underlying $45.835.
+$45 strike call/put (exp 2026-09-04, nearest post-earnings expiry):
+call mark $4.10 (delta 0.569, IV 2.21), put mark $3.50 (delta -0.431,
+IV 2.24). Straddle $7.60 -> expected move (x0.85) = 14.1%.
+Real historical move_pct: computed from GTLB's last 6 earnings reactions
+(report-day close -> next-day close): +11.64%, -10.60%, -7.35%, -12.78%,
+-6.18%, -2.80% -> median absolute = 8.975%.
+mismatch_ratio = 14.1/8.975 = 1.57 (cap is <0.85 to pass) -- REJECTED,
+options priced for a much bigger move than the stock has actually made.
+Also structurally over the $150/contract premium cap ($410/contract at
+the ATM strike) -- double rejection.
+
+**CRDO** (reports today 9/1 pm): underlying $216.19, too expensive to
+realistically reach a 0.30-delta contract under the $150 cap -- not
+pursued further.
+
+Nothing passed. No new S7 position opened. Staying flat.
+
+## 2026-09-01 ~10:10am ET -- Momentum scanner alert cycle
+
+**FLYE** (Fly-E Group) -- biggest % mover this cycle, +51.5% at scan time,
+RVOL 1982x (self-reported). Real-time bars show it already gave back
+~28% off its $2.79 high (made ~14:00 UTC) by the time of this check, and
+chatter includes explicit "HALT DOWN" reports and a stock-promotion group
+("Temple of Boom") posting price-target graphics -- pattern consistent
+with pump chatter, same as SQFT earlier this week. No dated news catalyst
+found. Logged for the record, not alerted as a clean setup.
+
+**INBS** checked and alerted (see below) -- real FDA-data catalyst but
+also a real live dilution offering, mixed picture disclosed to user.
+
+BIAF (+44%) and LIDR (+27%) both already faded 20%+ off their highs made
+25-40 min ago -- "already printed," not alerted.
+
+## 2026-09-01 ~11:12am ET -- Momentum scanner alert cycle
+
+**PXS** (Pyxis Tankers) alerted -- real earnings-beat catalyst (reported
+2026-08-31 pm, EPS beat by $0.07, revenue topped estimates), continuing
+into today. Just printed a fresh intraday high ($6.32) after chopping
+$5.94-6.25 for over an hour -- genuinely igniting, not already printed.
+
+INBS (from last cycle) has cooled to -1.2%, confirming the dilution-
+ceiling read from the prior alert -- no new action, already logged.
+SSM/BIAF/FLYE/LIDR/WETO all recurring, no material change from earlier
+today's alerts. Rest of this cycle's scan matches (VIDA/PW/DFNS/BRNX/
+NCRA/AEHL/SST/SKYQ/TJGC/AUUD) either negative or below the % change bar.
+
+## 2026-09-01 ~11:50am ET -- AAPL Sept-event trend + generalized event_catalog.py built
+
+User asked (after the US-Iran SPY/QQQ puts question) for AAPL's real
+historical pre-event trend ahead of the Sept 9 2026 product event, then
+asked to generalize it into a real system "for everything," not just
+AAPL.
+
+**Real 8-year AAPL fall-event data** (get_equity_historicals, real daily
+closes, no interpolated bars):
+
+| Year | Event | T-20 | T-10 | T-5 | T-1 | Event->T+1 |
+|---|---|---|---|---|---|---|
+| 2018 | 09-12 | +5.40% | +0.62% | -2.56% | -1.24% | +2.42% |
+| 2019 | 09-10 | +8.09% | +4.94% | +5.35% | +1.18% | +3.18% |
+| 2020 | 09-15* | +0.81% | -10.46% | +2.41% | +0.16% | -2.95% |
+| 2021 | 09-14 | -1.99% | -3.27% | -5.47% | -0.96% | +0.61% |
+| 2022 | 09-07 | -5.43% | -6.74% | -1.86% | +0.93% | -0.96% |
+| 2023 | 09-12 | -1.76% | -2.16% | -7.06% | -1.71% | -1.19% |
+| 2024 | 09-09 | +2.16% | -2.61% | -3.53% | +0.04% | -0.36% |
+| 2025 | 09-09 | +3.16% | +3.17% | +2.02% | -1.48% | -3.23% |
+
+*2020 was Watch/iPad only -- that year's iPhone event moved to Oct 13
+(COVID). Averages: T-20 +1.31%, T-10 -2.06%, T-5 -1.34%, T-1 -0.39%,
+event->T+1 -0.31% (3/8 positive -- real "sell the news" lean, not a
+reliable pre-event melt-up). Also found while pulling this: Tim Cook has
+stepped down, John Ternus is now CEO as of ~2026-08-31 -- no historical
+precedent for that in this dataset.
+
+**Built `event_catalog.py`** (new module) + `test_event_catalog.py` (8
+tests, all real-data-verified) to generalize S7's existing
+`option_math.py` edge test beyond earnings to any real, verified dated
+event. Full design and the live AAPL worked-example verdict (REJECTED:
+mismatch_ratio 2.87 vs 0.85 cap, premium $715/ct vs $150 cap) logged in
+strategies.md under "S7 extended to non-earnings dated catalysts."
+
+Real, live, and unrelated to the event screen itself: AAPL was already
+up +3.17% intraday today ($316.85 -> $326.88) on real volume by the time
+this was checked (~11:50am ET) -- noted, not investigated further this
+session.
+
+Not wired into any live trigger yet -- built and tested only, same
+go-live discipline S7 itself followed.
+
+## 2026-09-01 ~12:10pm ET -- Momentum scanner alert cycle
+
+**OLOX** (Olenox Industries) -- real, sharp ignition: chopped quietly
+$1.00-1.10 for 3+ hours, then real volume exploded (269K, then 1.4-1.7M
+per 5-min bar vs prior <50K bars) and price ran $1.07 -> $1.46 (+36% in
+~30 min, ~12:20-12:50pm ET) on a real 1.6M float. No dated news catalyst
+found -- Stocktwits chatter itself has a user asking "what caused the
+short squeeze... any news??" with no real answer; reads as a genuine
+float squeeze, not a fundamental catalyst. High was ~50 min old by the
+time this was checked, price already back to ~$1.20 (18% off high) --
+already printed, not alerted as a fresh setup. Also noted: the same
+account posting OLOX chatter is simultaneously cross-pumping a different
+ticker (CTM) in identical copy-paste posts -- mild promo pattern, not
+treated as a real catalyst for either name.
+
+SST/WKHS from last cycle both continued fading, no new alert. Everything
+else (FLYE/BIAF/SSM/LIDR/DAIC/PXS/WETO/INBS/LABT/EMPD) recurring, no
+material change.
+
+## 2026-09-01 ~1:10pm ET -- Momentum scanner alert cycle
+
+**PETZ** (TDH Holdings) -- real breakout on real volume (511K/724K per
+5-min bar vs ~10-90K prior) peaking $1.80 at ~2:35pm ET, but showing a
+clear fade since (lower highs each bar: 1.63 -> 1.59 -> 1.58 -> 1.56,
+now ~13% off high, ~35 min past the peak) -- past the fresh-ignition
+window, not alerted. No real dated catalyst found -- Stocktwits chatter
+has a user asking "why is this up?" and an unconfirmed "big inside buy;
+28 percent" claim alongside "scam"/"criminal" accusations; nothing
+verifiable. Logged for the record.
+
+OLOX continues fading from its earlier high, no new alert. Rest of
+today's recurring names (FLYE/BIAF/SSM/LIDR/DAIC/WETO/AUUD) unchanged.
+
+## 2026-09-01 ~4:01pm ET -- Growth sleeve daily stop check (trig_01P3etqQpqYJc9J1w9jPqbzD)
+
+Positions verified real: LYFT 4sh (stop $14.74, order 6a8df543, confirmed
+resting), SMR 1sh (stop $8.41, order 6a909804, confirmed resting).
+Quantities match resting stops on both -- no manual-buy gap. SMCI
+closed earlier today (see the 11:17am ET entry), correctly absent from
+positions.
+
+**Peak check:** LYFT real peak-since-entry is still $17.97 (08-25) --
+today's high only $17.035 (30-min bars), no new peak, stop correctly
+left at $14.74. SMR real peak-since-entry is still $10.255 (08-26) --
+today's high only $9.31, no new peak, stop correctly left at $8.41. No
+ratchets needed.
+
+**Standing technical-signal check (RSI(14)/ADX(10)/MACD(12,26,9), daily,
+last 5 sessions):**
+
+LYFT: RSI declining 62.3 -> 58.6 -> 58.0 -> 61.5 -> 51.0 (08-31) -- still
+inside the 30-70 neutral band, not oversold, but losing momentum. ADX
+declining 29.4 -> 28.2 -> 26.9 -> 27.0 -> 24.5 (08-31) -- has dropped
+BELOW the 25 real-trend threshold as of the latest close. MACD histogram
+negative and worsening for 4 straight sessions: +0.012 -> -0.014 ->
+-0.038 -> -0.033 -> -0.084 (08-31), a real bearish momentum read. Does
+NOT meet the full standing-alert bar (needs ADX>25 AND MACD against the
+position) since ADX has fallen under 25 -- ADX no longer confirms a
+strong trend even though MACD is bearish. Read honestly: real weakening
+momentum worth watching, not yet a hard signal.
+
+SMR: RSI neutral, 55.0 -> 50.2 -> 54.0 -> 50.0 -> 49.9 (08-31). ADX
+rising but still below the trend threshold: 16.5 -> 17.9 -> 19.2 -> 19.9
+-> 20.3 (08-31). MACD histogram positive but shrinking: +0.043 -> +0.029
+-> +0.049 -> +0.029 -> +0.014 (08-31) -- still bullish, fading. No
+bearish signal, no ADX confirmation either way. Mixed/neutral, honestly
+no real signal today.
+
+No ratchet, no resize, no close, no full technical signal on either
+position -- quiet cycle per the trigger's own rule, no user message.
+Logged per the standing requirement regardless of outcome.
+
+## 2026-09-01 ~4:08pm ET -- Momentum scanner alert cycle (last of the day, market closed at 4pm ET)
+
+**SSM** real, fresh acceleration right into the close: volume exploded
+from <25K/5-min bar to 500-800K starting ~3:15pm ET, price ran
+$3.95 -> $4.99 high (made in the final ~10-15 min before the close).
+Closed the regular session +75% ($4.69), up sharply from the ~44-52%
+level tracked earlier today. Same known catalyst (the real M&A LOI,
+already logged) -- no new dated news. Real risk color surfaced in
+today's chatter worth carrying forward: one detailed post flags the
+merger as "nonbinding... no disclosed sports assets, valuation or
+guaranteed closing," explicitly expecting a fade once "the pump is
+exhausted." Not alerted as an entry (market closed, nothing actionable
+tonight) -- logged as a real, large closing move for tomorrow's premarket
+review, with the dilution/nonbinding-deal risk flagged alongside the
+real catalyst.
+
+Rest of today's names (FLYE/BIAF/LIDR/PETZ/OLOX/WETO/DAIC) unchanged or
+continued fading, no other material closing moves.
+
+**This was the last momentum-scanner cycle of the day** (7am-4pm ET
+schedule, market now closed).
+
+## 2026-09-02 ~6:34am ET -- Premarket watch: watchlist rebuilt "September 2"
+
+Trigger fired. Renamed "September 1" -> "September 2" (list
+28897739-a4e8-40fa-ac57-6fb0eb30137b).
+
+**Broad context, not on the watchlist itself:** GTLB +20.2% premarket
+($45.09 -> $54.20) on its real earnings report (09-01 pm); DELL +8.96%
+premarket ($425 -> $463.07), also real earnings; MDB -13.4% premarket
+($434.21 -> $376) though MDB doesn't report until today (09-02 pm) --
+reason for the pre-earnings drop not investigated further. SPY -0.26%,
+QQQ -0.50% premarket, consistent with last night's weak-ADX/negative-
+MACD read (see the ~4:08pm ET SPY/QQQ analysis in this file).
+
+**Kept: nuclear/growth core** (LEU, SMR, ACAD, ET, RRC, OKLO, UUUU, CCJ)
+-- all real quotes checked, flat premarket, no bearish news, thesis
+intact.
+
+**Kept, escalated caution: SSM.** The real skepticism flagged yesterday
+evening (merger "nonbinding... no disclosed valuation or guaranteed
+closing," expecting a fade) is now materializing exactly as predicted --
+real premarket price is $4.18, down -12.1% from yesterday's $4.79ish
+close (which itself was a +75% day). Real, still-live name, but the
+risk case is no longer hypothetical.
+
+**Kept: WETO, LIDR** -- both real, sustained, heavily-traded momentum
+names, both red premarket (-8.6%, -6.5%) continuing recent volatility.
+Not dropped for a single red premarket print alone, consistent with
+this list's standing curation rule.
+
+**Dropped: LABT.** Real US-patent-allowance catalyst from several days
+ago has fully faded -- price down -8.3% premarket with no fresh news or
+sustained chatter since. Thesis played out.
+
+**Checked and NOT added:**
+- **UPC** (+24.8% premarket, RVOL 19x) -- real move, but chatter is
+  dominated by penny-stock hype/price-target posts and an explicit
+  "Temple of Boom" pump-group invite (same pattern as SQFT/FLYE earlier
+  this week). One real, legitimate risk flag surfaced in the chatter
+  itself: a trader citing yesterday's 13G filings totaling 80% of shares
+  outstanding -- a real dilution/overhang concern. No dated catalyst
+  found. Skipped.
+- **SUNE** -- a Stocktwits post yesterday claimed "just got a Merger
+  Agreement," but this is unconfirmed (no news-source check corroborated
+  it) and SUNE is flat premarket ($2.38 -> $2.40), not showing the price
+  action a real merger announcement would produce. Not added without
+  independent confirmation.
+
+No other real premarket movers cleared the bar for addition this
+morning.
+
+## 2026-09-02 ~7:14am ET -- Momentum scanner alert cycle (premarket)
+
+Quiet cycle, nothing fresh. Both scans dominated by red -- every name
+from yesterday's session continuing to fade this morning (SSM -6.4%,
+WETO -9.8%, FLYE -15.8%, OLOX -7.3%, PETZ -7.4%, DAIC -6.2%, LABT
+-10.5%, SST -12.7%, AMOD -21.3%), consistent with the broad overnight
+giveback already flagged in this morning's watchlist rebuild.
+
+Only two positive movers (BRNX +10.2%, NMAD +8.5%) both showed garbage
+premarket RVOL(1,1H) readings (3230x, etc.) -- checked BRNX specifically
+via get_equity_historicals (today's intraday bars not posted yet, same
+early-ingestion-lag issue documented before) and get_equity_fundamentals
+(market_date still shows 2026-09-01, overnight_volume 0) -- confirms
+nothing genuinely fresh has printed for it yet this morning, the scan's
+own numbers are stale carryover from yesterday. No real premarket
+ignition this cycle. No alert.
+
+## 2026-09-02 ~8:11am ET -- Momentum scanner alert cycle (premarket)
+
+Quiet again. UPC reappeared at +11.9% -- already assessed last cycle
+(pump-group chatter, real 13G-filing overhang, no catalyst), no material
+change, not re-alerted. BRNX/NMAD unchanged from the stale-data finding
+last cycle. Everything else continuing yesterday's broad fade
+(SSM -10.4%, WETO -11.4%, SST -12.0%, AMOD -22.4%, LABT -10.5%). No
+alert.
+
+## 2026-09-02 ~4:01pm ET -- Growth sleeve daily check
+
+LYFT (4 sh, entry $17.58): resting stop verified $14.74, quantity
+matches real position (4=4), no manual-buy gap. Real peak close since
+entry across finalized daily bars (08-24 through 09-01) still $17.70
+(08-28) -- today's close ($17.35, last trade 19:59:59 UTC) didn't
+exceed it. `decide_stop_update`: computed trail from $17.70 is $14.514,
+<= the resting $14.74, so no ratchet -- correctly left alone.
+
+Standing technical-signal check (RSI(14)/ADX(10)/MACD(12,26,9), latest
+finalized daily bar 2026-09-01, today's bar not yet in the indicator
+series):
+- RSI(14): 49.70 -- neutral, cooling from 61.72 on 08-28.
+- ADX(10): 22.79 -- BELOW 25, declining from 26.68 (08-28). No real
+  confirmed trend by this account's own >25 convention.
+- MACD(12,26,9): histogram -0.1267, macd -0.3638 vs signal -0.4904 --
+  bearish and widening (was -0.0349 on 08-28).
+
+Read plainly: MACD is tilting bearish and has been for several sessions,
+but ADX is below the 25 trend-confirmation threshold and still falling
+-- this is NOT the real ADX>25-plus-MACD-turning combination this
+account treats as a genuine signal. Mixed/neutral, not manufactured into
+something stronger. No action taken; the resting $14.74 stop remains
+the only live exit.
+
+SMR (1 sh, entry $10.00): resting stop verified $8.41, quantity matches
+real position (1=1), no manual-buy gap. Real peak CLOSE since entry
+across finalized daily bars (08-26 through 09-01) is $9.74 (08-27) --
+`decide_stop_update` off the close basis computes $7.99, well below the
+resting $8.41 (which was set off the 08-26 intraday HIGH of $10.255, a
+more conservative/higher basis than the function's own close-only
+convention) -- no ratchet, correctly left alone either way.
+
+Technical signal check: RSI(14) 49.69 (neutral), ADX(10) 19.18 (well
+below 25, no real trend at all), MACD histogram +0.0003 (essentially
+flat, barely positive). No real signal -- clearly neutral/no-trend
+read, not manufactured into anything. No action taken.
+
+Both open growth-sleeve positions: quiet day, no ratchet, no signal,
+no message needed per the trigger's own step 8.
+
+## 2026-09-02 ~4:10pm ET -- Momentum scanner alert cycle (close)
+
+VIOT made its largest print of the day into the close, +84.7% ($1.79,
+up from the +70% peak checked at 15:12 UTC). Largest real % change this
+cycle -- checked catalyst per standing rule regardless of alert
+clearance. Found one genuinely real, dated item this time: an active
+Form F-3 "mixed shelf" registration filed today, real SEC EDGAR link
+(sec.gov/Archives/edgar/data/1742770/...formf-3.htm). This is NOT a
+bullish catalyst -- a shelf registration is dilution overhang (same
+shape as LHSW's follow-on this morning), and the rest of the thread is
+pure day-trader chatter (share counts, "let's break $2," "watch out for
+the rug"). No positive dated catalyst behind the move -- logged for the
+record per step 3, not alerted. BIAF/PPBT/LHAI/JLHL all faded off their
+earlier highs into the close (BIAF +48%, PPBT +18%, down from ~73%/43%
+peaks respectively) -- already covered, no re-alert. Last cycle of the
+day (4pm ET scanner window). No alert.
+
+## 2026-09-03 ~6:35am ET -- Premarket watchlist rebuild ("September 2" -> "September 3")
+
+Real premarket check (get_equity_quotes) on the nuclear core (LEU, SMR,
+ACAD, ET, RRC, OKLO, UUUU, CCJ) -- all flat, <1% moves, kept unchanged.
+SSM (-9%, real risk still playing out) and WETO (+3%, stabilizing but
+still real elevated volume) also kept, consistent with their existing
+"real risk" flags. **Dropped LIDR** -- real momentum fully cooled to
+flat (0% premarket, no chatter), nothing left to watch.
+
+**Added RARE** (Ultragenyx Pharmaceutical) -- real, dated, MAJOR
+negative catalyst: Phase 3 neurogenetic-disorder study missed its
+primary endpoint (MT Newswires/Yahoo Finance, corroborated by a
+NewsImpact AI-impact-map link scoring 88% confidence negative), same-day
+Evercore ISI downgrade (Outperform -> In Line, PT $34 -> $16). Real
+-44.5% move, EXTREMELY_HIGH message volume, Stocktwits trending rank #5
+market-wide (get_trending_symbols, not just the low-float scanners).
+Genuinely dated, verified, not chat hype.
+
+**Added BIAF** (bioAffinity Technologies) -- NOT a fresh-catalyst add,
+a real-sustained-momentum add per the XPON-miss precedent: real,
+verified CyPath Lung commercial-expansion news from 2026-09-01 has now
+driven three consecutive real up days ($6.59 -> ~$11.66 -> $13.06
+premarket today), still on 46M+ shares volume and RVOL(1H) 58x this
+morning. Already covered extensively via yesterday's momentum-scanner
+alerts (see 2026-09-02 log entries) -- added here so the day-trade
+watchlist itself reflects a real, still-live multi-day mover, not just
+single-day scanner alerts.
+
+Skipped adding VIOT/PPBT/LHAI/JLHL/NCPL/CANF -- all real yesterday but
+faded hard overnight (VIOT $1.85 vs yesterday's $1.79 peak -- flat now;
+PPBT/LHAI/JLHL all near-flat or red) and/or already resolved as
+no-real-catalyst (VIOT's own dilution shelf filing, LHAI's explicit
+pump-and-dump warnings) -- nothing new to ground an add in this morning.
+
+Renamed the list in place (`update_watchlist`), removed LIDR
+(`remove_from_watchlist`), added RARE + BIAF (`add_to_watchlist`) -- all
+three calls confirmed `status: ok`. Final "September 3" list (12 items):
+SSM, WETO, LEU, SMR, ACAD, ET, RRC, OKLO, UUUU, CCJ, RARE, BIAF.
+
+## 2026-09-03 ~1:09pm ET -- Momentum scanner alert cycle
+
+Early Momentum Ignition (38 items) + Warrior Trading Style (2 items) both
+run. Top movers: AEHL +34.6% ($7.31), BIAF +21.1% ($11.806) -- both
+already covered/known no-catalyst this session, no change. SST +19.3%
+and DFNS +11.1% were fresh names this cycle, checked for real catalysts:
+
+- **SST (System1 Inc.)**: no catalyst. Stocklake `get_stock_news` empty
+  (14-day window). Stocktwits chat is pure speculation -- short-squeeze
+  vs dilution debate, bull-flag chart calls, a bag-holder pump-and-dump
+  warning -- nobody citing a filing or release. Real quote: $3.6399 vs
+  $3.01 prev close (+20.9%). Not alerted -- price action only.
+- **DFNS (T3 Defense Inc.)**: real, dated catalyst but modest --
+  GlobeNewswire release dated 2026-09-03 (today): subsidiary Tiltan
+  exhibiting at MSPO 2026 (Poland defense trade show), NATO market-access
+  push for TOPS simulation / Majestic.ai / T-VERSE. Also a same-day
+  Noble Capital/Channelchek research note recapping a Q2 update. Sourced
+  via Stocktwits-linked release only -- Stocklake `get_stock_news`
+  returned empty for DFNS too, so not independently confirmed there.
+  Real quote: $10.39 vs $9.26 prev close (+12.2%). This is a small-caps
+  defense name reacting to a trade-show appearance, not major news --
+  flagged to user as modest, not a strong setup.
+
+DLTH already alerted this morning (real earnings catalyst, logged
+earlier). Quiet cycle otherwise.
+
+## 2026-09-03 ~2:09pm ET -- Momentum scanner alert cycle
+
+Early Momentum Ignition (46 items) + Warrior Trading Style (2 items).
+Top movers unchanged in character: AEHL +34.8% ($7.32, known no-catalyst,
+already covered), BIAF +23.0-23.8% ($11.995-12.07, real catalyst already
+logged earlier), DLTH +17.7% (already alerted, earnings catalyst logged),
+SST +19.1% (checked this hour, no catalyst), DFNS +9.1% (checked this
+hour, real modest catalyst, not alert-worthy). Two fresh names checked:
+
+- **GRI (GRI Bio)**: no catalyst for today's move. Stocklake news empty.
+  Stocktwits chat is pure price-target hype, no one citing news. A real
+  forward-dated catalyst exists (Phase 2a IPF data presentation at ERS
+  Congress, "September 2026," announced 08-24) but that's a future event,
+  not today's trigger. Real quote context: Last $2.385, +19.25%. Not
+  alerted -- price action only.
+- **ANY (Sphere 3D)**: no fresh catalyst for today. Real catalysts exist
+  in recent history (08-24/25 shareholder-approved name change to
+  DarkHorse Technologies/DRK; 08-31-09-01 Kentucky utility approval for a
+  50MW data-center buildout tied to its AI/HPC pivot) but both are 3-9
+  days stale, already priced in, nothing new dated to today. Real quote
+  context: Last $2.4473, +11.7%. Not alerted -- stale-news momentum.
+
+Quiet cycle. No message sent to user.
+
+## 2026-09-03 ~3:09pm ET -- Momentum scanner alert cycle
+
+Early Momentum Ignition (55 items) + Warrior Trading Style (2 items). All
+top names already known/covered this session: AEHL +34.8% (no-catalyst,
+unchanged), BIAF +26.6% (real catalyst, already alerted this session,
+extending), DLTH +25.1% (real earnings catalyst, already alerted this
+morning, extending), SST +24.1% (no-catalyst, checked twice already),
+GRI +23.0% (no fresh catalyst, checked last cycle), ANY +13.9% (no fresh
+catalyst, checked last cycle), LHSW +12.7% (known no-catalyst), DFNS
++10.9% (real modest catalyst, checked twice already). No new names
+surfaced. Quiet cycle -- everything is either already-alerted or
+already-confirmed no-catalyst. No message sent to user.
+
+## 2026-09-03 ~4:01pm ET -- Growth sleeve daily check
+
+Both positions verified: LYFT 4 sh (avg $17.58, resting stop $14.74,
+order id 6a8df543, quantity matches real position) and SMR 1 sh (avg
+$10.00, resting stop $8.41, order id 6a909804, quantity matches).
+
+**LYFT** -- real peak-since-entry (finalized daily bars 08-24 through
+09-02) still $17.97 (08-25 high); today's last trade $17.285, has not
+made a new high. No ratchet needed, stop correctly stays $14.74.
+Technical check (daily): RSI(14) 55.85 (neutral), ADX(10) 21.10 (<25, NO
+real trend), MACD(12,26,9) histogram -0.1115 (negative, been declining
+5 sessions straight). Read honestly: MACD is bearish-leaning but ADX
+confirms no real trend strength behind it -- this does NOT meet the
+ADX>25 + MACD-turning-against combination that counts as a real signal
+per the standing rule. Mixed/neutral, not actionable.
+
+**SMR** -- real peak-since-entry still $10.255 (08-26 high); today's
+last trade $9.755, has not exceeded it. No ratchet needed, stop stays
+$8.41. Technical check (daily): RSI(14) 52.99 (neutral), ADX(10) 19.09
+(<25, no real trend), MACD histogram +0.0119 (flipped positive today
+after one negative print on 09-01) -- if anything mildly supportive of
+the long, not against it. No real signal.
+
+Quiet day both positions -- no stop changes, no quantity gaps, no real
+technical signal on either. No message sent to user (per standing rule:
+quiet + no signal = no message needed).
+
+## 2026-09-03 ~4:09pm ET -- Momentum scanner alert cycle (close)
+
+Early Momentum Ignition (75 items) + Warrior Trading Style (3 items,
+added TENX but negative % change, skipped). Four fresh names checked:
+
+- **FCUV (Focus Universal)**: no catalyst for today. Real catalyst is
+  stale -- an SEC 8-K (~Aug 18) disclosing shareholder approval of a
+  $250M shelf registration, flagged by traders themselves as dilution
+  risk, not bullish. Today's chat is pure squeeze/momentum talk. Real
+  quote: $18.71, +23.4%. Not alerted.
+- **PRHI (Presurance Holdings)**: no catalyst. Only real dated item is a
+  Q2 earnings release ~Aug 12 (3 weeks stale). Today's chat is pure hype
+  with a trader literally asking "why this going up." Real quote: $7.55,
+  +17.1%. Not alerted.
+- **QNRX (Quoin Pharmaceuticals)**: real catalyst exists but is ~5-6 days
+  stale, not today's trigger -- positive interim Phase 2/3 trial data
+  (p=0.0087) + ~$50M Leerink-led raise, announced ~Aug 29-31, plus
+  insider Form 4 buys by CEO/CFO/COO. Today's move reads as continued
+  follow-through, not fresh news. Real quote: $7.70, +14.2%. Not alerted
+  -- catalyst too old to count as today's trigger.
+- **AKAN (Akanda)**: no catalyst -- confirmed by traders themselves
+  ("$AKAN nada news getting hits tho"), some flagging dilution/ATM
+  overhang as bearish. Real quote: $4.12, +10.2%. Not alerted.
+
+AEHL still top mover (+33.9%), unchanged no-catalyst pattern, already
+logged multiple times today. Quiet cycle -- last hourly scan of the
+trading day. No message sent to user.
+
+## 2026-09-04 ~1:24am ET -- Growth sleeve redeployment (gap fix)
+
+User pushback, verbatim gist: capital has been sitting idle since SMCI
+closed 2026-09-01, and the account should be actively redeployed rather
+than left flat waiting on the 18% trail alone. Real check: $461.46
+buying power confirmed idle (get_portfolio) since the SMCI close -- no
+new position opened in the ~2.5 days since, unlike every prior close
+(BTG -> same-day LYFT entry on 08-24). This was a real execution gap,
+not a strategy disagreement.
+
+Market is closed overnight (regular session ended 4pm ET 09-03, current
+time ~1:24am ET 09-04) so nothing could fill immediately -- but a queued
+limit order for the next open is the same mechanism used for SMCI
+(placed 08-25 evening, filled 08-26 09:30:00 ET at a better price than
+the ceiling).
+
+Re-ran the Growth Momentum scan live (2514847d-25cb-4628-9731-bb5b0ee7d246,
+55 real matches). Pulled real fundamentals on 10 whole-share-affordable
+candidates (HL, AYA, STNE, GME, TTD, DLO, BEKE, LFST, GGB, SDGR).
+Rejected: SDGR (PE -28.1, unprofitable, same pattern excluded before),
+AYA/GGB/LFST/DLO (all sitting at or within ~1% of their 52-week high --
+extended, chasing not entering), STNE/TTD/BEKE/GME (real ADX 20-22,
+below this account's own 25 threshold for "real trend," despite decent
+value).
+
+**Picked HL (Hecla Mining)**: PE 26.6 (profitable), ADX(14) 31.5 (real
+confirmed trend, only candidate checked clearing the 25 threshold with
+a non-extended price), RSI 63.16 (not overbought), real quote $21.03-
+21.21, mid-range of its 52wk band ($8.75-$34.17, room to run), real 1mo
+momentum +5.84%. Same precious-metals sector as BTG, this account's one
+clean win to date (+8.0%, closed on explicit profit-take).
+
+Placed limit buy: 20 sh, $22.00 ceiling (GFD, regular_hours) -- order id
+6a9a5620-363e-42db-b1c1-4bbd431e264e, verified state: queued (market
+closed, next-open queuing, not a rejection). ~$440 of $461.46 buying
+power committed (95%), consistent with prior deployment sizing
+(BTG/SMCI both ~90%+ of available buying power). Scheduled a same-session
+follow-up (trig_012Hzf3jTtQSJ2RMuzbWhesV, fires ~9:34am ET 09-04) to
+verify the real fill and place the GTC stop_market at 18% below entry
+within the same discipline as every other growth-sleeve trade.
+
+## 2026-09-04 ~1:50am ET -- Robinhood's scanner exposes IV *and* HV as screenable fields (S7 candidate-starvation fix)
+
+User asked directly: "is there any website api for you to access or would
+signal you if any contract is really undervalued?" Answer, found by
+actually checking rather than assuming: **yes, and it was already in this
+account.**
+
+**The real finding.** `get_scanner_filter_specs` lists an OPTION filter
+group containing `FILTER_TYPE_IMPLIED_VOLATILITY` and
+`FILTER_TYPE_HISTORICAL_VOLATILITY` as first-class screenable fields,
+plus `FILTER_TYPE_AVERAGE_OPTIONS_VOLUME`, `FILTER_TYPE_TOTAL_OPEN_INTEREST`,
+`FILTER_TYPE_RELATIVE_OPTIONS_VOLUME`. The account's pre-existing "High
+options volume and IV" scan (ce0cc952-47c4-441d-ac50-029a5d37e335) already
+had `atmIv30Day` as a column -- the capability has been sitting unused
+since before this agent started. NOTE: no IV-RANK/IV-PERCENTILE filter
+exists in the spec list (the tool's prose guide mentions "IV rank" in
+passing among PERCENTAGE-unit filters, but it is NOT in the actual
+filter_specs array -- do not assume it is available).
+
+**Why this matters -- the real S7 diagnosis.** S7 has run 13 real live
+checks and produced 13 rejections and ZERO trades since going live
+2026-08-19. The standing explanation was the premium-cap/delta wall. That
+was real but incomplete. The bigger cause was **candidate starvation**:
+the screen was fed 1-2 hand-picked names per day off the earnings
+calendar. A screen with a genuine hit rate of even 1-in-30 will show 13
+straight rejections and look broken when it is merely underfed.
+
+**Built: scan "Cheap IV vs HV - S7 option candidates"**, scan_id
+`47f4f938-a4d9-413e-a1c7-e01855c09e45`. Filters (structural/liquidity
+only -- deliberately NO absolute IV threshold, since any absolute IV cut
+would be an invented number):
+  - Asset type = STOCK
+  - Last BETWEEN $5-$60 -- derived, not arbitrary: this account's own 13
+    rejections established a $150/contract cap cannot reach a 0.30-delta
+    strike much above ~$50-60/share (BMNR/AAOI/BABA/OXY pattern).
+  - Average options volume (1d, 30) > 2000 and Open interest > 5000 --
+    practical tradability floors (a real two-sided market to exit into),
+    explicitly NOT predictive thresholds.
+Columns: Implied volatility (`atmIv30Day`), Historical volatility,
+Market cap -- so ONE run_scan returns both vols per row.
+
+**First real run (2026-09-04, values are 09-03 CLOSE -- market shut, IV
+does not update until the 9:30am open per the documented 2026-08-20
+finding):** 396 total matches, 200 returned, **200/200 rows carried both
+a usable IV and HV** (zero missing-data rows). Applying this account's
+already-derived thresholds: **62 of 200 cleared iv_hv_ratio < 0.90**
+(S7's existing "cheap" cap), **38 cleared < 0.80** (McMillan Method-2
+threshold). Ten cheapest by IV/HV: EIX 0.357, PYPL 0.478, CELH 0.498,
+BROS 0.507, APTV 0.552, SEDG 0.558, FOUR 0.577, MDLN 0.621, TDS 0.625,
+LASR 0.640.
+
+**Caveats recorded, not buried:**
+  - Robinhood's HV column is a SINGLE window of undocumented length, so
+    this maps to `option_math.iv_hv_ratio()` (single-window), NOT the
+    stricter multi-window `iv_cheap_vs_multi_window_hv()` (McMillan
+    Method 2). Method 2 was NOT run here and must not be claimed.
+  - A very low ratio (under ~0.45, e.g. EIX at 0.357) is MORE OFTEN one
+    outsized historical gap inflating HV than genuinely cheap options.
+    Every top-ranked name needs a real-daily-bar outlier check before it
+    is trusted -- same class as RULE ZERO's concentration check.
+  - Cheap IV is NECESSARY, not SUFFICIENT, and says nothing about
+    DIRECTION. Survivors still face the unchanged gates: real catalyst,
+    >=0.30 delta, <=$150 premium, real contract-level spread/liquidity.
+
+**Wired in, not just noted:** the S7 trigger
+(trig_01QfmBuxGvdEQ1ybadA2Ci1R) now runs this sweep as TRACK 1, ahead of
+the dated-catalyst and soft-catalyst tracks, with the outlier check and
+all three caveats written into its standing instructions. It also now
+requires naming WHICH gate killed each top candidate on a zero-pass run,
+so the rejection pattern stays diagnosable rather than just accumulating.
+
+**Third-party alternatives checked (WebSearch), for the record:** paid or
+freemium IV-rank sources exist -- Barchart, FlashAlpha, Market Chameleon,
+Unusual Whales, ApexVol (free on ~13 tickers only), Option Strategist
+(free WEEKLY vol data). None was adopted: all are third-party feeds that
+can go stale (the 2026-08-17 Stocklake byte-identical-movers incident is
+the precedent), most paywall the useful breadth, and the broker's own
+scanner is the same feed our orders actually execute against. Revisit
+only if a real IV-PERCENTILE history (McMillan's preferred Method 1,
+~600-day IV series per symbol) is needed -- that is the one thing the
+Robinhood scanner genuinely cannot supply, and it is why
+`iv_cheap_vs_multi_window_hv`'s docstring calls itself a stand-in.
+
+## 2026-09-04 ~1:55am ET -- Growth-sleeve trigger: idle-capital redeployment made a standing step
+
+Follow-through on the same session's user pushback about capital sitting
+idle. The growth-sleeve trigger (trig_01P3etqQpqYJc9J1w9jPqbzD) now has a
+step 8 requiring a buying-power check EVERY run (not only after a close),
+with a same-cycle rescreen-and-redeploy if settled cash supports a
+whole-share position, explicit handling of the cash-account T+1
+unsettled-proceeds trap, the after-close queued-limit-order path so a
+4:05pm fire can still act, and a requirement to state the reason in one
+line whenever it deliberately does NOT redeploy. Step 3 was also
+sharpened to say plainly that the user's 2026-09-01 standing
+authorization means a real technical signal gets ACTED on, not surfaced
+and left waiting for permission.
+
+## 2026-09-04 ~6:35am ET -- Premarket watchlist rebuild ("September 3" -> "September 4")
+
+Heavy 2026-09-03 post-close earnings night. Confirmed via
+`get_earnings_calendar` (days=-2, real verified est-vs-actual EPS) and
+cross-checked against real premarket quotes.
+
+**The real pattern this morning, worth naming:** every one of the eight
+reporters checked BEAT its EPS estimate, and five of the eight are DOWN
+premarket -- three of them sharply. This is a guidance-driven tape where
+an EPS beat is not enough:
+
+| sym  | 9/3 close | premkt   | %      | EPS est -> actual |
+|------|-----------|----------|--------|-------------------|
+| LULU | 121.77    | 98.37    | -19.2% | 2.51 -> 2.92 BEAT |
+| GWRE | 202.86    | 171.00   | -15.7% | 0.85 -> 0.99 BEAT |
+| ASAN | 10.09     | 8.92     | -11.6% | 0.05 -> 0.10 BEAT |
+| PATH | 18.22     | 16.77    | -8.0%  | 0.13 -> 0.15 BEAT |
+| ZS   | 177.80    | 172.80   | -2.8%  | 0.88 -> 1.19 BEAT |
+| AMBA | 63.38     | 65.01    | +2.6%  | 0.08 -> 0.18 BEAT |
+| PL   | 18.35     | 20.34    | +10.8% | -0.05 -> -0.03 BEAT |
+| IOT  | 38.75     | 44.02    | +13.6% | 0.13 -> 0.20 BEAT |
+
+**ADDED (6)** -- all real, dated 9/3-pm earnings catalysts with real
+premarket gaps: LULU, GWRE, ASAN (big gap-downs on beats), IOT, PL
+(clean gap-ups), PATH (gap-down, and cheap enough to size). GWRE noted
+with a caveat: $171/share and a wide premarket spread (164.53/174.49),
+so it is expensive to size and the quote is thin right now.
+
+**KEPT (7):** WETO -- real +15.9% premarket bounce ($3.7305 vs $3.22)
+after yesterday's -16.8%, genuinely still live. LEU (+0.7%), SMR (+1.8%),
+OKLO (+2.0%), UUUU (+2.3%), CCJ (+0.9%) -- the nuclear/uranium core, all
+modestly green, theme intact (SMR is also a held S9 position). RARE
+(+1.5%) -- still worth watching for post-crash volatility after the
+-44% Phase 3 miss two sessions ago.
+
+**DROPPED (5):** SSM (yesterday's -27% crash fully played out, now flat
+at $3.5422/+1.2%), ACAD (flat, quiet, no catalyst), ET (+0.8% but a
+21.20/23.60 premarket spread -- thin and unreliable), RRC (-0.9% with a
+36.95/47.62 spread, quote not trustworthy premarket), BIAF (**-7.0%**
+at $11.8857 vs $12.78 -- the 3-day catalyst run is rolling over; this is
+the curate-don't-accumulate case, dropped on the move ending rather than
+on absence of a fresh headline).
+
+Final "September 4" list (13): WETO, LEU, SMR, OKLO, UUUU, CCJ, RARE,
+LULU, GWRE, IOT, PL, PATH, ASAN. All three calls (`update_watchlist`,
+`remove_from_watchlist`, `add_to_watchlist`) confirmed `status: ok`.
+
+Note: only one high-market-cap name reports in the next 3 days (IRS,
+2026-09-04, unverified timing) -- the earnings wave largely emptied out
+last night, so today is about trading the gaps, not anticipating new ones.
+
+## 2026-09-04 ~7:12am ET -- Momentum scanner cycle (premarket) -- scan fields contradicted by real bars
+
+Early Momentum Ignition (82 items) + Warrior Trading Style (4 items).
+Textbook case of why the premarket RVOL substitution rule exists. Every
+row's "Relative volume" read exactly 1 (the documented broken premarket
+placeholder) and "Relative volume (1, 1H)" returned absurd values
+(XHLD 16,272; ASTI 4,790; NMAD 2,970) -- neither field usable.
+
+Four names screened >5% positive. Cross-checked each against REAL
+extended-hours 30-min bars (get_equity_historicals, bounds=extended,
+08:00-11:00 UTC). Result: **three of the four were not backed by real
+premarket trading at all.**
+
+| sym  | scan said        | REAL premkt volume (6 bars) | verdict |
+|------|------------------|------------------------------|---------|
+| DAIC | +9.6%, vol 3.85M | **6,780 sh** total           | reject  |
+| MODD | +8.8%, vol 680K  | **2,970 sh** (2 bars interpolated) | reject |
+| NMAD | +6.4%, vol 327K  | **0 sh -- ALL SIX BARS interpolated=true** | reject |
+| AKAN | +14.2%           | 470,773 sh (genuinely real)  | reject, faded |
+
+- **DAIC**: the scan's "Volume 3,847,193" is NOT today's premarket volume
+  -- it is carrying yesterday's session total (yesterday's 4:09pm row
+  showed 3,664,616). Real premarket tape is 6,780 shares. Real bar prices
+  ($3.39-3.50) also disagree with the scan's "Last $3.66".
+- **NMAD**: every single premarket bar is `interpolated: true` with
+  volume 0 -- zero real trades. Its "+6.4% / Last $3.89" is fabricated
+  gap-fill, precisely what RULE ZERO says to discard before computing
+  anything. A name can appear on this scan at +6% having never traded.
+- **AKAN**: the one with genuinely real premarket volume (470,773 sh).
+  But real bars show it peaked at **$4.80** in the 5:30am ET bar and has
+  declined since ($4.32 -> $4.16 now) -- the high is 1.5+ hours old and
+  untested, the textbook "already printed" case. Also already checked
+  2026-09-03: no catalyst, traders themselves citing ATM/warrant dilution
+  as an overhang.
+- **WETO** (+13.7%) not re-checked here -- already added to today's
+  watchlist at the 6:35am build on its real +15.9% bounce.
+
+Nothing cleared step 2/3. Quiet cycle, no user alert. Reusable lesson
+recorded: on premarket fires, the scan's `dayVolume` can still be
+yesterday's total, and a row can show a large % change off purely
+interpolated bars -- the extended-hours bar check is not optional.
+
+## 2026-09-04 ~8:15am ET -- ALERTED: AKAN real premarket ignition (no catalyst, squeeze mechanics)
+
+First genuine alert-worthy name in several cycles. AKAN (Akanda Corp)
+went from +14.2% at the 7:12am cycle (where it was correctly rejected as
+faded -- peaked $4.80 at 5:30am ET, drifting at $4.16) to **+47.1% at
+$5.40** by 8:11am. Materially changed, so re-checked per the trigger's
+own rule rather than skipped as already-seen.
+
+**Volume test -- passed decisively, self-computed from real extended-hours
+10-min bars (NOT the broken premarket RVOL field, which read "1" on every
+row this cycle):**
+
+| bar (UTC) | open -> close | high | volume |
+|-----------|---------------|------|--------|
+| 11:50 | 4.299 -> 4.3197 | 4.32 | 19,384 |
+| **12:00** | **4.31 -> 5.3399** | **6.09** | **1,757,545** |
+
+That single 10-minute bar traded **3.27x the entire 537,665-share float**.
+The whole prior premarket session (08:00-11:59 UTC, ~4 hours) totalled
+only ~470,000 shares. ~50x volume expansion in one bar. High ($6.09) was
+made within ~10-15 min of the check -- the trigger's "igniting, not
+already printed" case, not the stale-high case.
+
+**Catalyst -- NONE. Verified, not assumed.** Stocklake: zero articles in
+14 days; widening to 30 days gives one stale item (2026-08-13 fiber-network
+PR). Stocktwits: ~70 messages read back to 04:33 ET, not one links a
+release or filing dated 09-03 or 09-04; most recent linked filing is
+**Aug 18** (6-K, Nasdaq equity-shortfall extension). Traders themselves
+confirm the vacuum -- "any news or why?", "strange movement", and one
+detailed post: "if there was any catalyst this would double within 3-5
+mins." Message volume only NORMAL (score 52) despite 94% bull sentiment
+-- retail-mechanical, not a news shock.
+
+**What is actually driving it (real, numbers cited overnight):**
+~264k shares short vs ~540k float = **~49% short float**, borrow fee
+**~202% annualized** as of 09-03, only ~90k shares available to borrow.
+Plus April-run nostalgia ($3.25 -> $57 in April 2026).
+
+**Dilution risk -- ELEVATED and specific, flagged in the alert:** no
+offering/ATM filing has appeared yet, but cash ~$0.5M vs ~$14.2M debt,
+and a **Dec 13 2026 Nasdaq equity-compliance deadline** requires $2.5M
+stockholders' equity. That is a direct structural incentive to issue
+equity into exactly this kind of squeeze. A trader flagged the pattern
+this morning: "run up stock with PR... once stock gets momentum they dump
+an offering mid day."
+
+Alerted to user with the no-catalyst status stated plainly, the dilution
+risk named, and the standing n=108 hold-time reminder. Explicitly NOT
+presented as a clean setup.
+
+Also this cycle: MODD (+8.5%) rejected again -- still mostly interpolated
+bars, best real bar only 25,477 sh. WETO (+19.6%, $3.86, real volume)
+not re-alerted -- already added to today's watchlist at the 6:35am build.
+
+## 2026-09-04 ~9:15am ET -- WETO: live $75M ATM found. Corrects this morning's watchlist reasoning.
+
+WETO ran to **+28.9% ($4.15)**, making new highs over its $4.11 premarket
+high, on a 914,805-share float with genuinely real volume (verified in
+real extended-hours bars: 303K/180K/127K/370K/164K across 10-min bars --
+not interpolated). Cleared step 2 decisively, so a full catalyst check
+was run. It found something that changes the picture materially.
+
+**Catalyst: NONE.** Stocklake news `status: empty` (zero articles, 30
+days). SEC filing index since 2026-06-01: most recent filing is
+**2026-08-26** -- nothing on Sept 2, 3 or 4. Last company item was an
+Aug 31/Sept 1 sEMG-Vision demo blurb, 4 days stale. On Stocktwits a
+widely-followed trader tagged it at 9:00am, verbatim: **"surging atm, no
+news."** Nobody links a 09-03 or 09-04 release.
+
+**Dilution risk: SEVERE, ACTIVE, and confirmed in a real filing --**
+- **424B5 filed 2026-08-26**: prospectus supplement for **up to
+  $75,000,000 of ordinary shares** via a sales agreement with **Rodman &
+  Renshaw dated Aug 26, 2026**. That is a LIVE at-the-market offering.
+- $75M against a 914,805-share float at ~$4 is an overhang worth roughly
+  **20x the entire float**.
+- A second 424B5 sits at Aug 24. Context: 100:1 reverse split in late
+  July, Aug 24 EGM, then the new ATM.
+- The prior ATM was terminated Aug 19 mid-run and **replaced Aug 26 at a
+  much higher print** -- a textbook sell-into-strength setup.
+- A trader this morning: "Turn the ATM off please."
+
+**CORRECTION TO THIS MORNING'S 6:35am WATCHLIST BUILD.** WETO was KEPT on
+the "September 4" list with the stated reason "real +15.9% premarket
+bounce ... genuinely still live." That justification was price-action
+only -- no catalyst check and no filing check was run on it at build
+time. Had the filing index been pulled then, the live $75M ATM would have
+been visible (it has been on file since 08-26). The name is not
+disqualified from a WATCHlist -- but it should have been carried with the
+ATM flagged, not as an unqualified bounce. Standing lesson: for a
+sub-$5 microcap with a sub-1M float, run get_sec_filing_index at build
+time, not only when the name later spikes.
+
+Alerted the user with the no-catalyst status stated plainly, the $75M ATM
+named with its filing date, and the correction to this morning's reasoning.
+
+**AKAN follow-through (alerted 8:15am at $5.40, spike high $6.09):**
+round-tripped to **$4.39** by 9:13am -- **-28% off the spike high in
+under an hour**, still +19.6% on the day. No offering filed that would
+explain it; reads as the squeeze simply exhausting. The alert's explicit
+"decide the exit before entering" caveat was the operative one. Recorded
+as a real outcome of a real alert, not quietly dropped.
+
+## 2026-09-04 ~9:35am ET -- HL filled, stop verified resting
+
+The overnight redeployment worked. Order 6a9a5620 (20 sh HL, GFD limit
+$22.00, placed ~1:24am while the market was closed, verified `queued`)
+**FILLED at the open: 09:30:01 ET, 20 shares @ $20.62**, single execution,
+zero fees. That is $1.38 under the $22.00 ceiling and under the prior
+session's $21.21 close -- a third real confirmation that a limit ceiling
+is a maximum, not an expected fill price (same as SMCI 08-26, filled
+$38.00 against a $39.50 ceiling). Cost $412.40 of the $461.46 that had
+been sitting idle.
+
+GTC stop_market placed at **$16.91** = `growth_signal.trailing_stop_price`
+on the real $20.62 fill (20.62 x 0.82 = 16.9084, rounded to the penny
+tick). First response came back **`state: unconfirmed`** -- per the
+standing post-IPST rule ("a stop that isn't verified resting is not a
+stop; it's a belief") the order state was re-checked in the same turn:
+**`state: confirmed`**, genuinely resting, covering all 20 shares.
+
+**Real process defect found, worth fixing:** stop latency was **318
+seconds**. The fill happened 09:30:01 but the fill-verification check had
+been scheduled for 09:34, so the position sat unprotected ~5 minutes.
+Nothing went wrong this time, but the exposure was real and avoidable.
+**Rule: when a limit order is queued overnight for the open, book the
+verification check at ~09:31, not 09:34.** Applied to any future
+overnight-queued entry.
+
+Growth sleeve now holds three positions: LYFT (4sh, stop $14.74), SMR
+(1sh, stop $8.41), HL (20sh, stop $16.91). Logged to trades.csv row 17
+and CLAUDE.md's S9 row (status updated to n=7, 3 open).
+
+## 2026-09-04 ~9:40am ET -- S7 cycle: Track 1's FIRST live run. No trade, but the wall finally narrowed.
+
+Flat (get_option_positions returned []), so the entry screen ran. Market
+open, so IV is live -- not the stale-close problem documented 2026-08-20.
+
+**PART A (pre-open watchlist rectify): overtaken by events.** This trigger
+fired 09:36am, six minutes AFTER the open, so a "pre-open" pass was moot.
+The rectify effectively happened live across this morning's cycles
+instead: WETO's $75M ATM found and flagged, AKAN's round-trip tracked.
+Both logged above. No further churn applied.
+
+**TRACK 1 -- systematic IV/HV sweep, first live run.** 396 matches, 200
+returned, **200/200 usable** (both vols present on every row). **63 cleared
+iv_hv_ratio < 0.90**, **36 cleared < 0.80** -- closely matching last
+night's 62/38, so the candidate pool is stable, not a fluke.
+
+**The artifact check earned its place on run one -- it killed the #1 name.**
+Computed real 66-day close-to-close realized vol from real daily bars for
+the three lowest ratios, then recomputed excluding the single largest move:
+
+| sym  | biggest 1-day move | its share of variance | HV all | HV ex-outlier | IV/HV all | **IV/HV ex-outlier** | verdict |
+|------|--------------------|----------------------|--------|---------------|-----------|----------------------|---------|
+| AMLX | **+49.4%** (08-18) | **70.1%**            | 113.0% | 61.1%         | 0.516     | **0.954**            | **ARTIFACT -- REJECT** |
+| AAP  | -28.2% (08-20)     | 54.2%                | 74.0%  | 50.0%         | 0.585     | 0.866                | survives, marginal |
+| PYPL | +15.9% (07-15)     | 36.2%                | 50.8%  | 40.7%         | 0.500     | **0.624**            | survives, robust |
+
+AMLX's "cheapness" was ONE biotech gap (Aug 18: $21.43 -> $35.11 on 23.98M
+shares vs ~1-3M normal) carrying 70% of the variance. Strip it and IV/HV
+goes to 0.954 -- **above** the 0.90 cap, i.e. not cheap at all. Exactly the
+failure mode the check was written for, caught on the first live run.
+
+Note: my computed HV differs from the scan's column (AMLX 113.0% mine vs
+173.6% scan; PYPL 50.8% vs 53.0%) because Robinhood's HV window length is
+undocumented. Use the scan's HV for RANKING, my own 66-day computation for
+the artifact check -- the latter is reproducible, the former is not.
+
+**STRUCTURAL FINDING -- the cap/delta wall narrowed from a chasm to a
+near-miss.** Real live quotes, PYPL @ $55.34, 2026-10-16 expiry (42 DTE):
+
+| contract | delta | premium | gate result |
+|----------|-------|---------|-------------|
+| $57.50 call | **0.4127** (clears) | **$193** | FAILS premium ($150 cap) |
+| $60.00 call | 0.2730 | **$102.50** (clears) | FAILS delta by 0.027 |
+| $52.50 put  | -0.2905 | **$117.50** (clears) | **FAILS delta by 0.0095** |
+
+Compare to the historical pattern: AAOI needed **4.4x the cap** to reach
+delta 0.246; OXY needed 2.4x the cap for delta 0.463. Today a strike misses
+the 0.30 floor by **under one hundredth of a delta** with premium
+comfortably inside the cap. The $5-60 price band did precisely what it was
+designed to do. The wall is no longer structural -- it is now marginal.
+
+**NO TRADE. The gate that killed it: NO DATED CATALYST.** Neither PYPL nor
+AAP has a near-term dated catalyst (get_earnings_calendar shows only IRS
+reporting in the next 3 days among high-cap names; PYPL's -12.7% Aug 28
+move is already priced). Cheap IV is NECESSARY, NOT SUFFICIENT, and it
+says nothing about direction -- a long single-leg option with no catalyst
+and no directional thesis is a theta bleed, not a setup. Rejecting here is
+the screen working, not failing.
+
+Also learned, worth recording: the 2026-10-02 expiry returned an EMPTY
+instrument list for both $57.50 and $52.50 -- weekly expiries carry coarser
+strike sets. A future run wanting a shorter-DTE variant to shave premium
+must ENUMERATE available strikes first, not assume the monthly ladder
+exists on a weekly.
+
+**Running total: 14 checks, 14 rejections, 0 trades -- but the first
+rejection that is fully diagnosable.** Prior 13 died on an unfixable
+structural wall. This one died on a missing catalyst, with the wall
+reduced to 0.0095 of delta. That is a materially different failure, and it
+says the next real dated catalyst on a $5-60 underlying has a genuine
+chance of clearing every gate at once.
+
+## 2026-09-04 ~10:15am ET -- Momentum cycle: WETO's ATM warning validated; IMRN is the day's first REAL catalyst
+
+**WETO -- the 9:15am ATM warning played out within the hour.** Real
+regular-session 10-min bars from the open:
+
+| bar (UTC) | open -> close | high | low | volume |
+|-----------|---------------|------|-----|--------|
+| 13:30 | 4.12 -> 3.24 | 4.15 | 3.24 | 655,393 |
+| 13:40 | 3.24 -> 2.49 | 3.28 | **2.49** | 1,610,478 |
+| 13:50 | 2.70 -> 2.61 | 2.83 | 2.4301 | 1,082,356 |
+| 14:00 | 2.6101 -> 2.59 | 2.66 | 2.49 | 477,118 |
+
+**-41% from the $4.15 open high to the $2.4301 low in ~30 minutes**, now
+~$2.59 and **-20% vs yesterday's $3.22 close**. Anyone who chased the
+premarket strength above $4 is down ~37%. The live $75M ATM (424B5 filed
+2026-08-26, Rodman & Renshaw) was found by pulling the SEC filing index --
+NOT visible in price action, which looked like a clean bounce. The
+correction made at 9:15am ("run get_sec_filing_index at build time for
+sub-$5 microcaps with sub-1M floats") earned its keep inside one hour.
+
+**IMRN (Immuron) -- REAL, DATED, SAME-DAY CATALYST. First one today.**
+2026-09-04 press release: "Immuron to launch PROIBS(R) in the United
+States" -- exclusive U.S. distribution agreement with Calmino group AB.
+GlobeNewswire, filed as **Form 6-K (CIK 1660046, ex99-1)**, verified by
+reading the filing itself, not just the headline.
+
+Real volume, verified in regular-session bars: **~19.2M shares in the
+first 40 minutes** (8,376,681 / 5,995,665 / 2,936,077 / 1,933,937) against
+a **5,135,937-share float** -- plus premarket, ~87.5M on the day, roughly
+17x the float.
+
+**But three real qualifiers, none of them minor:**
+1. The release does **NOT** claim FDA approval or clearance. PROIBS is a
+   *European* CE-certified medical device; **no U.S. regulatory status is
+   disclosed**. A distribution agreement is not an approval, and that is a
+   thin basis for +62%.
+2. Short-seller Adam Gefvert (CFA) is **publicly attacking on exactly that
+   gap**, and the post is circulating in the Stocktwits stream.
+3. **Live ATM**: Form F-3 shelf 333-280667, ATM agreement with H.C.
+   Wainwright (July 2, 2024), 424B5 of Oct 3, 2025 raising capacity to
+   ~$2.85M. Baby-shelf limited (float <$75M) so far smaller than WETO's
+   $75M -- but they can absolutely print into this spike.
+
+**Price test FAILED anyway:** peaked **$1.99** in the 13:40 bar (~35 min
+before this check), now $1.82 (-8.5% off the high), with volume decaying
+**77%** across four bars (8.4M -> 1.9M). The ignition is spent, not
+building. Reported to the user as a real-catalyst name that is already
+past its impulse, explicitly NOT as an entry.
+
+**CDTG -- NO catalyst, and the WORST dilution profile seen today.**
+No news dated 09-03 or 09-04. Only 30-day items are an Aug 25 Jane Street
+13G (5.10%) and an Aug 25 Pep'd peptide investment. Stocktwits already
+rolling over ("it pumped, and now its dumped"), sentiment NEUTRAL 45,
+delta -28. Dilution:
+- **1-for-25 reverse split effective 2026-06-01**, explicitly for Nasdaq
+  minimum-bid compliance (75.5M -> 3.02M shares).
+- **EGM 2026-07-28 raised authorized share capital from 4,000,000 to
+  500,000,000** -- a **125x** issuance runway.
+- F-1 filed 2026-03-04; 424B3 2026-04-17 (62M Class A at $0.105, pre-split).
+Real price action confirms the fade: ran $0.9139 -> **$1.4227** high, now
+$1.1459, **-19% off the high**, volume halving (7.76M -> 3.64M). Rejected.
+
+**Pattern of the day, worth carrying forward:** four low-float movers
+checked (AKAN, WETO, IMRN, CDTG). Three had NO catalyst. All four had a
+live dilution mechanism -- AKAN (Nasdaq equity deadline Dec 13 + $0.5M
+cash vs $14.2M debt), WETO ($75M ATM), IMRN (~$2.85M ATM), CDTG (125x
+authorized-share increase post-reverse-split). On this class of name the
+SEC filing index is not optional diligence; it is the primary read.
+
+## 2026-09-04 ~12:10pm ET -- ALERTED: AOUT, the day's only clean setup. Plus outcomes on the morning's names.
+
+Note: the 11:12am cycle and this 12:10pm cycle arrived together after a
+gap. Ran the CURRENT state once rather than replaying the stale 11:12
+snapshot -- an hour-old momentum read is not actionable and re-reporting
+it would be fabrication by staleness.
+
+**AOUT (American Outdoor Brands) -- +41.1% at $14.12. ALERTED.**
+This is the first name today to clear every gate at once.
+- **Real, dated catalyst, independently verified:** reported earnings
+  2026-09-03 **pm**. EPS estimate **-$0.25**, actual **+$0.03** -- a swing
+  from an expected loss to an actual profit. Confirmed from
+  get_earnings_calendar (verified: true), pulled this morning, not from
+  chat.
+- **Real volume:** RVOL **10.49** -- and this is the 9:30am-4pm window
+  where Robinhood's RVOL field is trustworthy, unlike the premarket
+  garbage documented earlier today. 3.30M shares vs a 10.44M float.
+- **Still near its high, and genuinely so:** session high **$14.45**
+  (14:00 UTC bar, 10:00am ET), now $14.05-14.12 -- only **2.7% off**.
+  Critically it has RETESTED that area repeatedly since: bar highs of
+  14.34 (14:30), 14.34 (14:40), 14.23 (15:40), 14.30 (15:50), 14.29
+  (16:00). This is consolidation near the high, NOT the abandoned-high
+  "already printed" pattern.
+- **Not a dilution shell:** $126M market cap, 10.44M float, a real
+  operating company -- categorically different from the sub-$2,
+  sub-1M-float, live-ATM names that dominated this morning.
+
+Honest qualifiers given to the user: the impulse is spent (volume decayed
+from ~295K/bar in the first 40 min to ~25K/bar now), so this is a holding
+pattern rather than an ignition; and +41% off a -0.25 -> +0.03 beat is a
+large move for a small absolute beat, so low-float mechanics are doing
+some of the work.
+
+**Outcomes on the morning's names -- all three resolved as warned:**
+- **AKAN**: $3.7688, **+2.7%** -- a FULL round trip. Alerted 8:15am at
+  $5.40 with spike high $6.09 and an explicit no-catalyst + dilution
+  warning; it has given back essentially the entire move to near flat.
+- **WETO**: $2.591, **-19.5%**, stable at the collapsed level. The $75M
+  ATM call was correct end to end.
+- **CDTG**: **$1.295, +43.9%** -- MATERIALLY CHANGED since the 10:15am
+  check (was $1.1139/+23.8%), with volume expanding 27.8M -> **71.6M**.
+  Re-flagged to the user, NOT as a setup: the 10:15am finding stands
+  unchanged -- no catalyst, 1-for-25 reverse split (06-01), authorized
+  shares raised 4,000,000 -> **500,000,000** on 07-28. A no-catalyst pump
+  running further does not become safer; it makes an offering into
+  strength more likely, not less. Explicitly logged that being "wrong" on
+  direction for an hour is not being wrong on risk.
+- **IMRN**: $1.695, +52.7%, volume now 102.2M. Real 6-K catalyst confirmed
+  earlier; drifting below its $1.99 high. No new alert -- already covered,
+  not making new highs.
+
+## 2026-09-04 ~1:10pm ET -- BIAF: a CORRECTION to my own premature self-criticism, plus a real scanner defect
+
+**What I said first, and why it was wrong to say it.** BIAF ran from -11%
+($11.40) this morning to **+59% at its $20.3499 high** (~12:05pm). Because
+I had dropped it from the watchlist at the 6:35am build, I told the user
+"dropping BIAF this morning was a miss... I was wrong to remove it." **I
+said that BEFORE the catalyst check came back -- judging my own decision
+by the price outcome instead of by the facts.** That was the wrong order
+of operations, and the facts reversed it.
+
+**Verified facts (catalyst check):**
+- **NO new dated Sept 4 catalyst exists.** Most recent company release is
+  **2026-09-01** ("bioAffinity Advances CyPath Lung for Surveillance of
+  Lung Cancer Survivors," BusinessWire) -- the catalyst already known and
+  already traded. Stocklake 10-day window returns that single article. No
+  Sept 4 PR, 8-K, contract, FDA action, analyst note or index event. Last
+  8-Ks are Sept 3 and Sept 1. Today's only Benzinga item is the **8:05am
+  premarket LOSERS list** (-9.24%, $11.60).
+- **So the 6:35am drop reasoning -- "the 3-day catalyst run is rolling
+  over" -- was CORRECT and is now independently confirmed.** The news
+  cycle had in fact rolled over. What the drop missed was float/squeeze
+  MECHANICS, not fundamentals. Those are different errors and only the
+  second one occurred.
+
+**The bull thesis driving the squeeze is factually FALSE.** A poster
+claiming a Goldman M&A background circulated a **$38-51 "takeout" target**
+citing "effectiveness results announced this AM." **No such release
+exists.** He appears to have misread the **S-3 registration going
+EFFECTIVE** as clinical **EFFECTIVENESS**. Sentiment 91.7% bull, message
+volume EXTREMELY_HIGH (98/100). Traders themselves group it with
+GPRO/QCLS as a short-float squeeze.
+
+**Dilution risk: SEVERE -- the worst seen today, worse than WETO's $75M ATM.**
+- **1-for-15 reverse split effective 2026-08-24** (Nasdaq compliance).
+- Robinhood `financial_status_indicator` flags **"Noncompliant" (CC4)**.
+- **S-3 filed 08-27, S-3/A filed 09-03** (File 333-298597) registering
+  **1,692,408 shares for Armistice Capital = 282% of the 600,736 shares
+  outstanding**, against a 573K float.
+- 564,136 pre-funded warrants @ **$0.105**; 564,136 Series A + 564,136
+  Series B @ **$4.9757** -- ALL massively in-the-money at $17.85.
+
+Warrants struck at $4.98 with the stock at $17.85 and a shelf registering
+nearly 3x the shares outstanding is not a missed fundamental opportunity.
+It is a mechanically dangerous chase.
+
+**Price test also fails independently:** peaked $20.3499 (~12:05pm), now
+$17.85-17.96, **-12.3% off the high**, with strictly lower bar highs since
+(20.17 -> 19.29 -> 19.57 -> 19.55 -> 18.49 -> 18.33) and volume decaying
+739K -> 185K. High is an hour old and untested. Not an entry.
+
+**LESSON RECORDED (process, not markets): do not concede an error on the
+basis of price action before the facts are in.** Outcome != process. A
+correct decision can be followed by an adverse price move; that does not
+retroactively make it wrong. I published self-criticism one turn too
+early and had to retract it in the next breath. Check first, assess second.
+
+**REAL SCANNER DEFECT FOUND -- both saved scans have a $20 price ceiling.**
+"Early Momentum Ignition" filters Last BETWEEN **$2-20**; "Warrior Trading
+Style" filters Last BETWEEN **$1-20**. BIAF was trading **$20.0433** when
+the 12:10pm cycle ran -- ABOVE both ceilings -- so it appeared in NEITHER
+scan and **went invisible at exactly its session peak**, reappearing only
+after fading back under $20. Any name that runs THROUGH $20 drops off the
+momentum board precisely when it is most extended. Surfaced to the user
+with a proposed fix (raise the ceiling to ~$50); NOT changed unilaterally,
+since these are the user's own Legend-built scans and altering a filter
+mid-session silently changes alert behavior.
+
+## 2026-09-04 ~2:15pm ET -- GRI: strongest price action of the day, WORST risk profile of the day
+
+**Price action (verified, real 10-min regular-session bars) was genuinely
+the best of any name today** -- and this is why it needed checking, not
+buying. GRI stair-stepped UP for four straight hours from a $2.34 open,
+and the 18:00 UTC (2:00pm ET) bar printed the **session high $2.98 on
+84,091 shares -- the largest volume bar of the day**. Volume EXPANDED into
+new highs (2-12K/bar this morning -> 45K -> 71K -> 84K). Every other name
+today peaked and faded; GRI was the only one still igniting at 2pm.
+
+**CATALYST CHECK: the Phase 2a IPF data has NOT been released.** The
+2026-08-24 GlobeNewswire release names the exact slot: ERS Congress,
+Barcelona, **Sept 5-9, 2026**; the late-breaking oral (OA2380, abstract
+63931, Session 12.04 Rare ILD/DPLD, presenter Helen Parfrey) is
+**Sunday 2026-09-06, 3:45-5:00 PM CEST** -- two days out. No 8-K, 6-K or
+PR dated 09-03 or 09-04; Stocklake returned zero articles in 14 days.
+Stocktwits' top-dated post today is a trader restating the Sept 5-9 window
+as "what I'm watching."
+
+**So today's +29% is pre-catalyst FRONT-RUNNING into a binary that prints
+over a WEEKEND.** That is a materially worse structure than any of the
+no-catalyst squeezes checked earlier today, because the position cannot be
+managed across the gap -- two days of no trading between entry and event.
+
+**Additional framing caveat that cuts the upside:** the 08-24 headline
+ALREADY reads "Highlighting Lung Function, Anti-Fibrotic Biomarkers and
+Favorable Tolerability," and GRI already released positive Phase 2a
+topline (2025) and gene-expression data (2026-01-28). ERS late-breaker
+rules require novel data, but with topline already public this may be a
+detail-add rather than a fresh readout -- i.e. the good news is largely
+pre-announced, so the "buy the rumor" payoff is capped while the
+disappointment risk is not.
+
+**DILUTION: severe, and the float is manufactured.**
+- **1-for-28 reverse split effective 2026-01-26** (15,960,229 -> 570,002
+  shares). This is GRI's **SECOND** reverse split (prior 1-for-7). The
+  2.19M float is an artifact of splits, not a natural scarcity.
+- **Active S-3 shelf effective 2026-01-29 for $250,000,000**, with a
+  424B5 ATM supplement up to $60M (H.C. Wainwright). The filing is
+  literally **"ATM prospectus supplement no. 7"** -- it is being ACTIVELY
+  DRAWN, not sitting dormant. **$6.8M already raised via ATM in Q1 2026.**
+- Dec 2025 offering left **8,063,336 pre-funded + 10,666,667 Series F
+  warrants** outstanding -- **18.7M warrants against a 2.19M float**.
+- Nov 2025 Nasdaq stockholders'-equity deficiency, cured only by that
+  offering.
+A pop into a conference is precisely when this ATM gets tapped.
+
+**Verdict delivered to user: strongest chart, worst structure.** Not
+alerted as a setup. A $5M-cap with a live $250M shelf being actively drawn,
+two reverse splits, 18.7M warrants, running two days BEFORE a binary that
+resolves over a weekend, with the positive framing already pre-announced.
+
+**BYRN -- no catalyst, but materially cleaner.** No PR/8-K/contract/analyst
+action dated 09-04; zero Stocklake articles in 10 days; Stocktwits is one
+"nice move" post, volume NORMAL, sentiment **100% BEAR**. Last real news is
+Q2 FY26 earnings **08-25**: revenue **-42% YoY**, **$10.1M net loss**;
+B. Riley cut PT $21 -> $12 (kept Buy). Dilution is materially cleaner --
+no reverse split, no S-3/ATM located, no warrant overhang, Nasdaq
+compliant. Real risk is cash burn ($9.6M cash at 2/28/26, down from
+$15.5M; $9.3M net loss for six months ended 5/31/26) with a $5M revolver
+and $15M delayed-draw term loan undrawn. Caveat carried honestly: absence
+of an S-3 in search is not proof of absence -- verify EDGAR CIK 0001354866
+before sizing. Price action is a low-float bounce off lows on thin volume
+(3,466 shares in the current bar). Not a setup either.
+
+**Day's scoreboard on catalyst verification: 6 low-float movers checked
+(AKAN, WETO, CDTG, BIAF, GRI, BYRN). ZERO had a real same-day catalyst.
+FIVE had live dilution mechanics.** The only name today with a genuine
+verified dated catalyst was AOUT (9/3-pm earnings beat) -- the one that is
+also still holding its gains ($14.31, +43%, near its $14.45 high).
+
+## 2026-09-04 ~3:09pm ET -- Momentum cycle: quiet, no new names. Follow-through on the day's board.
+
+Warrior scan returned 7 items, ALL previously checked and logged today.
+No new name surfaced. Nothing clears step 2/3 -- no alert warranted.
+
+Real quotes at 19:09 UTC, follow-through on names actively discussed:
+
+| sym  | now      | vs close | note |
+|------|----------|----------|------|
+| IMRN | $1.7201  | +54.5%   | firm; vol now 114.4M (~22x its 5.14M float) |
+| CDTG | $1.315   | +46.2%   | off its $1.395 intraday push |
+| AOUT | $14.16   | +41.5%   | **holding**; alerted 12:10pm @ $14.12, still above entry |
+| BIAF | $17.65   | +38.1%   | stable, still ~13% under its $20.35 high |
+| GRI  | $2.8696  | +25.3%   | **STALLED** -- off the $2.98 high flagged at 2:15pm |
+
+**GRI follow-through matters.** At 2:15pm it was the only name still
+igniting (session high on the day's largest volume bar). One hour later
+it has failed to extend and is back to $2.87. The catalyst finding
+explains why the chart alone was not enough: the Phase 2a IPF data does
+not print until **Sunday 09-06**, so there is no news to sustain an
+intraday breakout -- only positioning ahead of a weekend binary, against
+a live $250M shelf being actively drawn (ATM supplement no. 7). Chart said
+go; structure said no; structure has been right so far.
+
+**AOUT remains the day's only verified-catalyst name and the only one
+still holding gains.** Alerted 12:10pm at $14.12 on a real 09-03-pm
+earnings beat (est -$0.25 vs actual +$0.03); now $14.16, having spent
+three hours between roughly $13.9 and $14.45 without breaking down. Every
+no-catalyst name checked today either round-tripped (AKAN), collapsed
+(WETO -21.7%), or stalled well off its high (BIAF, CDTG, GRI).
+
+## 2026-09-04 ~4:05pm ET -- Growth sleeve daily check: HL stop ratcheted on day one
+
+Three positions, all quantity-verified against real resting stops (no
+manual-buy gap this cycle):
+
+| sym  | qty | avg cost | resting stop | qty match |
+|------|-----|----------|--------------|-----------|
+| LYFT | 4   | $17.58   | $14.74       | yes (4)   |
+| SMR  | 1   | $10.00   | $8.41        | yes (1)   |
+| HL   | 20  | $20.62   | $16.91 -> **$17.17** | yes (20) |
+
+**HL -- RATCHETED on its first day.** Real peak since this morning's
+09:30:01 entry is **$20.94** (15:00 UTC hourly bar high). Today's high
+across all bars: 20.675 / **20.940** / 20.910 / 20.860 / 20.7498 / 20.810.
+`growth_signal.trailing_stop_price(20.94)` = 17.1708 -> **$17.17**, above
+the resting $16.91, so `decide_stop_update` said ratchet. Cancelled the
+old stop (verified **`state: cancelled`**, cumulative_quantity 0), placed
+the new one, verified **`state: queued`** (placed 20:04 UTC, four minutes
+after the 4pm close -- next-open queuing, not a rejection, same as every
+prior post-close ratchet in this sleeve). HL closed $20.675, still above
+the $20.62 entry.
+
+Data-quality note recorded, not hidden: the 15:00 UTC bar that set the
+$20.94 high is oddly shaped -- a 2.5-cent range (20.915-20.940) on only
+50,743 shares, sitting between bars of 213K and 2.66M volume, with its LOW
+above the adjacent bars' highs. It is NOT flagged interpolated, so it is
+treated as real. Using the next-highest bar instead ($20.910) would give
+$17.15 rather than $17.17 -- a 2-cent difference that does not change the
+decision to ratchet either way.
+
+**LYFT -- real edge case: `decide_stop_update` said UPDATE, but the update
+is SUB-PENNY and correctly was NOT executed.** Peak since entry did
+advance, $17.97 (08-25) -> **$17.98** (09-03 high). But
+trailing_stop_price(17.98) = **14.7436**, which rounds to **$14.74** --
+exactly the resting stop. Robinhood rejects subpenny increments above $1
+(documented in CLAUDE.md), so a cancel/replace would have produced an
+identical order while leaving the position briefly unprotected for zero
+benefit. **Correct action: no change.** Worth remembering: a True from
+decide_stop_update is not automatically an order -- check that the new
+stop actually differs at the penny tick before touching a working stop.
+
+**SMR -- no change.** Peak since entry still $10.255 (08-26); today's high
+only $9.72. `decide_stop_update` -> should_update=False. Stop stays $8.41.
+
+**TECHNICAL SIGNAL CHECK (standing requirement, logged regardless of
+outcome). All readings as of the 09-03 finalized daily bar:**
+
+| sym  | RSI(14) | ADX(10) | MACD histogram (last 3) | real signal? |
+|------|---------|---------|--------------------------|--------------|
+| HL   | 63.46   | **36.06** | -0.066 -> -0.053 -> **-0.026** | **NO** |
+| LYFT | 54.98   | 21.24   | -0.125 -> -0.111 -> -0.106 | **NO** |
+| SMR  | 54.72   | 20.37   | -0.001 -> +0.012 -> **+0.031** | **NO** |
+
+Honest reads, no manufactured signals:
+- **HL** is the only position with a confirmed trend (**ADX 36.06**, well
+  above 25). Its MACD histogram is negative but **recovering three
+  sessions running** (-0.066 -> -0.053 -> -0.026), i.e. turning back IN
+  FAVOR of the long, not against it. RSI 63.5 is strong without being
+  overbought. This is constructive, not a warning. No action.
+- **LYFT**: ADX 21.24 is **below 25**, so by this account's own convention
+  there is no real trend, and the negative-but-shrinking MACD histogram
+  does not constitute a signal on its own. Mixed/neutral -- stated plainly
+  rather than dressed up. Note LYFT closed **$16.695, -3.4% on the day**
+  and is **-5.0% below its $17.58 entry**; the 18% trail at $14.74 is
+  nowhere near threatened.
+- **SMR**: ADX 20.37, no confirmed trend, but the MACD histogram has gone
+  positive and is **expanding** (+0.012 -> +0.031) -- mildly supportive of
+  the long. Closed $9.695, -3.1% below its $10.00 entry.
+
+Standing disclosure repeated: this account's own S11 backtest (44 real
+trading days, SPY/QQQ 5-min bars) found no exploitable edge in
+short-horizon technical-crossover signals. These are honest current
+momentum reads, not proven predictors.
+
+**REDEPLOY CHECK (step 8) -- no idle capital, and the reason is clean.**
+Real buying_power **$49.06**. That is not idle cash sitting unused: it is
+the residual after this morning's HL purchase consumed **$412.40** of the
+$461.46 that had been sitting since the SMCI close. The gap the user
+called out on 09-04 is now closed -- capital is deployed across three
+positions ($491.27 equity value vs $540.33 total account value). Nothing
+whole-share affordable at $49.06 among growth-scan candidates, so no
+redeployment this cycle, by arithmetic rather than by omission.
+
+## 2026-09-06 — Ignition Board: which URL is live, and whether its data layer actually works
+
+User asked: *"do you need a website to integrate the ignition board so that
+I can access it easily"*. Checked rather than assumed. Three real findings.
+
+**1. No website is needed — a published artifact IS a hosted page.** It has
+a permanent URL on claude.ai, opens in any browser (phone included), and
+survives this session ending. There is nothing to host, deploy, or pay for.
+
+**2. There are TWO published Ignition Boards, and this file pointed at the
+wrong one.** `Artifact action:list` returned both:
+- `d6619239-807d-4ef3-9c3b-d9a400107c81` — favicon 🔥, updated 2026-09-01.
+  **This is the live one.** 2,239 lines / 101,023 bytes.
+- `952415af-3876-453b-a469-db076662881e` — favicon ⚡, updated 2026-08-21.
+  Superseded first build. Still published (artifacts cannot be deleted from
+  here), so it will keep working and keep showing 08-21-era code — which is
+  exactly the trap, because it predates the RVOL fix of 08-28.
+The 2026-08-20 section of this file recorded only the 952415af URL and was
+never updated when the board was rebuilt. Corrected in place today. **If the
+user opens the ⚡ one they get the old board and won't be told so** — the
+favicon is the only visible difference. Told them to bookmark the 🔥 URL.
+
+**3. Whether live data renders is a real open question, and the page says
+so itself rather than faking it.** Read the published source directly. Its
+data layer is `window.claude.use("mcp")` + `mcp.callTool(SERVER, ...)` with
+`SERVER = "Robinhood"` (plus one `Stocklake` call at line 1433 for the
+catalyst column). Per the artifact-capabilities contract, that reaches the
+**viewer's claude.ai connectors** — NOT this session's locally-configured
+MCP servers. This session's own connector list reports none connected, but
+that describes THIS session, not the user's claude.ai account, so it does
+not settle the question either way. What can be verified: the board fails
+honestly. `boot()` at line 2181 branches on a null capability and paints
+"Live data isn't available in this view / This board reads your saved
+Robinhood scans directly. This view can't reach your connectors, so there's
+nothing to show." So the user's own screen answers the question in one look
+— tickers = connector live; that message = connector gone. Did NOT tell
+them it works, and did NOT tell them it's broken. Neither is known here.
+
+**Not republished.** A republish requires reading all 2,239 lines of the
+fetched copy first, and nothing about the page needed changing — the fix
+was to the record in this file, not to the code.
+
+## 2026-09-06 — Growth sleeve rule change: a technical signal now means TIGHTEN, not SELL
+
+Applied to `trig_01P3etqQpqYJc9J1w9jPqbzD` (growth-sleeve 4:05pm check),
+step 3. User's instruction was *"only if necessary if not let it be"* — so
+the bar was whether the change is justified on process grounds ALONE,
+independent of any trade's outcome. It is.
+
+**The defect, stated without reference to SMCI:** step 3 ended with *"Act on
+a real signal; do not sit on one waiting for permission."* That sentence
+authorized closing a position early on a technical-crossover signal. This
+account's own S11 backtest — EMA fan-out, 44 real trading days of SPY/QQQ
+5-minute bars, run in this repo — found **no exploitable edge** in exactly
+that class of signal. The same step 3 already required disclosing that
+finding when giving a recommendation, then instructed acting on the signal
+anyway, overriding an 18% trailing stop that carries no such measured
+defect. That is an internal contradiction that was in the trigger from the
+day the S11 result was written down, and it would have been worth fixing if
+SMCI had gone to $50.
+
+**The change (minimal, one bullet):**
+- A technical signal BY ITSELF → **tighten**: flag it, ratchet the stop up
+  ahead of the 18% schedule if warranted. Explicitly framed as a full
+  action, not as deferring — the user's 2026-09-01 standing authorization
+  (*"dont ask me to sell or stop. do you analysis and do what you have to
+  do"*) is untouched and restated. Nothing now waits for permission.
+- A full early **CLOSE** requires the signal **plus** a nameable, dated
+  corroborating fact: guidance cut, downgrade, dilution/ATM filing,
+  earnings miss, sector break — verified via `get_stock_news` /
+  `get_sec_filing_index` / Stocktwits. This is the same catalyst gate the
+  momentum-scanner job has always applied to entries; it now applies to
+  discretionary exits too, which is the consistency that was missing.
+- With corroboration: close it, no asking. Without: let the stop work, and
+  say in the message that the signal fired and no corroboration was found.
+
+**SMCI recorded as the illustration, explicitly NOT as the proof.** Closed
+2026-09-01 at $36.4822 on such a signal; 2026-09-04 close $39.59, intraday
+high $40.91; the trail at $32.37 was never threatened (low since $35.63);
+realized −$18.21 against +$19.08 for holding the rule. That is n=1 and does
+not establish the call was wrong — the S11 finding does the arguing. Same
+discipline as the BIAF lesson two days ago: **outcome is not process.**
+
+**Two smaller fixes folded into the same trigger update, both from real
+2026-09-04 observations:**
+- Step 4 now handles the LYFT sub-penny case: `decide_stop_update` can
+  return `should_update=True` when `trailing_stop_price` rounds to the same
+  cent as the resting stop. Compare to the resting price first; if
+  identical, do nothing — a cancel/replace would unprotect the position for
+  zero benefit.
+- Step 8 now says to book the post-open fill check at ~9:31am ET, not
+  later. HL's queued order filled at 9:30:01 while the check was set for
+  9:34 — 318 seconds unprotected.
+
+## 2026-09-07 (Labor Day) — premarket cycle SKIPPED; market-holiday guard added to all four triggers
+
+The 6:30am ET premarket-watch trigger fired into a fully closed market. **No
+watchlist was rebuilt and nothing was renamed** — dating a list "September 7"
+would have labelled it for a session that does not exist. The "September 4"
+list stays as it is; Tuesday's fire renames straight to September 8.
+
+**Verified, not assumed.** Two independent checks:
+1. Real tape: `get_equity_quotes` on SPY, HL, LYFT, SMR at 06:34 ET. Every
+   one had a newest print of **2026-09-05T00:00:00Z** (Friday 8pm ET) on both
+   `venue_last_trade_time` and `venue_last_non_reg_trade_time` — no premarket
+   activity at all, where a normal weekday shows prints from ~4am ET.
+   SPY $770.23, prior close $773.17 (2026-09-03, `interpolated: false`).
+2. NYSE holiday calendar via web search: US equity and fixed-income markets
+   closed Monday 2026-09-07 for Labor Day, reopening Tuesday 2026-09-08.
+   Corroborated by NYSE Group's own 2026-2028 holiday calendar release.
+The tape alone was deliberately not treated as sufficient — a data outage
+looks identical from the quote side.
+
+### The real defect this exposed
+All four cron triggers fire `* * 1-5` and have **no knowledge of market
+holidays**. Today alone they were scheduled to burn ~12 cycles on a closed
+tape: premarket (fired), momentum scanner (10 fires, 11:00-20:00 UTC), S7
+options screen (13:35 UTC), growth sleeve (20:00 UTC). Two of those four
+place real orders.
+
+The cost is not just wasted cycles. With the market closed, Robinhood's
+scanner rows, Relative-volume fields, IV/HV columns and option spreads go
+flat or stale — the exact same failure mode already documented for
+after-hours pulls (the 2026-08-20 scan returned 0% change and RVOL of
+exactly 1 on every row). Screening on that and acting is a RULE ZERO
+violation waiting to happen.
+
+**Fixed: a step-0 holiday guard added to all four triggers.** Each now, before
+anything else: pulls SPY, compares the newest print timestamp against the
+prior session, corroborates against the NYSE calendar via web search, and if
+closed does nothing — no rebuild, no scan, no screen, no orders, no
+trades.csv/CLAUDE.md edits — logs one line here and sends no user message.
+Per-trigger specifics: the premarket guard forbids renaming the list to a
+non-trading date; the momentum guard writes one sources.md line on the FIRST
+fire of a closed day and stays silent on the other nine; the growth guard
+notes explicitly that resting GTC stops stay resting across a holiday (the
+positions are NOT unprotected) and that "no new data" must not be read as a
+signal or a stale snapshot as today's high; the growth step-8 follow-up
+scheduler now skips a holiday when booking the next-open fill check.
+
+### Stocklake token expired — real, and it degrades the catalyst gate
+`get_economic_calendar` returned **"MCP server Stocklake requires
+re-authorization (token expired)"**. This is the news leg of the catalyst
+gate (`get_stock_news`) and the whole of S7's Track 3. Stocktwits and
+`get_sec_filing_index` still work, so the gate is degraded, not gone. All
+four triggers now carry a line saying to state plainly when Stocklake is
+unavailable rather than quietly proceeding on Stocktwits alone — and
+specifically, for the new growth-sleeve corroboration rule, NOT to read
+"couldn't check the news" as "no corroborating catalyst exists." That
+distinction is the difference between an honest hold and a fabricated one.
+Needs the user to re-authorize; cannot be done from a non-interactive
+session. Canva is also unauthorized, but nothing depends on it.
+
+### Positions across the long weekend — unchanged and protected
+LYFT 4sh (stop $14.74), SMR 1sh (stop $8.41), HL 20sh (stop $17.17). Friday's
+closes: LYFT $16.695, SMR $9.695, HL $20.675 (still above the $20.62 entry).
+GTC stops rest through the holiday. Next real session: Tuesday 2026-09-08.
+
+## 2026-09-08 ~6:35am ET — Premarket watch: "September 8" built (first session after Labor Day)
+
+Holiday guard passed cleanly: SPY carried a live premarket print at
+**2026-09-08T10:34:16Z** with bid/ask refreshing at 10:35:21Z, session
+PRE_MARKET. Corroborating detail worth keeping — every symbol's
+`previous_close_date` rolled from 2026-09-03 to **2026-09-04**, never to
+09-07, which is independent confirmation from Robinhood's own data that
+Monday had no session at all.
+
+**List renamed in place** (28897739-a4e8-40fa-ac57-6fb0eb30137b),
+"September 4" -> "September 8". 13 items -> 9.
+
+### DROPPED (8)
+**The entire 9/3-post-close earnings cohort — ASAN, PATH, PL, IOT, GWRE,
+LULU.** Added 09-04 on real earnings reactions; three sessions on, every
+one is inside ±2% premarket and has gone quiet: ASAN 8.65 vs 8.81 close
+(-1.8%), PATH 15.09 vs 15.19 (-0.7%), PL 18.13 vs 18.12 (+0.1%), IOT
+40.00 vs 40.20 (-0.5%), GWRE 161.73 vs 162.42 (-0.4%), LULU 100.26 vs
+100.61 (-0.3%). This is the "move fully played out" criterion, not a
+fresh-catalyst-only cut.
+**RARE** — 15.25 vs 15.30 (-0.3%), quiet, no catalyst.
+**WETO** — dropped DESPITE being green (+3.9%, 2.6495 vs 2.55). The $75M
+ATM has been on file since 08-26, it already round-tripped -41% within an
+hour of that warning on 09-04, and today's scan still shows a 914,805
+float. A bounce inside live dilution mechanics is not a setup. This is the
+09-04 lesson applied rather than re-learned.
+
+### ADDED (4), each with a verified dated catalyst
+**SRPT $19.00, -15.6%** vs $22.50 close (108K premarket volume). Real,
+dated, this morning: **Novartis's late-stage del-desiran trial missed its
+primary endpoints**, and the failure is dragging the whole DM1/muscle-
+wasting mechanism cohort. Verified two ways — Stocktwits chatter named it
+first (user CDMO, 09:51Z: "novartis results are not great for sarepta...
+the underlying mechanism is the same"), then confirmed against real news
+(Seeking Alpha: "Novartis drops 13% on trial failure, dragging Dyne and
+Sarepta"). **Key framing: this is a COMPETITOR read-through, not SRPT's
+own data.** Visible "buy the dip" / "dead cat bounce" chatter already —
+treat as a knife, not a gift.
+**NVS $140.33, -12.3%** vs $159.99. The epicenter of the same event.
+Quoted directly, not inferred.
+**ORCL $164.71, +3.7%** vs $158.78. Running INTO Q1 FY27 earnings
+**2026-09-10 pm** — confirmed independently by Robinhood's own
+`get_earnings_calendar` (est EPS $1.67), not just by the news. Analyst PT
+raises ahead of the print. Also flagged for S7 Track 2, though at $164 it
+is far outside the $5-60 scan band the premium cap forces.
+**GME $19.17, flat premarket.** Reports **tonight (9/8 pm)**, est EPS
+$0.06. Added for the event, not for premarket action.
+
+**DYNE deliberately NOT added.** The news names it alongside SRPT, but
+`get_equity_quotes(["DYNE","NVS","GME"])` returned only NVS and GME — no
+row for DYNE. Rather than add a symbol on the strength of a news article
+with no quote of its own, it was left off. Worth a re-check if it resolves.
+
+### KEPT (5) — nuclear/uranium core
+LEU $173.93 (flat, last print 07:33Z), SMR $9.77 (+0.7%), OKLO $41.71
+(+1.1%), UUUU $14.51 (+0.3%), CCJ $100.00 (-0.7%, thin 08:53Z print with
+bid $101.03 ABOVE it). Kept under the XPON rule — durable multi-week theme
+still genuinely live — but stated honestly: only OKLO shows any real move,
+and the core has now been flat for several sessions. If it is still this
+quiet by mid-week it earns a trim, not another free pass.
+
+**Scanner note, expected and confirmed again:** "Early Momentum Ignition"
+returned 66 items with `Relative volume` flat at exactly 1 on nearly every
+row and % changes reflecting FRIDAY's session, not this morning's
+premarket (BIAF showing -24.4% at $11.54, FCUV -51%). Same documented
+pre-9:30 staleness. Not used for today's adds; every add above came from a
+real premarket quote plus a verified catalyst.
+
+**Positions across the long weekend, all well clear of stops:** HL $20.52
+(-0.8% vs $20.68, stop $17.17), LYFT $16.60 (-0.7% vs $16.72, stop
+$14.74), SMR $9.77 (+0.7% vs $9.70, stop $8.41).
+
+## 2026-09-08 ~7:12am ET — ALERTED: CDTG fresh premarket ignition, NO catalyst (price action only)
+
+**CDTG** (CDT Environmental Technology, foreign private issuer) $1.57
+bid/ask 1.56/1.57 at 11:11:49Z vs $1.32 Friday close = **+18.9%**.
+Float 2,838,044. Market cap $3.99M.
+
+**Why this cleared step 2 — real, self-computed, not the broken RVOL field.**
+Pulled `get_equity_historicals` 10-min bars, bounds extended, none
+interpolated. Total premarket volume 08:00-11:10Z = **222,386 shares**, and
+**115,927 of that (52%) landed in the single 11:00Z bar** — the most recent
+one. That bar ran $1.38 -> $1.4697 (high $1.47) on ~15x the prior bar's
+volume, and the live quote was already $1.57, ABOVE the bar's high. This is
+igniting inside the last ~12 minutes, not already printed — exactly the
+time-awareness carve-out in step 2, and the opposite of the "high was 1+
+hours ago" case.
+
+**Honest limit on the RVOL claim:** real premarket volume was measured, but
+a same-time-of-day average across 5-7 prior sessions was NOT computed, so
+no RVOL multiple is quoted. Friday's own 87.1M-share day is an anomaly and
+would poison a naive comparison anyway.
+
+**Step 3 FAILED: no catalyst.** Stocktwits carries zero dated news — it is
+momentum chatter plus an alert-service pump list ("Some Stocks to Watch for
+8 Sept: $ISPC $ATER $CDTG $IMRN $SLE", posted 00:01Z by an account selling
+an indicator). Alerted anyway, explicitly framed as **"no catalyst found —
+price action only,"** per the standing rule, never as a clean setup.
+
+**Dilution check (the WETO rule), and it comes back CLEANER than expected:**
+`get_sec_filing_index` since 2026-07-01 shows no offering, ATM, or shelf.
+Most recent are insider Form 3 and Form 4 (both 2026-08-25) and three 6-Ks
+(07-06, 07-07, 07-28). Stated caveat, not glossed: CDTG is a foreign
+private issuer filing 6-K rather than 8-K, so an offering could be
+disclosed via 6-K or a 424B prospectus supplement and might not surface in
+this index. "No dilution filing found" is not the same as "no dilution."
+
+**The real bear case, recorded because it is specific and probably right:**
+Friday CDTG traded 87.1M shares; a commenter (PeterTauscher, 10:56Z) says
+31.5M were shorted that day and argues today is the classic day-2 dump —
+"no more revenue, no momentum, no volume left." Another (09:16Z) calls it
+"the same one hit wonder for only 1 Day as all the other 95%." That is the
+same structure that killed AKAN and WETO on 09-04. The ignition is real;
+the durability is not established.
+
+**New scanner finding worth keeping — the staleness is PARTIAL, not total.**
+Earlier this session I judged the whole premarket scan stale. That was
+wrong and is corrected here: on "Warrior Trading Style" at 11:11Z, `Last`
+($1.57) and `% Change` (0.1894) matched the live quote exactly, so those
+two columns ARE live premarket. But `Volume` read 8.71e7 — Friday's
+full-day figure, not today's 222K — and `Relative volume` was the usual
+flat 1. So the rule is narrower than "don't trust the scan premarket":
+**price and % change are live; volume and RVOL are stale.** Both scans
+still need `get_equity_historicals` for any volume claim before 9:30.
+
+## 2026-09-08 ~9:13am ET — BUG FOUND AND FIXED: the S7 "pre-open" trigger has been running AFTER the open since it was created
+
+Found while checking the clock during a routine momentum cycle, not from a
+failure report — which is the only reason it surfaced at all.
+
+**The defect.** `trig_01QfmBuxGvdEQ1ybadA2Ci1R` carried
+`cron_expression: "35 13 * * 1-5"`. Cron is evaluated in **UTC**. During
+EDT (UTC-4) that is **9:35am ET** — five minutes AFTER the 9:30 open. The
+trigger's own prompt says, in its first line, *"~8:35am ET weekday (before
+the 9:30am open)"*, and its PART A is titled **"Pre-open watchlist
+rectify."** It has never once run pre-open.
+
+**Confirmed against real fire times, not inferred:** `last_fired_at`
+2026-09-04T13:36:03Z = 9:36am ET, and 2026-09-07T13:35:55Z = 9:35am ET.
+The trigger was created 2026-08-19, which is also EDT, so this has been
+wrong for its entire life — roughly three weeks of "pre-open" rectifies
+that were actually post-open.
+
+**Why it matters, concretely.** PART A exists to catch a watchlist name
+that faded hard in premarket BEFORE the bell, so the list is clean when
+the session starts. Running it at 9:35 means the open has already
+happened and the first five minutes — the most violent stretch of the day
+for exactly the low-float names this account trades — are gone. It also
+means PART B's option screen was pricing contracts into a live opening
+book rather than a quiet premarket one.
+
+**Fix applied:** cron changed to **`35 12 * * 1-5`** = 12:35 UTC = **8:35am
+EDT**, matching what the prompt always claimed. Schedule-only update, sent
+without a prompt so nothing was held back. Verified: `next_run_at` now
+**2026-09-09T12:35:00Z**. Prompt text left untouched — it was already
+correct; the schedule was the thing that lied.
+
+**Known follow-up, recorded so it is not a surprise:** cron here has no
+timezone, so when EDT ends (2026-11-01) 12:35 UTC becomes 7:35am EST — an
+hour early. That is the safe direction to be wrong (still pre-open, just
+early) and is the deliberate trade rather than an oversight, but the cron
+needs a re-check at the DST boundary. Same applies to every trigger in
+this account.
+
+**Audited the other three for the same class of error; all correct in EDT:**
+- Premarket watch `30 10` = 10:30 UTC = 6:30am ET ✓ (observed fire 10:34)
+- Momentum scanner `0 11-20` = 7:00am-4:00pm ET ✓
+- Growth sleeve `0 20` = 4:00pm ET ✓ (observed 20:01, prompt says ~4:05)
+Only S7 was wrong.
+
+**Momentum cycles this hour, for the record:** nothing cleared the >5% bar
+on either scan. CDTG continued to bleed after the 7:12am alert — $1.57
+(+18.9%) -> $1.4197 (+7.6%) at 8:12am -> $1.3698 (+3.8%) at 9:13am, never
+retesting the $1.47 spike high. The day-2 fade the bearish commenters
+described is what actually happened. Alerting it with "no catalyst — price
+action only" rather than as a setup was the right framing.
+
+## 2026-09-08 ~10:13am ET — ALERTED: MOBX live ignition, no catalyst, HEAVY live dilution stack
+
+First cycle of the day with the market open, so `Relative volume` is finally
+a real number rather than the flat-1 placeholder. Five names matched; the
+RVOL column immediately proved it can mislead on its own.
+
+| sym | last | % chg | RVOL | float | day high | verdict |
+|-----|------|-------|------|-------|----------|---------|
+| MOBX | 1.4101 | +51.6% | **34.9** | 16.47M | 1.4799 | **ALERTED** |
+| BNC | 4.945 | +41.7% | 70.9 | 40.31M | 5.39 | rejected, already printed |
+| WYHG | 5.3147 | +30.9% | **495.9** | 6.96M | 5.87 | rejected, already printed |
+| CDTG | 1.6475 | +24.8% | 0.167 | 2.84M | — | reversed, see below |
+| ISPC | 1.785 | +15.9% | 1.69 | 2.52M | — | below the bar |
+
+**The RVOL-alone trap, demonstrated.** WYHG carries an RVOL of **495.9** —
+by far the highest number on the board — and BNC 70.9. Both were rejected.
+Real 5-min bars show why: WYHG's high $5.87 and BNC's high $5.39 were both
+printed in the **13:30Z opening bar** and neither has been retested in the
+35 minutes since; WYHG sits -9.9% off its high, BNC -8.3%. These are opening
+spikes that already faded. A screen that ranked on RVOL would have put the
+two worst candidates on top.
+
+**MOBX is the one that actually qualifies**, and it was verified on real
+bars, not the scan row: day high $1.4799 set at 13:55Z, then the most recent
+bar (14:05Z) ran to **$1.47 on 5,815,393 shares** — expanding volume pushing
+straight back into the high. Stocktwits confirms a new high of day at
+14:11:20Z. Igniting now, not printed.
+
+**Catalyst: NONE.** The entire message stream is chart talk — "break that
+1.48 for more! 80M VOL", "that 1.40 wall", "NHOD", "1.7 magnet" — plus a
+multi-ticker pump list ("$ATER $MOBX $NUR $PDSB $QCLS"). Not one message
+names news, a contract, a filing or an event. Alerted explicitly as **"no
+catalyst found — price action only."**
+
+**Dilution check: this is the real finding, and it is BAD — the opposite of
+CDTG's clean read this morning.** `get_sec_filing_index` since 2026-07-15:
+- **S-1 registration statement, 2026-08-28** — new shares being registered
+- **424B3 prospectus x2 on 2026-08-18**, plus another **2026-07-17** —
+  resale prospectuses, i.e. shares actively being registered for sale
+- **PRE 14A, 2026-08-28** — preliminary proxy, commonly a share-count
+  increase or reverse-split authorization
+- 8-Ks 08-31, 08-28, 08-13, 07-29; three insider Form 4s on 08-25
+An S-1 plus three 424B3s inside seven weeks, with a proxy on top, is a live
+and heavy supply overhang. A +51% move into an active resale registration is
+structurally the WETO setup — arguably worse, because WETO's was a single
+ATM and this is a stack. Said plainly in the alert rather than buried.
+
+**CDTG correction — it reversed after I described it as fading.** At 9:13am
+I reported it bleeding ($1.57 -> $1.4197 -> $1.3698) and said the day-2 fade
+was what happened. By 10:13am it is **$1.6475, +24.8%**, a new high above
+the $1.57 premarket spike. That call was right for the three hours it
+covered and wrong thereafter; recording it because the honest version of
+this log includes the reversals, not just the confirmations. Its RVOL reads
+**0.167** — below 1 — because Friday's anomalous 87.1M day inflates its
+trailing average, so today's real 14.5M looks small against it. Not alerted
+again: no catalyst has appeared, and the RVOL read is uninterpretable while
+that Friday bar sits in the average.
+
+**Note: today's S7 options screen did not run.** Fixing the S7 cron at
+13:13Z moved its next fire past today's 12:35Z slot to 2026-09-09T12:35:00Z,
+so the 13:35Z fire that would have happened under the old (wrong) schedule
+never came. That is a real side effect of my own fix, not a platform
+failure. Running the screen manually this cycle rather than skipping a day.
+
+## 2026-09-08 ~11:15am ET — S7 screen (run manually, missed by my own cron fix): the binding constraint has MOVED
+
+Ran the S7 check by hand because fixing the cron this morning skipped
+today's scheduled fire. Flat: `get_option_positions` (432805174, nonzero)
+returned **zero open option positions**.
+
+**Track 1 ran and worked.** Scan 47f4f938 returned **397 total matches, 200
+rows**. Computed iv_hv_ratio on every row: **58 cleared < 0.90**, **32
+cleared < 0.80**. Consistent with 09-04's 63/36 — the candidate-starvation
+fix is holding, this is a real candidate list.
+
+Top of the ranking:
+
+| tick | ratio | last | IV | HV |
+|------|-------|------|-----|-----|
+| AMLX | 0.3320 | 34.06 | 0.5758 | 1.7344 |
+| PYPL | 0.4733 | 53.29 | 0.2536 | 0.5357 |
+| AAP | 0.4786 | 42.70 | 0.4833 | 1.0098 |
+| EIX | 0.5072 | 59.06 | 0.5000 | 0.9859 |
+| BROS | 0.5501 | 46.56 | 0.4311 | 0.7837 |
+| CELH | 0.5561 | 30.34 | 0.5509 | 0.9906 |
+
+**AMLX rejected again, on the prior finding, and saying so rather than
+pretending to re-derive it.** It was the #1 rank on 09-04 too and was killed
+as a cheapness artifact (one day = 70.1% of the HV variance; ex-outlier
+ratio 0.954, above the cap). Its HV today is still **1.7344 (173%)** on a
+$34 stock, essentially unchanged, which indicates the same outlier is still
+inside the window. Not re-verified bar-by-bar this cycle — stating that
+plainly instead of implying fresh work.
+
+**THE REAL FINDING — the constraint that blocks S7 is no longer the premium
+cap.** `get_portfolio` (432805174): total value **$536.415**, equity
+**$487.355**, cash and buying power **$49.06**. The strategy's own cap is
+$150/contract, but the account can only spend **$49.06**. Maximum affordable
+premium is therefore **$0.49/share**, roughly **one third** of the cap the
+screen has been enforcing for three weeks.
+
+**Demonstrated on a real contract rather than argued.** CELH is the cheapest
+underlying in the qualifying group ($30.34, ratio 0.5561). Pulled its live
+chain: **CELH 2026-10-16 $35 call**, quoted 15:14:32Z — ask **$0.79
+($79.00/contract)**, mark $0.74, **delta 0.246756**, IV 0.5626, OI 3,115,
+bid/ask $0.69/$0.79 (a 12.7%-of-mark spread, itself wide). That contract
+fails on BOTH counts: it costs $79 against $49.06 available, and its delta
+of 0.2468 misses the 0.30 floor. Reaching 0.30 delta means moving closer to
+the money, which costs MORE, not less. So the gap is not marginal.
+
+**Root cause, stated because it is an allocation conflict and not a bug.**
+S9 (growth sleeve) holds $487.36 of the $536.42 account across LYFT, SMR and
+HL. S7 has now run **15 checks with 0 trades** since going live 08-19, and
+the reason has quietly changed: for the first ~13 it was the premium
+cap/delta wall; today it is simply that there is no capital. Two live
+sleeves are competing for one small cash account and S9 has won by default,
+because it deploys on every close while S7 waits for a setup.
+
+**Not acting on this unilaterally.** Freeing S7 capital means selling a
+growth position that is doing nothing wrong — HL is above entry, all three
+are well clear of their stops, and none has a signal against it under the
+rule narrowed on 09-06. That is a portfolio-allocation decision, not a
+trade the screen is authorized to make. Surfacing it to the user with a
+recommendation rather than either silently continuing to run a screen that
+structurally cannot fire, or quietly liquidating a sleeve to feed another.
+
+## 2026-09-08 ~4:15pm ET — Ignition Board: UI overhaul per direct user request, two real bugs found and fixed along the way
+
+User asked, verbatim: *"ignition artifact needs horizontal slider on top of the table as well, adjustable columns, collaspable table (option to see how many stock I want to see at a time), move alert log on top and bring that stock on separate Alert table to be able to see the stock information. when I click the stock on the table, it would be better if i can see more detail on it (i have no idea how you could show me). the color of the text needs to be more visible, as the color combination is not great"* — followed by *"use credit to finish this"*.
+
+**Read the full live artifact before touching it** (2,240 lines, per the tool's own requirement), confirmed byte-identical to the version this session's earlier record described, then built and verified every change locally with a headless Chromium (Playwright, pre-installed) against mocked `window.claude.use("mcp")` responses before publishing — the artifact-design skill's "look once" guidance, but this page has real interactive JS logic (drag-resize, scroll sync, a modal), not just static layout, so functional smoke tests were the honest way to know it actually works rather than assuming from the code.
+
+**Six changes, all delivered:**
+1. **Color contrast** — computed real WCAG contrast ratios (not eyeballed) for every token against every background it's used on. `--ink-faint` was the real offender: 2.78–3.44:1 in both themes (used pervasively — company names, timestamps, footer legend, the whole disclaimer paragraph). Retuned to `#766A58` (light) / `#948C88` (dark), landing ≥4.5:1 everywhere it's used. Light-mode `--accent` was borderline (4.07:1 on the page background) and nudged to `#945227` (≥4.7:1). `--ink-muted` and both `up`/`down` tokens already passed.
+2. **Horizontal scrollbar above the table, synced to the one below** — a slim proxy track (`.scroll-sync-top`) whose scroll position stays locked bidirectionally to the real one, on all three tables (momentum, swing, alert).
+3. **Adjustable columns** — real drag-to-resize via `<colgroup>` + pointer events, width persisted per table per viewer in localStorage.
+4. **Collapsible tables + rows-per-page** — a toolbar above each table with a 10/25/50/100/All selector and a collapse/expand toggle, both persisted.
+5. **Alert log moved above the fold, rebuilt as a real table** — previously a plain text feed ("AMD just qualified") buried at the bottom of the swing section. Now sits right under the summary tiles as a structured table (Time/Symbol/Last/1mo%/Today%/RSI/ADX) carrying a full snapshot of the row at the moment it fired, so the numbers are still there even after the symbol rotates out of the live scan. Each row opens the same detail panel as the main tables.
+6. **Click a row for detail** — a modal `<dialog>` shared by all three tables: price, the real pillar-by-pillar breakdown (main table only), VWAP/float/volume/qualified-at, catalyst/order-book/chart on demand (reusing the existing budget-gated fetchers), closes on the X, Esc, or a backdrop click.
+
+**Two real defects caught by testing, not shipped blind:**
+- Added `thead th { position: relative }` to support the resizer handle, not realizing the existing header rule already used `position: sticky` — my rule silently overrode it, which would have killed the sticky-header-on-scroll behavior on every table. Caught because a scripted drag-resize test started failing after the fix; traced to `getComputedStyle` reporting `relative` instead of `sticky`. Removed the redundant/harmful rule — sticky already provides a valid positioning context for the absolutely-positioned handle, so nothing else needed to change.
+- Column resizing silently did nothing on the first (correctly-positioned) pass: `table-layout:fixed; width:auto` does NOT reliably make a table's rendered width equal the sum of its `<col>` widths in Chromium — it shrinks every column proportionally to fit the container instead, and `col.offsetWidth` then lies about the real on-screen size (confirmed directly: `style.width` said 150px, `offsetWidth` read back 101px). Fixed by explicitly setting the table's own `width` to the sum of its column widths on every paint and every resize tick — verified end to end afterward with an exact pixel match (150px start, +80px drag, 230px end, matching localStorage).
+- A third stacking issue surfaced only after the sticky fix was restored correctly: `position: sticky` (unlike plain `relative`) always opens its own stacking context, so a resizer handle that intentionally overflowed 4px into the *next* column (to sit visually on the border, a common pattern) was being painted **under** that neighboring `<th>` and was unclickable — confirmed via `elementFromPoint` returning the sibling `TH` instead of the resizer `SPAN`. Fixed by keeping the handle fully inside its own column's box instead of bleeding across the boundary.
+
+All six requested behaviors verified functionally (not just visually) via a scripted interaction pass: resizer drag → exact pixel-matched width change, persisted; bidirectional scroll sync in both directions; collapse/expand with persistence; rows-per-page slicing with an accurate "Showing X of Y" label; modal open on row click, closed by Esc, correctly NOT triggered by a click on a button inside a row (guarded).
+
+**Honest caveat carried into the publish, not hidden:** the page still declares the `Stocklake` connector (used only for the Catalyst column, unchanged logic) but this session never made a live Stocklake call to re-verify its response shape — the publish tool flagged this itself. Not a new risk from tonight's edit (that code path wasn't touched), but worth saying plainly rather than implying more verification happened than actually did.
+
+Published to the same URL (https://claude.ai/code/artifact/d6619239-807d-4ef3-9c3b-d9a400107c81), same favicon, keeping the link the user already has stable.
+
+## 2026-09-09 ~6:35am ET — Premarket watchlist rebuilt to "September 9"
+
+Market-holiday guard: SPY real prints from 10:31-10:35 UTC today (premarket session active, not stale) — confirmed open, not a holiday.
+
+**Renamed "September 8" -> "September 9"**, id `28897739-a4e8-40fa-ac57-6fb0eb30137b`.
+
+**Added:**
+- **SUNE** (SUNation Energy) — +29% premarket ($3.07), real dated catalyst confirmed via web search cross-check (stocktitan, Seeking Alpha, Power Technology all corroborate): Suniva completed an **$835M capital raise** and is executing a **reverse merger** with SUNation Energy to build a second major US solar cell manufacturing facility (Laurens County, SC), more than quadrupling capacity to 5.5GW. Heavy real Stocktwits chatter citing the actual headline, not just price action. **Flagged, not treated as clean**: a $15M market-cap company absorbing an $835M raise via reverse merger is structurally dilutive to existing SUNE holders even though the news itself reads bullish — watch, don't chase, per this account's established "bullish catalyst the tape may still punish" posture.
+- **CHWY** — reports earnings today before the open (`get_earnings_calendar` confirmed, timing "am", estimate $0.36 EPS). Still flat premarket ($23.25 vs $23.27 close) as of the check — reaction hasn't happened yet, added as a live pre-earnings watch.
+
+**Removed:**
+- **GME** — real catalyst already fired and was checked directly, not assumed: `get_earnings_results` confirms it reported 2026-09-08 AM with actual EPS $0.27 vs estimate $0.06, a **4.5x beat**. Tape response: flat, +0.4% premarket. Per this account's standing rule (a bullish catalyst the tape rejects is a trap, not an opportunity, same MLTX precedent), the catalyst has already played out with no follow-through — nothing left to watch for today.
+- **NVS / SRPT** — both flat premarket (NVS -0.05%, SRPT -0.14%). Yesterday's Novartis del-desiran Ph3-miss read-through move fully priced in, no fresh catalyst today.
+
+**Kept unchanged:** LEU, OKLO, UUUU, CCJ (nuclear core — no urgent reason to drop, sector still real, all roughly flat premarket, standing watch not single-day catalyst picks). SMR (open S9 growth position, real continuing story — see growth-sleeve log for yesterday's +15% breakout). ORCL — real catalyst (earnings) is tomorrow 2026-09-10 PM, held one more day rather than dropped, consistent with the list's existing "into 9/10 earnings" framing.
+
+Also checked per step 3's standing requirement: the day's single largest scan mover (SUNE, above) had a real catalyst not yet logged today — logged here. META (+3.6% premarket, Stocktwits trending #4) has real coverage (AI model unveiling commentary, an Australia regulatory story) but no single sharp dated catalyst and isn't this list's small-cap-momentum style — not added.
+
+## 2026-09-09 ~8:36am ET — S7 daily check: Track 1 IV/HV sweep run, real near-miss on TSN, no trade
+
+Market-holiday guard: SPY fresh premarket print (12:36 UTC), confirmed open. Part A (pre-open watchlist rectify): checked all 8 symbols on "September 9" against premarket quotes — nothing materially changed since this morning's build (nuclear core flat, ORCL flat, SUNE's fade already logged in the momentum-scanner cycle, CHWY quiet pre-earnings). No watchlist edits.
+
+**Part B — flat, no open S7 position.** Ran Track 1 (scan `47f4f938-a4d9-413e-a1c7-e01855c09e45`, 398 total matches, 200 returned). Computed iv_hv_ratio for every row, sorted ascending.
+
+**Outlier check on the 6 cheapest names — 5 of 6 rejected as HV-inflation artifacts**, same pattern as AMLX on 09-04, verified against real daily bars rather than assumed:
+- **AAP** (ratio 0.458): single -24.5% gap day (08-20, $56.18→$42.39) dominates the window — before it, calm $52-59 chop; after, calm $42-44 chop.
+- **PCG** (0.577): two-day real event (-8.9% 08-28, then -20% 08-31 on the same underlying story) — same shape.
+- **WEN** (0.609): +14.7% single-day spike (08-12, 45M vs ~6-8M normal volume) then a separate -13% gap (08-27).
+- **ETOR** (0.625): -14% two-day drop 08-10/08-11 against a series otherwise moving 1-3%/day.
+- **CRMD** (0.670): +14.6% single-day spike (08-13, 6.07M vs ~700K-1.3M normal volume).
+- **OMER** (0.722, checked out of order after TSN/RELY): +21.4% single-day spike (08-13, 13.4M vs ~1-2M normal volume). Also rejected as artifact.
+
+**RELY** (0.714) and **TSN** (0.742) checked as the more plausible survivors — no single dominant gap day in either series, genuine sustained chop instead of one outlier. Catalyst check: RELY has real news but it's mixed/bearish — two separate director stock sales this week (one lining up another as of 09-08) plus a piece questioning take-rate quality — no bullish dated catalyst, direction would argue put not call at best, and Stocklake hit its 25-call guest-limit mid-check (said so rather than silently proceeding TSN's news leg on Stocktwits alone). **TSN cleared the catalyst gate for real**: incoming President/CEO (Jeffrey K. Schomburger) filed a Form 4 buying **$1,001,617** (19,450 sh @ $51.50) on 2026-09-08, independently corroborated by multiple Stocktwits posters citing the actual filing (filingtracker.ai link, ceo-buys.com). Next earnings 11/16, not the driver here.
+
+**TSN 2026-10-16 calls checked against both gates — no strike clears both, one real near-miss:**
+| Strike | Delta | Ask (premium/ct) |
+|---|---|---|
+| $47.5 | 0.841 | $740 |
+| $50 | 0.710 | $400 |
+| $52.5 | 0.516 | $205 |
+| **$55** | **0.2988** | **$90** |
+
+$55c is a genuine near-miss in the PYPL 09-04 shape: premium comfortably inside the $150 cap, delta misses the 0.30 floor by 0.0012. Rejected, not chased.
+
+**Process defect surfaced, worth fixing:** these option quotes carry `updated_at: 2026-09-08T19:59:...` — yesterday's 4pm ET close, not live. This trigger fires ~8:35am ET, before the 9:30am open, and Robinhood option quotes are confirmed (again) not to refresh until the regular session opens (`extended_hours_state: disabled` on the chain) — the exact defect that got the OLD dedicated S7 trigger moved from 8am to 9:35am ET on 2026-08-20. The 2026-08-27 merge that folded S7 into this 8:35am combined trigger silently reintroduced it. TSN's own equity price is essentially unchanged premarket ($52.35 vs $52.28 close) so this particular near-miss likely still holds, but the staleness is real and should be fixed rather than relied on by luck next time. Not fixed unilaterally this cycle — flagging to the user, same posture as the known $1-20/$2-20 scan price-ceiling defect.
+
+Running total: 16/16 S7 checks, 0 trades.
+
+## 2026-09-09 ~4:03pm ET — Growth sleeve daily check: HL ratcheted, LYFT real -8.2% on CFO news (no formal signal)
+
+Market-holiday guard: SPY real close print (19:59:59Z), confirmed a normal trading day.
+
+**Technical readings, all three positions (logged every run per standing requirement):**
+- LYFT: RSI 42.67, ADX(10) 18.21 (no real trend, below the 25 threshold), MACD histogram -0.1872 (bearish, widening).
+- SMR: RSI 66.15, ADX(10) 24.00 (borderline, still below 25), MACD histogram +0.1402 (bullish).
+- HL: RSI 58.22, ADX(10) 33.60 (real trend present), MACD histogram -0.0902 (marginal negative, persisting from prior cycles).
+
+**HL — ratcheted.** Real intraday high today (30-min bars) was $21.17 at the 9:30-10:00am ET bar, a new peak over the prior $20.97 (09-04). `trailing_stop_price(21.17)` = $17.36, above the resting $17.17. Cancelled the old stop (verified `state: cancelled`), placed $17.36 (verified `state: queued`, market had just closed — next-open queuing, not a rejection, same pattern as every prior post-close ratchet). Follow-up booked for 2026-09-10 09:31am ET to verify it confirms.
+
+**LYFT — real, large, dated-catalyst-driven drop; no formal technical signal.** Closed $14.91 vs yesterday's $16.24 (**-8.2%**), now sitting just $0.17 above its $14.74 resting stop. Checked for a real cause rather than assuming: Lyft named a new CFO today (Michael Brous replacing retiring Erin Brewer, effective 09-28) while reaffirming Q3 guidance — real, dated, negative tape reaction, corroborated via Stocktwits (a linked news article) independent of Stocklake. However, ADX is only 18.21 — below this account's own 25 "real trend" threshold — so the formal signal criteria (ADX>25 AND MACD turning against) is NOT met. Per the standing rule, no signal is manufactured where the gate hasn't fired; no discretionary action taken. The mechanical 18% trail is doing its job on its own (very close to triggering now if the decline continues). SMR unchanged (today's high $11.26 stayed under the existing $11.37 peak, stop stays $9.32).
+
+**Idle capital — not redeployed**, same stated reason as yesterday: the $49.06 buying power is the exact amount already flagged as blocking S7, still awaiting the user's allocation call.
+
+Current state: LYFT (4sh, stop $14.74), SMR (1sh, stop $9.32), HL (20sh, stop $17.36).
+
+## 2026-09-10 ~6:35am ET — Premarket watchlist rebuilt to "September 10"
+
+Market-holiday guard: SPY real premarket prints (10:31-10:35 UTC), confirmed open.
+
+**Renamed "September 9" -> "September 10"**, id `28897739-a4e8-40fa-ac57-6fb0eb30137b`.
+
+**Added:**
+- **TNON** (Tenon Medical) — +47% premarket ($3.59), float only 627K (already the mandatory dilution-check cohort). Real, dated, genuinely mixed catalyst: an 8-K filed 2026-09-09 confirms the company paid off $5.16M of debt — reduces near-term dilution pressure (a real positive for holders) but also reduces available cash on hand (a real liquidity concern), and Stocktwits posters are actively debating exactly that tension, not just hyping price. Also checked its recent filing history: multiple Form 3/4 insider transactions and a 424B3 prospectus since 08-31, consistent with an ongoing capital-structure story worth continued real scrutiny, not a clean squeeze play.
+
+**Removed:**
+- **CHWY** — reported Q2 EPS exactly in-line ($0.36 vs $0.36 est.) yesterday (09-09 AM, confirmed via `get_earnings_results`), yet the stock has fallen from ~$23.27 to ~$20.54 (~-12%) since Monday's close. The reaction has already happened and is no longer fresh news; today's premarket move is only -1%, not a new development. Catalyst played out, dropped.
+
+**Held one more day:**
+- **SUNE** — down -8.6% premarket to $4.12, well off yesterday's $4.36-4.81+ run, but volume remains enormous (123M shares on the day, still far above baseline) and this has been genuinely volatile for 2+ days straight. Not yet calling it "fully played out" — kept with the same dilution caution as before, watched not chased.
+- **ORCL** — reports earnings tonight (2026-09-10 PM per `get_earnings_calendar`), now the most immediately relevant catalyst on the list. Held through the report.
+
+**Unchanged:** nuclear core (LEU, OKLO, UUUU, CCJ) — still a standing sector watch, no fresh reason to touch. SMR — open S9 growth position.
+
+**Not added:** FTFT (-7.2% premarket, still no catalyst found since yesterday's "price action only" flag, continuing to fade) and YMAT (-2.6% premarket, same no-catalyst status) — both cooling off, no new reason to add.
+
+## 2026-09-10 ~8:36am ET — S7 daily check: Track 1 sweep, entire cheap end is outlier-contaminated, no trade
+
+Market-holiday guard: SPY fresh premarket print (12:36 UTC), confirmed open. Part A (pre-open watchlist rectify): nuclear core (LEU, CCJ, OKLO, UUUU) all down notably premarket (LEU -7%, CCJ -5%) but premarket bid/ask spreads are unusually wide (e.g. LEU $167/$169, CCJ $95.30/$98.50) suggesting thin-liquidity price discovery, and a web search found no dated news specific to today — the sector has been rotating lower since early August per real reporting (BofA cut CCJ's price target citing uranium market outlook), not a fresh catalyst. No watchlist edit made on this basis.
+
+**Part B — flat, no open S7 position.** Ran Track 1 (scan `47f4f938-a4d9-413e-a1c7-e01855c09e45`, 200 rows). Computed iv_hv_ratio for every row, sorted ascending, and checked the cheapest 7 against real daily bars for the single-dominant-gap-day artifact pattern (same method as 09-04's AMLX and 09-09's AAP/PCG/WEN/ETOR/CRMD/OMER):
+
+| Symbol | Ratio | Verdict |
+|---|---|---|
+| ALMS | 0.259 | **Artifact** — real -56.6% single-day crash 08-31→09-01 (28.4M vol vs ~1M normal) dominates the window |
+| CHPT | 0.417 | **Artifact** — real +75% single-day spike 09-02→09-03 (44M vol vs ~300-600K normal) |
+| EIX | 0.481 | **Artifact** — real -23% single-day crash 08-28→08-31 (24.8M vol vs 2-7M normal), same wildfire-liability shape as PCG |
+| HRL | 0.612 | **Artifact** — real -10.2% single-day drop 08-26→08-27 (18.6M vol vs 3-5M normal), calm since |
+| ABCL | 0.612 | **Artifact** — real +34.9% single-day spike 08-10 (46M vol vs 3-8M normal), calm since ($11-12.5 range) |
+| TH | 0.721 | No dominant single-day outlier found — the cleanest candidate today, but no catalyst identified (flat in this morning's scan, nothing on Stocktwits) |
+| CAVA | 0.728 | One real moderate outlier (08-11→08-12, +14.2%, likely earnings) plus a genuine sustained downtrend since ($74→$56.51) — not chased further, no catalyst surfaced |
+
+**Every single one of today's 7 cheapest names by IV/HV ratio is either an outlier artifact or lacks a real catalyst.** This is the same finding as yesterday, more pronounced (5 of 6 were artifacts on 09-09; 5 of 7 today, with the 2 survivors lacking catalysts). Worth naming plainly: the current scan universe's cheap tail is now consistently contaminated by real August volatility events still sitting in the historical-volatility window — this may ease as those days roll out of whatever window Robinhood's single-window HV uses.
+
+No trade. Running total: 17/17 S7 checks, 0 trades.
+
+## 2026-09-10 ~12:11pm ET — Momentum-scanner check: no alert, DBGI logged (largest mover, no catalyst)
+
+Market-holiday guard: SPY fresh print (16:11 UTC), confirmed open. Both scans run.
+
+No name cleared step 2/3 this cycle — everything that qualified on % change was already well past its intraday high (1+ hour, unretested):
+- **TNON** — high $4.98 at 9:45am ET, now ~$4.24-4.42, still fading. Same name covered last cycle, no material change.
+- **DBGI** — today's largest mover, +44.8%, high $6.91 at 11:10am ET, faded to $5.18-5.42 (~-25% off high) by 12:05pm ET. Checked Stocktwits per the "log the biggest mover regardless" rule: no verified dated catalyst — only unconfirmed retail "buyout" rumor chatter ("$7.7 buyout" mentioned, no source) and posters flagging heavy dilution since a prior buyout event. Float 574,639 (sub-1M, would trigger the dilution check if this were being alerted — not alerted, so index check skipped).
+- **SKYQ** (high $3.80 @ 9:50am ET, now ~$3.33), **TPET** (high $2.34 @ 10:15am ET, now ~$2.11), **AHMA** (high $2.10 @ 9:35am ET, now ~$1.62, unchanged from last cycle's "already printed" call) — all faded off highs made 1+ hour ago, no fresh development.
+
+No user message sent (quiet cycle, correct per protocol). Running total this window: no new alerts since TNON/AHMA/SUNE/FTFT earlier fires.
+
+## 2026-09-10 ~2:10pm ET — Momentum-scanner ALERT: DBGI fresh breakout, no catalyst (flagged)
+
+Market-holiday guard: SPY fresh print (18:09 UTC), confirmed open.
+
+**DBGI (Digital Brands Group)** — alerted. $6.62, +77% on the day (prior close $3.75). Made a genuine FRESH new high of $7.15 at ~2:00pm ET (within the last ~10 min at alert time), well above the morning's $6.91 peak — real re-ignition, not the same already-covered move. Volume bars accelerated hard into the new high (332K/398K/409K/275K per 5-min bar in the last 20 min vs. 20-100K typical earlier), daily RVOL 220x. Pulled back ~7.4% off the freshest high by the time of the alert but still inside the ~15-20 min "igniting" window, not the "1+ hour unretested" already-printed case.
+
+**No catalyst found — price action only.** Checked Stocktwits: pure retail pump/meme chatter (an absurd, non-credible "$1B buyout / $1,659.94 per share" rumor, "77 tomorrow," SMA-target posts) — nothing sourced or dated. Flagged explicitly to the user as speculative momentum, not a clean setup. Float 574,639 (ultra-low) — pulled `get_sec_filing_index` since 2026-08-01: only a 10-Q (08-19) and three 8-Ks (09-02, 08-13, 08-06), no S-1/S-3/424B/ATM prospectus visible in the index (contents of the 8-Ks not individually read — not a full clearance, just no obvious dilution mechanism on file).
+
+## 2026-09-10 ~3:09pm ET — Momentum-scanner ALERT: TNON second leg (real but stale catalyst); DBGI extends further
+
+Market-holiday guard: SPY fresh print (19:09 UTC), confirmed open.
+
+**TNON (Tenon Medical)** — alerted, new development. $5.24, +115% on the day (was +76-80% at prior cycles). Broke to a genuine fresh high of $5.96 at 2:45pm ET (~24 min before this alert), massive volume acceleration (2.66M/1.47M/1.11M shares per 5-min bar in that window vs. ~250-300K earlier), now consolidating $5.0-5.4, still near the highs — not faded off. Has a real, dated catalyst on file (2026-09-09 8-K, $5.16M debt payoff, already used to justify this morning's watchlist add) but that catalyst is a day old and doesn't explain this specific afternoon leg — Stocktwits shows this move is squeeze/momentum-driven in lockstep with DBGI ("Unstoppable $DBGI,$TNON,$PCLA... $AHMA, $PSIG"), not fresh name-specific news. Flagged both facts to the user. Dilution risk already on file from this morning's premarket check (multiple Form 3/4s, a 424B3 since 08-31) — not re-pulled this cycle, still applies.
+
+**DBGI** — continuation of the 2:10pm alert, materially changed (higher high). Extended to a fresh high of $7.48 at 3:00pm ET, still no real catalyst — same pure squeeze dynamic, explicitly correlated with TNON/PCLA/AHMA/PSIG in the chatter (a basket-style low-float squeeze, not stock-specific news for any of them).
+
+## 2026-09-10 ~4:02pm ET — Growth-sleeve daily check: LYFT stopped out, HL signal flagged (no corroboration)
+
+Market-holiday guard: SPY regular-session close printed exactly 20:00:00 UTC today, confirmed a real trading day (not a holiday false-fire).
+
+**LYFT closed** — the resting $14.74 GTC stop_market filled at 09:30:00 ET this morning (4 sh @ $14.71 avg), confirmed via `get_equity_orders` (order id 6a8df543..., state: filled). Realized -$11.49 on $70.33 cost basis (avg $17.5825/sh across the 3+1 share fills). Proceeds $58.84 unsettled T+1 — matches `get_accounts` unsettled_funds exactly. This was the mechanical trail doing its job on price action, not a discretionary signal-based close: the 09-09 CFO-departure catalyst never cleared this account's ADX>25 "real trend" floor (peaked at 18.2), so the formal signal gate never fired.
+
+**Remaining positions, quantity-verified** (SMR 1sh, HL 20sh, both match their resting stops — no manual-buy gap).
+
+Real peak-since-entry check (finalized daily bars through 09-09 + today's real intraday bars):
+- SMR: peak since 08-26 entry still $11.37 (09-08). Today's real high $10.685 (30-min bars) — no new peak. `decide_stop_update`: computed 11.37*0.82=$9.3234, rounds to same cent as resting $9.32 — no action (same edge case as the 09-04 LYFT precedent).
+- HL: peak since 09-04 entry still $21.17-21.18 (09-09). Today's real high $20.53 — no new peak. Stop correctly left at $17.36.
+
+**Technical signal check (required every cycle):**
+| Symbol | RSI(14) | ADX(10) | MACD histogram (last 5 sessions) | Read |
+|---|---|---|---|---|
+| SMR | 61.04 | 27.29 | 0.0155 -> 0.0343 -> 0.0406 -> 0.1364 -> 0.1648 | Real trend (ADX>25), MACD positive and rising — bullish, no signal |
+| HL | 60.30 | 33.76 | -0.0543 -> -0.0265 -> -0.0522 -> -0.0903 -> -0.0949 | Real trend (ADX>25) **plus MACD turning against the position** (negative, deepening) — genuine signal per the 2026-09-06 gate |
+
+**HL signal — checked for corroboration, found none.** Pulled Stocktwits: pure retail silver-sector chatter (oil/silver price speculation, no dated news, no downgrade, no filing). Per the narrowed rule, a technical signal without a nameable dated catalyst authorizes tightening only, not a close. Considered tightening the $17.36 stop ahead of the normal 18% schedule and declined: today's price (~$20.02-20.27 across the last few 30-min bars) is already only ~13-14% above the resting stop — tighter than a fresh 18% trail would produce — because price has drifted down from the $21.17 peak while the stop stayed pegged to that peak. Passive tightening already happened; no further action taken. Disclosed limitation repeated: this account's own S11 backtest found no exploitable edge in short-horizon technical-crossover signals, so this is a real, honest momentum read, not a proven predictor.
+
+**Idle capital (step 8):** settled buying power $49.06 — same figure flagged in every prior growth-sleeve check as the amount structurally blocking S7 allocation (still unresolved with the user). Not redeployed, same standing reason. LYFT's $58.84 proceeds settle ~09-11 morning, bringing uncommitted cash to roughly $108 — flagged as worth a fresh redeploy look once settled rather than force-fitting a sub-$50 pick today.
+
+## 2026-09-10 ~4:10pm ET — Momentum-scanner fire past session close, no scan run
+
+Regular trading hours ended at exactly 4:00:00pm ET (SPY's last regular-hours print: 19:59:59.99 UTC); this trigger fired 10 minutes later, into the after-hours session (SPY now showing a fresh non-regular print at 20:10:21 UTC). Outside this job's stated 7am-4pm ET scope and outside the window where the scans' RVOL/high-of-day logic means anything live. Last real intraday cycle was the 3:09pm ET check (TNON second leg + DBGI extension, both logged). No scan run, no message — today's momentum-scanner coverage is complete.
+
+## 2026-09-10 ~4:20pm ET — Ignition Board: docked side panel + chart auto-load (post-market rework)
+
+User complaint, verbatim: "i dont see the candle detail in our new ignition board. did you skip including it during re-structuring? and there is so many empty spaces you could use to make the layout better? the whole body is right in the middle leaving empty spaces left and right. you could use those spaces to open new popup or the stock detail when I click the stock or have catalyst news." Deferred to after close per the user's own instruction, actioned now via the scheduled `trig_01LhmiiTYyHYQzDuN76pKiuL` wake.
+
+**Read the live artifact in full first** (2839 lines, saved copy verified line-by-line) rather than assuming what changed in the 09-08 overhaul. Finding: the candlestick chart was **not dropped** — `drawCandles()` still exists, wired into both the table's "Chart" column and the detail modal's "Chart (5-minute candles)" section, using real `get_equity_historicals` 5-min bars. What actually made it invisible to the user:
+1. Gated behind a manual "Chart"/"Load chart" button for any row that hadn't auto-qualified (3+ of the 4 numeric pillars) — and even the detail modal never auto-requested it on open, so opening a row's detail usually showed a button, not a chart.
+2. Rendered tiny even when loaded (120×34px in the table, 120px tall in the modal) next to 11 other columns.
+3. The Chart column sat 10th of 12 in a table whose `min-width:780px` plus resizable columns routinely pushed it past the visible viewport into horizontal scroll.
+
+That, combined with the centered `max-width:1240px` `.wrap` on what is now a wide desktop dashboard, explained both complaints as one root cause: the useful stuff (chart, catalyst, order book) was scrolled off to the right or hidden behind a click inside a small centered popup, while real width sat idle on both sides.
+
+**Fix — docked side panel replacing the popup on wide viewports (≥1101px):**
+- New `.layout` (flex, max-width 1680px, same as the widened `.wrap`) with `.main-col` (existing content, unchanged) and a persistent `<aside class="side-panel">` (400px, `position:sticky`) using the space that used to just be background.
+- Selecting any row (main momentum table, swing table, or alert log) now renders straight into the panel instead of opening a `<dialog>` — same `renderDetail()` function, refactored to target either surface via a small `{ symEl, nameEl, bodyEl }` descriptor, so there's exactly one place this markup is built. The row gets a visible `.row-selected` highlight (new CSS, specificity-checked against the existing `q-strong`/`q-watch` border coloring so it always wins).
+- The modal `<dialog>` is **kept fully intact**, not removed — below 1101px (checked via `matchMedia`, listened for resize) the side panel hides and the exact original popup flow takes over, so phone/narrow-window users see no regression. A `handleLayoutChange` listener moves an already-open detail between panel and modal if the viewport crosses the breakpoint mid-session.
+- Selecting a row now auto-fires the chart, VWAP, and catalyst lookups (previously three separate manual clicks), same real cost as the old buttons, just bundled behind the one click that already expresses the same intent.
+- The docked panel's chart canvas is set to 210px tall (`.side-body .detail-chart-wrap canvas`) — genuinely readable wicks/bodies, not a sparkline.
+
+**Tested locally with Playwright** (`/opt/pw-browsers/chromium-1194`) against a mocked `window.claude.use("mcp")` before publishing, per the 09-08 precedent. Caught and fixed one real bug in the test harness itself (`eval()` of a function declaration returns `undefined`, not the function — needed `eval("(" + fn + ")")`) that initially made the chart look broken; once fixed, verified at 1600×950 (wide): side panel populates on click, canvas has real non-transparent pixels (checked via `getImageData`), no modal opens, row highlight applies, a second click swaps the panel content without any popup. Verified at 820×900 (narrow): modal opens as before, canvas renders inside it, closing it and clicking a second row works cleanly.
+
+Published to the **same artifact URL** (`d6619239-807d-4ef3-9c3b-d9a400107c81`, now version 9) so the user's existing link/bookmark stays stable. Stripped the platform-injected `<!doctype html><html><head>...</head><body>`/`</body></html>` wrapper before publishing (present in the saved copy from `action:"read"`, per the Artifact tool's own rule not to double-wrap).
+
+**One honest caveat carried into the publish result:** the platform flagged the page's declared "Stocklake" connector capability as unobserved this session (only mocked in the Playwright test, no real live call made before publishing) — the catalyst-lookup code path is unchanged from before, but wasn't re-verified against a real Stocklake response in this pass.
+
+## 2026-09-11 ~6:35am ET — Premarket watchlist rebuilt to "September 11"
+
+Market-holiday guard: SPY fresh premarket print (10:34-10:35 UTC), confirmed open (Friday, real trading day).
+
+**Renamed "September 10" -> "September 11"**, id `28897739-a4e8-40fa-ac57-6fb0eb30137b`.
+
+**Top story — ORCL, real earnings beat.** Reported 2026-09-10 PM: EPS actual $1.92 vs estimate $1.67 (verified via `get_earnings_results`), a genuine ~15% surprise. Premarket +7.1% to $163.72-$163.87 (vs $152.94 close) — confirmed via Stocktwits trending (#1 rank, 70,688 watchers, change +7.08%) and real quote data, not a stale/rumored number. Held on the list, most conviction of anything today.
+
+**TNON — held, extends real momentum.** Premarket $6.90-6.92, +30.2-30.5% vs yesterday's $5.30 close (which was itself the close of a huge multi-day squeeze). Stocktwits pulse: EXTREMELY_HIGH message volume (score 95), EXTREMELY_BULLISH sentiment (88.2% bull / 11.8% bear). No fresh dated news catalyst beyond the 09-09 debt-payoff 8-K already logged — this is sustained real chatter/momentum, not a quiet fade, so kept per the standing rule that a watchlist can hold a name on real sustained interest alone.
+
+**Removed — SUNE.** Down -8.9% premarket to $3.07-3.08, on top of yesterday's real -18.4% to -21.7% decline (close $3.37, was $3.68 the session before, per a Stocktwits "top losers" roundup). Cumulative ~-40% over 2 sessions. Checked `get_sec_filing_index` since 2026-08-01: two Rule 425 filings (business-combination-related prospectuses/communications) plus an 8-K, all filed 2026-09-08 — a real, dated, disclosed corporate-action development that plausibly explains the volatility, not just hype cooling. Stocktwits chatter has turned genuinely distressed/capitulation-toned ("Borderline Chinese scam stock," "is it gonna break under $2," "chart is broken," explicit private-placement dilution concern drawing a comparison to TNON) versus TNON's still-euphoric tone — a real, checkable difference in character, not just a price move. Dropped as a day-trade momentum name; the merger-related filings make this a different (M&A-arb) situation now, outside this watchlist's scope.
+
+**KR (Kroger)** reports this morning (AM, confirmed via `get_earnings_calendar` high-market-cap filter) but premarket move is only +0.97% ($57.50 vs $56.95 close) — no real reaction yet, not watchlist-worthy for this list's low-float/momentum + nuclear-sector character. Not added.
+
+**DBGI** (yesterday's other huge mover, not on this list) continues fading: -3.8% premarket to $6.53-6.74, well off its $7.48 peak. No action — was never added to this dated list.
+
+**Nuclear core (LEU, SMR, OKLO, UUUU, CCJ) — unchanged.** Mixed, mild premarket moves (LEU +1.4%, SMR -3.9%, OKLO +1.2%, UUUU +1.0%, CCJ +0.2% on thin/wide premarket spreads) — no fresh catalyst, standing sector watch continues as-is.
+
+Final list (7 symbols): TNON, ORCL, LEU, SMR, OKLO, UUUU, CCJ.
+
+## 2026-09-11 ~7:11am ET — Momentum-scanner ALERT: TNON fresh premarket high, no new catalyst
+
+Market-holiday guard: SPY fresh premarket print (11:11-11:12 UTC), confirmed open.
+
+**TNON** — alerted. $7.24-7.30 (bid/ask), +36.6% vs yesterday's $5.30 close per the scan snapshot, but real-time price has already run further: 5-min bars show a fresh intraday high of **$7.76 at 7:00am ET** (~11 min before this check), on a real volume surge (692,389 and 294,424 shares in the last two 5-min bars vs. a 20K-220K/bar baseline through the rest of premarket) — genuine money showing up, not a thin print. Within the ~15-20 min "igniting" window, not already-printed. Premarket RVOL field unreliable pre-9:30am as usual; a precise same-time-of-day multi-day comparison wasn't available (prior days' pulled bars only started at 9am ET), so this alert leans on the real, visible intrabar volume acceleration instead of a computed ratio.
+
+No new catalyst beyond what's already on file (09-09 8-K debt payoff; extremely bullish, extremely-high-volume Stocktwits chatter already logged in this morning's premarket watchlist rebuild) — this is the same real, sustained squeeze continuing, not a fresh headline. Flagged as continuation, not a clean new setup.
+
+## 2026-09-11 ~8:11am ET — Momentum-scanner UPDATE: TNON spike-and-fade to $9.35, already retraced
+
+Market-holiday guard: SPY fresh premarket print (12:11 UTC), confirmed open.
+
+**TNON — no fresh alert, flagged as already-printed spike-and-fade.** Since the 7:11am ET check (fresh high $7.76), price spiked violently to a real intraday high of **$9.35 at 7:45am ET** (5-min bar 11:45 UTC, volume 1,402,568 in that single bar vs. a 100-700K baseline) -- a genuine, dramatic second leg, +20% above the prior high in ~30 minutes. Has since faded hard: down to $7.75-8.10 by 8:11am ET, giving back nearly the entire spike (from $9.35 to ~$7.78, a ~17% retracement) within ~26 minutes. This is now past the 15-20 min "igniting" window and has already round-tripped most of its gain -- textbook already-printed/spike-and-fade, not a fresh setup to alert on. No new catalyst emerged; same story as prior cycles (real sustained squeeze, 09-09 debt-payoff 8-K, extremely bullish Stocktwits chatter already logged). Noted for the record given the size of the move, but no user alert sent -- would be chasing a top, exactly what this job exists to avoid presenting as clean.
+
+DBGI (+4.0%) and FTFT (+9.4%) both modest, neither clears the bar this cycle.
+
+## 2026-09-11 ~8:36am ET — S7 daily check: Part A no rectify needed, Part B flat, no trade
+
+Market-holiday guard: SPY fresh premarket print (12:36 UTC), confirmed open.
+
+**Part A (pre-open watchlist rectify):** checked TNON, ORCL, LEU, SMR, OKLO, UUUU, CCJ against the ~6:30am ET build. TNON and ORCL stories unchanged qualitatively (TNON still the dominant real mover, now $8.32 after the $9.35 spike-and-fade already logged this cycle's earlier momentum-scanner check; ORCL still holding its earnings-beat pop). Nuclear core flat-to-mixed, no fresh catalyst. No watchlist edit made — nothing material changed since the build.
+
+**Part B — flat, no open S7 position.** Ran Track 1 (scan `47f4f938-a4d9-413e-a1c7-e01855c09e45`, 200 of 397 real rows). Computed iv_hv_ratio for every row: 38 cleared the 0.90 cap, 18 cleared 0.80, only 2 under the 0.45 outlier-suspicion line. Checked the cheapest candidates against real daily bars / Stocktwits / earnings data:
+
+| Symbol | Ratio | Verdict |
+|---|---|---|
+| ALMS | 0.280 | **Artifact** (already known — real single-day crash dominates) |
+| CHPT | 0.410 | **Artifact** (already known — real single-day spike dominates) |
+| EIX | 0.456 | **Artifact** (already known — wildfire-liability crash dominates) |
+| ONON | 0.477 | **Artifact, newly confirmed** — real -20.3% single-day crash 08-10→08-11 (43.9M vol vs 3-10M normal) dominates the HV window; calm chop $26-32 since, no fresh catalyst today |
+| COO | 0.485 | **Rejected, two independent reasons** — real -25% two-day crash (09-09→09-10) on a real, dated, verified catalyst (Q3 report 09-09 PM: EPS actually beat $1.15 vs $1.12 est, but a real revenue miss + weak guidance + investor anger over not spinning off CooperSurgical drove the drop, confirmed via Stocktwits). But (1) the reaction already happened 2 days ago — chasing an already-printed move, same class of rejection as PDD/XPEV 08-24 and SAIC 08-31, and (2) the cheap IV/HV ratio is itself an artifact of that same 2-day crash dominating the HV window, same failure mode as ALMS/CHPT/EIX |
+| HRL | 0.620 | **Artifact** (already known) |
+| RELY | 0.634 | Real sustained decline (-18% over 2 weeks, accelerating), NOT a single-day artifact — but no dated catalyst found (Stocktwits: pure "what happened here" retail chatter, no news cited). Rejected on the catalyst gate |
+| CAVA | 0.742 | Real moderate outlier + genuine downtrend (already known), no catalyst surfaced |
+
+**Track 2 (dated earnings, next 3 days, high-market-cap):** only KR, which already reported this morning (EPS $1.09 actual vs $1.12 est, a slight miss) — already-reported, same chase-the-gap exclusion as every prior same-day earnings check. No forward candidates in the window.
+
+**Track 3 (soft catalyst):** Stocklake still returns "requires re-authorization" (confirmed again, unchanged since 09-07) — the news leg is unavailable, not silently skipped. Fell back to Stocktwits alone for RELY/COO above; neither survived.
+
+No trade. Running total: 18/18 S7 checks, 0 trades. No near-miss worth flagging this cycle (every candidate was rejected before reaching the option-chain/delta stage, on catalyst or artifact grounds, not a close cap/delta call).
+
+## 2026-09-11 ~9:11am ET — Momentum-scanner check: quiet, TNON recovering within existing range
+
+Market-holiday guard: SPY fresh premarket print (13:11 UTC), confirmed open. TNON $8.25-8.26 (+55.8%), recovering from the earlier fade but still below the $9.35 spike high logged at 8:11am ET — no fresh high, no material change, no new alert. FTFT +14.6% modest, nothing else clears the bar. No user message needed.
+
+## 2026-09-11 ~10:11am ET — Momentum-scanner check: quiet, FTFT logged (already-printed, no catalyst)
+
+Market-holiday guard: SPY regular-hours print (14:11 UTC), confirmed open. RVOL fields now reliable (market open past 9:30am).
+
+**FTFT** — today's largest real mover, +47%, $2.98-3.05 (real RVOL 2.19x/49.8x, genuinely elevated). Real day high $3.40 was at 9:35am ET, ~36 min before this check — already faded ~12% off that high, past the ~15-20 min igniting window. No dated catalyst found: Stocktwits is EXTREMELY_HIGH volume (score 94), EXTREMELY_BULLISH (81% bull) but pure low-float chatter and promotional trading-alert posts ("$FTFT ran +44% from 2.35 call!"), nothing news-based. Logged per the biggest-mover rule; does not qualify for an alert (already printed + no catalyst).
+
+TNON ($7.69, RVOL now thin at 0.35x post-open) unchanged, still below its $9.35 spike high, no new development. No user message this cycle.
+
+## 2026-09-11 ~11:11am ET — Momentum-scanner FLAG (not a clean alert): BDRX real move, no catalyst, heavy dilution, credible manipulation warning
+
+Market-holiday guard: SPY regular-hours print (15:11 UTC), confirmed open.
+
+**BDRX (Biodexa Pharmaceuticals)** — real, fresh breakout: flat $0.84-0.94 until 10:30am ET, then exploded on genuine volume acceleration (3.1M/4.3M/3.5M/1.8M/3.0M/3.3M/2.6M/2.7M shares per 5-min bar since 10:30am ET vs. a 50-750K baseline before). Now $1.41-1.46, +113.6% on the day, making fresh highs within the last few minutes -- genuinely igniting by the timing test. RVOL 332.8x (real field, market open).
+
+**No catalyst found.** Stocktwits pulse: EXTREMELY_HIGH volume, EXTREMELY_BULLISH sentiment (88.9% bull) -- but every post is pure low-float pump chatter ("low floater on fire," "INSANE PLAY... members in cord"), nothing news-based.
+
+**Dilution check (float ~1.03M, sub-$5 price -- exact WETO-shaped profile): heavy, active mechanics confirmed.** `get_sec_filing_index` since 2026-07-01 shows **13 prospectus filings** (seven 424B3 + one 424B5 on 08-04, six more 424B3/424B5 on 07-01) plus two 6-K current reports -- this is about as much live resale/offering registration activity as this account has seen on a single name.
+
+**Also worth naming plainly: a credible peer manipulation warning surfaced in the same chatter**, not from this account's own analysis but from another trader's real, detailed post: called this "rug pull week... our 4th in a row," named SWRD and BENF (both in the same low-float basket flagged repeatedly this morning alongside FTFT/TNON/PCLA) as having "doubled and tanked" already this week, referenced a real halt alert on one of them, and described the pattern as "these guys double the price, load up on shares, and pick up more shares at the bottom." BENF itself is on today's scan too (+5.2%, RVOL 179.7x) but per that same account has already played out (doubled, halted, dumped) -- not fresh, not covered separately.
+
+**Flagged to the user with full caveats, not presented as a clean setup** -- real move, real volume, but no catalyst, heavy dilution on file, and a specific credible warning about this exact basket's pattern this week.
+
+## 2026-09-11 ~12:10pm ET — Momentum-scanner check: quiet; BDRX rug-pull warning confirmed in real time
+
+Market-holiday guard: SPY regular-hours print (16:10 UTC), confirmed open.
+
+**BDRX** — collapsed from the $1.41-1.46 peak (11:11am ET) to $1.1425 now, -19% off high within the hour. Confirms the peer "rug pull week" warning logged last cycle played out exactly as described, same pattern as SWRD/BENF. No further action, already fully flagged last cycle.
+
+**TNON** ($9.26, +74.7%) still below its established $9.35 spike high — no fresh development. **FTFT** ($2.87) and **BENF** (-3.3%, confirming its own already-played-out move) unchanged from prior characterization. No user message this cycle.
+
+## 2026-09-11 ~1:09pm ET — Momentum-scanner UPDATE: BDRX whipsaws to a new high ($1.51), same caveats stand
+
+Market-holiday guard: SPY regular-hours print (17:09 UTC), confirmed open.
+
+**BDRX** — recovered from the $1.14 low (confirmed last cycle, -19% off its first peak) to a fresh high of **$1.51** (+128.8%, RVOL 520x, cumulative volume 105.5M vs. 87M last cycle) -- a real, larger second leg exceeding the original $1.46 peak. No new catalyst has surfaced; the dilution finding (13 prospectus filings since 07-01) and the "rug pull week" community warning both still stand unchanged, and the round-trip (peak->-19% crash->new higher peak) itself reinforces rather than contradicts that characterization -- this is exactly the volatile whipsaw pattern that warning described. Sent a brief update to the user rather than a full re-alert since the substance (no catalyst, heavy dilution, proven fragile) is unchanged from the 11:11am flag.
+
+TNON ($8.72, down from $9.26 last cycle, still below its $9.35 established peak) unchanged, no new development.
+
+## 2026-09-11 ~2:09pm ET — Momentum-scanner check: quiet, BDRX and TNON continuing to fade
+
+Market-holiday guard: SPY regular-hours print (18:09 UTC), confirmed open.
+
+Both scans run. Nothing clears the step-2/3 bar this cycle -- no message sent.
+
+**BDRX** $1.42 (+115.1%, RVOL 603x), down from the $1.51 new high logged last cycle (1:09pm) -- continued fade off that peak, not a fresh development, no catalyst change. **TNON** $5.91-5.95 (+11.5-12.3%), a real further fade -- down from $8.72 last cycle and well below the $9.35 spike high from this morning, now roughly -37% off that peak. Neither is a new high or fresh igniting move, so no alert.
+
+**FTFT** remains today's largest real % change (+42.9%, $2.93-2.99) but this was already fully logged at 10:11am ET (real day high $3.40 at 9:35am ET, no dated catalyst found, Stocktwits chatter only) -- pulled real 5-min bars (09:30 ET through now) to confirm: high of day is still $3.40 (9:35am ET, ~4.5 hours ago), price has been range-bound $2.67-3.15 since, currently $2.93-2.99 -- same already-printed, no-catalyst characterization, no re-log needed per the no-material-change rule.
+
+No other names in either scan clear even the raw %-change/RVOL screen meaningfully. Quiet cycle.
+
+## 2026-09-11 ~3:09pm ET — Momentum-scanner ALERT: XHLD fresh breakout, no catalyst
+
+Market-holiday guard: SPY regular-hours print (19:09 UTC), confirmed open.
+
+**XHLD (TEN Holdings)** — real, fresh breakout. Was flat $10.6-10.9 all session (light volume, a few hundred-to-low-thousand shares per 5-min bar) until the 19:00 UTC (3:00pm ET) bar, which jumped $11.10->$13.01 on 67,678 shares, then the very next bar (3:05pm ET) pushed to a high of $13.84 on 59,442 shares -- both real volume spikes, nothing interpolated. Live quote confirms: $13.17 as of 19:10:28Z (fresh, ~1 min old), +21.5% vs. $10.84 prior close, only ~5% off the $13.84 intraday high made ~5 min ago -- squarely in the igniting window (well inside 15-20 min), not already-printed. Float 10.34M (scan), RVOL (1, 1H) 19.2-19.7x per the scan field, trustworthy at this hour (well past 9:30am).
+
+**Catalyst check: none found.** Stocklake `get_stock_news` hit the 25-call guest daily limit -- news leg unavailable this check, stated plainly rather than proceeding on Stocktwits alone. Stocktwits pulse: sentiment is actually BEARISH (72.7% bear) despite the price move, LOW current message volume (extremely high only on multi-month lookback), and the real posts describe this explicitly as unexplained/promotional action, not news -- "this artificial pump is almost over," "I really can't understand what's propping this up," "this becoming short sellers' nightmare," one chart-target hype post ("13.47 is next res then we could see 20.00... Join TOB") from a promotional trading-room account, and a mention it "halted up here" (a volatility halt, not a catalyst). One unrelated PR post noted XHLD is attending an investor conference Sept 14-16 -- a future date, generic conference-attendance announcement, not today's trigger. Float is 10.3M (not sub-1M) and price is $13 (not sub-$5), so the WETO-style dilution check doesn't apply here.
+
+**Flagged to the user as "no catalyst found -- price action only," not presented as a clean setup**, per protocol -- real move, real volume, but no dated news behind it and the community's own read is that this looks like an unexplained/promotional pump.
+
+TNON/BDRX/FTFT/SXTC unchanged from the pattern already on record (TNON/BDRX continuing to fade off their earlier peaks, FTFT still range-bound below its 9:35am high, SXTC's second leg peaked $3.00 at 2:20pm ET and has since faded ~10% off that high -- not fresh, no re-alert).
+
+## 2026-09-11 ~4:02pm ET — Growth sleeve daily check: SMR stopped out, HL held, GCT bought (redeploy)
+
+Market-holiday guard: SPY fresh print (19:59:59Z regular, 20:02:19Z non-reg), confirmed a real session, market had just closed for the day (checked ~20:02 UTC = 4:02pm ET).
+
+**Positions per real data (get_equity_positions):** only HL (20sh) shown. SMR is gone -- checked get_equity_orders(symbol=SMR) and found its resting $9.32 GTC stop_market FILLED today at 09:38:12 ET (1 sh @ $9.32). **SMR realized -$0.68 (-6.8%)** on the $10.00 entry, a mechanical stop-out, not caught until this check since no earlier trigger in this sleeve's own schedule verifies intraday fills. SMR's own price today: $10.21 prior close -> $8.605 by the time of this check (-15.7% intraday) -- the stop protected against a materially larger loss than the one realized. Logged to trades.csv row 16 (updated in place) and CLAUDE.md's S9 row.
+
+**HL** -- quantity-verified (20sh matches the resting $17.36 stop, no manual-buy gap). Real peak since entry across finalized daily bars (09-04 through 09-10): $21.18 (09-09 high) -- one cent above the $21.17 the resting stop's 18% trail was based on. Trivial rounding-level difference (unlike the 56-cent SMCI 08-31 discrepancy); took no action -- a cancel/replace for one cent of stop distance costs a real unprotected window for no real benefit. **Technical signal check:** RSI(14) 54.46 (neutral, 30-70 band), ADX(10) 30.79 (real trend, >25), MACD histogram -0.156, deepening for the fifth straight session (-0.026 -> -0.052 -> -0.090 -> -0.095 -> -0.156, 09-03 through 09-10). This is the same ADX>25-plus-MACD-worsening combination flagged 09-10, now further along. **Corroboration check:** Stocktwits pulse shows only general oil/silver commodity chatter and retail bull/bear debate, no dated news; Stocklake's news tool is unavailable this session (hit its 25-call/day guest limit earlier today, stated plainly per the standing rule rather than treating "couldn't check" as "no catalyst exists"); get_sec_filing_index returned zero HL filings since the 09-04 entry. No corroboration found -- per the narrowed 2026-09-06 rule, no early close. The resting $17.36 stop stands and is already ~12% below today's ~$19.78 close-ish price (tighter than a fresh 18% trail from here would be), so no ahead-of-schedule tightening either. Disclosed limitation repeated: this account's own S11 backtest found no exploitable edge in short-horizon technical-crossover signals, so this is a real, honest momentum read, not a proven predictor.
+
+**Redeploy idle capital:** settled buying_power $107.90 (get_portfolio), confirmed separate from today's SMR stop proceeds ($9.32 unsettled T+1, per get_accounts unsettled_funds). Re-ran the Growth Momentum scan (63 real matches, scan_id 2514847d-25cb-4628-9731-bb5b0ee7d246). Checked fundamentals (get_equity_fundamentals) on 10 whole-share-affordable candidates by real ADX/PE/52wk-proximity: rejected CRGY (PE -338.3, unprofitable) and TARS (PE -75.1, unprofitable) on negative earnings; rejected SHEL (PE 10.5, profitable, but made a new 52-week high the prior session at $96.99 and today's price $96.77 is right at it -- chasing); rejected KGS (ADX 24.27, below this account's own 25 "real trend" floor). Remaining real candidates (YPF, CNH, SBSW, PGNY, GCT, HRMY, TIMB) all cleared profitable+real-trend+not-extended; picked **GCT (GigaCloud Technology)**: PE 12.25 (cheapest of the qualifying set), ADX(14) 31.15 (real trend, not extreme/overextended), RSI 58.2 (mid-range, not overbought), price ~8% off its 52wk high ($56.27, 08-06) -- not chasing. Also chosen for sector diversification: B2B e-commerce/distribution, away from HL's precious-metals concentration (and SBSW, a tempting cheap pick, would have added a second miner).
+
+Placed a GFD limit buy, 2 sh, $53.00 ceiling (current price ~$51.87-51.98 ask) at 20:04:49 UTC -- market had just closed for the day, so this queues for Monday's open per the established after-close pattern. Verified `state: queued`. Scheduled a follow-up (send_later) for 09:31 ET Monday 2026-09-14 to confirm the real fill and place the GTC stop_market at 18% below entry -- booked at :31 not :34, per the process fix recorded after HL's 09-04 entry (318s stop latency from booking the check too late). Not yet logged to trades.csv (this sleeve logs at real fill time, not order-placement time); will log the fill + stop together once confirmed Monday.
+
+One growth position currently confirmed open (HL, 20sh, stop $17.36); GCT pending Monday's open.
+
+## 2026-09-11 ~4:10pm ET — Momentum-scanner fire past session close, no scan run
+
+Market-holiday guard: SPY confirms regular hours ended at 19:59:59.990Z (4:00:00pm ET); this cycle fired at 20:09:59Z (4:09:59pm ET), 10 minutes into post-market (last_non_reg_trade_time 20:10:07Z). Not a holiday -- just the scheduled 4pm slot landing after the bell, same as 2026-09-10's 4:10pm fire. RVOL/relative-volume fields are meaningless post-close (same unreliability window as premarket), so no scan run, no analysis, no user message. Last live cycle of the day was 3:09pm ET (XHLD alert).

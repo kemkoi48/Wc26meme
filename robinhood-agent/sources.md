@@ -5333,3 +5333,55 @@ Queried `get_equity_orders(state=confirmed)`:
 - **GCT** — 2 shares, stop **$41.69**, `confirmed`, GTC. Price **$52.67**, +3.60% on the $50.84 entry. Still below the **$53.38** profit-lock arm threshold (+5%). Nothing for the 4:01pm growth check to act on unless it closes above $53.38.
 
 **Cadence note, repeated from 1:09pm because it repeated in fact:** the 1:09pm check saw $5.4399 and the 2:09pm check sees the aftermath of a $6.10 high set at 1:50pm. For the second time today the hourly grid straddled the move. Platform minimum is 1 hour, so this is not fixable by schedule — only by the pending question of whether the scanner cycle may check open positions, which is still awaiting the user.
+
+---
+
+## 2026-09-14, 3:09pm ET — momentum scanner cycle
+
+**Market-holiday guard:** passed. SPY `state: active`, last trade 2026-09-14T19:09:36Z, $761.88.
+
+### FTFT — third leg. The "already printed" heuristic would have been wrong a THIRD time today.
+
+$8.5353 @ 19:09:37Z, **+196.4%**. Scan `Last` $8.64. Day volume **103.0M on a 7.94M float = 13x float turnover**.
+
+The vertical leg, from 10-minute bars:
+
+| Time (ET) | Open → Close | High | Volume |
+|---|---|---|---|
+| 2:20pm (18:20Z) | 5.685 → 5.620 | 5.75 | 1,360,034 |
+| 2:30pm (18:30Z) | 5.630 → 5.620 | 5.67 | 778,766 |
+| **2:40pm (18:40Z)** | **5.630 → 7.885** | **8.1999** | 1,875,875 |
+| 2:50pm (18:50Z) | 7.872 → 7.455 | 8.00 | 2,264,256 |
+
+**Scorecard on my own heuristic today: 0 for 3.** 9:10am (called it dead at $3.11, ran to $5.78), 1:09pm (called it printed at $5.78, ran to $6.10), and the 2:09pm distance reading would have said printed again before this $8.20 leg.
+
+**The narrowed rule from 2:09pm passed its first live test.** It requires *distribution* — declining pullback volume AND failure to reclaim the breakout level — not distance from the high. At 2:09pm FTFT's pullback bars ran 700k–1.36M, i.e. no volume dry-up, so the rule said *do not call it printed*. That was right. One correct call is not validation of a rule; it is one correct call. Recording it as such.
+
+### FTFT — the two things that are NOT clean, stated before anything else
+
+**1. There is no catalyst. None.** `get_equity_news` returns exactly one FTFT article today: a Benzinga market wrap (10:07am ET) whose FTFT mention is *"shares were also up, gaining 59% to $4.56"* — that is the move reporting itself, not a cause. Stocktwits (15 newest messages) contains zero named news: it is "cover shorties," "shorts are done," "see you at 125," price targets, and squeeze chatter. Per step 3 of this job's own procedure this is **"no catalyst found — price action only,"** and it must never be presented as a clean setup. A +196% move with no identifiable reason is not a setup with unknown upside; it is a move whose entire basis is unknown.
+
+**2. THE DILUTION CHECK COULD NOT BE PERFORMED.** `get_sec_filing_index("FTFT")` returns `filings: []` — both with `since=2026-06-01` and with all filters dropped (retried per the tool's own guidance). FTFT is a NASDAQ-listed US issuer that certainly files with the SEC, so **this is a tool failure, not evidence of no filings.** I cannot clear FTFT on dilution and I am not going to imply otherwise.
+
+This matters specifically here. A Stocktwits user at 19:08:47Z posted *"offering could and will stop this run.. question is when?"* — unverified, and I am recording it as an unverified user claim rather than a finding. But a $23M market cap that has tripled in a session is the exact profile where an ATM or offering is the most likely ending, and the WETO precedent (2026-09-04, kept on a watchlist at +15.9%, collapsed −41% within the hour on a $75M ATM that had been on file since 08-26) is why this check exists at all. **Unavailable is not the same as clean**, and on this cohort the base rate is bad: of six low-float movers checked on 09-04, five had live dilution mechanics.
+
+**One unverified claim explicitly not adopted:** a user posted *"NHOD 9.37."* My own data does not support it — the 18:50Z bar high is $8.00 and the quote is $8.5353; the 19:00Z bar has not returned yet. The day high I can actually source is **≥$8.64** (scan `Last`). I am not repeating $9.37 as fact.
+
+### VNCE — update, not a new alert
+
+$7.57 @ 19:09:30Z, **+44.5%**. New session high **$7.6698** at 2:50pm ET, above the $7.4541 cited at 2:09pm.
+
+This partially answers the caveat I attached an hour ago. I flagged it as a **low-volume grind** — afternoon bars of 18k–70k against 279k at the open. Volume has since re-expanded: 1,333 (18:20Z) → 42,117 → 23,123 → **69,895** (18:50Z), the strongest bar since noon, and it came on the push to the new high. The "thin tape" caveat is weakening. It is not withdrawn — day volume is 3.37M, up only ~350k in the hour — but the direction of the evidence has changed and the record should say so.
+
+### Rejected
+
+- **VEEA** — the closest call, rejected on the dilution gate. +33.9%, $2.05, float 1.88M, `Relative volume` **106.9**. But: day high **$2.1522 at 12:10pm ET**, three hours ago, price 4.7% below; the noon spike bars ran 259k/531k/374k and volume then collapsed to 6k–60k. Under the new rule that is genuine distribution → printed. The last bar (18:50Z) did re-expand to 60,312 pushing $2.06, which makes it marginal rather than dead — but `get_sec_filing_index("VEEA")` also returns `filings: []` with and without filters, so the mandated dilution check is **unavailable** on a **$4.85M market cap** microcap. Per WETO, unavailable + this cohort = do not alert.
+- **EVCM** $7.475, **+18.9%**, market cap $1.11B, 0.8% below its $7.535 high (2:40pm). Fails on participation: day volume **307,640**, RVOL 1.70, recent bars of 812–5,726 shares. A billion-dollar company moving 19% on 307k shares is a real corporate event happening on almost no tape — logged for the record, not alertable under a momentum mandate.
+- **GTBP** +34.4% $11.57 — RVOL **0.83**, day volume 452,040. Third consecutive cycle rejected on the identical ground: price move without participation.
+- **SCNI** $2.3217, faded to +39.9% from +48.5% an hour ago; high $2.67 at 9:40am. Printed, confirmed, eighth consecutive rejection.
+- **BMGL** $7.44 — Benzinga's wrap has it +84% at $8.44 earlier; now well below the $9.22 session high, `% Change` field still blank. Unchanged from 2:09pm.
+
+### Positions
+
+- **HL** $19.025, −3.8%. Stop **$18.50** resting (verified `confirmed` last cycle), 2.8% below. No action.
+- **GCT** $52.79, **+3.84%** on the $50.84 entry. Still below the **$53.38** profit-lock arm. 51 minutes to the close and the 4:01pm growth check; on current price the lock does not arm today.

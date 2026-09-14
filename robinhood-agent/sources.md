@@ -5223,3 +5223,35 @@ Step 2 says skip a name already alerted today "unless it has materially changed 
 **BMGL $7.11-7.32** — float 715,044, volume 21.61M = **~30x float turnover**, and the scan could not even render its % Change (empty field). Rejected outright: the bars show a spike to **$9.22** at 13:50 UTC (9:50am ET) followed by an immediate collapse — $8.92 -> $7.57 in the next five-minute bar, now $7.11 with a low of $7.07. **-23% off the high in about twenty minutes.** Actively unwinding, textbook pump-and-dump shape, not a setup. Logged as a caution, not a candidate.
 
 **VSME $1.28 (+19.6%)** — fourth straight cycle, fourth rejection, same reason (still below its $1.48 premarket high). Consistent.
+
+## 2026-09-14 ~11:15am ET — User pushback on profit-taking; profit lock built and WIRED IN; HL stop tightened
+
+**The user's criticism, verbatim: "you seem to invest and set stop/loss, wont take profit when you have chance."** Checked against the record rather than argued with. They were right, and the gap was structural rather than a series of judgment calls.
+
+**What the sleeve actually had:** an entry screen, an 18% trailing stop, and a technical check whose only authorized action was to TIGHTEN the stop. There was no code path anywhere in it that could sell into strength. Its own history shows the consequence: **BTG (+$35.69) was booked only because the user intervened twice** — on the first push ("let's take the profit") I tightened a stop to $5.50 instead of selling, and only after a second push ("take the profit... not just sit back and relax") did I sell at $5.68. **SMR** ran $10.00 -> $11.37 peak, was never trimmed, stopped out at $9.32 for -$0.68.
+
+**The sharpest finding: the rule already existed and had been stranded.** The user's 2026-08-18 instruction ("we are happy at 5% profit but if the momentum is there sell it at high") was implemented the same day as `scalp_signal.PROFIT_TRIGGER_PCT/PROFIT_TRAIL_PCT`. The scalp loop was then switched off. The growth sleeve — the only thing still running — never got an equivalent. The user's requested profit-taking rule has been sitting in dead code for four weeks.
+
+**Real account state at the time of the complaint** (so the claim is grounded, not conceded vaguely): total value **$497.70**. Realized agent-executed **-$15.13**, of which **-$14.56 is the single IPST stop-rejection failure** — strip that one process failure and the rest nets -$0.57. HL was **-$33.70 unrealized**, taking the all-in figure to roughly **-$47**. One correction to their claim, stated once and not leaned on: BTG was a genuine +$35.69, so "not a single profit" is not literally true — but since it required two overrides, the substance of their point stands.
+
+**FIX 1 — `growth_signal.decide_profit_exit()`.** PROFIT_TRIGGER_PCT 5.0 / PROFIT_TRAIL_PCT 2.0, identical semantics to the scalp version: arms once the peak since entry reaches +5%, then rides the PEAK rather than the entry, exiting on a 2% pullback from that peak — so a runner keeps running and only exits when it genuinely turns down. 50 tests pass. **Both thresholds pinned on both sides by tests**, deliberately, so this number cannot quietly drift out of the code the way the S7 delta floor did (0.25 in code / 0.1 in config.json / 0.30 in prose, found this morning).
+
+**A boundary test caught a real float bug.** An exact 2% pullback computes as **1.9999999999999944** (105 - 102.9 == 2.0999999999999943), so a bare `>=` silently failed to fire exactly ON the user's stated threshold. Fixed with an explicit epsilon and a comment explaining why. Found by the test, not by inspection — which is the argument for pinning boundaries rather than eyeballing them.
+
+**FIX 2 — WIRED IN, which is the part that matters.** Added to the growth-sleeve trigger (`trig_01P3etqQpqYJc9J1w9jPqbzD`) as **step 3, checked BEFORE the stop ratchet**, with explicit sell-and-verify instructions and the no-OCO cancel-first ordering. Building the rule and leaving it uncalled would have been a verbatim repeat of the original failure. Next fire 20:01Z today, so it is live this afternoon.
+
+**Replayed against the real closed trades — including where it does NOT help, so the fix is not oversold:**
+
+| sym | entry | peak | peak % | arms? | would have done |
+|---|---|---|---|---|---|
+| SMR | 10.00 | 11.37 | +13.70% | YES | exit ~$11.14 -> **+$1.14 instead of -$0.68** |
+| BTG | 5.2599 | 5.7005 | +8.38% | YES | auto-exit ~$5.59 (vs $5.68 the user had to force) |
+| SMCI | 38.00 | 39.47 | +3.87% | no | unchanged, still -$18.21 |
+| HL | 20.62 | 21.18 | +2.72% | no | unchanged |
+| LYFT | 17.5779 | 17.98 | +2.29% | no | unchanged |
+
+**The uncomfortable read that falls out of that table: three of five positions never got 5% above entry at all.** The missing profit rule is real and now fixed, but it is not the whole problem — **the entries have not been producing much upside to harvest.** Recorded plainly rather than letting the fix imply more than it delivers.
+
+**Known limitation, unresolved:** the trigger runs once daily at the close. A 2% pullback from peak can occur and fully reverse inside one session, so daily granularity will miss triggers. The natural fix is checking open positions on the hourly scanner cycle, but that job is explicitly alert-only and changing its mandate is the user's call, not a unilateral one. Flagged, not done.
+
+**HL stop tightened, on the user's instruction.** They chose "tighten hard" over closing. Cancelled the $17.36 stop (verified `state: cancelled`), placed **$18.50** (verified `state: confirmed`); naked window 17 seconds. Placement reasoning: literal "just under current price" (~$18.90) sits inside today's $18.59-19.07 range and would have been stopped out on ordinary noise within the hour, which is a worse version of closing the position — so the stop went just under **$18.59, the session low that has held all day**. Caps further downside at about **$9.40** more (realizing ~-$42.40 if hit) versus roughly **$32** more under the old $17.36 trail.

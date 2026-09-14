@@ -5275,3 +5275,61 @@ So the real high is **$5.78**, set ~45 minutes ago, never retested, and current 
 **Positions:** HL **$19.115**, recovered from $18.895 — the new $18.50 stop sits 3.2% below, untouched. GCT **$52.865**, +3.98% on the $50.84 entry, still short of the **$53.38** profit-lock arm threshold (needs +5%). Nothing for the 4:01pm check to act on yet.
 
 **Other scan rows, all rejected:** SCNI $2.395 (+44.3%, still below its $2.67 session high), VSME $1.3403 (+25.3%, sixth straight cycle below its $1.48 premarket high — rejected six times on the same consistent ground), BMGL $7.2101 (still no % Change field; down from its $9.22 spike, continuing to bleed).
+
+---
+
+## 2026-09-14, 2:09pm ET — momentum scanner cycle
+
+**Market-holiday guard:** passed. SPY quote `state: active`, last trade 2026-09-14T18:12:26Z, $762.27 (prior close $764.29). Live regular session.
+
+### FTFT — RE-ALERT. My 1:09pm "already printed" call was wrong, for the second time today.
+
+Bars (5-minute, regular hours, `get_equity_historicals`) say the run did not end where I said it did:
+
+| Time (ET) | Bar high | Volume |
+|---|---|---|
+| 12:25pm (16:25Z) | **$5.78** ← the high I cited at 1:09pm | 793,564 |
+| 1:15pm (17:15Z) | **$5.8599** ← breaks it | 1,759,531 |
+| 1:20pm (17:20Z) | $5.90 | 1,310,208 |
+| 1:40pm (17:40Z) | $5.95 | 1,318,244 |
+| **1:50pm (17:50Z)** | **$6.10 — day high** | **1,410,153** |
+| 2:00pm (18:00Z) | $5.95 (close $5.64) | 800,878 |
+| 2:05pm (18:05Z) | $5.76 (close $5.72) | 354,072 |
+
+Current $5.8414 @ 18:12:25Z, +102.8%. Day high **$6.10**, set ~22 minutes ago, price 4.3% below it and still holding above the $5.78 level it broke. Day volume 89.0M on a 7.94M float. **Material change vs. the $5.78 threshold → re-alert.**
+
+**What I got wrong, precisely.** At 1:09pm the *facts* I cited were true: high $5.78, a clean sequence of lower highs, price 5.9% below. The *inference* from them — "already printed" — failed. It has now failed twice on this name today (9:10am and 1:09pm), which makes it a pattern, not a one-off.
+
+The defect is that my "already printed" test measures **distance from the high** and nothing else. Distance from the high cannot distinguish a top from a pullback inside an uptrend — the two look identical until they resolve. The heuristic was built for a single-leg opening spike; FTFT is a multi-leg parabolic, and it is now on its third leg.
+
+**Narrower replacement rule, checkable against today's own data.** A "printed" verdict must show *distribution*, not just distance: volume declining across the pullback AND failure to reclaim the breakout level. Applied to today:
+- FTFT at 1:09pm — pullback bars ran 440k–940k. **Volume was not drying up.** The rule says do not call it printed. Correct.
+- SCNI today — 2.34M and 1.84M on the opening bars, 30k–100k now. **Volume genuinely dried up.** The rule says printed. Also correct.
+
+Same test, opposite answers, both right. That is the distinction the distance-only test was blind to.
+
+**What this does not become.** The fix is not "never call a mover printed" — that makes every alert permanent and the job worthless. It is one added condition. I am also not now claiming FTFT goes higher; I am claiming I have no basis to say it is finished, which is a different and much weaker statement.
+
+### VNCE — new alert, with an explicit caveat on what kind of setup it is
+
+$7.4146, **+41.5%**, float 6.00M, day volume 3.02M, RVOL 7.84, market cap $67.8M. Not previously alerted today.
+
+Day high **$7.4541** at 1:20pm ET (17:20Z); current price **0.5% below it**. Structure since 12:00pm ET is a staircase of higher highs: 7.00 → 7.0499 → 7.2147 → 7.3027 → 7.3844 → 7.4541 → 7.45. By the distance test this is as un-printed as a name gets.
+
+**The caveat, stated plainly because it changes what this is:** the afternoon leg is running on 18k–70k share bars against 279k in the opening bar — roughly a tenth of the participation. This is a **low-volume grind to new highs, not an ignition.** Both halves are true and the user should have both: it is at its high (real), and it is getting there on thin tape (also real). A grind on declining volume can continue for hours or reverse on the first real seller; the volume profile gives no edge either way.
+
+### Rejected this cycle
+
+- **SCNI** $2.4108, +48.5%, float 651,618, volume 38.2M. Day high **$2.67 at 9:40am ET** — 4.5 hours ago, price 9.7% below it, and volume collapsed 2.34M → 30k–110k per bar. Distribution confirmed on both legs of the new rule. Printed. *(Seventh consecutive cycle rejected, consistent ground each time.)*
+- **BMGL** $7.3114, float 715,044, volume 30.1M (**42x float turnover**). Spiked to **$9.22 at 9:50am ET**, collapsed to $7.07 within 20 minutes, has chopped $7.00–7.75 for four hours since. Price 20.7% below the high. A failed spike, dead. `% Change` still blank — no valid prior-close reference, so the scan's own ranking of this row is unreliable.
+- **PMI** $6.27 — alerted 7:10am, day high $6.40 at 9:40am. **No re-alert, and a liquidity note that matters more than the price:** recent 10-minute bars carry 100, 270, 730, 903, 1,038 shares, and the 1:40pm bar is `interpolated: true` with **zero volume**. This name cannot absorb a real order. Recording it so a future cycle does not treat a PMI print as tradeable.
+- GTBP +30.1% $11.20 — RVOL 0.73, day volume 396,919. Price move without participation; fails on volume.
+- ALAR +16.2%, DBI +11.7%, SMTK +9.0%, BRNX +7.5%, CODA +6.0% — all under 6% net-change-to-volume interest or already mid-day fades; none at or near session highs.
+
+### Positions — both stops verified resting this cycle
+
+Queried `get_equity_orders(state=confirmed)`:
+- **HL** — 20 shares, stop **$18.50**, `confirmed`, GTC, placed_agent `agentic`. Price **$18.955**, −4.2% on the day; the stop sits **2.4% below**, closer than at any check since it was tightened. No action: the tightened stop is doing exactly the job it was tightened for, and moving it again on an adverse day would be the stop-chasing the 08-18 rule exists to prevent.
+- **GCT** — 2 shares, stop **$41.69**, `confirmed`, GTC. Price **$52.67**, +3.60% on the $50.84 entry. Still below the **$53.38** profit-lock arm threshold (+5%). Nothing for the 4:01pm growth check to act on unless it closes above $53.38.
+
+**Cadence note, repeated from 1:09pm because it repeated in fact:** the 1:09pm check saw $5.4399 and the 2:09pm check sees the aftermath of a $6.10 high set at 1:50pm. For the second time today the hourly grid straddled the move. Platform minimum is 1 hour, so this is not fixable by schedule — only by the pending question of whether the scanner cycle may check open positions, which is still awaiting the user.

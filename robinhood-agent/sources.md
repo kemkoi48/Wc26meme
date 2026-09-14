@@ -5122,3 +5122,58 @@ Market-holiday guard: SPY premarket print 12:10:35Z ($759.45, -0.6%), market ope
 - **VSME dilution check, finally run** (deferred at 6:35am and 7:10am, warranted now that it has appeared three cycles running): `get_sec_filing_index` since 07-01 returns two 6-K filings (foreign-issuer current reports), dated **2026-09-11** and 2026-07-15. **No F-1, no prospectus, no ATM, no shelf** — so no visible dilution mechanic, unlike the BDRX/WETO profile. The 09-11 6-K lands on exactly the day the move began and may well BE the catalyst, but its contents were not read, so it is recorded as an unverified possibility, not a catalyst.
 
 Nothing else cleared. Warrior scan: 6 matches, only VSME and FTFT green; BTCT -2.6%, SXTC -5.5%, BDRX -6.9% (continuing to bleed post-interim-results), TNON -10.3% (fifth session of decay, now $5.32 — correctly dropped from the watchlist this morning).
+
+## 2026-09-14 ~8:35am ET — S7 screen + pre-open rectify: no trade, and TWO live-system defects found
+
+Market-holiday guard: SPY premarket print 12:35:57Z ($758.50, -0.8%), market open.
+
+### PART A — pre-open watchlist rectify: no changes made
+
+All 9 names re-quoted vs the 6:35am build. Nothing warranted an add or a drop, so the list was not churned (per step 3). Two moves flagged without action:
+- **RUM $7.888 (+10.0%)**, down from $8.33 at the build and from a ~$9.09 premarket peak — **-13% off its high**. This is the fade predicted in this morning's entry playing out: recycled August deal, customer ID unconfirmed by either party. Kept rather than dropped because it is still +10% on real volume with the regular session not yet open, and the open is the real test. Flagged, not churned.
+- **ORCL $142.95, now -4.9%**, worse than the -3.3% at the build, and well below where it was added on Friday's EPS beat (Friday's range $166.00 high / $149.84 low). The AI-capex unwind keeps compounding. Kept as the bellwether of that theme.
+- SRRK $58.65 (+5.8%), off the $62.00 premarket print but solidly green on the real FDA approval; note a very wide pre-open spread ($55.00 / $59.38). CRBP $8.37 (+3.1%), faded from $9.69 but its CANYON-1 topline call has not happened yet — that is the whole reason it is on the list. Nuclear core all modestly weaker, no idiosyncratic news.
+
+### PART B — S7: account flat, Track 1 run, NO TRADE
+
+`get_option_positions(432805174, nonzero=true)` returns empty — no open S7 position, so the entry screen ran. Live cap verified in the file per instruction: `option_math.py` line 419 `max_premium_usd: float = 150.0`. **Confirmed correct.**
+
+**Track 1 IV/HV sweep:** scan returned **398 total matches, 200 rows**. Of the 200, **42 clear the 0.90 cap and 18 clear the 0.80 McMillan threshold** — a real candidate list, consistent with the 09-04 calibration (63/36 that day). Nothing fell under 0.45, so no automatic artifact-zone exclusions; the top two came in at 0.457/0.460.
+
+**The artifact check did heavy lifting — 3 of the 4 cheapest names are fake cheap.** Pulled real daily bars (06-15 to 09-11) and measured what share of total log-return variance the single worst day accounts for:
+
+| sym | IV | HV | ratio | worst day | % of variance | HV ex-outlier | ratio ex-outlier | verdict |
+|---|---|---|---|---|---|---|---|---|
+| CLBT | 0.5687 | 1.2431 | 0.457 | **-34.5%** | **68.4%** | 0.4720 | **1.205** | ARTIFACT — actually RICH |
+| PYPL | 0.2536 | 0.5511 | 0.460 | +15.9% | 36.9% | 0.4167 | **0.609** | survives |
+| EIX | 0.5000 | 1.0184 | 0.491 | **-26.2%** | **64.2%** | 0.3922 | **1.275** | ARTIFACT — actually RICH |
+| TTAN | 0.6728 | 1.2989 | 0.518 | **-35.6%** | **59.1%** | 0.5987 | **1.124** | ARTIFACT — actually RICH |
+
+All three rejects invert past the 0.90 cap once the single gap day is removed — their options are *expensive*, not cheap, and all three would have screened as the best candidates on the board. Same failure mode as AMLX on 09-04 (one day = 70.1% of variance). This check is earning its place every run.
+
+**PYPL is the sole survivor and its cheapness is robust, not a one-day artifact.** Stress-tested by dropping successive outliers: ratio 0.485 (raw) -> 0.609 (drop 1) -> 0.829 (drop 2) -> **0.856 (drop 3)** — still under the 0.90 cap even with its three biggest days removed. Genuinely cheap IV.
+
+**But PYPL does not become a trade, for three separate reasons, each stated so the rejection stays diagnosable:**
+1. **Option quotes are STALE and unusable right now — this is a defect, see below.** The 10-16 $52.50p quote came back with `updated_at: 2026-09-11T19:59:59.969Z` — **Friday's 4pm close, three calendar days old.**
+2. On those (stale) Friday numbers the contract reads: delta **-0.3875**, premium **$171.50**, IV 0.372, bid $1.44 / ask $1.99, OI 6,294, vol 2,026. So **delta now passes comfortably** (0.3875, clears both the real 0.25 floor and the stale-prose 0.30 one) and **the PREMIUM CAP is what kills it — $171.50 vs the $150 cap, over by $21.50.** Note this is the *reverse* of the historical pattern: the cap/delta wall has flipped sides on this name, because PYPL fell from ~$56 (09-04) to $53.79, pulling the $52.50 strike toward the money — delta rose, and so did premium. Spread is also 32% of mid vs the 15% config gate, though a pre-open spread is not meaningful.
+3. **No catalyst.** Track 1 is a cheapness screen; it supplies neither direction nor a reason. Cheap IV is necessary, not sufficient, and nothing dated was found for PYPL. Earnings are **2026-10-27 (verified)**, which is *after* the 10-16 expiry — so the no-buying-into-a-scheduled-IV-event gate is clean for that expiry, but a November expiry would straddle it and be disqualified.
+
+### DEFECT 1 — the delta floor disagrees in THREE places, and the loosest one is live
+
+- `option_math.py`: `OptionScanConfig.min_delta = 0.25` and `SoftCatalystScanConfig.min_delta = 0.25` (lines 423, 640).
+- **`config.json`: `option_scan.min_delta = 0.1`** — and `config.py` line 195 constructs `OptionScanConfig(**{k:v for k,v in os_raw.items() if k in fields})`, so **config.json's 0.1 overrides the code's 0.25 whenever the config is loaded.** The loosest of the three values is the one that actually executes.
+- This trigger's own prompt, and CLAUDE.md's S7 row, both say **"≥0.30 delta floor."**
+
+**strategies.md already adjudicated this, on 2026-08-21, and the record is explicit** (lines 976-981, verbatim): *"This section originally asserted 'no long option is bought below roughly 0.30 delta.' That number was never in the code: both `OptionScanConfig.min_delta` and `SoftCatalystScanConfig.min_delta` enforced 0.10, and two test fixtures the suite treats as genuine passing setups carry deltas of 0.25 and 0.28 — a 0.30 floor would have rejected both."* The dated resolution (line 1978) pins it: *"`max_premium_usd = 50.0`, `min_delta = 0.25` — user decisions, dated, and the delta floor is now pinned on both sides by tests."*
+
+So **0.25 is authoritative**; the "0.30" in this trigger and in CLAUDE.md is the same prose drift already caught once and re-grown. **Consequence worth naming: this trigger's own calibration note says the 09-04 PYPL 10-16 $52.50p "missed the 0.30 delta floor by 0.0095" at delta -0.2905 — at the real 0.25 floor that contract PASSED the delta gate** (it would still have needed the catalyst and spread gates, so this is not "a trade was missed," but the recorded rejection reason was wrong). And config.json's stale 0.1 is a genuine live-money risk: it would admit contracts at delta 0.10, far below any dated decision.
+
+**Not fixed unilaterally.** strategies.md's own precedent on this exact question is "not reconciled silently in either direction" for a live-money gate. Reported to the user for a decision. Today's screen applied the stricter reading anyway, which changed nothing — PYPL failed on premium, not delta.
+
+### DEFECT 2 — this trigger fires at 8:35am ET, but option quotes don't update until 9:30am
+
+CLAUDE.md's S7 row records that the S7 trigger was deliberately moved **from 8am to 9:35am ET on 2026-08-20** because "option quotes don't update until the 9:30am regular-session open (extended_hours_state disabled on every chain) — the 8am cycle was pulling yesterday's stale close pricing." When Part A and Part B were merged into this single ~8:35am trigger on 2026-08-27 (a platform limit prevented a second trigger), **Part B silently re-acquired that exact defect.**
+
+Verified today with real data, not asserted: PYPL's chain shows `extended_hours_state: "disabled"`, and the actual contract quote carried `updated_at: 2026-09-11T19:59:59.969Z`. **Every Part B run at 8:35am since the merge has been screening option contracts on stale closing prices.** Since S7 has placed zero trades in that window the damage is zero so far, but the screen has been structurally incapable of validating premium/delta/spread on live pricing. Recommended fix relayed to the user: keep Part A at 8:35am, and either move Part B to ~9:35am or have the 8:35am run stop at Track 1 ranking and defer all contract-level gates to a post-open check.
+
+**Running total: 14 real S7 checks, 14 rejections, 0 trades.** Today's rejection reason: PYPL premium $171.50 over the $150 cap, plus no catalyst, plus quotes unusable pre-open.

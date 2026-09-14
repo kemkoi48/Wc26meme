@@ -5191,3 +5191,35 @@ Market-holiday guard: SPY premarket print 13:10:40Z ($758.34, -0.8%), market ope
 **VSME $1.29 (+20.6%)** — highest nominal % change on the board for a third straight cycle, and rejected for a third straight cycle on the same ground: premarket high $1.48 was set in the 4-5am ET bar, price is still **-12.8% off it**. Grinding up off the $1.24 low but not making a fresh high. Consistent treatment across all three cycles.
 
 Everything else in the Warrior scan red: BTCT -2.8%, BDRX -4.6%, SXTC -6.6%, TNON -10.5% (now $5.31).
+
+## 2026-09-14 ~10:10am ET — CORRECTION: the 9:10am "FTFT failed" call was WRONG; FTFT +66%
+
+Market-holiday guard: SPY regular-session print 14:11:09Z ($760.76, -0.5%), market open. First cycle of the day inside 9:30-4pm, so the scan's own RVOL field is trustworthy again.
+
+### The error, stated plainly
+
+At 9:10am ET I told the user FTFT had failed — "$3.11, -6.9% from the alert price... never took out Friday's $3.40 high — the third attempt at that ceiling failed like the prior two," and that the thin-volume divergence "was the correct read and is now confirmed by outcome." **That was wrong, and the reasoning behind it was methodologically bad.**
+
+Real bars since: FTFT opened the regular session at **$3.30 and traded 4,243,719 shares in the first five-minute bar alone**, running to $4.45. It then based $3.86-4.34 for twenty minutes, and at 13:55 UTC (9:55am ET) went vertical again — $3.855 -> **$4.94** on 3,575,732 shares — printing a day high of **$5.25** in the 14:00 bar. Currently **$4.79-4.80**, i.e. **+66.3%** on the day and about 8.8% off a high set five to ten minutes ago.
+
+**Root cause of the bad call: I declared a premarket divergence "resolved" twenty minutes before the regular session opened.** The entire thin-volume argument rested on premarket participation, and premarket participation was never the relevant sample — the test is what happens when real liquidity arrives at 9:30. It arrived, and 4.24M shares in five minutes answered the question in the opposite direction. Calling the outcome before the actual event is the error, independent of which way it resolved.
+
+**What was right and what was wrong, kept separate so the record is usable:**
+- The **8:11am ALERT was correct**: flagged at $3.34 making a fresh high, now $4.79 = **+43% from the alert price**.
+- The **8:11am volume caveat was legitimate as a caveat** — premarket volume genuinely was 0.59x the prior two sessions. Stating it as a risk was right.
+- The **9:10am follow-through was wrong** — not because the caveat was wrong, but because I converted a still-open question into a settled verdict, and then cited the outcome as confirmation of my own reasoning. That is the failure mode worth remembering: *do not score a call before the event that decides it has happened.*
+- Correction sent to the user immediately on discovery, leading with the error rather than burying it under the new alert.
+
+**RVOL nuance now that the field is live:** FTFT's scan RVOL reads **0.60** on a +66% day with 32.07M shares traded. Not a broken field this time — the trailing average it divides by is inflated by FTFT's own 09-09/09-10/09-11 run (53.3M on Friday alone). **Standing note: for a name already several days into a run, RVOL against a trailing average that includes those run days systematically understates today's participation.** Read absolute volume alongside it.
+
+### Re-alert justified on FTFT
+
+Step 2 says skip a name already alerted today "unless it has materially changed (new high, big volume expansion)." FTFT has both, emphatically — a new high of $5.25 versus the $3.40 ceiling that had rejected it three times, and 4.24M shares in a single five-minute bar. Re-alerted.
+
+### Rejected this cycle
+
+**SCNI $2.47-2.48, +48.8%**, float **651,618** (sub-1M), RVOL 8.82x, volume 30.82M — roughly **47x its entire float**. Rejected on the near-high test: Benzinga had it +86.9% at $3.10 premarket, the regular-session high was $2.67 in the 13:40 bar (~30 min ago), and it is now $2.48, **-7% off the session high and well below the premarket print**. Faded into the open rather than through it. Dilution check run anyway given the sub-1M float and sub-$5 price: two 6-K filings (foreign-issuer current reports) dated 2026-09-08 and 2026-08-26, **no F-1, no prospectus, no ATM, no shelf** — clean, same shape as VSME.
+
+**BMGL $7.11-7.32** — float 715,044, volume 21.61M = **~30x float turnover**, and the scan could not even render its % Change (empty field). Rejected outright: the bars show a spike to **$9.22** at 13:50 UTC (9:50am ET) followed by an immediate collapse — $8.92 -> $7.57 in the next five-minute bar, now $7.11 with a low of $7.07. **-23% off the high in about twenty minutes.** Actively unwinding, textbook pump-and-dump shape, not a setup. Logged as a caution, not a candidate.
+
+**VSME $1.28 (+19.6%)** — fourth straight cycle, fourth rejection, same reason (still below its $1.48 premarket high). Consistent.

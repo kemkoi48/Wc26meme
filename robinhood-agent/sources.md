@@ -5255,3 +5255,23 @@ Step 2 says skip a name already alerted today "unless it has materially changed 
 **Known limitation, unresolved:** the trigger runs once daily at the close. A 2% pullback from peak can occur and fully reverse inside one session, so daily granularity will miss triggers. The natural fix is checking open positions on the hourly scanner cycle, but that job is explicitly alert-only and changing its mandate is the user's call, not a unilateral one. Flagged, not done.
 
 **HL stop tightened, on the user's instruction.** They chose "tighten hard" over closing. Cancelled the $17.36 stop (verified `state: cancelled`), placed **$18.50** (verified `state: confirmed`); naked window 17 seconds. Placement reasoning: literal "just under current price" (~$18.90) sits inside today's $18.59-19.07 range and would have been stopped out on ordinary noise within the hour, which is a worse version of closing the position — so the stop went just under **$18.59, the session low that has held all day**. Caps further downside at about **$9.40** more (realizing ~-$42.40 if hit) versus roughly **$32** more under the old $17.36 trail.
+
+## 2026-09-14 ~1:09pm ET — FTFT peaked $5.78 between hourly checks; NO re-alert (fading, lower highs)
+
+Market-holiday guard: SPY regular print 17:09:28Z ($762.35, -0.25%, recovering from -0.8%). Market open.
+
+**Nearly made the 9:10am mistake again in mirror image, and the bars caught it.** The quote alone showed FTFT at **$5.4399 (+88.9%)**, above the **$5.25** day high known at the 10:10am re-alert — which reads as "new high, re-alert." Pulling the actual 5-minute bars says otherwise:
+
+- 16:20 UTC (12:20pm ET): $4.875 -> **$5.42** close $5.3893 on **1,883,862 shares**
+- 16:25 UTC (12:25pm ET): opened $5.6806, **high $5.78 <- REAL day high**, close $5.5622
+- every bar since: highs of 5.70, 5.559, 5.55, 5.4698, 5.3099, 5.34, 5.41 — **a clean sequence of lower highs**
+
+So the real high is **$5.78**, set ~45 minutes ago, never retested, and current $5.4399 is **-5.9% below it**. That is the already-printed case, not an igniting one. **No re-alert.**
+
+**The hourly cadence straddled the entire peak.** At the 12:10pm check FTFT was $4.53; the $5.78 print landed at 12:25pm; by this 1:09pm check it was back to $5.44. The top happened wholly between two consecutive fires. Worth recording as a real structural limit of an hourly alert job on a name moving this fast — the platform minimum is 1 hour (30-min was tried and rejected 2026-08-28), so this is not fixable by tightening the schedule.
+
+**Deliberate discipline note, given this morning.** At 9:10am I took an incomplete read and declared FTFT's move dead — it then ran from $3.11 to $5.78. The correction is NOT to now swing the other way and call the fade dead too. Reported to the user as position-relative-to-high only: peaked $5.78, now $5.44, lower highs since. **No directional prediction either way.** Scoring a move before it finishes is the error; it does not become correct by pointing the other direction.
+
+**Positions:** HL **$19.115**, recovered from $18.895 — the new $18.50 stop sits 3.2% below, untouched. GCT **$52.865**, +3.98% on the $50.84 entry, still short of the **$53.38** profit-lock arm threshold (needs +5%). Nothing for the 4:01pm check to act on yet.
+
+**Other scan rows, all rejected:** SCNI $2.395 (+44.3%, still below its $2.67 session high), VSME $1.3403 (+25.3%, sixth straight cycle below its $1.48 premarket high — rejected six times on the same consistent ground), BMGL $7.2101 (still no % Change field; down from its $9.22 spike, continuing to bleed).

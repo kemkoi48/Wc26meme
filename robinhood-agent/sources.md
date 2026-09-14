@@ -5385,3 +5385,57 @@ This partially answers the caveat I attached an hour ago. I flagged it as a **lo
 
 - **HL** $19.025, −3.8%. Stop **$18.50** resting (verified `confirmed` last cycle), 2.8% below. No action.
 - **GCT** $52.79, **+3.84%** on the $50.84 entry. Still below the **$53.38** profit-lock arm. 51 minutes to the close and the 4:01pm growth check; on current price the lock does not arm today.
+
+---
+
+## 2026-09-14, 4:01pm ET — growth sleeve daily check (first run with the profit lock live)
+
+**Step 0 guard:** passed. SPY regular-session last trade **19:59:59.999Z** — today's closing print, not a prior session. Post-close non-reg print 20:01:55Z. Market traded today.
+
+**Step 1 — verified against real data, not notes.** `get_equity_positions(432805174)`: HL 20 sh @ **$20.62** avg, GCT 2 sh @ **$50.84** avg. Both match trades.csv rows 17 and 18. Resting-stop quantities match the real position quantities (20/20, 2/2) — no manual-buy gap this cycle.
+
+### Step 3 — PROFIT LOCK: ran on both, armed on neither
+
+| | Entry | Real peak since entry | Peak gain | Arm at | Result |
+|---|---|---|---|---|---|
+| HL | $20.62 | **$21.18** (09-09 finalized daily bar) | **+2.72%** | $21.65 | `not armed: peak +2.72% < 5.0% trigger` |
+| GCT | $50.84 | **$53.115** (today 1:30pm ET, 10-min bars) | **+4.47%** | **$53.382** | `not armed: peak +4.47% < 5.0% trigger` |
+
+**GCT missed arming by $0.267 — half a percent.** On the rule's first live day it came that close and did nothing.
+
+That is worth sitting with rather than spinning. It is *exactly* the limitation recorded when the lock was built this morning: replayed against the five closed positions, three of them (SMCI +3.87%, HL +2.72%, LYFT +2.29%) never reached +5% above entry at all. Today adds a sixth data point on the same side. **The pattern is now hard to dismiss: this sleeve's entries rarely produce a 5% peak, so a take-profit rule bolted onto them has very little to act on.** The exits were a real defect and fixing them was right; they were not the *only* defect.
+
+What I am **not** doing is concluding from one near-miss that 5% is the wrong threshold. One near-miss is one near-miss. If several more cluster just under the trigger, that becomes an argument with evidence behind it — and it would be the user's call, since 5% is their number from 08-18, not mine.
+
+### Step 4 — technical signal check (logged both, per the standing audit requirement)
+
+**GCT** — RSI(14) **58.41** (neutral, flat: 58.51 / 58.22 / 58.41), ADX(14) **30.37** (>25, real trend, easing from 31.99), MACD(12,26,9) histogram **-0.325**.
+Histogram is negative but **shrinking for five straight sessions**: -0.542 → -0.429 → -0.376 → -0.348 → -0.325. That is momentum converging back *toward* the long, not against it. **No signal fired.**
+
+**HL** — RSI(14) **52.83** (neutral, but falling: 59.97 → 54.37 → 52.83), ADX(14) **28.97** (>25, real trend, easing from 30.96), MACD histogram **-0.211**, widening negative a fifth straight session: -0.052 → -0.090 → -0.094 → -0.155 → -0.211.
+
+**A real signal fired** — ADX>25 combined with MACD turning against a long. This is the **third consecutive session** it has fired (09-10, 09-11, 09-14), each reading worse than the last.
+
+- **Authorized response is tighten only** (2026-09-06 narrowing). The stop was **already** hard-tightened to $18.50 this morning on the user's explicit "Tighten the stop hard" choice, and it now sits **1.7% below** the $18.82 close. **No second tighten taken** — acting twice on one day's data is double-counting the same information, and a stop that tight on HL's daily range gets hit by noise rather than by the signal it is supposed to express.
+- **Corroborating catalyst for a full close: none adopted.** Gold **-2.3%** and silver **-3.1%** on 09-14 (Benzinga, dated) is real, and HL is a silver miner. But one down session in the metals is not a "sector break," and the trend it would have to break still reads ADX 29. Calling it a sector break to license a close would be **manufacturing the catalyst the rule exists to demand.** Stated plainly: the signal fired, no corroborating catalyst was found, so no early close.
+
+### Step 5/6 — stop actions
+
+**GCT ratcheted $41.69 → $43.55.** `decide_stop_update(41.69, 53.115)` → `should_update=True, new_stop=43.5543`.
+- Cancelled the $41.69 stop, **verified `state: cancelled`** at 20:03:26Z *before* placing anything (no OCO on this interface — two resting sells cannot cover the same 2 shares).
+- New GTC stop_market, 2 sh @ **$43.55**, placed 20:03:34Z. **Verified `state: queued`** — the market had already closed, and a `regular_hours` stop placed post-close queues for the next open. Not a rejection.
+- Cancel-to-replace gap **8 seconds**, with the market shut, so no real unprotected exposure.
+
+**HL left alone.** `decide_stop_update(18.50, 21.18)` → `should_update=False`, reason `computed 17.3676 <= resting 18.5000`. The mechanical 18% trail off the $21.18 peak is **$17.37**; the resting $18.50 sits **$1.13 above** it because of this morning's manual tighten. The rule correctly refuses to loosen.
+
+### Step 9 — no redeploy, with a real reason
+
+`get_portfolio` buying_power **$15.54**; `get_accounts` unsettled_funds for 432805174 **$0.00** — so nothing is sitting in T+1 waiting, and this is the genuine settled figure, not a post-sale artifact. $15.54 cannot buy a whole share of anything in a scan universe filtered to >$1B market cap, and a fractional buy cannot carry a resting stop (the PLTR lesson, row 12). Account total $497.42 / equity $481.88.
+
+### Gap surfaced, not silently fixed
+
+**GCT was bought this morning with its MACD histogram already negative** (-0.325 on the 09-11 close, the last finalized bar before the fill). The Growth Momentum entry scan screens market cap, RSI, ADX, 1-month change and average volume — **it does not look at MACD.** The daily monitoring check does. So this sleeve can buy into precisely the condition it would flag against the next day.
+
+That is an internal inconsistency between the entry gate and the monitoring gate, on live money. Recording it for the user's decision rather than reconciling it myself, same handling as the S7 delta-floor disagreement — strategies.md's own precedent is that live-money gates are "not reconciled silently in either direction."
+
+**Data-quality note (observed, not changed):** trades.csv rows 1-13 have ragged column counts (16 to 40 fields against an 18-column header) from unquoted commas written into `notes` long before today. Rows 14-18 are clean. Today's edit round-tripped the malformed rows byte-identically — the diff touches only rows 17 and 18 — so nothing was made worse, but those older rows will not parse reliably as CSV. Flagging rather than rewriting historical records mid-session.

@@ -5439,3 +5439,50 @@ Histogram is negative but **shrinking for five straight sessions**: -0.542 → -
 That is an internal inconsistency between the entry gate and the monitoring gate, on live money. Recording it for the user's decision rather than reconciling it myself, same handling as the S7 delta-floor disagreement — strategies.md's own precedent is that live-money gates are "not reconciled silently in either direction."
 
 **Data-quality note (observed, not changed):** trades.csv rows 1-13 have ragged column counts (16 to 40 fields against an 18-column header) from unquoted commas written into `notes` long before today. Rows 14-18 are clean. Today's edit round-tripped the malformed rows byte-identically — the diff touches only rows 17 and 18 — so nothing was made worse, but those older rows will not parse reliably as CSV. Flagging rather than rewriting historical records mid-session.
+
+---
+
+## 2026-09-14, 4:09pm ET — momentum scanner, final fire (post-close, no alert)
+
+**Guard:** SPY's last regular-session trade is the **19:59:59.999Z** closing print; only post-close non-reg prints are ticking. The market traded today and is now **closed**. This is the 4:00pm slot firing 9 minutes after the bell, by schedule design.
+
+**No user message, and that is the correct output.** Step 2's entire test — "Last is still near the day's High," igniting vs. already-printed — is about whether there is session left to act in. There is none. An alert now would be a false alert by this job's own standard, and both day's names were already alerted.
+
+### FTFT final: closed $8.03, +178.8%. Real day high $9.479.
+
+| Time (ET) | High | Close | Volume |
+|---|---|---|---|
+| 2:40pm | 8.1999 | 7.885 | 1,875,875 |
+| **3:00pm** | **9.370** | 8.632 | 3,363,517 |
+| 3:10pm | 9.100 | 8.451 | 2,466,809 |
+| **3:40pm** | **9.4799 — day high** | 8.596 | 2,534,409 |
+| 3:50pm | 9.250 | **8.030 (close)** | 1,967,274 |
+
+Closed **15.3% below** the $9.479 high; fading further after hours ($7.63 last non-reg, $7.59 bid).
+
+### THE $9.37 CLAIM WAS CORRECT — and declining to repeat it was still right
+
+At 3:09pm a Stocktwits user posted *"NHOD 9.37."* I refused to adopt it, wrote that my own data did not support it, and stated the day high I could actually source as **"≥$8.64."**
+
+**The 19:00Z bar — which had not yet returned when I pulled data at 19:09:28Z — shows a high of exactly $9.37.** The user was right, and my bars were simply nine minutes behind the claim.
+
+Both halves of this need recording, because the wrong lesson is available here:
+
+- **The process was right and I would repeat it.** Adopting an unverified number from an anonymous poster mid-squeeze is precisely the RULE ZERO failure this account exists to avoid. Being unable to verify a claim is not evidence the claim is false — and I did not say it was false. I said I could not source it.
+- **The hedge did real work.** Writing "**≥**$8.64" rather than "the day high is $8.64" is why that statement is still true now that $9.479 is known. Had I written it as a flat equality to sound decisive, the record would now contain a wrong number.
+
+The failure mode to avoid going forward is over-correcting into credulity: one accurate Stocktwits call does not make squeeze chatter a data source. The next "NHOD" post is still unverified until bars say otherwise.
+
+### VNCE — closed at its high, $7.63, +45.6%
+
+Day high $7.6698; the close is **0.5% under it**, the strongest finish of anything on today's list. Worth noting against my own 2:09pm read: I flagged it as a **low-volume grind** rather than an ignition, on 18k–70k bars against 279k at the open. That caveat was accurate about the tape and wrong about the outcome — it ground all the way into the close without ever breaking. Volume told the truth about *participation*; it said nothing useful about *direction*. Recorded so the caveat is not reused as if it were a fade prediction.
+
+### Day's alert ledger (for the record)
+
+| Symbol | Alerted | Outcome |
+|---|---|---|
+| PMI | 7:10am | Closed ~$6.22, +16.7%. Liquidity later found to be untradeable (10-min bars of 100–1,000 shares, one zero-volume interpolated bar). |
+| FTFT | 8:11am, re-alerted 10:10am + 2:09pm | **+178.8% close, $9.479 high.** No catalyst ever identified; dilution check never completable. |
+| VNCE | 2:09pm | **+45.6% close, 0.5% off its high.** |
+
+**Standing gaps unchanged and still open for the user:** `get_sec_filing_index` returned empty for FTFT *and* VEEA today with all filters dropped — the mandated dilution check is effectively unavailable, which on this cohort (5 of 6 names carried live dilution mechanics on 09-04) is a real hole, not a formality. Also still open: the $1-20/$2-20 scan `Last` ceiling (a name disappears from both scans by going up — FTFT would have vanished had it cleared $20), the S7 delta-floor disagreement, and whether this alert-only job may check open positions.

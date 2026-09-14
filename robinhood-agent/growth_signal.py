@@ -82,6 +82,29 @@ MIN_AVG_VOLUME = 500_000.0
 # where 18% comes from (the user's stated tolerance, not a backtest).
 TRAIL_PCT = 18.0
 
+# Profit lock, added 2026-09-14. NOT a new idea: these are the user's own
+# numbers from 2026-08-18 ("we are happy at 5% profit but if the momentum is
+# there sell it at high"), which were implemented in scalp_signal.py that
+# same day -- and then stranded, because the scalp loop was switched off
+# while the growth sleeve kept running WITHOUT any take-profit rule at all.
+#
+# WHY THIS EXISTS, stated plainly because the gap was expensive: for its
+# first seven positions the growth sleeve had an entry screen, a trailing
+# stop, and a signal check that only ever TIGHTENED the stop. Nothing in it
+# could ever sell into strength. The consequences are in trades.csv: BTG
+# (+$35.69) was only booked because the user intervened twice to force it,
+# and SMCI ran to a $39.47 peak from a $38.00 entry, was never trimmed, and
+# closed at $36.48 for -$18.21. A wide 18% trail with no profit rule
+# mathematically hands back up to 18% of every peak before it reacts.
+#
+# Same semantics as scalp_signal.decide_exit's profit-lock branch: it ARMS
+# once the peak since entry reaches PROFIT_TRIGGER_PCT, and once armed it
+# rides the PEAK rather than the entry, so a still-running position keeps
+# running and only exits when it actually turns down. Not backtested --
+# these are a stated comfort level, same caveat as TRAIL_PCT.
+PROFIT_TRIGGER_PCT = 5.0
+PROFIT_TRAIL_PCT = 2.0
+
 
 def _f(value: Any) -> Optional[float]:
     """Coerce to float or None. Rejects bools and non-finite values."""
@@ -182,4 +205,74 @@ def decide_stop_update(
     return StopUpdate(
         True, new_stop,
         f"new peak raises trail: {cur:.4f} -> {new_stop:.4f} ({trail_pct:.0f}% below peak)",
+    )
+
+
+@dataclass(frozen=True)
+class ProfitExit:
+    should_exit: bool
+    reason: str
+    peak_gain_pct: Optional[float] = None
+    drawdown_pct: Optional[float] = None
+
+
+def decide_profit_exit(
+    entry_price: float,
+    peak_price: float,
+    current_price: float,
+    trigger_pct: float = PROFIT_TRIGGER_PCT,
+    trail_pct: float = PROFIT_TRAIL_PCT,
+) -> ProfitExit:
+    """Whether to SELL INTO STRENGTH, independent of the 18% trailing stop.
+
+    Check this BEFORE decide_stop_update on every periodic run. Once armed
+    this is far tighter than the 18% trail, so the trail becomes what it
+    should always have been -- a disaster floor, not the only exit.
+
+    `peak_price` is the real peak since entry (finalized daily bars are
+    more trustworthy than a live intraday snapshot near the close -- see
+    the SMCI 08-31 correction in CLAUDE.md, where a live hourly read
+    undercounted the day's true high by 56 cents).
+    """
+    e, p, c = _f(entry_price), _f(peak_price), _f(current_price)
+    if e is None or e <= 0:
+        return ProfitExit(False, f"unusable entry price: {entry_price!r}")
+    if p is None or p <= 0:
+        return ProfitExit(False, f"unusable peak price: {peak_price!r}")
+    if c is None or c <= 0:
+        return ProfitExit(False, f"unusable current price: {current_price!r}")
+    if p < e:
+        p = e  # never peaked above entry; treat entry as the peak
+
+    # Compare with a small tolerance: an exact 2% pullback computes as
+    # 1.9999999999999944 in float (105 - 102.9 == 2.0999999999999943), so a
+    # bare >= silently fails to fire exactly ON the user's stated threshold.
+    # Caught by the boundary test, not by inspection.
+    eps = 1e-9
+
+    peak_gain = (p - e) / e * 100.0
+    if peak_gain < trigger_pct - eps:
+        return ProfitExit(
+            False,
+            f"not armed: peak +{peak_gain:.2f}% < {trigger_pct:.1f}% trigger",
+            peak_gain,
+            None,
+        )
+
+    drawdown = (p - c) / p * 100.0
+    if drawdown >= trail_pct - eps:
+        pnl = (c - e) / e * 100.0
+        return ProfitExit(
+            True,
+            f"profit lock: peak +{peak_gain:.2f}% (${p:.4f}), pulled back "
+            f"{drawdown:.2f}% to ${c:.4f} ({pnl:+.2f}%) -- take the profit",
+            peak_gain,
+            drawdown,
+        )
+    return ProfitExit(
+        False,
+        f"armed, still running: peak +{peak_gain:.2f}% (${p:.4f}), only "
+        f"{drawdown:.2f}% off it (needs {trail_pct:.1f}%)",
+        peak_gain,
+        drawdown,
     )

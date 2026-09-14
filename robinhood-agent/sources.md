@@ -5177,3 +5177,17 @@ CLAUDE.md's S7 row records that the S7 trigger was deliberately moved **from 8am
 Verified today with real data, not asserted: PYPL's chain shows `extended_hours_state: "disabled"`, and the actual contract quote carried `updated_at: 2026-09-11T19:59:59.969Z`. **Every Part B run at 8:35am since the merge has been screening option contracts on stale closing prices.** Since S7 has placed zero trades in that window the damage is zero so far, but the screen has been structurally incapable of validating premium/delta/spread on live pricing. Recommended fix relayed to the user: keep Part A at 8:35am, and either move Part B to ~9:35am or have the 8:35am run stop at Track 1 ranking and defer all contract-level gates to a post-open check.
 
 **Running total: 14 real S7 checks, 14 rejections, 0 trades.** Today's rejection reason: PYPL premium $171.50 over the $150 cap, plus no catalyst, plus quotes unusable pre-open.
+
+## 2026-09-14 ~9:10am ET — Momentum-scanner: no new alert; the FTFT volume divergence resolved bearishly
+
+Market-holiday guard: SPY premarket print 13:10:40Z ($758.34, -0.8%), market open. 20 minutes to the bell.
+
+**No name cleared step 2 this cycle — no new alert.** Sent a short follow-through message anyway, which is a deliberate departure from step 4's "quiet cycle needs no message": both of today's alerts have deteriorated since they were sent, the user may be positioned in them, and staying silent on the letter of the rule while a flagged risk materialized would work against them. Framed explicitly as closing the loop, not as new analysis.
+
+**FTFT — the 8:11am caveat played out, within the hour.** Alerted at $3.34 making a fresh high, with the explicit flag that premarket volume was **0.59x** the same window on each of the prior two sessions — "price making a higher high on materially thinner volume... a bearish divergence, not a confirmation." Now **$3.11 (bid $3.11 / ask $3.13), -6.9% from the alert price**, and the scan's % change has fallen from +15.3% to **+8.0%**. It never took out Friday's $3.40 high — the third attempt at that ceiling failed like the prior two. The thin-participation read was the correct one and is now confirmed by outcome, not just by reasoning. Recorded deliberately: this is one real instance, not proof the heuristic is predictive, but it is exactly the failure mode the divergence was flagged for.
+
+**PMI — also fading, no re-alert.** $5.69 (bid $5.19 / ask $5.99, a very wide pre-open spread), vs $5.96 at the 7:10am alert and $5.90 at 8:10am. Now ~8% off its $6.18 premarket high, still +6.8% on the day. No new high and no volume expansion, so step 2 correctly says skip — but the deterioration is logged rather than passed over silently, since it was alerted this morning.
+
+**VSME $1.29 (+20.6%)** — highest nominal % change on the board for a third straight cycle, and rejected for a third straight cycle on the same ground: premarket high $1.48 was set in the 4-5am ET bar, price is still **-12.8% off it**. Grinding up off the $1.24 low but not making a fresh high. Consistent treatment across all three cycles.
+
+Everything else in the Warrior scan red: BTCT -2.8%, BDRX -4.6%, SXTC -6.6%, TNON -10.5% (now $5.31).

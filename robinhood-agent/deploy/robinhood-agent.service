@@ -1,0 +1,38 @@
+# systemd unit for the DAILY trend strategy (config.yaml / config.json).
+# Runs one cycle per day on a continuous --interval loop. For the intraday
+# Pattern Scalp, use cron instead (see crontab.example) — it needs to fire only
+# during the opening window, which a market-hours cron schedule does cleanly.
+#
+# Install:
+#   sudo cp deploy/robinhood-agent.service /etc/systemd/system/
+#   # edit paths + User below to match your host
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now robinhood-agent
+#   journalctl -u robinhood-agent -f     # watch logs
+#
+# Ships in DRY RUN. Add --live to ExecStart only after you've reviewed
+# audit.jsonl and funded the account.
+
+[Unit]
+Description=Robinhood autonomous trading agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=robinhood
+WorkingDirectory=/opt/robinhood-agent
+EnvironmentFile=/opt/robinhood-agent/.env
+ExecStart=/opt/robinhood-agent/.venv/bin/python run.py --config config.json --interval 86400
+Restart=on-failure
+RestartSec=30
+
+# Basic hardening — this process holds a brokerage token.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/robinhood-agent
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

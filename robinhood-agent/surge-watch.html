@@ -1,0 +1,371 @@
+<title>Surge Watch</title>
+<style>
+  :root {
+    --paper:      #fbfaf7;
+    --surface:    #f2efe9;
+    --surface-2:  #e7e2d9;
+    --ink:        #1c1a17;
+    --ink-soft:   #45403a;
+    --muted:      #736c62;
+    --rule:       #d8d2c7;
+    --accent:     #8a5a2b;
+    --accent-dim: #f0e6d8;
+    --stop:       #9e3320;
+    --stop-dim:   #f7e5e0;
+    --target:     #2f6146;
+    --target-dim: #e3efe7;
+    --fire:       #a8660a;
+    --fire-dim:   #fbead1;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "DejaVu Sans Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #14120f;
+      --surface:    #1e1b17;
+      --surface-2:  #2a251f;
+      --ink:        #f0ece5;
+      --ink-soft:   #cbc4b9;
+      --muted:      #948c80;
+      --rule:       #332d26;
+      --accent:     #d09a5e;
+      --accent-dim: #2b2015;
+      --stop:       #e58a76;
+      --stop-dim:   #331a14;
+      --target:     #7fc39c;
+      --target-dim: #16291f;
+      --fire:       #f0b429;
+      --fire-dim:   #332405;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:      #14120f;
+    --surface:    #1e1b17;
+    --surface-2:  #2a251f;
+    --ink:        #f0ece5;
+    --ink-soft:   #cbc4b9;
+    --muted:      #948c80;
+    --rule:       #332d26;
+    --accent:     #d09a5e;
+    --accent-dim: #2b2015;
+    --stop:       #e58a76;
+    --stop-dim:   #331a14;
+    --target:     #7fc39c;
+    --target-dim: #16291f;
+    --fire:       #f0b429;
+    --fire-dim:   #332405;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 1.5rem 1.1rem 4rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 44rem; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+
+  /* ---- THE ANSWER: what do I do right now ---- */
+  .hero {
+    border-radius: 4px; padding: 1.3rem 1.4rem; display: flex; flex-direction: column; gap: .3rem;
+    border: 2px solid var(--rule); background: var(--surface);
+  }
+  .hero.quiet { border-color: var(--rule); }
+  .hero.fired { border-color: var(--fire); background: var(--fire-dim); }
+  .hero-label {
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .hero.fired .hero-label { color: var(--fire); font-weight: 700; }
+  .hero-main {
+    font-size: clamp(1.4rem, 6vw, 1.85rem); font-weight: 700; letter-spacing: -.01em;
+    font-family: var(--mono);
+  }
+  .hero.fired .hero-main { color: var(--fire); }
+  .hero-sub { color: var(--ink-soft); font-size: .92rem; margin: 0; }
+
+  .legend {
+    display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: .82rem; color: var(--muted);
+  }
+  .legend b { color: var(--ink-soft); }
+  .legend .swatch { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: .35rem; vertical-align: middle; }
+  .legend .swatch.quiet { background: var(--muted); }
+  .legend .swatch.fired { background: var(--fire); }
+
+  header { display: flex; flex-direction: column; gap: .4rem; }
+  .eyebrow {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  h1 { font-size: clamp(1.4rem, 5vw, 1.7rem); line-height: 1.05; margin: 0; font-weight: 640; letter-spacing: -.02em; }
+
+  .statusbar {
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+    font-family: var(--mono); font-size: .76rem; color: var(--muted);
+  }
+  .dot { width: .45rem; height: .45rem; border-radius: 50%; flex-shrink: 0; }
+  .dot.closed { background: var(--muted); }
+  .dot.open { background: var(--target); box-shadow: 0 0 0 3px var(--target-dim); }
+  .statusbar .sep { color: var(--rule); }
+
+  h2 {
+    font-size: .95rem; margin: 0; font-weight: 640;
+    padding-bottom: .35rem; border-bottom: 2px solid var(--ink);
+    display: flex; align-items: baseline; gap: .6rem;
+  }
+  h2 .when {
+    font-family: var(--mono); font-size: .63rem; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); margin-left: auto; font-weight: 400;
+  }
+  section { display: flex; flex-direction: column; gap: .7rem; }
+
+  /* ---- compact watchlist: symbol, price, pill. nothing else competes. ---- */
+  .watchrow {
+    display: flex; align-items: center; gap: .8rem;
+    padding: .6rem .75rem; border-radius: 3px; background: var(--surface);
+    border: 1px solid var(--rule);
+  }
+  .watchrow.fired { border-color: var(--fire); background: var(--fire-dim); }
+  .watchrow .sym { font-family: var(--mono); font-weight: 700; font-size: .95rem; width: 4.2rem; flex-shrink: 0; }
+  .watchrow .price {
+    font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: .95rem;
+    color: var(--ink-soft); min-width: 5.5rem;
+  }
+  .watchrow .pill {
+    font-family: var(--mono); font-size: .66rem; letter-spacing: .04em;
+    padding: .18rem .5rem; border-radius: 2px; border: 1px solid currentColor;
+    text-transform: uppercase; margin-left: auto;
+  }
+  .pill.quiet { color: var(--muted); background: var(--surface-2); border-color: var(--rule); }
+  .pill.fired { color: var(--fire); background: var(--paper); font-weight: 700; }
+
+  .scan-note { margin: 0; font-size: .84rem; color: var(--muted); }
+  .scan-empty { margin: 0; font-size: .86rem; color: var(--muted); font-style: italic; }
+
+  /* ---- expanded action card, only when fired ---- */
+  .action-card {
+    border: 2px solid var(--fire); background: var(--fire-dim); border-radius: 4px;
+    padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: .6rem;
+  }
+  .action-card h3 { margin: 0; font-size: 1rem; font-family: var(--mono); color: var(--fire); }
+  .action-card p { margin: 0; font-size: .88rem; color: var(--ink-soft); }
+  .fired-detail {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+    gap: .5rem;
+  }
+  .fired-detail .stat {
+    background: var(--paper); border-radius: 2px; padding: .5rem .6rem;
+    display: flex; flex-direction: column; gap: .1rem;
+  }
+  .fired-detail .k { font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .fired-detail .v { font-family: var(--mono); font-size: .92rem; font-weight: 700; }
+
+  /* ---- reference material: read once, not every glance ---- */
+  details {
+    border: 1px solid var(--rule); border-radius: 3px; background: var(--surface);
+  }
+  details summary {
+    padding: .75rem 1rem; cursor: pointer; font-size: .9rem; font-weight: 620;
+    display: flex; align-items: center; gap: .5rem; list-style: none;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "▸"; color: var(--muted); font-size: .8em; }
+  details[open] summary::before { content: "▾"; }
+  details .inner { padding: 0 1rem 1rem; display: flex; flex-direction: column; gap: .6rem; }
+  .yday-row {
+    display: flex; gap: .7rem; font-size: .86rem; color: var(--ink-soft);
+    padding-bottom: .5rem; border-bottom: 1px solid var(--rule);
+  }
+  .yday-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .yday-row b { font-family: var(--mono); color: var(--ink); min-width: 3.6rem; flex-shrink: 0; }
+
+  .box { padding: 0; }
+  .box p { margin: 0; color: var(--ink-soft); font-size: .87rem; }
+  .box p + p { margin-top: .55rem; }
+
+  .log { display: flex; flex-direction: column; gap: 0; font-family: var(--mono); font-size: .78rem; }
+  .log-row {
+    display: flex; gap: .7rem; padding: .35rem 0; border-bottom: 1px solid var(--rule);
+    color: var(--muted);
+  }
+  .log-row:last-child { border-bottom: none; }
+  .log-row .t { flex-shrink: 0; color: var(--ink-soft); }
+
+  footer { color: var(--muted); font-size: .8rem; border-top: 1px solid var(--rule); padding-top: 1rem; display: flex; flex-direction: column; gap: .3rem; }
+  code { font-family: var(--mono); background: var(--surface-2); padding: .08em .35em; border-radius: 2px; font-size: .88em; }
+  a { color: var(--accent); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Scanning the market, not four fixed tickers</div>
+    <h1>Surge Watch</h1>
+  </header>
+
+  <!-- THE ANSWER. This is the only thing that has to be read at a glance. -->
+  <div class="hero quiet" id="hero">
+    <div class="hero-label">Right now</div>
+    <div class="hero-main">No signals — nothing to do</div>
+    <p class="hero-sub">Quiet cycle: core four plus all 35 distinct scan candidates checked, none confirmed. Buying power still $110.65, unchanged since this morning (settlement pending, T+1). No open position. Session tally: IPST −5.33R, SXTC −1.00R, WFF −0.97R. Exit rule now includes the profit-lock trail (arms at +5% peak, exits on a 2%+ pullback from there) for whenever the next position opens.</p>
+  </div>
+
+  <div class="legend">
+    <span><span class="swatch quiet"></span><b>Quiet</b> = no action</span>
+    <span><span class="swatch fired"></span><b>Fired</b> = real breakout confirmed — buy near the shown price, stop below. No fixed target: ride it, but once it's peaked +5%+ a 2%+ pullback from that peak locks in the gain. Also exits on a close below the prior bar's low, or 15 bars with no progress</span>
+  </div>
+
+  <div class="statusbar">
+    <span class="dot open"></span>
+    <span>Entry window open (RULES.md) · live-trade authorized</span>
+    <span class="sep">·</span>
+    <span>Refreshed <span id="asof">12:21 ET, 18 Aug</span></span>
+    <span class="sep">·</span>
+    <span>No open position · buying power $110.65 (unsettled)</span>
+  </div>
+
+  <section>
+    <h2>Core watch<span class="when">your own trading history</span></h2>
+    <div id="watchlist">
+      <div class="watchrow" data-sym="WETO">
+        <span class="sym">WETO</span>
+        <span class="price">$35.20</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="WFF">
+        <span class="sym">WFF</span>
+        <span class="price">$2.52</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="OSRH">
+        <span class="sym">OSRH</span>
+        <span class="price">$0.682</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="IPST">
+        <span class="sym">IPST</span>
+        <span class="price">$16.33</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+    </div>
+    <p class="scan-note" style="margin-top:.5rem">All four quiet this cycle —
+    no volume-confirmed move on any of them. IPST is still the session's
+    biggest mover on an absolute basis but this cycle's bar shows no fresh
+    confirming volume (0.1x) — old news, not a new breakout.</p>
+  </section>
+
+  <section>
+    <h2>Today's market scan<span class="when" id="scan-time">12:21 ET, 18 Aug — 2 scanners</span></h2>
+    <p class="scan-note">Rescanned every refresh using two of your own
+    Robinhood account's saved scanners — "Early Momentum Ignition" (price
+    $2-20, float under 20M, 1h relative volume over 3x) plus "Warrior
+    Trading Style" (float under 50M, day volume 10M+) as a second net for
+    high-conviction names the first misses — then the same
+    volume-confirmed-move logic as the four above on each result's real
+    minute bars. This is how a name that isn't WETO/WFF/OSRH/IPST gets
+    caught. Switched from a third-party screener 2026-08-18: both scanners
+    are sourced directly from the broker (no second vendor to go stale),
+    and live tests found IPST and WFF on their own, plus a real premarket
+    mover independently confirmed on WETO through a third saved scan
+    ("Daily gainers"). Not individually backtested per symbol — the
+    detection rule itself was validated as general (see "why you
+    shouldn't trust the size" below), so a new name gets the same rule,
+    not a new one invented for it.</p>
+    <div id="scan-results">
+      <div class="watchrow" data-sym="AIXC">
+        <span class="sym">AIXC</span>
+        <span class="price">$1.80</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="XOS">
+        <span class="sym">XOS</span>
+        <span class="price">$4.38</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="CDTG">
+        <span class="sym">CDTG</span>
+        <span class="price">$4.10</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="SGLY">
+        <span class="sym">SGLY</span>
+        <span class="price">$6.11</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <div class="watchrow" data-sym="SXTC">
+        <span class="sym">SXTC</span>
+        <span class="price">$4.71</span>
+        <span class="pill quiet">quiet</span>
+      </div>
+      <p class="scan-note" style="margin-top:.75rem">30 matches on Early
+      Momentum Ignition, 8 on Warrior Trading Style — 35 distinct symbols
+      checked this cycle (all 4 core + 31 new), all quiet. CDTG shows a
+      −6.18% single-bar move but on the 15-second granularity this tool
+      auto-selected, that's noisy and not a real confirmed breakdown —
+      watching, not acting, on granularity artifacts.</p>
+    </div>
+  </section>
+
+  <!-- Action cards go here, one per fired symbol from EITHER section above.
+       Empty when everything's quiet. -->
+  <div id="actions"></div>
+
+  <details>
+    <summary>What each one did yesterday (read once, not every check)</summary>
+    <div class="inner">
+      <div class="yday-row"><b>WETO</b><span>11 signals, net −4.4%. Also up 396% premarket-to-afterhours with no real catalyst — the riskiest name here. Treat any fired signal on this one with extra caution.</span></div>
+      <div class="yday-row"><b>WFF</b><span>4 signals, the day's best result — but traced to a 15-bar time limit cutting a still-rising trade, not the rule calling the top. Don't expect a repeat.</span></div>
+      <div class="yday-row"><b>OSRH</b><span>17 signals (most of the four), net −0.2% — mostly noise at this price.</span></div>
+      <div class="yday-row"><b>IPST</b><span>Where this tool came from: your own 6 real trades, median hold 149 seconds, net +$29.58.</span></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Why you shouldn't trust the size of any win this shows</summary>
+    <div class="inner box">
+      <p><b>The entry logic is real and tested</b> — volume-confirmed moves beat a volume spike alone and a price move alone, across 1,530 real minute bars. It correctly tells your actual IPST winner's bar from your actual IPST loser's bar.</p>
+      <p><b>The dollar amounts are not a forecast.</b> Yesterday's backtest total (+709% across 41 signals) came almost entirely from one lucky WFF timing accident. Tested cold on WETO the same day: net −4.4%. This tool finds real breakouts. It can't tell a trend launching from one about to fail.</p>
+      <p>Every "fired" means <i>"something real just happened,"</i> not <i>"this runs."</i> Size every entry assuming it loses about 2%.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Refresh log</summary>
+    <div class="inner">
+      <div class="log" id="log">
+        <div class="log-row"><span class="t">01:05 ET</span><span>Page rebuilt for clarity — separated "what do I do" from the backtest explanation. Market closed, no scan runs until premarket.</span></div>
+        <div class="log-row"><span class="t">01:25 ET</span><span>Added "today's market scan" — was only checking 4 fixed symbols, now rescans a small-cap momentum screen every refresh so a new mover gets caught too. Tested the screen live just now: it surfaced CAPR and GLTO, neither of which is in the core four.</span></div>
+        <div class="log-row"><span class="t">03:10 ET</span><span>Switched the market scan's source from a third-party screener to your own Robinhood account's saved scanner ("Early Momentum Ignition"). Ran it live: 98 matches, and it independently found IPST and WFF — your own traded symbols — plus verified the top mover (XOS, premarket) against real 5-minute bars. Same broker feed the orders execute against, no second vendor to go stale.</span></div>
+        <div class="log-row"><span class="t">03:45 ET</span><span>Checked all your other saved scans and account state while you sleep. Account safety: Agentic account is flat (no positions, no open orders) and your real trading account (5SH47822) has no live resting orders overnight — the only two non-terminal-looking orders on record were both rejected, never live. One dead position noted: ACETQZZ, 200 shares, an inactive/delisted ticker that can't be quoted or traded — informational only, nothing to do about it. Added "Warrior Trading Style" (float &lt;50M, volume 10M+) as a second scan net alongside Early Momentum Ignition — found AUUD and IVF as fresh candidates the first scan didn't surface. Also independently reconfirmed WETO as a real premarket mover (+40%) via a third saved scan ("Daily gainers"), and found two more saved scans (options IV/volume, RSI/ADX trend) that are real and working but belong to different strategies (S7 options, S1 trend-follow) — logged in sources.md, not mixed into this dashboard.</span></div>
+        <div class="log-row"><span class="t">07:00 ET</span><span>First real premarket refresh. Both scanners ran live: 94 matches (Early Momentum Ignition) + 9 (Warrior Trading Style), overlapping on XOS/WFF/IPST. Checked top movers by real % change (XOS, SGLY, CDTG, AUUD, TRUG) plus all four core symbols against real minute bars — everything quiet, no fires. WETO trading at $36, matching what you flagged before you traded it. Three scan candidates (ASYS, GLBS, GNPX) skipped — too few premarket bars this early to check honestly rather than guess.</span></div>
+        <div class="log-row"><span class="t">08:40 ET</span><span><b>SGLY fired</b> from the market scan (92 + 9 matches this run) — 48.7x volume confirming a +2.34% bar, entry ~$7.44, stop $7.29. All four core symbols and the rest of the scan (XOS, TRUG, DFSC, AUUD, ASYS, STFS) stayed quiet. WETO up to $46.60 premarket but no confirmed signal on it right now. GLBS/QNTM skipped — too few bars. User notified.</span></div>
+        <div class="log-row"><span class="t">09:30 ET</span><span>User-requested rescan, and confirmed live-trade authorization: fires now get bought for real in the Agentic account (432805174), $150 max per Rule 2, GTC stop within 60s per Rule 3, no fixed target. This scan: SGLY's 8:40 fire confirmed stale (down to $6.28, past its $7.29 stop — correctly never bought). Everything else quiet too: WETO −10% this bar, unwinding its spike. No trade placed.</span></div>
+        <div class="log-row"><span class="t">10:16 ET</span><span>User-requested 10:00 rescan. Two real fires: IPST (fresh, +5.65% on 10.3x volume) and WFF (already stale by the time it was checked — skipped, correctly). Re-verified IPST wasn't halted (get_equity_tradability: active/tradeable) and checked real order-book depth before buying — bought 13 sh at $10.85 limit. Order broker-confirmed; fill still pending at time of this refresh.</span></div>
+        <div class="log-row"><span class="t">10:18 ET</span><span>Fill confirmed: 13 sh IPST at $10.75. GTC stop placed at $10.54 — but 105 seconds after the fill, not the 60s Rule 3 target. Logged honestly in trades.csv (row 9, SCALP strategy). First live trade this scanner has placed.</span></div>
+        <div class="log-row"><span class="t">10:23 ET</span><span>User: "ipst is risky asset so make sure to sell it on time." Checked the stop order directly — it had been REJECTED by the broker at 10:20:26 ET, seconds after being placed. No protection existed the entire time. Price had already fallen to $9.87-9.61 by the time this was caught.</span></div>
+        <div class="log-row"><span class="t">10:24 ET</span><span>Sold at market, filled $9.6301. Closed <b>-$14.56, -5.33R</b> — over 5x the loss the stop was supposed to cap. Root cause of the rejection not yet diagnosed. New standing rule added to CLAUDE.md: verify a protective order's state after placing it, every time — a submitted order is not a confirmed one.</span></div>
+        <div class="log-row"><span class="t">10:30 ET</span><span>Scheduled 5-min rescan. <b>SXTC fired</b> — fresh volume-confirmed breakout (5.8x volume, +3.79% bar). Bought 29 sh at $4.9899. Applied the new rule immediately: placed GTC stop at $4.89, then checked its state — confirmed resting, 15s after the fill. This is what should have happened on IPST.</span></div>
+        <div class="log-row"><span class="t">10:33 ET</span><span>SXTC's stop fired on its own — closed <b>−1.00R exactly</b> ($4.9899 → $4.89), no slippage. This is what a working, verified stop looks like: the loss was capped at precisely what it was designed for.</span></div>
+        <div class="log-row"><span class="t">10:39 ET</span><span>Scheduled 5-min rescan. <b>WFF fired</b> (core watch) — 4.0x volume confirming a +2.82% bar. Bought 58 sh at $2.5799. GTC stop placed at $2.53, state verified immediately — confirmed resting, 15s after the fill. Third straight trade with a verified stop.</span></div>
+        <div class="log-row"><span class="t">10:40 ET</span><span>WFF's stop fired too — closed <b>−0.97R</b> just 54s after entry, a fast whipsaw. Price recovered to $2.63 minutes later. This is the accepted cost of no profit target, not a mistake — the stop worked exactly as designed, same as SXTC. No open position now.</span></div>
+        <div class="log-row"><span class="t">10:44 ET</span><span>Scheduled rescan, nothing fired. Session tally: IPST −5.33R (the verification failure), SXTC −1.00R, WFF −0.97R (both textbook). Watching for the next signal.</span></div>
+        <div class="log-row"><span class="t">10:49 ET</span><span><b>XOS fired</b> (9.9x volume, +2.84% bar), verified live and tradeable — but the buy order was REJECTED: "not enough buying power." Real finding: this is a cash account, and proceeds from today's three closed trades hadn't settled yet, so buying power was $110.65, not the $524.38 cash balance. By the time this was diagnosed, XOS had fallen to $4.35 from its $4.70 signal — past its stop level — so it was correctly skipped, not chased. Noted in CLAUDE.md for future sizing.</span></div>
+        <div class="log-row"><span class="t">10:54 ET</span><span><b>WETO fired</b> (3.3x volume, +5.62% bar), verified live and tradeable. Buying power still $110.65 (unsettled from this morning) — at WETO's ~$42 ask, that's only 2 shares against a ~2% spread. Skipped as too marginal to be a real position rather than forcing a token-size trade. No open position.</span></div>
+        <div class="log-row"><span class="t">10:59 ET</span><span>User: "we are happy at 5% profit but if the momentum is there sell it at high." Added a profit-lock trail to the exit rule (scalp_signal.decide_exit) — arms once a trade has peaked at +5%+, then exits on a 2%+ pullback from that peak, not a fixed target. A trade that keeps making new highs past +5% keeps running exactly as before; it only locks in gains once it actually turns down from its own high. Neither threshold is independently backtested — the 5% is the user's stated comfort level, the 2% trail reuses the existing stop's distance. Tests added and passing. Applies to every exit check from here forward, including the open-position check on the next scheduled refresh.</span></div>
+        <div class="log-row"><span class="t">12:10 ET</span><span>Quiet cycle. Buying power still $110.65 (unsettled since this morning's trades — T+1). No open position. Checked both scanners live: 29 matches (Early Momentum Ignition) + 8 (Warrior Trading Style), 34 distinct symbols total including the core four — every one quiet, nothing volume-confirmed. IPST (today's earlier trade) is the session's biggest mover at +113.8% but that move is old news, not a fresh breakout, and its current bar shows no fresh confirming volume. Profit-lock trail from the prior update is live and will apply to the next open position's exit check.</span></div>
+        <div class="log-row"><span class="t">12:21 ET</span><span>Quiet cycle. Buying power unchanged at $110.65. No open position (verified — last order on record is still the 10:40 ET WFF stop fill). 30 matches (Early Momentum Ignition) + 8 (Warrior Trading Style), 35 distinct symbols checked, all quiet. CDTG showed a −6.18% single-bar move on this tool's auto-selected 15-second granularity — noise, not a confirmed breakdown, not acted on.</span></div>
+      </div>
+    </div>
+  </details>
+
+  <footer>
+    <p>Prices from Robinhood, pulled directly. Scanner: <code>scalp_signal.py</code> in
+    the repo. This page updates when refreshed and republished — not on its own
+    while you're looking at it. Reload for the latest version at this link.</p>
+  </footer>
+
+</div>

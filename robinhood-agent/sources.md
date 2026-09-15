@@ -5548,3 +5548,60 @@ Benzinga's stated reason: *"after gaining 179% on Monday."* **That is not a cata
 **Final list (9):** LEU, SMR, VEEA, MYSZ, FPS, RLGT, FTFT, VNCE, BDRX.
 
 **Tool availability, stated rather than worked around:** Stocklake was not used this cycle. `get_sec_filing_index` returned empty for VEEA again — the SEC-filing leg has now failed on FTFT, VEEA (twice) across two sessions, so the dilution check this list depends on is effectively **not functioning**, and every catalyst above is sourced to Benzinga or Stocktwits rather than to a filing.
+
+---
+
+## 2026-09-15, 7:10am ET — momentum scanner, premarket cycle
+
+**Guard passed:** SPY premarket print at 11:10:17Z, `previous_close_date` 2026-09-14.
+
+### The premarket RVOL substitution earned its keep immediately — LZM is a phantom
+
+`Relative volume` came back as literally **`1` on every single row** of the scan — the documented flat placeholder outside 9:30–4:00 — and `Relative volume (1, 1H)` returned values like 6,315 / 10,034 / 26,793 / 171,307 / 1,111,416. Both fields are unusable, exactly as the trigger warns.
+
+**LZM (Lifezone Metals)** ranked second on the scan at **$4.33, +14.6%**, and it is **not real**. Pulling extended-hours bars: **every premarket bar from 08:00Z to 11:00Z is `interpolated: true` with `volume: 0`**, flat at $3.780. LZM has not traded a single share this morning. No news either (`get_equity_news` returns zero articles).
+
+Had I trusted the scan row, I would have alerted a +14.6% move that did not happen. This is precisely the RULE ZERO failure the self-compute rule exists to prevent, caught on its first use today.
+
+### TNON — ALERTED. Real catalyst, verifiable volume, and a name I dropped yesterday.
+
+**$6.32–6.45** (last bar close $6.32 at 11:00Z), vs a **$5.66** prior close — **+11.7% to +13.9%**. Float **627,447**. Market cap ~$3.7M.
+
+**Self-computed premarket volume (summed from real 10-min extended bars, 08:00Z→11:10Z): ~1,033,000 shares — 1.65× the entire float, before the opening bell.** Not the broken field; actual bars.
+
+The ignition sequence is clean:
+
+| Time (ET) | High | Volume |
+|---|---|---|
+| 4:00–5:30am | $5.30–5.55 | 296–8,225/bar (trickle) |
+| 5:40am | $5.80 | 11,493 |
+| 5:50am | $6.35 | 55,349 |
+| 6:00am | $6.7587 | **201,760** |
+| **6:20am** | **$7.07 — premarket high** | **245,913** |
+| 6:30am | $6.87 | 156,279 |
+| 6:40–7:00am | $6.53 | 86,116 → 53,161 → **90,607** |
+
+**Catalyst — real, dated, and unusually the OPPOSITE of this cohort's norm.** Per Benzinga (2026-09-11, 8:59am ET), Tenon paid off **in full and early, in cash**, its **$5.16M original issue discount senior convertible promissory notes** ahead of their September 11 maturity — *eliminating* the discount-conversion dilution overhang rather than creating one. Supporting structure: a **1-for-35 reverse split on Aug 10** followed by Nasdaq confirming regained minimum-bid compliance (delisting risk removed), and **Q2 (Aug 13) revenue $1.28M, +127% YoY, gross margin to 64%** with recent FDA 510(k) clearances on the Catamaran SI Joint Fusion System. Net loss was $4.1M.
+
+**Dilution check — RAN, and the answer is mixed, not clean.** The convertible notes are genuinely retired. But `get_sec_filing_index` shows a **424B3 Prospectus filed 2026-09-04** — a resale/shelf registration, which is itself a share-supply mechanism. So: one dilution channel closed, another registered and open. Reported both rather than leading with the good half.
+
+**Weakest leg, stated plainly:** the $7.07 premarket high was set at 6:20am, ~50 minutes before this check, and price is **~9–11% below it**. That is not "at the high." Applying the distribution test I narrowed yesterday: volume ran 245,913 → 156,279 → 86,116 → 53,161 → **90,607**, i.e. declining and then re-expanding on the most recent bar, and price has not reclaimed $7.07. No clean distribution signature, but no reclaim either. Genuinely mixed, and the alert says so.
+
+### I dropped TNON yesterday, and that was a process error — not just bad luck
+
+Yesterday's watchlist description reads: *"Dropped TNON (-11%, done)."* I cut it on a down day.
+
+The XPON rule exists for exactly this: **do not drop a name because its price paused when its catalyst is structural and still in force.** TNON's catalyst was never a one-day news pop — it was a balance-sheet restructuring (debt retired, compliance regained, revenue +127%) that did not stop being true because the stock had a red Monday. I applied a price filter to a structural setup. **Re-added to the "September 15" watchlist** (now 10 names).
+
+### CORRECTION to what I told the user 35 minutes ago
+
+At 6:35am I wrote that `get_sec_filing_index` "has now failed on FTFT, VEEA (twice) across two sessions, so the dilution check this list depends on is **effectively not functioning**."
+
+**That was too broad, and it is wrong as stated.** The tool returned **15 filings for TNON** just now — form 4s, 8-Ks, a 10-Q, and the 424B3 — working normally. The real pattern is **symbol-specific**: it returns empty for FTFT and VEEA while working for TNON. Which means the correct conclusion is narrower and more useful: the dilution check is *available*, and an empty result for a *particular* symbol should be treated as unknown-for-that-symbol, not as a broken tool and not as "no filings exist." Generalizing from two symbols to "the tool is down" would have caused me to stop running a check that demonstrably works.
+
+### Not alerted this cycle
+
+- **VEEA** $3.44, +50.2%, 28.8M premarket shares — already reported at 6:35am, no re-alert.
+- **FTFT** $6.3473, -21.1%, 126.8M volume — already covered at 6:35am; the unwind continues.
+- **AEHL** -11.9% $5.35 — the $6M convertible promissory note priced to Stratosphere Capital Management. Dilution thesis for this cohort, confirmed by the tape.
+- ALMU +6.9%, AGPU +6.2%, EDHL +5.2%, XPON +3.3% — none with verified premarket participation or a dated catalyst; not checked further this cycle.

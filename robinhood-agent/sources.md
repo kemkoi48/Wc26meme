@@ -5945,3 +5945,19 @@ Two new names appeared on the scan but both are already well off their highs by 
 VEEA, BNGO, MYSZ, BDRX, TNON: no material change from prior cycles' reasoning.
 
 **GCT** — only open position, no action this cycle (alert-only job). No user message this cycle — nothing clears step 2.
+
+---
+
+## 2026-09-15, 3:09pm ET — momentum scanner cycle. IPW alerted: fresh high, no catalyst, dilution filing on file.
+
+**Guard passed:** SPY $757.37 (−0.46%), print 19:09:16Z.
+
+### IPW (iPower) — $3.61, +87.0% on the day, RVOL 120x (live field, market open). Float **948,054** (sub-1M). Made a fresh intraday high of **$4.17 at 2:55pm ET, 14 minutes before this check** — inside the "igniting" window, not "already printed." Volume accelerated into the high (685K → 1.91M → 1.35M → 1.19M → 1.10M in the five-minute bars leading up to it) before the current pullback to $3.61.
+
+**Catalyst check, Stocktwits-first:** Stocktwits — pure squeeze chatter and price targets ("$7 here'd be great," "can it see $6?", "will more than $10 soon"), no named news. `get_equity_news("IPW")` returns two Benzinga "stocks moving" roundups (today's and 08-24's) — these are automated recaps of the price move itself, not a reason for it, so they don't count as a catalyst either. **No catalyst found — price action only.**
+
+**Dilution check (sub-$5, sub-1M float → required):** `get_sec_filing_index("IPW")` shows an **S-1/A (registration statement amendment) filed 2026-09-09** — six days ago, now sitting under an 87% single-day spike on a $1.8M market cap. Same shape as WETO/RETO: a live registration mechanism on file underneath a low-float squeeze.
+
+Alerting on price-action/RVOL/freshness grounds per step 2, with catalyst explicitly absent per step 3 — never a clean setup.
+
+**GCT** — only open position, no action this cycle (alert-only job).

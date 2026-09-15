@@ -5891,3 +5891,13 @@ One Stocktwits user independently posted *"$RETO 'I'm gonna buy $38 million wort
 - **BDRX $1.2399, +10.7%** — the 8:36am drop continues to look right.
 
 **GCT** $52.49, stop $43.55 resting `confirmed`. Only open position.
+
+---
+
+## 2026-09-15 — Stocklake reconnected, verified live
+
+User reconnected a connector via claude.ai Settings; `ListConnectors` metadata still reads Stocklake as `needs_reconnect`/`connected:false` (stale label, not trusted). Verified the only way this account trusts anything: a real call. `get_stock_news("AAPL")` returned two real, dated articles (published 2026-09-14) with `status: "ok"` — **Stocklake is genuinely working again**, ending the run of "guest limit hit" / "requires re-authorization" gaps logged repeatedly this week (09-11, 09-14, 09-15 premarket).
+
+Not treating this as permanently fixed — the standing instruction in every trigger ("if Stocklake is unavailable, say so plainly rather than proceeding on Stocktwits alone") stays as-is and will catch it live if it breaks again. This is a status update, not a rule change.
+
+Also checked, not connected here: three finance-relevant connectors surfaced in Anthropic's own registry (Bigdata.com — SEC filings/earnings calls/sentiment; Alpha Vantage — stocks/options/fundamentals/SEC filings; MT Newswires — real-time financial news). None added — each needs the user's own OAuth via claude.ai Settings, and none were explicitly requested.

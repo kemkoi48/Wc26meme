@@ -5914,3 +5914,20 @@ User instruction: "Use Stocktwits for this" → clarified via question, scoped t
 Preserved unchanged in both: Stocktwits chatter (squeeze talk, unverified user claims, price targets) is NEVER itself a "dated catalyst" — only a real sourced news article or SEC filing counts. This was the load-bearing rule behind correctly rejecting FTFT/BDRX/RETO/SUGP as "no catalyst — price action only" even at extreme gains, and it stays load-bearing going forward.
 
 Growth-sleeve stop check and premarket-watchlist-build triggers were left untouched — the user's answer specifically scoped this to "the scanner/S7 triggers," and those two triggers' Stocklake/Stocktwits mentions are corroborating-catalyst asides, not the primary alert gate.
+
+---
+
+## 2026-09-15, 1:09pm ET — momentum scanner cycle. RETO update: new high, now HALTED.
+
+**Guard passed:** SPY $757.29 (−0.47%), print 17:09:34Z.
+
+### RETO — last trade $2.59 (17:00:23Z), but the stock is currently HALTED with an indicated bid/ask of $3.73 (quote timestamp 17:10:22Z, no trade behind it — every 1-minute bar since 17:00 is zero-volume/interpolated). Since the 12:10pm alert ($2.04, day high at the time) it printed a fresh high of $2.92 (12:30pm ET bar) before the halt. Stocktwits chatter in real time ("2 mins to unhalt," "another halt up over 3$," "$RETO 5 coming") confirms a live volatility halt, not a data gap.
+
+**Catalyst check, re-run per today's Stocktwits-first order:** Stocktwits — pure squeeze chatter, price targets, halt commentary, zero named news. `get_equity_news("RETO")` — zero articles, unchanged from 12:10pm. **Still no catalyst.** Dilution risk unchanged: the 424B5 shelf prospectus (filed 2026-08-07) logged at 12:10pm is still on file and more relevant than ever on a stock now indicated ~10x that day's open.
+
+Alerting again despite no catalyst because of the material change (new high + a live halt materially changes the risk/reward and float-mechanics story), consistent with the 12:10pm call — this is still "no catalyst found — price action only," never a clean setup, and the halt makes both the upside and the reversal risk sharper in both directions.
+
+### Not alerted (unchanged from 12:10pm)
+- VEEA, MYSZ, BNGO, BDRX — no material change since last check.
+
+**GCT** $52.49 area, stop $43.55 resting `confirmed`. Only open position. No action this cycle (alert-only job).

@@ -5901,3 +5901,16 @@ User reconnected a connector via claude.ai Settings; `ListConnectors` metadata s
 Not treating this as permanently fixed — the standing instruction in every trigger ("if Stocklake is unavailable, say so plainly rather than proceeding on Stocktwits alone") stays as-is and will catch it live if it breaks again. This is a status update, not a rule change.
 
 Also checked, not connected here: three finance-relevant connectors surfaced in Anthropic's own registry (Bigdata.com — SEC filings/earnings calls/sentiment; Alpha Vantage — stocks/options/fundamentals/SEC filings; MT Newswires — real-time financial news). None added — each needs the user's own OAuth via claude.ai Settings, and none were explicitly requested.
+
+---
+
+## 2026-09-15 — Stocktwits made primary catalyst source in scanner/S7 triggers
+
+User instruction: "Use Stocktwits for this" → clarified via question, scoped to "Catalyst checks in the scanner/S7 triggers." Edited two live trigger prompts via `update_trigger` (full-prompt replacement, verified against the exact current text pulled from each trigger's most recent real firing payload before editing — momentum-scanner from its 09-15 12:35 UTC fire, S7 from its 09-14/09-15 8:35am ET fires, confirmed byte-identical apart from timestamps):
+
+- **Momentum scanner** (`trig_011uqSeqdqMoS3e5ZUTk13jN`), step 3: now Stocktwits `get_symbol_messages` PRIMARY (free, no quota), Robinhood `get_equity_news` SECOND (same fix just proven on the Ignition Board artifact), Stocklake `get_stock_news` THIRD (reconnected today, re-verify live each cycle rather than assume permanently fixed).
+- **S7 + pre-open rectify** (`trig_01QfmBuxGvdEQ1ybadA2Ci1R`): Part A step 2 now corroborates Stocktwits `get_symbol_pulse` moves against `get_equity_news`/`get_stock_news` before treating them as confirmed. Track 3 reordered to Stocktwits primary / Robinhood second / Stocklake third, same pattern.
+
+Preserved unchanged in both: Stocktwits chatter (squeeze talk, unverified user claims, price targets) is NEVER itself a "dated catalyst" — only a real sourced news article or SEC filing counts. This was the load-bearing rule behind correctly rejecting FTFT/BDRX/RETO/SUGP as "no catalyst — price action only" even at extreme gains, and it stays load-bearing going forward.
+
+Growth-sleeve stop check and premarket-watchlist-build triggers were left untouched — the user's answer specifically scoped this to "the scanner/S7 triggers," and those two triggers' Stocklake/Stocktwits mentions are corroborating-catalyst asides, not the primary alert gate.

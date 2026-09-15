@@ -5486,3 +5486,65 @@ Day high $7.6698; the close is **0.5% under it**, the strongest finish of anythi
 | VNCE | 2:09pm | **+45.6% close, 0.5% off its high.** |
 
 **Standing gaps unchanged and still open for the user:** `get_sec_filing_index` returned empty for FTFT *and* VEEA today with all filters dropped — the mandated dilution check is effectively unavailable, which on this cohort (5 of 6 names carried live dilution mechanics on 09-04) is a real hole, not a formality. Also still open: the $1-20/$2-20 scan `Last` ceiling (a name disappears from both scans by going up — FTFT would have vanished had it cleared $20), the S7 delta-floor disagreement, and whether this alert-only job may check open positions.
+
+---
+
+## 2026-09-15, 6:35am ET — premarket watchlist rebuild ("September 14" → "September 15")
+
+**Guard passed:** SPY has a live premarket print at **2026-09-15T10:34:38Z**, and `previous_close_date` is **2026-09-14** at $760.88. Today is a real trading session.
+
+### Macro frame for the day (from Benzinga, 01:58–05:18am ET)
+
+- **FOMC begins a two-day meeting today.** Empire State Manufacturing 8:30am ET.
+- **10-year Treasury yield briefly topped 5% Monday — first time since 2023.**
+- **Brent $107.48 / WTI $103.31**, still climbing on the US–Iran conflict and Strait of Hormuz disruption; an ExxonMobil Joliet refinery power outage added to it.
+- Futures red across the board (Dow -0.40%, S&P -0.30%, Nasdaq 100 -0.32%, Russell -0.39%). Polymarket has a **32%** implied chance of a higher S&P open.
+
+### VEEA — I rejected this name yesterday at 3:09pm, and it is +49% premarket today
+
+`get_equity_quotes`: **$3.42** bid / $3.43 ask at 10:35:19Z vs a **$2.29** close — **+49.3%**, on a tight two-cent spread (real liquidity, not a premarket phantom).
+
+**Catalyst (real, dated, published 05:18am ET today, Benzinga):** Veea signed a **term sheet to combine with NovaGen Group B.V.**, plus a **$10 million cornerstone investment from GeoNova Capital**, targeting a definitive business combination agreement "within the coming weeks."
+
+**Honest accounting of yesterday's rejection.** I rejected VEEA on two grounds: (a) *printed* — its $2.1522 high was three hours old and volume had collapsed from 531k/374k bars at noon to 6k–60k; (b) the **dilution check was unavailable** (`get_sec_filing_index` empty) on a $4.85M market cap, and per the WETO precedent unavailable-on-this-cohort means no alert.
+
+Ground (a) was an accurate description of yesterday's tape and is not contradicted by an **overnight announcement** — a scanner cycle cannot see a term sheet that is published the next morning, which is precisely the gap *this* premarket job exists to cover. So the two calls are not actually in conflict, and I am not going to pretend they are in order to perform contrition.
+
+What I will not do is wave away the one part that should stay uncomfortable: **yesterday's noon volume spike was 531k and 374k on a name that normally trades 5k–25k per bar.** That is an order of magnitude, one session before a merger term sheet was announced. I cannot prove those are connected and I am not asserting it. But "volume dried up, therefore printed" read the tape correctly and still missed what the tape might have been signaling. Worth holding onto rather than filing away.
+
+`get_sec_filing_index("VEEA")` **still returns empty** this morning with the date filter and without — so the filing leg remains unavailable, unchanged from yesterday. The catalyst here is sourced to Benzinga, not to a filing I verified.
+
+### FTFT — the unwind, exactly where no-catalyst moves end up
+
+**$5.74** last non-reg at 10:34:23Z vs **$8.04** close — **-28.6%**. Benzinga's 05:18am premarket list has it at -21.5% / $6.31, so it has kept sliding through the morning.
+
+Benzinga's stated reason: *"after gaining 179% on Monday."* **That is not a catalyst, and there still is not one in either direction.** Yesterday I alerted this name three times and each time recorded that no nameable catalyst existed and that the mandated dilution check could not be completed. A move with no reason has no floor when it turns — that was the substance of the warning, and this is what it looks like the next morning. Kept on the list: 103M shares traded Monday means real two-sided liquidity, and an unwind of that size is itself a day-trade setup.
+
+### Watchlist changes
+
+**Added (7):**
+
+| Symbol | Premarket | vs close | Grounding |
+|---|---|---|---|
+| **VEEA** | $3.42 | **+49.3%** | NovaGen merger term sheet + $10M GeoNova cornerstone investment (today, premarket) |
+| **MYSZ** | $2.51 | **+51.2%** | Announced acquisition-led strategy building a **defense technology platform** (dated) |
+| **FPS** | $31.24 | **+9.1%** | **Reports earnings before the open today** (est. 24c EPS on $429.94M rev). 106k premarket volume, Stocktwits trending rank 10 off only 2,368 watchers |
+| **RLGT** | $9.49 | **+15.6%** | **Better-than-expected Q4 results** |
+| **FTFT** | $5.74 | **-28.6%** | Unwinding Monday's +179%. **No catalyst either direction** — price action only, explicitly flagged as such |
+| **VNCE** | $7.19 | -6.0% | Closed Monday at its high (+45.6%). Still live; premarket spread $7.40/$8.10 is wide and thin — do not read that quote as a real price |
+| **BDRX** | $2.16 | **+92.9%** | **No catalyst found — price action only.** The only nameable fact is that it *fell* ~14% Monday on interim six-month results; nothing explains +93%. Same shape as FTFT, listed with the same warning |
+
+**Dropped (7):**
+- **CRBP** $8.01, flat — Monday's topline call was the reason it was listed; the event passed with a +1.1% move on 7.95M shares. Catalyst consumed, no reaction.
+- **SRRK** $51.08, flat — the SMA FDA approval was Monday's catalyst. Approved, didn't run. Consumed.
+- **RUM** $7.96, flat — was +17% Monday on the report naming Anthropic as a customer; the list's own description flagged that ID as unconfirmed. Move played out, no follow-through.
+- **ORCL** $143.99, flat — a megacap sitting on a day-trade list with no catalyst. Should not have persisted this long.
+- **OKLO** $36.09, **UUUU** $12.30, **CCJ** $93.05 — all flat premarket.
+
+**On the nuclear cluster, and on not over-pruning.** Five nuclear/uranium names (LEU, SMR, OKLO, UUUU, CCJ) were all flat premarket and none appear in Stocktwits trending. The XPON lesson says do **not** drop a quiet name that is still genuinely live — but XPON had heavy sustained chatter, and these have none this morning. I kept **LEU** (highest day-trade beta of the group, +1.2% premarket to $148.00) and **SMR** ($8.54) as theme representatives and dropped the three larger, lower-beta names as redundant. The theme stays covered; five slots on one flat theme is not curation.
+
+*Side note on SMR:* the growth sleeve stopped out at $9.32 on 09-11 and it is $8.51 today — the mechanical trail was right on that one.
+
+**Final list (9):** LEU, SMR, VEEA, MYSZ, FPS, RLGT, FTFT, VNCE, BDRX.
+
+**Tool availability, stated rather than worked around:** Stocklake was not used this cycle. `get_sec_filing_index` returned empty for VEEA again — the SEC-filing leg has now failed on FTFT, VEEA (twice) across two sessions, so the dilution check this list depends on is effectively **not functioning**, and every catalyst above is sourced to Benzinga or Stocktwits rather than to a filing.

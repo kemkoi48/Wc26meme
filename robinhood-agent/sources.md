@@ -5847,3 +5847,47 @@ What I will say plainly: the tighten-only response did work as designed here. Th
 - **VEEA $5.86, +155.9%** — day volume now **127.9M**, RVOL 4.44. But its **$6.75 high (10:05am) has not been retaken**; price is 13% below it. Already alerted three times today; the bar is a new high, and this is not one. **No re-alert.**
 - **BNGO $1.735, +30.5%**, float 11.77M, RVOL 68.98 — checked and **rejected**. Day high **$2.23 at 10:40am**, price **22% below** it, and volume has collapsed straight down the back of the move: 4.30M → 2.43M → 1.29M → 826k → 519k → **210k**. Both legs of the distribution test, cleanly. `get_equity_news("BNGO")` returns **zero articles** — no catalyst either. Printed and unexplained.
 - **MYSZ $2.1501, +29.5%** — continuing to fade from its $2.51 premarket high. **BDRX $1.27, +13.4%** — bouncing off the lows but still far under its +93% premarket print; the 8:36am drop stands.
+
+---
+
+## 2026-09-15, 12:10pm ET — momentum scanner cycle. RETO alerted, with the two worst possible qualifiers.
+
+**Guard passed:** SPY $756.79 (−0.54%), print 16:10:15Z.
+
+### RETO — $2.04, +465.6%, AT its day high. Ignition confirmed; catalyst absent; dilution vehicle on file.
+
+Float **8,219,576**. Day volume **145.5M — 17.7× the float**. RVOL **580.9** (live field, market open).
+
+The ignition is unambiguous and is still stepping up:
+
+| Time (ET) | High | Close | Volume |
+|---|---|---|---|
+| 9:30–10:20 | $0.37 | 0.3504 | **5,771 / 0 / 100 / 0 / 140 / 300** (dead) |
+| 10:30 | 0.48 | 0.4497 | 1,440,170 |
+| 10:40 | 0.92 | 0.9200 | 6,700,676 |
+| 11:00 | 0.78 | 0.7285 | 16,458,581 |
+| **11:20** | 1.12 | 1.1200 | **21,180,246** |
+| 11:40 | 1.59 | 1.5200 | 7,109,505 |
+| 11:50 | 1.90 | 1.7700 | 10,756,229 |
+| **12:00** | **$2.04** | **$2.04** | 5,975,033 |
+
+**The last bar closed exactly at its high, and that high is the day high.** This is the opposite of every "already printed" rejection I have made this week — there is no distance-from-high problem, no volume dry-up, no failed reclaim. A stock that traded **5,771 shares** in its 9:30 bar has done **145 million** since.
+
+**And now the two things that must be said before anything else:**
+
+**1. NO CATALYST. None.** `get_equity_news("RETO")` returns **zero articles**. Stocktwits (12 newest) contains no named news whatsoever — it is "goin 10 today," "nxet 5," "naked shorts cant sell fast enough," and top-gainer lists. Per step 3 this is **"no catalyst found — price action only,"** and it must never be presented as a clean setup. This is the third time in two days this exact shape has appeared: **FTFT** (+179% Monday on no catalyst → −28% Tuesday) and **BDRX** (+93% premarket on no catalyst → round-tripped to +5% within two hours). A move with no reason has no floor.
+
+**2. A DILUTION VEHICLE IS ON FILE.** `get_sec_filing_index("RETO")` returns a **424B5 Prospectus filed 2026-08-07** — a shelf takedown, i.e. the registered mechanism for selling shares. Five weeks old, on a **$3.13M market cap** that has just gone up 5.7×.
+
+One Stocktwits user independently posted *"$RETO 'I'm gonna buy $38 million worth of dilution!'"* — **the $38M figure is an unverified user claim and I am not adopting it**, but the *existence* of the 424B5 is verified from the filing index, and it is the vehicle such a raise would run through. Another user referenced a trading **halt** ("there was no need for the halt"), also unverified from my tools; the quote state reads `active`.
+
+**Why this is an alert and SUGP was not:** SUGP failed on two counts — printed (high 30 minutes stale, volume collapsing) **and** a 424B3 on file. RETO fails only the catalyst/dilution half; it is at its high on accelerating volume. The price-action test it passes cleanly, the reason-and-risk test it fails completely, and the user gets both halves.
+
+### Not alerted
+
+- **VEEA $5.8199, +154.1%** — volume now **144.1M** (RVOL 5.0), but the **$6.75 high from 10:05am still has not been retaken**; price is 13.8% below it. Alerted three times already; the bar is a new high. **No fourth alert.** (Several Stocktwits posts today pair VEEA and RETO as the session's two runners; noted as sentiment, not evidence.)
+- **MYSZ $2.3799, +43.4%** — recovered above its $2.35 mid-morning level but still under the $2.51 premarket high. Not a new high.
+- **BNGO $1.745, +31.2%** — rejected at 11:10am as printed; unchanged in substance, still ~22% under its $2.23 high.
+- **BDRX $1.2399, +10.7%** — the 8:36am drop continues to look right.
+
+**GCT** $52.49, stop $43.55 resting `confirmed`. Only open position.

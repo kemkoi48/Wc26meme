@@ -5798,3 +5798,52 @@ New to the scan: **$1.02–1.04, +43.4%**, float **704,204**, day volume **114.3
 - **MYSZ $2.2698, +36.4%** — faded from its $2.51 premarket level. Not a new high.
 - **BDRX $1.1799, +5.3%**, RVOL 6.77 — the name dropped from the watchlist at 8:36am after it round-tripped from +93%. Confirmed at +5.3%: the drop was right.
 - **FTFT $5.765, −28.3%** — still sliding, no catalyst either direction, fourth consecutive lower reading.
+
+---
+
+## 2026-09-15, 11:10am ET — momentum scanner cycle. HL STOPPED OUT — found here, not by a growth trigger.
+
+**Guard passed:** SPY $756.96 (−0.51%), print 15:10:21Z.
+
+### HL closed at a −$42.60 loss, and the way I found it is the bigger problem
+
+Running `get_equity_orders(state=confirmed)` as a stop-verification check, **HL's $18.50 stop was absent from the confirmed list while HL was trading at $18.31 — below its own stop.** That is either a fill or an unprotected position, and both demand an immediate answer.
+
+It was a fill. Order `6aa80f2d`, **filled 2026-09-15 09:57:55 ET, 20 sh @ $18.49**, single execution, no partial. `get_equity_positions` now returns **GCT only**.
+
+- Entry **$20.62** (09-04) → exit **$18.49** → **realized −$42.60, −10.33%**
+- **The largest single loss this sleeve has taken.** Prior: BTG +$35.69, SMCI −$18.21, LYFT −$11.49, SMR −$0.68.
+- Proceeds **$369.80** unsettled T+1 (cash account) — nothing redeployable today.
+
+**The structural problem: nothing in this account's schedule checks for intraday stop fills.** The fill was at 09:57:55; the next growth-sleeve check is 4:01pm. Without this ad-hoc lookup the close would have sat unlogged for ~6 hours. **This is the second occurrence** — SMR stopped out mid-morning 09-11 and was also caught retroactively at the 4:02pm check, where it was written up as a gap and then not fixed. Twice is a pattern, and it is worth fixing rather than re-noting each time.
+
+### The signal fired three times. I tightened once. That is worth putting squarely on the record.
+
+The ADX>25-plus-MACD-turning-against signal fired on HL **three consecutive sessions**, worsening each time:
+
+| Date | ADX | MACD histogram | Action taken |
+|---|---|---|---|
+| 09-10 | 33.8 | −0.095 | none (no catalyst found) |
+| 09-11 | 30.79 | −0.156 | none (no catalyst found) |
+| 09-14 | 28.97 | −0.211 | stop hard-tightened to $18.50 |
+
+Under the 2026-09-06 narrowing, a technical signal authorizes **tightening only**; a full close additionally requires a nameable dated catalyst. I searched for one on all three dates and never found one, so I never closed. **Closing on the first signal (09-10, HL ~$20.02–20.27) would have realized roughly −$7 to −$12 instead of −$42.60.**
+
+**And the honest framing, which is n=2 pointing in opposite directions:**
+
+- **SMCI** — closed early *on this exact signal*. Holding would have been better: −$18.21 realized vs +$19.08 if held.
+- **HL** — not closed early on this exact signal. Closing would have been better: −$42.60 realized vs ~−$10.
+
+Two live cases, opposite conclusions. The narrowing was never justified by a win rate; it was justified because **this account's own S11 backtest found no exploitable edge in short-horizon crossover signals**, and that finding is not overturned by one adverse case any more than it was established by SMCI's. **Reporting this as a data point for the user, not changing the rule on my own** — the same handling every live-money gate in this account gets.
+
+What I will say plainly: the tighten-only response did work as designed here. The $18.50 stop, set on the third signal, caught HL at −10.3% rather than letting the 18% trail ($17.37) run to roughly −16%. The rule limited the damage; it did not prevent it.
+
+### GCT — stop verified healthy
+
+`state: confirmed`, 2 sh @ **$43.55**, `last_transaction_at` 2026-09-15T12:27:17Z. **The queued order placed after yesterday's close activated correctly at today's open** — worth confirming explicitly, since a rejected queue would have left GCT unprotected all session. GCT $52.02 (−1.4% today, +2.3% on the $50.84 entry).
+
+### Scanner side — no alert
+
+- **VEEA $5.86, +155.9%** — day volume now **127.9M**, RVOL 4.44. But its **$6.75 high (10:05am) has not been retaken**; price is 13% below it. Already alerted three times today; the bar is a new high, and this is not one. **No re-alert.**
+- **BNGO $1.735, +30.5%**, float 11.77M, RVOL 68.98 — checked and **rejected**. Day high **$2.23 at 10:40am**, price **22% below** it, and volume has collapsed straight down the back of the move: 4.30M → 2.43M → 1.29M → 826k → 519k → **210k**. Both legs of the distribution test, cleanly. `get_equity_news("BNGO")` returns **zero articles** — no catalyst either. Printed and unexplained.
+- **MYSZ $2.1501, +29.5%** — continuing to fade from its $2.51 premarket high. **BDRX $1.27, +13.4%** — bouncing off the lows but still far under its +93% premarket print; the 8:36am drop stands.

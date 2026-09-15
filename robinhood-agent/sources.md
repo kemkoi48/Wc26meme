@@ -5605,3 +5605,60 @@ At 6:35am I wrote that `get_sec_filing_index` "has now failed on FTFT, VEEA (twi
 - **FTFT** $6.3473, -21.1%, 126.8M volume — already covered at 6:35am; the unwind continues.
 - **AEHL** -11.9% $5.35 — the $6M convertible promissory note priced to Stratosphere Capital Management. Dilution thesis for this cohort, confirmed by the tape.
 - ALMU +6.9%, AGPU +6.2%, EDHL +5.2%, XPON +3.3% — none with verified premarket participation or a dated catalyst; not checked further this cycle.
+
+---
+
+## 2026-09-15, 8:10am ET — momentum scanner, premarket cycle
+
+**Guard passed:** SPY premarket print 12:10:15Z.
+
+### VEEA — RE-ALERT. The volume expansion happened AFTER my 7:10am check.
+
+**$4.011** @ 12:10:24Z (bid $4.010 / ask $4.020 — two cents wide, real liquidity), vs a **$2.29** close = **+75.2%**. Float **1,878,883**.
+
+At 6:35am I reported it at $3.42 (+49.3%). At 7:10am it was $3.44 and I did **not** re-alert — correctly, nothing had changed. Then it went:
+
+| Time (ET) | High | Close | Volume |
+|---|---|---|---|
+| 5:00–6:50am | $3.32–3.66 | — | 50k–225k/bar (chop) |
+| **7:00am** | $3.59 | 3.46 | **426,840** ← expansion starts |
+| 7:10am | $3.79 | 3.701 | **874,858** |
+| 7:20am | $3.93 | 3.810 | 612,457 |
+| 7:30am | $3.94 | 3.920 | **1,200,747** |
+| **7:40am** | **$4.33** | 4.198 | **2,904,767** |
+| **7:50am** | **$4.3797 — premarket high** | 4.200 | 2,038,579 |
+| 8:00am | $4.21 | 3.9703 | 1,126,514 |
+
+**Self-computed from real extended-hours bars: ~9.18 million shares in the 70 minutes since 7:00am, on a 1.88M float — roughly 5× the entire float, before the opening bell.** (The scan's own `Relative volume` again read the flat `1` placeholder and was ignored.)
+
+This is a material change on both of step 2's criteria at once — new high *and* a volume expansion of an order of magnitude — so the skip-if-already-alerted rule does not apply.
+
+**Catalyst (unchanged, real, dated today):** term sheet to combine with **NovaGen Group B.V.** plus a **$10M cornerstone investment from GeoNova Capital**, targeting a definitive agreement within weeks.
+
+**Where price actually sits, stated because it is the weak leg:** $4.011 is **8.4% below** the $4.3797 high set at 7:50am, ~20 minutes ago — right at the edge of the "igniting vs. printed" window. Volume across the last three bars ran 2.90M → 2.04M → 1.13M, i.e. tapering from the peak bar, which is the early shape of distribution under the rule I narrowed yesterday. Price has *not* broken down with it. Live and enormous, but no longer accelerating.
+
+**Dilution check: unknown for this symbol, not clean and not broken.** `get_sec_filing_index("VEEA")` has returned empty three times now (twice yesterday, once this morning) — but the same tool returned 15 filings for TNON an hour ago, so this is a per-symbol gap. On a $7.06M market cap that has nearly doubled overnight, I cannot clear it, and I am saying so rather than letting silence read as a pass.
+
+### TNON — no re-alert, and the honest follow-up on my 7:10am call
+
+I alerted TNON an hour ago at **$6.32–6.45**. It is now **$6.17**. **It went down, not up.**
+
+The bars since:
+
+| Time (ET) | Close | Volume |
+|---|---|---|
+| 7:10am | 6.180 | 33,976 |
+| 7:20am | 6.230 | 3,855 |
+| 7:30am | 6.160 | 30,871 |
+| 7:40am | 6.072 | 51,096 |
+| 7:50am | 6.081 | 31,243 |
+| 8:00am | 6.160 | 53,895 |
+
+Volume collapsed from the 90k–246k range of the ignition to **4k–54k**, and the $7.07 high has not been retested — price is now **12.7% below** it. By the two-part distribution test: volume declining **and** no reclaim of the breakout level. **That is a clean "printed" call now, and it was not an hour ago.**
+
+The alert stated at the time that being 9–11% under a 50-minute-old high was its weakest leg. That caveat was correct and it is the part that has played out. Recording the negative outcome explicitly: the catalyst was real and verified, the volume was real and verified, and the entry timing was still poor — which is the distinction worth keeping, since a good catalyst check does not substitute for a good position-vs-high check.
+
+### Also this cycle
+
+- **FTFT** $6.19, **-23.0%** — the unwind continues, third straight reading lower. No catalyst in either direction, still.
+- **SCNI** $1.86, -23.8%; **BMGL** $6.03, -15.5%; **VSME** $1.17, -10.0% — all continuing yesterday's fades, all previously and repeatedly rejected on consistent grounds.

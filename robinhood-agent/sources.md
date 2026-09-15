@@ -5733,3 +5733,20 @@ Also still true: **no catalyst for PYPL**, so even a cheap contract would not ha
 
 1. **Stale option quotes at 8:35am.** Every quote pulled came back `updated_at: 2026-09-14T19:59:59Z` — yesterday's close. Today that is 1 day stale (yesterday it was 3, across the weekend). Every delta/premium figure above is a prior-close mark, not a live one. Still awaiting the user's decision on moving Part B to ~9:35am.
 2. **Delta-floor disagreement, unchanged.** `option_math.py:423` default `min_delta = 0.25`; `config.json` `option_scan.min_delta = 0.1` — **the config value is what actually executes**; strategies.md prose says 0.30. I screened at **0.25** (the code default and the 2026-08-21 pinned decision), deliberately not the looser live 0.1, since placing a real trade on the loosest of three conflicting values while the question is open is not a call I should make quietly. It did not bind today — 0.3563 clears all three.
+
+---
+
+## 2026-09-15, 9:10am ET — momentum scanner, premarket cycle. QUIET — no alert sent.
+
+**Guard passed:** SPY premarket print 13:10:57Z.
+
+Nothing cleared step 2. Recording the reasoning so the silence is auditable rather than just absent:
+
+- **VEEA $4.14 (+80.8%)** — already alerted at 8:10am. Up from $4.011 then, but the premarket high is still **$4.3797** (7:50am) and $4.14 has **not** taken it out. The rule is "new high **or** big volume expansion," and a 3% grind back toward an existing high is neither. No re-alert. (Scan `Relative volume` again reads the flat `1` premarket placeholder; ignored, as every cycle before 9:30.)
+- **TNON $6.27** — alerted 7:10am, unchanged from the 8:36am reading, still 11% under its $7.07 high. Already called printed at 8:10am; nothing has changed that.
+- **MYSZ $2.47 (+48.8%)** and **FPS $31.20 (+8.9%)** — both on the watchlist and reported to the user at 6:35am. Both are recovering toward, not exceeding, their earlier premarket levels. Not new, not new highs.
+- **FTFT $6.39 (-20.5%)**, **SCNI $1.85 (-24.2%)**, **BMGL $6.03 (-15.5%)**, **VSME $1.15 (-11.5%)** — the entire rest of the Warrior scan is red.
+
+**Step 3 paper-trail check:** largest real % change this cycle is VEEA at +80.8%; its catalyst (NovaGen merger term sheet + $10M GeoNova cornerstone investment) is already logged three times today, so no new paper-trail line is owed.
+
+**No user message.** Per the job's own standard, silence is the correct output when nothing qualifies, and a false alert is worse than none. Today has already produced two real alerts (TNON 7:10am, VEEA 8:10am re-alert) and one drop (BDRX); adding a third message for a name that has not made a new high would be noise.

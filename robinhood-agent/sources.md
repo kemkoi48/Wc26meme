@@ -5750,3 +5750,51 @@ Nothing cleared step 2. Recording the reasoning so the silence is auditable rath
 **Step 3 paper-trail check:** largest real % change this cycle is VEEA at +80.8%; its catalyst (NovaGen merger term sheet + $10M GeoNova cornerstone investment) is already logged three times today, so no new paper-trail line is owed.
 
 **No user message.** Per the job's own standard, silence is the correct output when nothing qualifies, and a false alert is worse than none. Today has already produced two real alerts (TNON 7:10am, VEEA 8:10am re-alert) and one drop (BDRX); adding a third message for a name that has not made a new high would be noise.
+
+---
+
+## 2026-09-15, 10:10am ET — momentum scanner, FIRST REGULAR-SESSION cycle
+
+**Guard passed:** SPY trading live, $758.34 (−0.33%), print 14:10:50Z. RVOL fields are now usable (the flat `1` placeholder only afflicts pre/post).
+
+### VEEA — RE-ALERT (third today). $6.0421, +163.9%.
+
+Day high **$6.75**, set in the 10:05am bar — **within the last five minutes**. Current price is **10.5% below** it.
+
+| Time (ET) | High | Low | Close | Volume |
+|---|---|---|---|---|
+| 9:30 | 5.28 | 4.31 | 4.9098 | **8,000,159** |
+| 9:50 | 5.54 | 4.82 | 5.140 | 5,251,643 |
+| 9:55 | 6.23 | 5.12 | 6.230 | 2,666,397 |
+| 10:00 | 6.39 | 5.80 | 6.265 | 4,004,519 |
+| **10:05** | **6.75** | **5.57** | 5.800 | 3,960,067 |
+
+**Day volume 96.6M on a 1,878,883 float — 51× the float.** RVOL **3.35** (real field, market open, not self-computed).
+
+**Read the 10:05 bar honestly:** high $6.75, low $5.57, close $5.80. That is a spike to the high and a violent same-bar rejection of ~17%, on 3.96M shares. Price has since recovered to $6.04. So: at/near highs, enormous participation, high five minutes old — "igniting" by the time test — **but the last print at the high was immediately sold.** Both halves are the setup.
+
+**Catalyst unchanged:** NovaGen Group B.V. merger term sheet + $10M GeoNova Capital cornerstone investment, announced premarket today.
+
+**The dilution risk here is now the loudest thing about it, and I still cannot check it.** `get_sec_filing_index("VEEA")` has come back empty four times across two sessions while working normally for TNON and SUGP — a per-symbol gap, not an outage. A **$7M market cap** that has **tripled in one session** on a merger term sheet naming a cornerstone investor is close to the archetype of a company about to register or price shares. I have no filing visibility to confirm or rule that out, and at +164% that silence should weigh more, not less.
+
+Alert progression today: 6:35am watchlist ($3.42, +49%) → 8:10am re-alert ($4.011, +75%) → now ($6.04, +164%).
+
+### SUGP — checked and REJECTED, and this one would have been the trap
+
+New to the scan: **$1.02–1.04, +43.4%**, float **704,204**, day volume **114.3M — 162× the float**, RVOL **167.2**. On raw numbers the most extreme row of the day.
+
+**Rejected on two independent grounds:**
+
+1. **Printed.** Day high **$1.22** at 9:40–9:45am, ~30 minutes ago, price now ~15% below it. Volume across the bars since: 5.48M → 2.89M → 1.72M → 2.40M → 1.72M. Declining, and the $1.22 high has not been retested. Both legs of the distribution test satisfied.
+2. **Live dilution mechanism on file.** `get_sec_filing_index` returns a **424B3 Prospectus filed 2026-08-26** — a resale registration against a 704k-share float at ~$1. Two **6-K** current reports were also filed **today (2026-09-15)**, which are the probable catalyst, but the index alone does not give their contents so I am not characterizing them.
+
+**The 08-26 date is worth pausing on: WETO's $75M ATM was also on file since 2026-08-26**, and WETO is precisely why this check exists — it was kept on a watchlist at +15.9% and collapsed −41% within the hour. Same cohort, same filing shape, same trap. Rejected.
+
+### Others, no alert
+
+- **FPS $32.37, +13.0%** — the earnings reaction flagged at 6:35am has arrived; now above its $31.24 premarket level. Already on the watchlist with its catalyst logged, so no separate alert, but the setup called at 6:35am did play out.
+- **VNCE $8.1399, +6.4%** — broke above both yesterday's $7.65 close and yesterday's $7.6698 intraday peak. On the watchlist; continuing, not new.
+- **TNON $6.391, +14.9%** — recovered from the $6.17 low I recorded at 8:10am when I called it printed, but still below its $7.07 premarket high. That call was about the premarket leg and remains accurate; no re-alert without a reclaim.
+- **MYSZ $2.2698, +36.4%** — faded from its $2.51 premarket level. Not a new high.
+- **BDRX $1.1799, +5.3%**, RVOL 6.77 — the name dropped from the watchlist at 8:36am after it round-tripped from +93%. Confirmed at +5.3%: the drop was right.
+- **FTFT $5.765, −28.3%** — still sliding, no catalyst either direction, fourth consecutive lower reading.

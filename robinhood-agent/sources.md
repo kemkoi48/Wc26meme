@@ -5662,3 +5662,74 @@ The alert stated at the time that being 9–11% under a 50-minute-old high was i
 
 - **FTFT** $6.19, **-23.0%** — the unwind continues, third straight reading lower. No catalyst in either direction, still.
 - **SCNI** $1.86, -23.8%; **BMGL** $6.03, -15.5%; **VSME** $1.17, -10.0% — all continuing yesterday's fades, all previously and repeatedly rejected on consistent grounds.
+
+---
+
+## 2026-09-15, 8:36am ET — S7 options screen + pre-open watchlist rectify
+
+**Guard passed:** SPY premarket print 12:35:57Z.
+
+### PART A — rectify: BDRX dropped. The "no catalyst" warning held within two hours.
+
+| Symbol | 6:35am build | 8:36am | vs close |
+|---|---|---|---|
+| VEEA | $3.42 (+49.3%) | **$4.0203** | **+75.6%** |
+| MYSZ | $2.51 (+51.2%) | $2.35 | +41.6% |
+| TNON | (added 7:10am) | $6.26 | +12.6% |
+| RLGT | $9.49 | $9.1593 | +11.6% |
+| FPS | $31.24 | $30.70 | +7.2% |
+| LEU | $148.00 | $147.40 | +0.8% |
+| SMR | $8.54 | $8.53 | +0.2% |
+| VNCE | $7.19 | $7.46 | −2.5% |
+| FTFT | $5.74 | $6.2245 | −22.6% |
+| **BDRX** | **$2.16 (+92.9%)** | **$1.1802** | **+5.4%** |
+
+**BDRX round-tripped from +92.9% to +5.4% in two hours — it gave back essentially the entire move.** I added it at 6:35am with the explicit flag: *"no catalyst found — price action only. The only nameable fact is that it fell ~14% Monday on interim six-month results; nothing explains +93%. Same shape as FTFT, listed with the same warning."*
+
+**Removed from the list** per the already-printed discipline. This is the second confirmation in two days of the same read: FTFT (no catalyst, +179% Monday → −23% Tuesday) and now BDRX (no catalyst, +93% → +5% within one premarket session). A move without a reason has nothing holding it up. Nothing else changed materially; the other nine stay.
+
+### PART B — S7: flat, screen run, NO TRADE. New rejection reason, and it is a defect in the screen itself.
+
+No open option position (`get_option_positions` empty). **Track 1 run: 398 matches, 200 rows returned, 200 with usable IV and HV. 31 cleared the 0.90 cap, 21 cleared the 0.80 Method-2 threshold.**
+
+**HV-artifact check on the top four (variance concentration on real daily bars):**
+
+| | scan ratio | worst day | share of 20d variance | ex-outlier ratio (20d / 30d) | verdict |
+|---|---|---|---|---|---|
+| AAP | 0.4742 | **−28.16%** | **88.6%** | 1.733 / 1.182 | **REJECT — artifact** |
+| PCG | 0.5772 | −22.39% | 65.0% | 0.983 / 1.161 | **REJECT — artifact** |
+| COO | 0.5823 | −15.86% | 72.6% | 1.139 / 1.158 | **REJECT — artifact** |
+| PYPL | 0.4451 | −13.59% | 65.4% | **0.760 / 0.841** | survives |
+
+All three rejects flip from "cheap" to *richer than realized* once the single dominating day is removed. EIX ranked #2 again today and was already adjudicated on this same check yesterday — the same outlier has not yet rolled out of its HV window, so its re-appearance is consistent, not new information.
+
+My independently computed 20-day HV for PYPL was **0.5821** against Robinhood's undocumented-window HV of **0.5697** — close enough to confirm the column is roughly a 20-day measure.
+
+### PYPL cleared the cap and the delta floor for the first time — and then failed on cheapness
+
+**PYPL 2026-10-16 $52.50 put** (marks stale from the 09-14 close, see the defect note below):
+
+- delta **−0.3563** — clears the 0.25 code floor **and** the 0.30 prose floor
+- ask **$1.45 → $145.00 premium**, inside the **$150** cap with $5.00 of room
+- spread (1.45−1.26)/1.355 = **14.0%**, inside the 15.0% limit
+- open interest **6,549**, volume **480**, 31 days to expiry — all fine
+
+**Every gate that has blocked S7 for 14 straight checks passed.** Then this:
+
+**The contract's own IV is 0.3376. The scan ranked PYPL on `atmIv30Day` = 0.2536 — 33% lower.** Measured properly, at the IV of the contract that would actually be bought, against the outlier-corrected realized vol:
+
+- 0.3376 / 0.3338 (20d ex-outlier HV) = **1.011**
+- 0.3376 / 0.3016 (30d ex-outlier HV) = **1.119**
+
+Both **above** the 0.90 gate. **The option is not cheap. The cheapness lived entirely in an ATM IV number that the tradeable strike does not offer.**
+
+**This is a structural gap in Track 1, not a PYPL quirk:** the screen ranks candidates on ATM 30-day IV, but a trade executes at a specific contract's IV, and on a name with real skew those differ enough to invert the verdict. Track 1 was added to fix candidate starvation and it did — it surfaced a name that finally cleared cap, delta, spread and liquidity. But its ranking metric and its execution metric are different numbers, so a top-ranked name can be genuinely un-cheap where it counts. **Surfaced, not fixed unilaterally** — it changes what the live screen buys, same handling as the delta-floor disagreement.
+
+Also still true: **no catalyst for PYPL**, so even a cheap contract would not have cleared the catalyst gate.
+
+**Running total: 15 real S7 checks, 15 rejections, 0 trades.** Today's is the first rejection where cap and delta were not the binding constraint.
+
+### Two known defects, re-confirmed live this cycle
+
+1. **Stale option quotes at 8:35am.** Every quote pulled came back `updated_at: 2026-09-14T19:59:59Z` — yesterday's close. Today that is 1 day stale (yesterday it was 3, across the weekend). Every delta/premium figure above is a prior-close mark, not a live one. Still awaiting the user's decision on moving Part B to ~9:35am.
+2. **Delta-floor disagreement, unchanged.** `option_math.py:423` default `min_delta = 0.25`; `config.json` `option_scan.min_delta = 0.1` — **the config value is what actually executes**; strategies.md prose says 0.30. I screened at **0.25** (the code default and the 2026-08-21 pinned decision), deliberately not the looser live 0.1, since placing a real trade on the loosest of three conflicting values while the question is open is not a call I should make quietly. It did not bind today — 0.3563 clears all three.

@@ -5979,3 +5979,17 @@ Alerting on price-action/RVOL/freshness grounds per step 2, with catalyst explic
 **Redeploy check:** real settled buying_power $15.54; $369.80 from the HL close is still T+1 unsettled (get_accounts confirms). No whole share of any realistic growth candidate is affordable at $15.54 — no redeployment attempted this cycle. Will re-check once the HL proceeds settle (expected ~09-16).
 
 Logged to trades.csv (row 18) and CLAUDE.md's S9 row.
+
+---
+
+## 2026-09-15, 4:09pm ET — momentum scanner, final cycle of the day (post-close)
+
+**Guard passed:** real post-close print, SPY $757.88 non-reg at 20:09:23Z (regular session closed 20:00:00Z).
+
+Regular session ended at 4:00pm ET with RETO closing $3.41. In the nine minutes since, it has gone **violently volatile in real post-market trading** (session: "post", real volume, not a data artifact): gapped down to $2.65 immediately after the bell, then spiked to a high of **$7.86 at 4:05pm ET** (871K shares that single minute), now settling around **$6.00-6.15**. Catalyst status unchanged from the two alerts logged earlier today (12:10pm, 3:09pm... [1:09pm]): zero named news, only the 424B5 dilution shelf on file. This is now the third session (regular + immediate post-close) of extreme, catalyst-free volatility on this name — treating as further confirmation of the "price action only" read, not a new signal.
+
+Not sending a user message: the regular session is over, nothing else on the scan changed materially (VEEA/MYSZ/IPW/BNGO/BDRX all flat-to-faded from prior checks), and acting on a thinly-traded, already-thrice-flagged no-catalyst post-market spike isn't an actionable alert — logged for the record only.
+
+**GCT** — stop resting $43.67 (queued for tomorrow's open, verified this cycle's earlier growth-sleeve check). No action from this alert-only job.
+
+This closes out today's momentum-scanner cycles (7am-4pm ET window).

@@ -5961,3 +5961,21 @@ VEEA, BNGO, MYSZ, BDRX, TNON: no material change from prior cycles' reasoning.
 Alerting on price-action/RVOL/freshness grounds per step 2, with catalyst explicitly absent per step 3 — never a clean setup.
 
 **GCT** — only open position, no action this cycle (alert-only job).
+
+---
+
+## 2026-09-15, 4:05pm ET — growth sleeve daily stop check
+
+**Guard passed:** SPY close $757.38 (regular-session print 19:59:59Z), post-close non-reg print at 20:02Z confirms today's real close, not a stale prior-session snapshot.
+
+**Position:** GCT, 2sh, entry $50.84 (2026-09-14). Only open growth position (HL closed via stop 09-15 09:57:55).
+
+**Profit lock (checked first, per 2026-09-14 rule):** Real peak since entry $53.26 — today's actual intraday high, 1:52pm ET, confirmed via 1-minute bars (30-min bar showed the same $53.26, cross-checked to avoid the SMCI-style undercount). Entry-day (09-14) high was $53.12, so today set a marginal new peak. `decide_profit_exit(50.84, 53.26, current)`: **not armed** — arm threshold is $53.382 (+5.0%), real peak is +4.76%, missed by $0.12 / 0.24 percentage points. Closest miss yet on this position (09-14 missed by 0.50pp).
+
+**Stop ratchet:** `decide_stop_update(43.55, 53.26)`: new trail = 53.26 × 0.82 = $43.6732 → $43.67, above the resting $43.55 → should_update=True. Cancelled order `6aa85316` (verified `cancelled`, 20:03:12Z), placed new GTC stop_market 2sh @ $43.67 (order `6aa9a486`, verified `queued` — market closed at check time, regular_hours next-open queuing, not a rejection).
+
+**Technical check:** ADX(10) 23.76 — below the 25 "real trend" floor for the first time since entry (was 30.37 on 09-14); RSI(14) 60.93, neutral; MACD histogram -0.259 as of the last finalized (09-14) daily bar, still negative but shrinking for a fifth straight session (-0.542/-0.429/-0.376/-0.348/-0.325/-0.259). **No signal fired** — ADX below the real-trend floor means the tighten-only signal condition isn't met regardless of MACD direction. Not manufacturing a signal where the account's own threshold says there isn't one.
+
+**Redeploy check:** real settled buying_power $15.54; $369.80 from the HL close is still T+1 unsettled (get_accounts confirms). No whole share of any realistic growth candidate is affordable at $15.54 — no redeployment attempted this cycle. Will re-check once the HL proceeds settle (expected ~09-16).
+
+Logged to trades.csv (row 18) and CLAUDE.md's S9 row.

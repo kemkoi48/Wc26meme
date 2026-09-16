@@ -6325,3 +6325,58 @@ Stating this carefully rather than triumphantly: **one resolved case does not pr
 **MEDS $6.50, +301%** — third straight hour lower from $9.46, still the day's one durable winner from alert ($3.648 → $6.50, +78%). **DLXY $1.78, +329%** (bid=ask, likely halted again; above the $1.22 alert but −60% off its $4.45 high). **QCLS $1.085, +146%** — faded, still gated, no catalyst ever found. **TPST $1.1198, +48.2%** — the only name firming into the afternoon, RVOL 3.56. **FTFT $6.78, +18.1%** — gated all day, no catalyst found across four sessions of swings. **VEEA $5.83, +2.1%.**
 
 Nothing cleared step 2 + step 3 this cycle. No new alert.
+
+---
+
+## 2026-09-16 4:05pm ET — S9 growth-sleeve daily check (trig_01P3etqQpqYJc9J1w9jPqbzD)
+
+**Market-open guard: passed.** SPY regular close $754.09, newest print 2026-09-16T19:59:59Z (today). Market was open.
+
+### Account state — the HL proceeds have settled
+`buying_power $385.34`, `unsettled_funds $0.00`. Step 9 redeploy is live for the first time since the HL close.
+
+### GCT — THE PROFIT LOCK FIRED, first time ever
+
+2 shares, `average_buy_price $50.84`. Today's 30-min bars put the new peak-since-entry at **$53.70** (16:30 UTC / 12:30pm ET). Regular close **$51.62**.
+
+```
+decide_profit_exit(50.84, 53.70, 51.62)
+ProfitExit(should_exit=True,
+           reason='profit lock: peak +5.63% ($53.7000), pulled back 3.87% to $51.6200 (+1.53%) -- take the profit',
+           peak_gain_pct=5.6255, drawdown_pct=3.8734)
+```
+
+The rule adopted 2026-09-14 — arm at +5% peak, exit on a 2% pullback from that peak — triggered on its own terms. For contrast, `decide_stop_update(43.67, 53.70)` would have ratcheted the stop only to $44.03, i.e. the stop logic alone would have given back the entire gain and then some. That gap is exactly why the profit lock was added.
+
+**Technicals at the close (logged for the record, none of them overrode the lock):** ADX(10) **22.67** — below the 25 trend floor, so no trend signal either way; RSI(14) **60.69**; MACD histogram **−0.2227**, negative but shrinking for a sixth consecutive session.
+
+**Execution, in the required order:**
+1. Cancelled resting stop `6aa9a486-7362-4d42-9c6d-79b805967612` @ $43.67 — **verified `state: cancelled`** at 20:03:31Z. No OCO on this interface; two resting sells can never cover the same shares.
+2. Placed **SELL 2 GCT, limit $49.00, GTC, regular_hours** → order `6aaaf63d-f3aa-4009-9914-42b98bd4579f`, **`state: queued`** for the next open. A sell limit fills at or above its price, so $49.00 is a floor, not a target — it captures the real opening print while refusing a broken fill.
+
+**KNOWN LIMITATION, and it bit today.** The profit lock only runs once daily at the close. It armed on a +5.63% peak but fires the exit at **+1.53%** — the intraday round trip from $53.70 back to $51.62 happened entirely between checks. The rule did what it was written to do; the sampling rate is the constraint, and this is the first real data point on what that costs.
+
+### Redeploy — Growth Momentum scan → XP
+
+Scan `2514847d-25cb-4628-9731-bb5b0ee7d246`: 57 matches. Pulled fundamentals on the 10 affordable names with ADX ≥ 25.
+
+**Rejected on negative PE** (the sleeve's standing profitability gate): ECVT (−19.30), PHVS (−12.48), OPK (−16.27), ALVO (−9.01, also PB −9.35), NEOG (−339.34).
+
+| Survivor | PE | ADX(10) | RSI(14) | vs 52wk high | Close |
+|---|---|---|---|---|---|
+| **XP** | **10.07** | 30.94 | 62.81 | −12.9% | **$19.755** |
+| HRMY | 13.67 | 41.76 | 63.03 | −2.94% (high set 09-03) | $42.22 |
+| UROY | 14.77 | 32.69 | 53.07 | — | $4.385 |
+| CRUS | 14.95 | 38.46 | 57.02 | −34.6%, only +11% off a 09-01 52wk low | $118.06 |
+| PGNY | 30.15 | — | — | — | $27.40 |
+
+**RULE ZERO catch:** `get_equity_fundamentals` reported XP's day high as $19.845 while the scan reported Last $20.15 — a contradiction, so I pulled live quotes instead of acting on either. XP's **regular-session close is $19.755**; the $20.15 is a post-close print at 20:01:04Z. Sizing off $20.15 would have been sizing off a number that never traded in the session.
+
+**Chose XP.** Cheapest PE of the qualifying set — the same criterion that selected GCT ("PE 12.25, the cheapest of the qualifying set"). Real ADX trend at 30.94, RSI mid-range rather than extended, and 12.9% below its 52-week high, so this is not chasing — against HRMY at 2.94% off its high, which is. ~7M average volume gives real liquidity, and it diversifies away from the healthcare concentration that dominated the candidate pool. CRUS was rejected despite the highest-quality-looking numbers: 34.6% below its 52wk high and only 11% above a 52wk low set two weeks ago is a downtrend with a strong ADX, which is ADX measuring the wrong direction.
+
+**Placed BUY 18 XP, limit $20.40, GFD, regular_hours** → order `6aaaf748-a6f7-4246-bf30-3d2c016803f5`, **`state: queued`** for the next open. 18 × $20.40 = $367.20 worst case against $385.34 buying power. The $20.40 ceiling sits 3.3% above the regular close and above the $20.15 post-close print, so a normal gap-up still fills while a broken open does not. Review returned no `order_checks` alerts.
+
+### Follow-up armed
+`send_later` → **2026-09-17T13:30:00Z (09:30 ET)**, trigger `trig_01DUy73Lhdwq7o9n5TYrg5Aq`. send_later's granularity is one minute, so 09:30:30 exactly is not expressible; firing at 09:30:00 means the turn's first order query lands within seconds of it, which is strictly closer to the mandate than 09:31. **GCT currently has no protective stop under it** — the old one was cancelled before the new sell was placed — so confirming that fill is the urgent half. If the XP buy fills, the GTC `stop_market` at `growth_signal.trailing_stop_price` goes on immediately off the real average fill price.
+
+trades.csv row 18 and CLAUDE.md's S9 row are deliberately **not** updated yet: both orders are queued, not filled, and this account logs outcomes, not intentions.

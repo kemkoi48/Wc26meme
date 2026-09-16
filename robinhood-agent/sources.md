@@ -6090,3 +6090,52 @@ TNON printed **+6.6% premarket ($5.3923)**, clearing the >5% bar, so it went to 
 Incidentally this confirms this morning's watchlist drop of TNON as "played out" was the right call — it's bouncing on no news into bearish chatter.
 
 **Net: zero alerts this cycle.** Expected, and the correct output.
+
+---
+
+## 2026-09-16, 8:35am ET — S7 screen + pre-open rectify
+
+**Guard passed:** SPY premarket $759.94, print 12:35:39Z.
+
+### PART A — pre-open rectify: no changes
+
+All six names checked against the 6:35am build. MEDS $3.724 (stronger, +129.9% vs close), WAFU $1.5997 (flat), INTC $100.71 (flat, +3.7%), VEEA $5.26 (slightly up), FTFT $6.4331 (-4.8% from the build, still +12.1%), TPST $1.06 (-14.5% from the build but still +40.3% on the day). Nothing faded hard enough to drop and nothing new worth adding — **list left alone rather than churned**, per step 3.
+
+### PART B — S7: flat, screen run, NO TRADE. But the cap/delta wall broke for the first time.
+
+`get_option_positions` → empty. Verified `max_premium_usd = 150.0` live in option_math.py. (Noting again: `min_delta = 0.25` in BOTH OptionScanConfig and SoftCatalystScanConfig, while this trigger's prose says 0.30 — the delta-floor disagreement is still unresolved and still unrecorded in config.)
+
+**Track 1 sweep:** 396 matches, 200 returned. **31 cleared 0.90, 13 cleared 0.80.**
+
+**Artifact check — the top three ALL died, and so did one more further down:**
+
+| | scan ratio | biggest 1-day | share of 30d variance | ex-outlier ratio | verdict |
+|---|---|---|---|---|---|
+| ALMS | 0.279 | **−83.4%** | **91.4%** | 1.097 | artifact — options actually *expensive* ex-outlier |
+| AMLX | 0.319 | +49.4% | 83.3% | 0.870 | artifact (same 08-18 gap that killed it on 09-04) |
+| EIX | 0.475 | −26.2% | 72.4% | 1.029 | artifact |
+| RARE | 0.680 | **−58.0%** | **94.7%** | 3.378 | artifact, the worst of the day |
+
+**Genuinely cheap after the outlier check:** SDGR (ex-ratio 0.742), METC (0.834), BBWI (0.862). SMR rejected — scan said 0.780 but ex-outlier it's **0.989**, i.e. not cheap once its 09-11 −17% day is removed.
+
+**Catalyst gate killed all three survivors:**
+- **SDGR** — Tectora Therapeutics formed with RA Capital/NEA, $55M Series A, SDGR contributed two programs for equity + milestones/royalties (MT Newswires, **2026-09-09**). But the actual +22% move came **09-14/09-15**, 3-4 sessions later, and nothing dated explains it. Same standard applied to TNON at 8:10am today.
+- **METC** — most recent news is **08-18/19**, a month old (non-binding MOUs with Indium, Bedrock Semiconductor, roboLoop for Brook Mine gallium/germanium). Stock has since fallen 30% from $14.41 to $10.04 with no fresh catalyst either way.
+- **BBWI** — real activist catalyst: **Barington Capital raised its stake and is publicly pushing for a sale** (MT Newswires 09-10, citing Bloomberg). But that is six days old and the stock has fallen from $18.90 to $16.72 *since* it, including −6.6% on 09-15. A bullish catalyst the tape rejected is not a thesis.
+
+### THE REAL FINDING: the cap/delta wall broke, and a different gate caught it
+
+**SDGR 10-16 $25 call: delta 0.3983, mark $1.15 ($115/contract), ask $1.25 ($125), OI 934, vol 187, bid 1.05 / ask 1.25.**
+
+That **clears the $150 cap AND the 0.30 delta floor simultaneously — the first time in this screen's history.** For calibration: PYPL on 09-04 missed the delta floor by 0.0095 at $117.50; AAOI historically needed 4.4x the cap to reach delta 0.246. This one cleared both with room (delta 0.098 above the floor, $35 under the cap).
+
+**It was killed by the ATM-IV-vs-contract-IV gap instead** — the open item flagged earlier and now decisive rather than theoretical:
+- The scan ranked SDGR on **ATM IV 0.497** → ratio 0.630, 5th cheapest of 200.
+- The contract you would actually buy carries **IV 0.674** (skew: the $25 strike is OTM after a 22% two-day run).
+- Against ex-outlier HV 0.670 that is a ratio of **1.006 — not cheap at all.** Against the scan's own HV 0.789 it is 0.854, which also fails OptionScanConfig's strict 0.85 gate, by 0.004.
+
+So the scan's "5th cheapest name in the market" is, at the strike that satisfies delta and cap, priced at roughly 1.0x realized vol. **Track 1 ranks on a number you cannot trade.** This is no longer a theoretical caveat — it is the gate that decided today's only real candidate, and it will recur on every skewed name.
+
+Also worth recording as a liquidity example: the **$27.50 call** showed delta 0.350 and mark $1.425 (also inside both gates) but **bid $0.05 / ask $2.80**, OI 18, volume 2 — completely untradeable. The spread gate is doing real work, not just decoration.
+
+**Outcome: no trade, correctly.** Nothing logged to trades.csv or CLAUDE.md — the screen working as designed.

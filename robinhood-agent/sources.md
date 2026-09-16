@@ -6380,3 +6380,55 @@ Scan `2514847d-25cb-4628-9731-bb5b0ee7d246`: 57 matches. Pulled fundamentals on 
 `send_later` → **2026-09-17T13:30:00Z (09:30 ET)**, trigger `trig_01DUy73Lhdwq7o9n5TYrg5Aq`. send_later's granularity is one minute, so 09:30:30 exactly is not expressible; firing at 09:30:00 means the turn's first order query lands within seconds of it, which is strictly closer to the mandate than 09:31. **GCT currently has no protective stop under it** — the old one was cancelled before the new sell was placed — so confirming that fill is the urgent half. If the XP buy fills, the GTC `stop_market` at `growth_signal.trailing_stop_price` goes on immediately off the real average fill price.
 
 trades.csv row 18 and CLAUDE.md's S9 row are deliberately **not** updated yet: both orders are queued, not filled, and this account logs outcomes, not intentions.
+
+---
+
+## 2026-09-16, 4:09pm ET — closing bell. The first-day scorecard on the catalyst gate, corrected.
+
+**Guard passed:** market was open today; SPY's newest print is 19:59:59Z (today). This is the post-close fire, so **no name can clear step 2 by construction** — "still near the day's high" and "igniting" are meaningless after the bell. No alert, as designed. This entry is the closing record.
+
+### DATA DEFECT WORTH NAMING: the scans' `Last` includes extended hours
+
+Both scans use `tradeAllDay.price`, so at 4:09pm the `Last` column is a **post-close print, not the session close**. The gap was material tonight:
+
+| | scan `Last` (4:09pm) | real regular-session close (19:59:5xZ) |
+|---|---|---|
+| RETO | $2.2291 (−20.4%) | **$1.83 (−34.6%)** |
+| DLXY | $1.81 | **$2.03** (15:42:14 ET — halted into the bell) |
+| TPST | $1.15 | **$1.2083** |
+| FTFT | $6.90 | **$7.09** |
+
+This is the same error class that put RETO's 09-15 close in this log at $3.41 instead of the settled $2.80. Every figure below is the **regular-session last trade**, pulled from `get_equity_quotes`, not the scan cell.
+
+### The four alerts, at the close
+
+| name | alerted at | session high | **close** | **vs alert** |
+|---|---|---|---|---|
+| **MEDS** | $3.648 (7:09am) | $9.46 | **$6.06** (+274% on the day) | **+66.1%** |
+| **DLXY** | $1.22 (11:10am) | $4.45 | **$2.03** (+389% on the day) | **+66.4%** |
+| **TPST** | $1.0993 (7:09am) | $1.34 | **$1.2083** (+60.0%) | **+9.9%** |
+| **WAFU** | $1.6201 (7:09am) | $1.92 | **$1.46** (+5.0%) | **−9.9%** |
+
+**Three of four closed green; the average alert is +33.1%.**
+
+**This corrects the 2:09pm scorecard in this same log, and the correction goes in the direction that flatters the gate — which is exactly why it needs stating as carefully as the bad version did.** At 2:09pm the tally read "one real winner, three flat-to-down," with DLXY at +2% and TPST at −2%. Both recovered into the close: DLXY ran from $1.24 back to $2.03 in the last two hours, TPST closed at its session-strongest. That earlier snapshot was accurate when written and wrong as a verdict, because **a 2pm reading of a day trade's outcome is not the outcome** — the same criticism I made of the 11:10am "the gate cost 44x" framing, now applying to my own scorecard.
+
+Two caveats that stay attached: **DLXY was halted into the bell** — its last regular print is 15:42 ET and the post-close print is $1.76, so $2.03 is the last tradeable regular-session price, not a clean closing auction. And **one day is one day.** Four alerts is not a sample.
+
+### The suppressed names — and the strongest single data point the gate has
+
+| gated name | prior close | **regular close** | day | peak → close |
+|---|---|---|---|---|
+| **RETO** | $2.80 | **$1.83** | **−34.6%** | peaked $20.85 → **−91.2%** |
+| **QCLS** | $0.4413 | $0.97 | +119.8% | peaked $1.46 → −33.6% |
+| **FTFT** | $5.74 | $7.09 | +23.5% | gated all four sessions |
+
+**RETO closed down 34.6% on a session in which it traded up roughly 645%.** This log recorded its peak at $15.85 at 11:10am and called the gate's opportunity cost "real, not hypothetical." It closed at **$1.83 — 88% below that figure and below where it started the day.** A trader who took the 11:10am number at face value and bought is down 88%; a trader who simply held from the prior close is down a third.
+
+That is the cleanest evidence in this log for the "no news, no trade" precondition — and it is still only evidence, not proof. QCLS, also catalyst-free and also gated, closed up 120%. The gate suppressed a name that more than doubled today. Both facts belong in the record.
+
+### The honest summary of day one
+
+The gate did what the user asked: it stopped catalyst-free squeezes from reaching them, and the one that mattered most, RETO, ended the day below its open. The four names it did pass averaged +33% from alert to close. But the day also produced a suppressed +120% (QCLS), and three of the four alerts gave back most of a much larger intraday move before recovering — **entry quality is what this gate governs, and the exit is still entirely unaddressed.** The user's own n=108 order history says trades held past ~5 minutes are net negative, and nothing installed today touches that.
+
+Board at the close, no new catalysts found: **VEEA $6.105 (+6.9%)**. DLXY's catalyst was logged at 11:10am, so the step-3 "largest mover" paper-trail clause is already satisfied for today.

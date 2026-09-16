@@ -6196,3 +6196,27 @@ $7.95, **+38.5%**. MT Newswires (09-16 07:12am ET) again describes only the move
 
 ### Others
 TPST $1.165, +54.2% — recovered off the lows but still under its $1.34 premarket high; no new high, no re-alert. WAFU $1.485, +6.8% — faded below its premarket range; the 7:09am alert did not carry into the session. INTC $101.43, +4.4% — holding its gap.
+
+## 2026-09-16, 11:10am ET — DLXY alerted (clean pass on every gate). MEDS new high again.
+
+**Guard passed:** SPY $760.87, print 15:10:38Z.
+
+### DLXY (Delixy Holdings) — $1.22, +194.0%. The cleanest pass the gate has produced.
+
+- **% change** +194.0% vs the $0.415 close ✓
+- **RVOL 4,128.7** (live field, market hours — reliable now, not the premarket placeholder). Volume **184.7M on a 5,000,000 float = 37x float turnover** ✓
+- **At the day's high, right now** ✓ — opened $0.87, flushed to $0.695 at 9:35am, then four consecutive 5-min bars each closing at or near their high: $0.935 → $0.983 → $1.08 → **$1.22**, the last one closing exactly at its high on 4.04M shares. This is the opposite of the faded-off-the-high pattern that killed most candidates this week.
+- **Real, dated catalyst** ✓ — entered a **non-binding letter of intent with Caog for the acquisition or merger of up to 48% of the shares in Tarbagatay Munay** (Benzinga, **2026-09-16 09:42am ET**).
+- **Dilution check — CLEAN.** Float is 5M so the sub-1M rule didn't mandate it; ran it anyway given the cohort. Filing index shows only 6-K foreign-issuer reports, insider Form 3s, and 424B3/424B4 prospectuses dated **2025-07-09** — the IPO documents from 14 months ago, not a live shelf. No current dilution vehicle.
+
+**Honest qualifiers stated in the alert:** the catalyst is a *non-binding LOI*, which is thin in substance even though it is real and dated. Stocktwits reports repeated **upward volatility halts** ("back to back halts up"), which cuts both ways — it confirms the velocity and it guarantees violent two-way risk on the way out.
+
+### MEDS — fourth new high, +483%
+
+**$9.46, +483.3%.** Volume 137.4M = **68x** its 2.01M float. Ran $5.06 → $9.46 in the hour since the last check. Catalyst unchanged (Helomics acquisition, Benzinga 09-16 05:04am ET). Re-alerted as a one-liner only — it is confirmation of a position already flagged three times, not new information.
+
+### Still gated, still no catalyst
+**RETO $15.85, +466.8%** — now roughly **44x off Monday's $0.36 base**. Fifth consecutive gated cycle. **FTFT $7.76, +34.2%** — fourth session of swings, still no reason found.
+
+### Faded
+TPST $1.07, +41.7% (off its $1.34 high, no re-alert). **WAFU $1.395, +0.4% — fully round-tripped**; the 7:09am alert did not survive the open. Recording that plainly: of the three names alerted this morning, one (MEDS) ran 5x, one (TPST) held a partial gain, and one (WAFU) gave everything back.

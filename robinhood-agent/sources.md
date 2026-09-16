@@ -6070,3 +6070,23 @@ RVOL self-computed for every name below (the scan's Relative-volume field read a
 **RETO** $3.6397, **+30.0%** premarket, 232M shares yesterday. **No catalyst found — price action only.** Benzinga's own overnight write-up states "No immediate catalyst was identified behind the stock move." Under the old rule this would have been a third consecutive day of alerts on this name; under the 2026-09-16 gate it produces this line and nothing else. **The gate is working as designed on its first cycle.**
 
 Also now verified from that Benzinga piece and worth recording: RETO's August securities purchase agreement allows **up to $36M in pre-paid share purchases at a discount to market**, the SEC declared its registration statement **abandoned** last week, and it did a **4-for-1 reverse split in May** for Nasdaq compliance. The unverified "$38 million of dilution" Stocktwits claim I declined to adopt on 09-15 was directionally right — second time this week Stocktwits led verification (FTFT's $9.37 high was the first). Process unchanged: still don't cite it unverified, but the pattern is real and worth tracking.
+
+## 2026-09-16, 8:10am ET — momentum scanner. Quiet cycle, no message.
+
+**Guard passed:** SPY premarket $760.34, print 12:10:16Z.
+
+**Already alerted at 7:09am, no material change → no re-alert** (step 2 requires a new high or big volume expansion): MEDS $3.62 (was $3.648, still ~24% under its $4.78 premkt high), TPST $1.0793 (was $1.0993, still ~19% under $1.34), WAFU $1.60 (was $1.6201). All three drifted slightly lower; none made a new high.
+
+**RETO** $3.2809, +17.2% premkt — fading from the $4.18 earlier print. Still no catalyst. Gated out, no message. Second consecutive cycle the gate has suppressed it.
+
+### TNON — the first genuinely ambiguous case under the new gate, and a precedent worth setting
+
+TNON printed **+6.6% premarket ($5.3923)**, clearing the >5% bar, so it went to a catalyst check. It has a **real, nameable catalyst — but dated 2026-09-11**, five days ago: full early payoff of its $5.16M original-issue-discount convertible notes ahead of the 09-11 maturity (removing a discount-conversion dilution overhang), on top of a 1-for-35 reverse split on 08-10 that regained Nasdaq bid-price compliance, and Q2 revenue of $1.28M, +127% YoY at 64% gross margin (Benzinga, 2026-09-11 08:59am ET).
+
+**Judged NOT to clear the gate.** That catalyst already produced its move and then unwound it: $8.99 high on 09-11 → $5.06 close on 09-15, a 44% round trip. Nothing dated today explains today's bounce. Stocktwits is actively bearish — "this will lose all gains today," "no fuel for liftoff," "No pumping allowed here!" — plus one post warning specifically about TNON's financing/dilution risk and another citing an unverified "$15 to $20" target (not adopted).
+
+**Precedent set, so this stays consistent:** "nameable, dated catalyst" means dated *to the move being alerted*, not any catalyst the company has ever had. A stale catalyst that has already been priced in and round-tripped does not re-qualify a name on a later bounce. Reading it the other way would reopen exactly the loophole the 09-16 gate was built to close.
+
+Incidentally this confirms this morning's watchlist drop of TNON as "played out" was the right call — it's bouncing on no news into bearish chatter.
+
+**Net: zero alerts this cycle.** Expected, and the correct output.

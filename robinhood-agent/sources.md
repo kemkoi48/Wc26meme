@@ -6220,3 +6220,30 @@ TPST $1.165, +54.2% — recovered off the lows but still under its $1.34 premark
 
 ### Faded
 TPST $1.07, +41.7% (off its $1.34 high, no re-alert). **WAFU $1.395, +0.4% — fully round-tripped**; the 7:09am alert did not survive the open. Recording that plainly: of the three names alerted this morning, one (MEDS) ran 5x, one (TPST) held a partial gain, and one (WAFU) gave everything back.
+
+## 2026-09-16, 12:09pm ET — RETO round-trips 60% in 55 minutes. DLXY halted. QCLS gated.
+
+**Guard passed:** SPY $760.48, print 16:09:32Z.
+
+### RETO — the other half of the gate-calibration story, and it arrived within the hour
+
+At 11:10am this log recorded RETO at $15.85 (+467%) and stated the gate had cost the account roughly 44x. **That framing now needs the other side, with the same prominence.**
+
+Real 5-minute bars since: peaked **$20.85 at 11:15am ET**, then $16.99 → $13.91 → $12.85 → $13.03 → $11.27 → $10.37 → $10.55 → $10.41 → $10.89, and the live quote at 12:09pm is **$8.41**.
+
+**That is −60% from the $20.85 peak in 55 minutes.** Anyone acting on the $15.85 print I quoted an hour ago would be **down 47% right now.** It is still +200% on the session, but the move has given back the majority of its gain in under an hour, with no catalyst having ever existed to support any of it.
+
+This is precisely the failure mode the 09-16 gate was built around — catalyst-free low-float squeezes reverse violently and without warning. The gate's "cost" measured at a peak is not a cost that was ever capturable; measuring it at 11:10am and stopping there would have been a misleading account of the tradeoff. **Recording both numbers so the record is honest in both directions.**
+
+### DLXY — HALTED, indicated sharply higher
+
+Alerted at 11:10am at $1.22. It ran $1.22 → $1.23 → $1.33 → $1.54 → $1.74 → **$2.15** (11:40am ET), and every bar since 11:45am is **zero-volume/interpolated — a trading halt**. Bid = ask = **$3.99** at 16:08:22Z, i.e. indicated ~85% above the $2.15 last trade and +861% vs the $0.415 close.
+
+Stating the risk plainly rather than the headline number: **a halt means the position cannot be exited**, and RETO in the bars above is a live demonstration of what a reopen after a vertical run can do. The indicated $3.99 is not a tradeable price and should not be read as one.
+
+### QCLS — gated out, stale catalyst (same precedent as TNON)
+
+$1.46, **+230.8%**, float 1.79M, volume 157.8M, RVOL 40.1 — clears step 2 comfortably. Catalyst check: **nothing dated today.** The only QCLS news is 09-14/09-15 and it is *negative* and already played out — the company terminated consulting agreements with Chelsea Voss and Ocean Avenue Holdings, an affiliate of Martin Shkreli, and the stock fell **66% Monday** and another 12% Tuesday premarket. Today's +230% is a bounce off that collapse with no fresh reason. Gated, per the 8:10am TNON precedent that "dated" means dated to the move being alerted.
+
+### Others
+**MEDS $8.61, +431%** — off the $9.46 high, no new high, no re-alert. **FTFT $8.10, +41.1%** — still no catalyst, gated. **TPST $1.04, +37.7%** — continuing to fade.

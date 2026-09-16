@@ -6044,3 +6044,29 @@ TNON +2.8% premkt (was +11% yesterday, faded to $5.10 close — done). FPS +1.4%
 **Final list (6):** MEDS, TPST, WAFU, INTC, VEEA, FTFT.
 
 Also seen with real catalysts, not added (already ran, or wrong direction): NAMI +31% (economic interest transfer agreement, announced Tuesday), ENRD +13% (Canaccord initiated Buy, $8 PT). Deliberately avoided: SNYR +61% on a **Chapter 11 bankruptcy filing**, HCAI and BBNX both up on **priced offerings** (dilution, not strength).
+
+---
+
+## 2026-09-16, 7:09am ET — momentum scanner. FIRST CYCLE UNDER THE NEW CATALYST GATE.
+
+**Guard passed:** SPY premarket $759.50, print 11:09:56Z.
+
+RVOL self-computed for every name below (the scan's Relative-volume field read a flat "1" for all 14 rows — the known broken premarket placeholder). Baseline = same 08:00-11:00 UTC window, prior 5 sessions.
+
+### Cleared the gate (3) — all with real, dated, sourced catalysts
+
+| | Price | % chg | Premkt vol | Baseline | Real RVOL | Float | vs premkt high |
+|---|---|---|---|---|---|---|---|
+| **WAFU** | $1.6201 | +16.6% | 1,092,107 | ~204 | **~5,350x** | **114,503** | −4.7% off $1.70 |
+| **MEDS** | $3.648 | +125.2% | 11,289,372 | ~330 | **~34,000x** | 2.01M | −23.7% off $4.78 |
+| **TPST** | $1.0993 | +45.5% | 6,039,703 | ~2,826 | **~2,140x** | 8.04M | −18.0% off $1.34 |
+
+- **WAFU** — catalyst: subsidiary's "AI Ecosystem Intelligent Agent Industrialization Project" cleared Yuhang District (Hangzhou) review, eligible for up to $1.1M in local AI subsidies pending final approval. Benzinga, **2026-09-16 01:56am ET**. Premarket volume is **9.5x the entire float**. Structure is the cleanest of the three: pulled to $1.55, base-built, then the 11:00 bar expanded to 195,850 shares (up from 34,720) and printed $1.70 — volume expanding INTO the recovery, not into the decline. **DILUTION CHECK (required, sub-$5 + sub-1M float): CLEAN.** Filing index shows only 6-K foreign-issuer reports and Form 3 insider filings; the only 424B3 on file is from **2019-04-12**, seven years stale. No live dilution vehicle — genuinely unusual for this cohort and the opposite of RETO/IPW/WETO.
+- **MEDS** — catalyst: **completed the acquisition of Helomics Corp.**, an AI-driven cancer diagnostics laboratory, from Axe Compute (AGPU). Benzinga, **2026-09-16 05:04am ET**. 5.6x float turnover premarket. But the structure has turned: the 11:00 bar is the session's heaviest (2.83M) and swung $4.70 → $3.58 inside ten minutes. Pullback volume rising, not falling, and $4.78 not reclaimed — distribution by this account's own narrowed rule.
+- **TPST** — catalyst: **exclusive option agreement with Hebei Senlang Biotechnology** to license its CD7-targeted lentiviral vector platform and in-vivo CAR-T pipeline (incl. a BCMA/GPRC5D candidate in Phase 1 for r/r multiple myeloma). Benzinga, **2026-09-16 05:04am ET**. Lower highs since $1.34 ($1.27 → $1.13 → $1.17) and no reclaim.
+
+### Gated out by the new rule (1)
+
+**RETO** $3.6397, **+30.0%** premarket, 232M shares yesterday. **No catalyst found — price action only.** Benzinga's own overnight write-up states "No immediate catalyst was identified behind the stock move." Under the old rule this would have been a third consecutive day of alerts on this name; under the 2026-09-16 gate it produces this line and nothing else. **The gate is working as designed on its first cycle.**
+
+Also now verified from that Benzinga piece and worth recording: RETO's August securities purchase agreement allows **up to $36M in pre-paid share purchases at a discount to market**, the SEC declared its registration statement **abandoned** last week, and it did a **4-for-1 reverse split in May** for Nasdaq compliance. The unverified "$38 million of dilution" Stocktwits claim I declined to adopt on 09-15 was directionally right — second time this week Stocktwits led verification (FTFT's $9.37 high was the first). Process unchanged: still don't cite it unverified, but the pattern is real and worth tracking.

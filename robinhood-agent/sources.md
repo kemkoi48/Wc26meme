@@ -6247,3 +6247,30 @@ $1.46, **+230.8%**, float 1.79M, volume 157.8M, RVOL 40.1 — clears step 2 comf
 
 ### Others
 **MEDS $8.61, +431%** — off the $9.46 high, no new high, no re-alert. **FTFT $8.10, +41.1%** — still no catalyst, gated. **TPST $1.04, +37.7%** — continuing to fade.
+
+## 2026-09-16, 1:09pm ET — DLXY halt-cycling, now indicated −40%. No new alerts.
+
+**Guard passed:** SPY $759.50, print 17:09:27Z.
+
+### DLXY — the reversal arrived, and it arrived inside a halt
+
+Alerted 11:10am at $1.22. Real bar sequence since:
+
+| time (ET) | event |
+|---|---|
+| 11:40 | last trade before halt, **$2.15** |
+| 11:45-12:20 | **halted** (all bars zero-volume) |
+| 12:20 | reopens $3.50, runs to $3.65 on 712,089 |
+| 12:25-12:40 | **halted again** |
+| 12:40 | reopens $4.30, **session high $4.45**, closes $4.15 on 1,052,411 |
+| 12:45-now | **halted again**, continuously |
+| 1:08pm | bid = ask = **$2.50** |
+
+So the indicated reopen is **−40% below the $4.15 last trade and −44% below the $4.45 high**, and the stock has been untradeable for most of the last 90 minutes.
+
+Against my $1.22 alert it is still indicated +105%. But the honest characterisation is the one given at alert time and now demonstrated: **a halt means the position cannot be exited**, and the reopen can come in 40% lower. That warning was not decorative — it is what happened, within two hours, on the one name that passed every gate cleanly today.
+
+### Everything else — no new alerts, nothing new clears
+**MEDS $7.375, +355%** (−22% off the $9.46 high). **RETO $10.225, +265%** — bounced off $8.41 but still −51% from the $20.85 peak; no catalyst, gated a seventh cycle. **QCLS $1.2503, +183%** — faded from $1.46, still no catalyst dated today, gated. **TPST $1.0409, +37.8%**. **FTFT $6.95, +21.1%** — fading, gated. **VEEA $5.975, +4.6%**.
+
+No name cleared step 2 + step 3 this cycle. No new alert sent.

@@ -6169,3 +6169,30 @@ Position: $4.17 is 12.8% under the $4.78 session high, but only ~9.7% under the 
 - **RETO** $3.77, +34.6% — still no catalyst. Gated out for the third consecutive cycle.
 - **TPST** $1.0507, +39.1% — continuing to fade from $1.34; no re-alert.
 - **WAFU** $1.6297, +17.2% — flat since the 7:09am alert; no new high, no volume expansion, no re-alert.
+
+## 2026-09-16, 10:09am ET — first regular-session cycle. MEDS new high. RETO gate cost now measurable.
+
+**Guard passed:** SPY $759.27, real regular-session print 14:13:09Z.
+
+### MEDS — new high, third alert, and the premarket setup delivered
+
+**$5.0632, +212.5%** vs the $1.62 close. New session high — clears the $4.78 premarket high that capped it all morning. Volume **103.4M against a 2,013,578 float = 51x float turnover**.
+
+Note on RVOL: the scan's field now reads 1.59, which is misleading — the trailing average denominator already includes yesterday's 51.7M session. Raw volume against this name's pre-spike baseline (~20-50K/day through 09-09..09-12) is the real measure, and it is on the order of thousands of times normal.
+
+Catalyst unchanged: completed acquisition of Helomics Corp. (AI cancer diagnostics) from AGPU — Benzinga, 2026-09-16 05:04am ET.
+
+Sequence for the record: alerted 7:09am at $3.648 (23.7% off high, read as distribution), re-alerted 9:10am at $4.17 on a 4-5x volume expansion off a 100-minute base, now $5.06 at a new high. The 9:10am read was the correct one; the 7:09am distribution call was wrong and the base-and-breakout that followed is what resolved it.
+
+### RETO — the gate's cost is now a real number, not a hypothetical
+
+**$6.50, +135.7% today**, on top of +676% yesterday. That is roughly **18x off Monday's $0.36 base in three sessions.** Catalyst re-checked this cycle: still nothing. MT Newswires (09-16 07:12am ET) only reports the move itself — "up over 41% following a more than 676% rise in the prior session" — and Benzinga's overnight piece states outright, "No immediate catalyst was identified behind the stock move."
+
+**The gate has now suppressed RETO across four consecutive cycles, and it has gone up in all four.** This is exactly the tradeoff stated when the gate was installed on 09-16, and it is worth putting a real number on rather than quietly logging: the rule that keeps this account out of FTFT/BDRX/WETO is also keeping it out of an 18x. Both halves are true. Surfacing to the user as calibration evidence — NOT as a setup, and not a reason to loosen the gate unilaterally.
+
+### FTFT — also gated, also no catalyst
+
+$7.95, **+38.5%**. MT Newswires (09-16 07:12am ET) again describes only the move: "shares were up 12%, swinging from a 29% fall at Tuesday's close." Four sessions of violent swings (+179% Mon, −29% Tue, +38.5% Wed) and no source has ever produced a reason. This is the catalyst-free name flagged on the watchlist this morning.
+
+### Others
+TPST $1.165, +54.2% — recovered off the lows but still under its $1.34 premarket high; no new high, no re-alert. WAFU $1.485, +6.8% — faded below its premarket range; the 7:09am alert did not carry into the session. INTC $101.43, +4.4% — holding its gap.

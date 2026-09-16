@@ -6139,3 +6139,33 @@ So the scan's "5th cheapest name in the market" is, at the strike that satisfies
 Also worth recording as a liquidity example: the **$27.50 call** showed delta 0.350 and mark $1.425 (also inside both gates) but **bid $0.05 / ask $2.80**, OI 18, volume 2 — completely untradeable. The spread gate is doing real work, not just decoration.
 
 **Outcome: no trade, correctly.** Nothing logged to trades.csv or CLAUDE.md — the screen working as designed.
+
+## 2026-09-16, 9:10am ET — momentum scanner. MEDS re-alerted on volume expansion, 20 min before the open.
+
+**Guard passed:** SPY premarket $759.52, print 13:10:48Z.
+
+### MEDS — re-alert justified under step 2's "materially changed" carve-out (big volume expansion)
+
+$4.14-4.17, **+155.6%** vs the $1.62 close. Float 2,013,578.
+
+Structure has **flipped since the 7:09am alert**, and my read then has to be corrected: at 7:09am MEDS was 23.7% off its $4.78 high with the session's heaviest bar swinging $4.70→$3.58, and I called that distribution. What actually followed was ~100 minutes of tight base-building ($3.48-$3.89) on **declining** volume (2.83M → 1.24M → 227K → 520K → 682K → 386K → 541K → 365K → 314K), then:
+
+| 10-min bar (UTC) | high | close | volume |
+|---|---|---|---|
+| 12:40 | 3.86 | 3.720 | 830,647 |
+| **12:50** | **4.55** | **4.491** | **2,793,642** |
+| **13:00** | **4.62** | **4.280** | **3,065,167** |
+
+That is a **4-5x volume expansion** into a breakout off the base — the second qualifying condition in step 2, met unambiguously. Accumulation-then-breakout, not the blow-off I read two hours ago.
+
+**Premarket volume now 22,861,719 shares = 11.4x the entire float.** (Baseline: prior sessions traded in the low thousands premarket — 08:00-11:00 average was ~330 shares.)
+
+Position: $4.17 is 12.8% under the $4.78 session high, but only ~9.7% under the $4.62 swing high set inside the last ten minutes.
+
+**Catalyst unchanged and real:** completed acquisition of Helomics Corp., an AI-driven cancer diagnostics laboratory, from Axe Compute (AGPU) — Benzinga, 2026-09-16 05:04am ET.
+
+### Others
+
+- **RETO** $3.77, +34.6% — still no catalyst. Gated out for the third consecutive cycle.
+- **TPST** $1.0507, +39.1% — continuing to fade from $1.34; no re-alert.
+- **WAFU** $1.6297, +17.2% — flat since the 7:09am alert; no new high, no volume expansion, no re-alert.

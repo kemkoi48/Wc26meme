@@ -5993,3 +5993,26 @@ Not sending a user message: the regular session is over, nothing else on the sca
 **GCT** — stop resting $43.67 (queued for tomorrow's open, verified this cycle's earlier growth-sleeve check). No action from this alert-only job.
 
 This closes out today's momentum-scanner cycles (7am-4pm ET window).
+
+---
+
+## 2026-09-16 — Momentum-scanner alert criteria: catalyst is now a HARD GATE, not a label
+
+User: *"What is the criteria for the stock to qualify for the alert? We might have to re-check the criteria for the alert, as most of the stock that comes on the alert is useless."*
+
+**Diagnosis.** The criteria were two gates, but only the first was actually a gate:
+- **Step 2 (price/volume)** — real filter: >5% change, elevated RVOL, still near the day's high, not a repeat of an earlier alert unless materially changed.
+- **Step 3 (catalyst)** — *not* a filter. It read "either drop it or flag it explicitly as 'no catalyst found — price action only,' never present it as a clean setup." That's a labeling requirement. A name could fail the catalyst check completely and still be messaged to the user with a caveat attached.
+
+That is the entire cause of the complaint. Every alert sent on 2026-09-15 — RETO at 12:10pm, RETO again at 1:09pm, IPW at 3:09pm — cleared step 2 on price action and explicitly failed step 3, and each carried a live dilution filing (RETO: 424B5 of 08-07; IPW: S-1/A of 09-09). Three alerts, zero real catalysts.
+
+**Cross-check against the source methodology.** This job is explicitly modeled on Warrior Trading's scanner (the account even runs a scan named "Warrior Trading Style - Low Float Volume Movers"). Their scan profile — $1-20 price, sub-10-20M float, high RVOL, significant % gap — is what step 2 already implements faithfully. What was missing is Ross Cameron's own hard rule: **"no news, no trade."** In that methodology a catalyst is a precondition for the setup, not a disclaimer, specifically because a catalyst-less low-float move is disproportionately short-covering or manipulation. Our step 3 borrowed the idea and implemented it in the wrong shape.
+
+**Change applied** (`trig_011uqSeqdqMoS3e5ZUTk13jN`, full-prompt replacement, verified against the exact stored text before editing):
+- Step 3 now reads **NO CATALYST = NO ALERT** — a catalyst-less name produces a sources.md line and nothing else, regardless of % change or RVOL.
+- Step 4 now requires both halves explicitly, and asks for the catalyst's **source and publication date** in the alert itself.
+- Step 4 also states plainly that the job is expected to be quiet far more often now, that this is the intended effect, and that a run of silent days is not a reason to loosen the bar back.
+
+Unchanged: the Stocktwits-first source order (09-15), the rule that Stocktwits chatter alone is never a dated catalyst, the dilution check, and the "log the biggest mover regardless" paper-trail rule.
+
+**Not changed, flagged instead:** the premarket-watchlist trigger builds a watchlist rather than sending alerts, so this gate wasn't applied there — a name can still earn a watchlist slot on price action alone. Worth deciding separately whether the same standard should apply to what goes on the list.

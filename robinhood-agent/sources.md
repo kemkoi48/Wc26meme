@@ -6274,3 +6274,29 @@ Against my $1.22 alert it is still indicated +105%. But the honest characterisat
 **MEDS $7.375, +355%** (−22% off the $9.46 high). **RETO $10.225, +265%** — bounced off $8.41 but still −51% from the $20.85 peak; no catalyst, gated a seventh cycle. **QCLS $1.2503, +183%** — faded from $1.46, still no catalyst dated today, gated. **TPST $1.0409, +37.8%**. **FTFT $6.95, +21.1%** — fading, gated. **VEEA $5.975, +4.6%**.
 
 No name cleared step 2 + step 3 this cycle. No new alert sent.
+
+## 2026-09-16, 2:09pm ET — DLXY round-trips to the alert price. First-day scorecard on the new gate.
+
+**Guard passed:** SPY $760.75, print 18:09:07Z.
+
+### DLXY — full round trip, back to where it was alerted
+
+**$1.24.** Alerted at **$1.22** at 11:10am. Ran to a session high of **$4.45** (3.6x) through repeated halts, and is now back at **$1.24** — **−72% from the high**, and effectively unchanged against the alert price.
+
+This was described at 11:10am as "the cleanest pass the gate has produced," and on the entry criteria it genuinely was: at its high on 37x float turnover, a real dated Benzinga-sourced catalyst, and clean filings. **All of that was true and it still round-tripped inside three hours**, with the stock halted and untradeable during several of the moves that mattered. Entry quality and outcome are not the same thing, and today is a clean demonstration of the gap.
+
+### First-day scorecard — the 2026-09-16 catalyst gate, four alerts
+
+| name | alerted at | session high | now | vs alert |
+|---|---|---|---|---|
+| **MEDS** | $3.648 (7:09am) | $9.46 | **$7.04** | **+93%** |
+| **TPST** | $1.0993 (7:09am) | $1.34 | $1.075 | −2% |
+| **WAFU** | $1.6201 (7:09am) | $1.92 | ~$1.40s | ~−14% |
+| **DLXY** | $1.22 (11:10am) | $4.45 | $1.24 | +2% |
+
+**One real winner, three flat-to-down.** Every one of the four had a verified, dated, sourced catalyst — the gate did its job on the entry criteria. What it does not do, and was never claimed to do, is tell you when to get out; three of four names gave back most or all of a very large intraday move.
+
+Set against the suppressed names: **RETO $10.74** (peaked $20.85, −48% off it) and **QCLS $1.115** (peaked $1.46, −24% off it) — both catalyst-free, both reversed hard as well. So the gate is not the difference between winners and losers today; the exit is. Recording that plainly rather than claiming the filter was vindicated.
+
+### No new alerts
+Nothing new cleared step 2 + step 3 this cycle. MEDS $7.04 (+335%, off its high, no new high). FTFT $6.865, +19.6%, still no catalyst, gated. TPST $1.075. VEEA $6.04, +5.8%.

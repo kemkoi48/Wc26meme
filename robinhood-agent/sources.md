@@ -6300,3 +6300,28 @@ Set against the suppressed names: **RETO $10.74** (peaked $20.85, −48% off it)
 
 ### No new alerts
 Nothing new cleared step 2 + step 3 this cycle. MEDS $7.04 (+335%, off its high, no new high). FTFT $6.865, +19.6%, still no catalyst, gated. TPST $1.075. VEEA $6.04, +5.8%.
+
+## 2026-09-16, 3:09pm ET — RETO gives back essentially the entire move. Gate question resolved.
+
+**Guard passed:** SPY $752.997, print 19:09:39Z — note the market itself has turned red (−0.58% vs the $757.39 close), a broad afternoon fade rather than a single-name event.
+
+### RETO — the complete arc, and the answer to the question asked on 2026-09-15
+
+| time | price | vs prior close ($2.80) |
+|---|---|---|
+| 09-15 close | $2.80 | +676% on the day |
+| 09-16 11:10am | $15.85 | +467% |
+| 09-16 11:15am | **$20.85 (peak)** | **+645%** |
+| 09-16 12:09pm | $8.41 | +200% |
+| **09-16 3:09pm** | **$3.26** | **+16%** |
+
+**−84% from the peak. The entire move is gone.** Anyone who acted on the $15.85 figure this log recorded at 11:10am is **down 79%**.
+
+This resolves the thread running through the last two days. The user asked on 09-15 whether a stock like RETO should qualify for an alert; the gate was installed that night; this morning at 11:10am this log recorded — correctly and deliberately — that the gate had "cost" the account ~44x and that the cost was real, not hypothetical. **The full arc is now visible and the cost was illusory.** It was never capturable: the name was halted repeatedly on the way up, and it returned to roughly unchanged within four hours of the peak.
+
+Stating this carefully rather than triumphantly: **one resolved case does not prove the rule**, and the 2:09pm scorecard still stands — three of four gated-and-alerted names also round-tripped today, so the gate is not what separated winners from losers. What this does establish is that measuring a catalyst-free squeeze's "opportunity cost" at its peak is meaningless, and the 11:10am framing needed the correction it got at 12:09pm and now again here.
+
+### Rest of the board — broad fade, no new alerts
+**MEDS $6.50, +301%** — third straight hour lower from $9.46, still the day's one durable winner from alert ($3.648 → $6.50, +78%). **DLXY $1.78, +329%** (bid=ask, likely halted again; above the $1.22 alert but −60% off its $4.45 high). **QCLS $1.085, +146%** — faded, still gated, no catalyst ever found. **TPST $1.1198, +48.2%** — the only name firming into the afternoon, RVOL 3.56. **FTFT $6.78, +18.1%** — gated all day, no catalyst found across four sessions of swings. **VEEA $5.83, +2.1%.**
+
+Nothing cleared step 2 + step 3 this cycle. No new alert.

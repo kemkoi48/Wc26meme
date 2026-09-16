@@ -6016,3 +6016,31 @@ That is the entire cause of the complaint. Every alert sent on 2026-09-15 — RE
 Unchanged: the Stocktwits-first source order (09-15), the rule that Stocktwits chatter alone is never a dated catalyst, the dilution check, and the "log the biggest mover regardless" paper-trail rule.
 
 **Not changed, flagged instead:** the premarket-watchlist trigger builds a watchlist rather than sending alerts, so this gate wasn't applied there — a name can still earn a watchlist slot on price action alone. Worth deciding separately whether the same standard should apply to what goes on the list.
+
+---
+
+## 2026-09-16, 6:35am ET — premarket watchlist build. "September 15" → "September 16".
+
+**Guard passed:** SPY premarket $759.01, print 10:24:26Z today; prior settled close 09-15 $757.39. Market open, Wednesday, no holiday.
+
+**CORRECTION to yesterday's 4:09pm entry:** I recorded RETO's regular-session close as $3.41, taken from the last trade print at 19:49:57Z. The **official settled close was $2.80** (`sip-list-exchange-close`, 09-15), which is also what Benzinga reported (+676.27% on the day). The $3.41 figure was a late print, not the settled close — an 18% overstatement. Corrected here rather than edited in place so the error stays visible.
+
+### Added (4) — every one has a real, dated, sourced catalyst
+
+- **MEDS** (DataMeds AI) — **$3.14 premkt vs $1.62 close, +93.8%.** Float 2.01M. Catalyst: **completed the acquisition of Helomics Corp., an AI-driven cancer diagnostics laboratory, from Axe Compute Inc. (AGPU)** — Benzinga, 2026-09-16 05:04am ET. Ran $0.87→$3.85 intraday yesterday before fading; the acquisition close is the reason it's re-bidding.
+- **TPST** (Tempest Therapeutics) — **$1.24 premkt vs $0.7554 close, +64.1%.** Float 8.04M. Catalyst: **exclusive option agreement with Hebei Senlang Biotechnology** to license its CD7-targeted lentiviral vector platform and in-vivo CAR-T pipeline, including a BCMA/GPRC5D dual-targeting candidate in Phase 1 for relapsed/refractory multiple myeloma — Benzinga, 2026-09-16 05:04am ET.
+- **WAFU** (Wah Fu Education) — **$1.57 premkt vs $1.39 close, +12.9%.** Float **114,503** — the lowest of anything checked this week. Catalyst: subsidiary's **"AI Ecosystem Intelligent Agent Industrialization Project" passed review for Yuhang District, Hangzhou's 2026 third batch** of innovation projects, making it eligible to apply for local AI subsidies **up to $1.1M pending final approval** — Benzinga, 2026-09-16 01:56am ET. Honest sizing note: $1.1M of *potential* subsidy on a $6M market cap is real but modest; the explosiveness here comes from the 114K float, not the dollar amount.
+- **INTC** — **$100.59 premkt vs $97.14 close, +3.55%.** Catalyst: **Reuters reported 2026-09-16 that SK hynix is in exploratory talks with Intel to produce memory chips at Intel's planned Ohio complex** (lease or JV structures; both sides say nothing is finalized), plus **Tigress Financials raised its target to $145 from $118, Buy** (MT Newswires, 06:29am ET today). #1 trending on Stocktwits, 208K watchers, 3.9M shares premarket. Different profile from the microcaps — real liquidity, institutional-grade catalyst.
+
+### Dropped (7) — moves played out or reversed
+
+TNON +2.8% premkt (was +11% yesterday, faded to $5.10 close — done). FPS +1.4% (earnings already out, no follow-through). LEU +0.6% and SMR +0.5% (both quiet, no catalyst today). VNCE +0.1% (was +12% yesterday, now flat — done). RLGT −0.9% (Q4 beat fully digested). MYSZ **−17.2%** (the defense-pivot move has reversed hard).
+
+### Kept (2)
+
+- **VEEA** — $5.16 premkt, −9.7%, unwinding after the run, but the NovaGen merger term sheet + $10M GeoNova catalyst is real and recent and volume is still enormous (203M). Genuinely live.
+- **FTFT** — $6.76 premkt, **+17.8%**, after +179% Monday and −28% Tuesday. **This is the one catalyst-free name left on the list** — three sessions of violent swings and no source has ever produced a reason. Kept only because the watchlist rules explicitly allow sustained real momentum as a reason to keep watching (the XPON lesson), but flagged to the user: if the new no-catalyst-no-alert standard should extend to what goes on the watchlist, FTFT is the name it would remove.
+
+**Final list (6):** MEDS, TPST, WAFU, INTC, VEEA, FTFT.
+
+Also seen with real catalysts, not added (already ran, or wrong direction): NAMI +31% (economic interest transfer agreement, announced Tuesday), ENRD +13% (Canaccord initiated Buy, $8 PT). Deliberately avoided: SNYR +61% on a **Chapter 11 bankruptcy filing**, HCAI and BBNX both up on **priced offerings** (dilution, not strength).

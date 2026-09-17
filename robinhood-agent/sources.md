@@ -6559,3 +6559,17 @@ At the 8:35am S7 check RETO was $2.85-2.92 (+56%). This cycle's live quote: **$0
 DAIC $4.01 (fading, no new high), AEHL $11.575 (flat), VEEA $7.68 (continuing to fade off the $8.61 high), MEDS $6.69 (flat), FTFT $6.49 (−7.3%, still fading), TPST $1.05 (−13.1%, still fading). No re-alerts.
 
 ### Message sent: none. Quiet cycle by design.
+
+---
+
+## 2026-09-17, 9:30:30am ET — open-fill check: GCT sold, XP bought, stop confirmed in 54 seconds
+
+Both orders queued after the 09-16 close filled essentially at the bell (09:30:01 ET).
+
+**GCT — profit lock closed the position, real fill beat the model.** Sold 2 sh @ **$52.55** avg (limit $49.00 GTC, a floor not a target). Realized **+$3.42 (+3.36%)** on the $50.84 entry, 2 shares. The profit lock fired 09-16 4:05pm ET (`decide_profit_exit`: peak $53.70 = +5.63%, pulled back 3.87%, exit modeled at +1.53% off the 4:05pm read of $51.62) — the real open ($52.55) came in well above that stale evening price, so the actual result is more than double what the model quoted at decision time. The $49.00 floor limit — chosen deliberately over a market order — did exactly what it was for: protected against a bad open without capping a good one. Logged to `trades.csv` row 18 (updated in place) and CLAUDE.md's S9 row.
+
+**XP — filled, stop confirmed in 54 seconds, the fastest this sleeve has managed.** Bought 18 sh @ **$19.97** avg (limit $20.40 GFD ceiling), cost basis $359.46. GTC stop_market placed at **$16.38** (`growth_signal.trailing_stop_price(19.97)` = 16.3754) — came back `unconfirmed` and was re-checked in the same turn per the post-IPST rule, verified **`confirmed`**. Fill to confirmed-resting: **54 seconds** (09:30:01.335Z → 09:30:55.326Z). This closes the loop on a timing lesson that's been refined three times: HL (09-04, 09:34 check) — 318s. GCT (09-14, 09:31 check) — 133s. XP (today, 09:30:30 check) — 54s. Moving the check to fire at the open itself, not a fixed minute after, was the fix.
+
+Logged to `trades.csv` row 19 and CLAUDE.md's S9 row. XP is now the sleeve's only open position. GCT's $105.10 proceeds are unsettled T+1, not redeployable today.
+
+**Known limitation restated, since it's directly relevant to today's result**: the profit lock runs once daily at the close, so it priced GCT's exit off a same-day 4:05pm snapshot rather than the real overnight-queued fill. Today that gap worked in the account's favor (+3.36% realized vs +1.53% modeled); it will not always — a name that gaps down overnight after arming would realize worse than modeled, not better. One data point, recorded honestly in both directions.

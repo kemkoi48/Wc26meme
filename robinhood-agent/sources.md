@@ -6631,3 +6631,20 @@ Re-pulled news: still only the same 03:58am Benzinga article stating "No immedia
 AEMD $7.29-7.28 (RVOL 1765x, no new high since the 10:09am check, already logged). DAIC $4.69-4.70 (further faded from 10:09am's $5.03-5.09). No re-alerts on either.
 
 ### Message sent: none. Quiet cycle, and the pattern is now repeating cleanly — four straight cycles where the biggest movers keep failing structure, not catalyst, and one (NUWE) where the "catalyst" itself didn't hold up to a direct check.
+
+---
+
+## 2026-09-17, 12:09pm ET — momentum scanner. No new names, everything already tracked continues to fade. Quiet cycle.
+
+**Guard passed:** SPY regular print 16:09:50 UTC, $762.50. Market open, regular hours.
+
+Both scans returned mostly the same cohort as prior cycles today (AEMD, DAIC, BIAF, AEHL, AKAN, KXIN, WETO, VEEA, DTSS), nothing new. Cross-checked live quotes against yesterday's official close (2026-09-16) rather than the scan's own "% Change" column, which is computed off a different, unclear reference this cycle and understated every name:
+
+- **AEMD**: $7.03 vs yesterday's $1.43 close (+391%). Same level as the 11:09am read ($7.29), no fresh high — still the already-printed merger name, fully logged, no re-alert needed.
+- **DAIC**: $4.96 vs $2.01 close (+147%). Same range as this morning, no fresh high — already gated on dilution/structure, no re-alert.
+- **KXIN**: $1.665 vs $1.13 close (+47%), but down sharply from both its $2.81 intraday peak and the 11:09am cycle's $2.11 read. Continues fading well past the structure gate — confirms last cycle's verdict rather than changing it.
+- **DTSS**: $1.21 vs $0.5912 close (+105%), also down from its own intraday peak. Catalyst-free confirmation from three earlier cycles today stands (03:58am Benzinga: "No immediate catalyst behind the stock move was identified") — no new facts to re-check.
+
+Rest of board (BIAF, AEHL, AKAN, WETO, VEEA) flat-to-fading, no material change from cycles already logged today.
+
+### Message sent: none. Quiet cycle — nothing new, nothing clearing the catalyst+structure bar. This is now the sixth cycle in a row where the board is the same handful of already-triaged names continuing to fade, not fresh ignition.

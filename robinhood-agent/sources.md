@@ -6669,3 +6669,21 @@ Rest of board (BIAF, AEHL, AKAN, WETO, VEEA) flat-to-fading, no material change 
 AKAN $3.07 vs $2.72 close (+12.9%, still catalyst-free). AEMD $6.25 vs $1.43 close (+337%, unchanged range, already logged). DAIC $4.91 vs $2.01 close (+144%, unchanged range). KXIN $1.71 vs $1.13 close (+51%, still well off its $2.81 peak, structure gate still fails). DTSS $1.17 vs $0.5912 close (+98%, catalyst-free confirmation now four cycles running).
 
 ### Message sent: none. Quiet cycle — BIAF is genuinely the most interesting price action of the day, and it's still a no per the rule the user set on 2026-09-16: a squeeze the crowd itself names as a squeeze is not a trade.
+
+---
+
+## 2026-09-17, 2:10pm ET — momentum scanner. Same board, same verdicts, minor chop. Quiet cycle.
+
+**Guard passed:** SPY regular print 18:10:31 UTC, $762.53. Market open, regular hours.
+
+No new names of note. Checked live quotes against yesterday's official close for the tracked cohort:
+
+- **AEMD** $6.585 vs $1.43 close (+360%) — still consolidating in the same $6-7.30 band it's held since the 10:09am cycle. Largest % mover this cycle by a wide margin, but its real merger catalyst is already fully logged and its structure-gate fail is already established; no new work needed.
+- **BIAF** $8.45 vs $5.35 close (+58%) — pulled back from last cycle's $9.28 peak. Still catalyst-free (squeeze narrative), no re-alert.
+- **KXIN** $1.97 vs $1.13 close (+74%) — bounced off its $1.665 intraday low but still ~30% off the $2.81 peak from 10:30am ET. Not a fresh high, structure gate still fails.
+- **DAIC** $4.99 vs $2.01 close (+148%) — flat, no fresh high.
+- **DTSS** $1.04 vs $0.5912 close (+76%) — continuing to fade (was $1.21 two cycles ago). Catalyst-free confirmation stands.
+- **NUWE** $1.015 vs $0.815 close (+24.5%) — modest, well below its earlier session levels, still no confirmed sourced catalyst for the Stocktwits-quoted press release checked last cycle.
+- **WETO** $1.885 (+2.4% intraday), flat — no material change.
+
+### Message sent: none. Quiet cycle — the board is chopping around the same names with no new ignition and no new catalysts.

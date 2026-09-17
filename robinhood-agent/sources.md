@@ -6648,3 +6648,24 @@ Both scans returned mostly the same cohort as prior cycles today (AEMD, DAIC, BI
 Rest of board (BIAF, AEHL, AKAN, WETO, VEEA) flat-to-fading, no material change from cycles already logged today.
 
 ### Message sent: none. Quiet cycle — nothing new, nothing clearing the catalyst+structure bar. This is now the sixth cycle in a row where the board is the same handful of already-triaged names continuing to fade, not fresh ignition.
+
+---
+
+## 2026-09-17, 1:09pm ET — momentum scanner. BIAF now the day's standout mover — but its own Stocktwits crowd is calling it a short squeeze, not a catalyst. Gated.
+
+**Guard passed:** SPY regular print 17:09:19 UTC, $762.48. Market open, regular hours.
+
+### BIAF — steady, uninterrupted climb across four straight cycles, still zero sourced catalyst
+
+**$9.28 vs yesterday's $5.35 close (+73.4%)**, up from +56.8% last cycle and +32.2% the cycle before that — the most persistent riser on the board today, not a one-shot spike. Checked it again given the continued strength (RULE ZERO — a move that keeps compounding deserves a fresh look, not just a reused verdict):
+
+- **Stocktwits** (live feed, 16:52-17:08 ET): overwhelmingly price-chase chatter — "**Short squeeze!**", "going parabollic", "$1200+", "couple more news drops and this'll be $30" (a claim, not a source), "averaged down to $9.84." Not one message names an actual dated news item or filing. The crowd itself is calling this a squeeze, which is exactly the pattern this gate exists to filter out.
+- **Robinhood/Benzinga**: five articles pulled, every one a routine multi-stock "movers" roundup (09-17, 09-15, 09-11, 09-09 ×2) that just restates the price move — none identifies a reason. BIAF has round-tripped through this same roundup format for over a week (+11.4% → −22.07% → −12.66% → +17.91% → +10.75%, no catalyst named at any point).
+
+**No nameable, dated catalyst. Gate reject stands, now on its fourth consecutive cycle** — logged per the standing largest-mover rule since this is today's most persistent riser, but still no user message per the hard gate.
+
+### Rest of the board, no material change
+
+AKAN $3.07 vs $2.72 close (+12.9%, still catalyst-free). AEMD $6.25 vs $1.43 close (+337%, unchanged range, already logged). DAIC $4.91 vs $2.01 close (+144%, unchanged range). KXIN $1.71 vs $1.13 close (+51%, still well off its $2.81 peak, structure gate still fails). DTSS $1.17 vs $0.5912 close (+98%, catalyst-free confirmation now four cycles running).
+
+### Message sent: none. Quiet cycle — BIAF is genuinely the most interesting price action of the day, and it's still a no per the rule the user set on 2026-09-16: a squeeze the crowd itself names as a squeeze is not a trade.

@@ -6599,3 +6599,35 @@ Made a fresh session high **$7.1495** at 9:50am ET (well above this morning's ea
 VEEA $6.75 (continuing to fade off yesterday and this morning's highs). MEDS $5.01 (−17.5%, a real reversal off its own recent strength — no new catalyst, not alerted). WETO, RETO unchanged/gated from prior cycles.
 
 ### Message sent: none. A real, large, dated catalyst existed this cycle (AEMD) and still didn't clear the gate — the structure test is doing its job, not the catalyst test.
+
+---
+
+## 2026-09-17, 11:09am ET — momentum scanner. Five movers checked, all gated. KXIN closes out the "already printed" pattern seen three times today.
+
+**Guard passed:** SPY regular print 15:10:13 UTC, $760.67. Market open, regular hours.
+
+### KXIN — real catalyst (602% H1 revenue growth), but ~25-30% off a 40-minute-old peak
+
+**+84.5%, float 1.5M.** Catalyst is real and dated: 602% H1-2026 revenue increase, reported same-day premarket. Pulled 5-minute bars 13:30-15:10 UTC: price based near $1.53-1.68, broke out ~14:20 UTC on real volume expansion (bars of 1.51M/2.09M/4.76M/3.89M shares), peaked **$2.81 at 14:30 UTC (10:30am ET)**, then faded. Most recent bars (15:05-15:10 UTC): $1.98 open → **$2.11 close**, off a low of $1.95 — a small bounce, but still **~25% off the 40-minute-old peak** and not a fresh high. Same pattern as AEMD and DAIC at the 10:09am cycle: real catalyst, failed structure gate. No alert.
+
+### DTSS — now +197.7% (up from 104.7% at 10:09am), catalyst-free confirmation stands
+
+Re-pulled news: still only the same 03:58am Benzinga article stating "No immediate catalyst behind the stock move was identified." Re-confirmed gate reject — the move getting bigger doesn't change that no one has sourced a reason for it.
+
+### BIAF — no sourced catalyst, Stocktwits sentiment turning on itself
+
+**+32.2%, $7.07.** News feed: only routine multi-stock "movers" roundup mentions (09-17, 09-15, 09-11, 09-09), no dedicated dated article. Stocktwits pulse: message volume LOW despite the move size, and the stream itself is telling — "this one is sketchy," "bought too high, now I'm paying the price," "I'm out" alongside the bulls. No nameable catalyst, gated.
+
+### AKAN — zero news, zero catalyst
+
+**+15.4%, $3.14.** `get_stock_news` returned **zero articles** in the last 3 days — not thin, empty. Stocktwits chatter is pure price-level speculation ("$15 promise," "hidden buyer at 2.87," "fills the gap") with no catalyst mentioned by anyone in the stream either. Clean gate reject, no further work needed.
+
+### NUWE — Stocktwits quoted an unconfirmed press release; checked it out, found nothing to confirm it
+
+**+31.9%, $1.075.** A Stocktwits post at 14:52 UTC quoted what reads like a press-release headline: "Nuwellis Reports Strong Aquadex Console Adoption, with 31 Aquadex SmartFlow Consoles Sold Year-to-Date." Per RULE ZERO, checked it rather than taking the quote at face value: Robinhood/Benzinga news feed has nothing published today (most recent is the 08-26 premarket-movers roundup); SEC filing index shows no 8-K filed today either (most recent is 08-25). Stocktwits chatter quoting an unconfirmed release is still Stocktwits chatter — the standing rule is explicit that this never counts on its own. No alert, but flagged as one to re-check next cycle in case the wire catches up.
+
+### Rest of the board
+
+AEMD $7.29-7.28 (RVOL 1765x, no new high since the 10:09am check, already logged). DAIC $4.69-4.70 (further faded from 10:09am's $5.03-5.09). No re-alerts on either.
+
+### Message sent: none. Quiet cycle, and the pattern is now repeating cleanly — four straight cycles where the biggest movers keep failing structure, not catalyst, and one (NUWE) where the "catalyst" itself didn't hold up to a direct check.

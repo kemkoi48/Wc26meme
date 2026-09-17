@@ -6724,3 +6724,28 @@ AEMD $6.43 (flat, +350% vs $1.43 close, already logged). DAIC $5.06-5.07 (flat, 
 **Redeploy check:** buying_power $25.88 (GCT's $105.10 sale proceeds still unsettled T+1, settling 09-18). Ran the Growth Momentum scan (80 matches) — every name affordable under $25.88 was either a sub-$5 speculative name (BBD, CIG, SID, IQ, OPK) or would leave under $1 of buying power with no room for a stop-loss cushion. Judged this not a meaningful whole-share redeployment and held cash rather than force a token 1-share position. Will revisit 09-18 once GCT's proceeds settle (~$130 available).
 
 ### Message sent: none. Routine ratchet, no profit exit, no redeploy — nothing rose to a user-facing update this cycle.
+
+---
+
+## 2026-09-17, 4:09pm ET — momentum scanner. Last cycle of the day. TCRT's patent claim couldn't be independently confirmed; AIFF pure hype. Both gated. Day's alert tally: zero.
+
+**Guard passed:** SPY print 19:59:59 UTC (regular) / 20:09:39 UTC (after-hours), $762.64-762.74. Market closed for the regular session a few minutes before this fire; data still fresh.
+
+### TCRT (Alaunos Therapeutics) — a claimed same-day patent publication, couldn't independently verify
+
+**$1.62 (regular close) / $2.28 (after-hours) vs yesterday's $1.28 close (+27-78% depending on print), float 2.34M.** A dedicated patent-tracking Stocktwits account (@US_Patent_Plays) posted at 19:57 ET: "New US Patent App #20260273054 Published Today for 'IDENTIFICATION OF NEOANTIGEN-REACTIVE T CELL RECEPTORS'" with a direct USPTO search link. This is thematically plausible — Alaunos's real platform (hunTR) is specifically a neoantigen-reactive TCR discovery engine — but per RULE ZERO I tried to independently confirm rather than take a Stocktwits link at face value:
+- USPTO Patent Public Search link: page is JS-rendered, WebFetch returned no extractable patent data.
+- Google Patents direct lookup (US20260273054A1): **404, not found** — could mean not yet indexed (common for same-day publications) or a bad/mistyped number.
+- Web search for the specific patent: no independent source found; only background confirming Alaunos's hunTR platform is topically consistent.
+
+**Could not corroborate. Per the standing rule, a Stocktwits claim — even with a link — that no independent source confirms stays unconfirmed. Gate reject**, logged as a closer call than most given the plausibility, in case tomorrow's news flow confirms it.
+
+### AIFF (Firefly Neuroscience) — no catalyst at all, pure hype chatter
+
+**$1.29 (regular) / $1.26 (after-hours) vs $0.9301 close (+35-39%), float 14.8M.** Robinhood/Benzinga: zero articles. Stocktwits: exclusively price-target and vibes chatter ("big news soon getting in now," "I smell $5," "$2.10+ tomorrow," "lots of algos bought up") — not one message names an actual news item. Clean gate reject.
+
+### Rest of the board — day's familiar names, no new ignitions
+
+AEMD $6.21 (+334% vs $1.43 close, unchanged range, fully logged earlier). DAIC $5.18 (+158%, no fresh high). BIAF $8.60 (+61%, still catalyst-free squeeze). KXIN $1.75 (+55%, still well off its $2.81 peak). DTSS $1.20 (+103%, catalyst-free confirmed five times today). NUWE $1.08 (+33%, no confirmed catalyst). HSCS $4.88 (+29%, still on the unconfirmed "merger play" rumor from last cycle). GWAV $3.02, AEHL $11.86 — flat/no material change.
+
+### Message sent: none. Day's tally: **zero alerts sent across nine cycles (7:09am-4:09pm)**, consistent with the 2026-09-16 gate's intended effect. Every single large mover today was checked; every one either lacked a sourced catalyst, or had one that failed the structure test, or (TCRT) had a claim that couldn't be independently verified.

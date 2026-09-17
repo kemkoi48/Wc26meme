@@ -6573,3 +6573,29 @@ Both orders queued after the 09-16 close filled essentially at the bell (09:30:0
 Logged to `trades.csv` row 19 and CLAUDE.md's S9 row. XP is now the sleeve's only open position. GCT's $105.10 proceeds are unsettled T+1, not redeployable today.
 
 **Known limitation restated, since it's directly relevant to today's result**: the profit lock runs once daily at the close, so it priced GCT's exit off a same-day 4:05pm snapshot rather than the real overnight-queued fill. Today that gap worked in the account's favor (+3.36% realized vs +1.53% modeled); it will not always — a name that gaps down overnight after arming would realize worse than modeled, not better. One data point, recorded honestly in both directions.
+
+---
+
+## 2026-09-17, 10:09am ET — momentum scanner. First regular-session cycle. A real, large catalyst (AEMD's $180M merger) — but faded past the gate. No alert.
+
+**Guard passed:** SPY regular print 14:10:02 UTC (today), $760.22. Market open, regular hours — live RVOL field now trustworthy.
+
+### AEMD (Aethlon Medical) — the day's largest real mover, real catalyst, but already faded off two highs
+
+**+415% at peak, now $7.36-7.39.** Real, substantial, dated catalyst: **all-stock merger with North Immunology Inc.**, backed by a **$180M private placement**, combined company to trade as NRTX pending SEC/Nasdaq clearance, expected close Q1 2027. Benzinga, **2026-09-17 08:29:50am ET** — this is a genuine corporate transaction, not a rumor or a thin financing.
+
+**Failed step 2 (not faded well off it), not step 3.** Real 5-minute bars: session high **$9.50** at 9:30am ET (the open), a secondary local high **$9.00** at 9:55am ET, then three consecutive 5-minute bars with lower highs and lower lows (9:55→10:00→10:05→10:10: $9.00→$8.08→$7.98→$7.49) on collapsing volume (1.81M→835K→623K→25K, the last a partial bar). Current price is **−22% off the absolute high, −18% off the more recent one**, both already 15-40 minutes stale and not retested. This is the account's own "already printed" case, not "igniting" — logged per the standing largest-mover paper-trail rule since it's today's biggest move, but not alerted.
+
+### DAIC — new intraday high, also faded hard, no re-alert
+
+Made a fresh session high **$7.1495** at 9:50am ET (well above this morning's earlier ~$5.00 peak), then fell to **$5.03-5.09** over the next three bars — down 29% off that high in 20 minutes, same declining-bar pattern as AEMD. Catalyst unchanged from this morning's alert (Envoy Technologies acquisition, 67% dilution). No re-alert: this is a fade past the high, not a fresh ignition.
+
+### DTSS (Datasea) — catalyst-free by the wire's own words, gated
+
+**+104.7% at peak.** Benzinga's own overnight writeup states it explicitly: **"No immediate catalyst behind the stock move was identified."** Published 2026-09-17 03:58am ET. Clean, sourced confirmation of no catalyst — gated, no further work needed. Also thinly and irregularly traded (multiple 5-minute bars with zero real volume, consistent with repeated halts).
+
+### Rest of the board
+
+VEEA $6.75 (continuing to fade off yesterday and this morning's highs). MEDS $5.01 (−17.5%, a real reversal off its own recent strength — no new catalyst, not alerted). WETO, RETO unchanged/gated from prior cycles.
+
+### Message sent: none. A real, large, dated catalyst existed this cycle (AEMD) and still didn't clear the gate — the structure test is doing its job, not the catalyst test.

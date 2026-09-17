@@ -6532,3 +6532,30 @@ Next two real (non-artifact) survivors, checked in full:
 **Track 3 (soft catalyst on the rest of the list):** not run individually past PURR/KURA — the next tier (EROC 0.749, HMY 0.755, HPE 0.766, TH 0.780, MARA 0.784) all cluster closer to the 0.80 cap with less separation from the pack, and with the two best-ranked real candidates both failing on catalyst, running the full remaining list wasn't a good use of this cycle's budget. Flagged as unfinished, not exhausted.
 
 **Result: nothing passes. 14/14 rejected across the full life of S7 (13 prior + CHPT/PURR/KURA this cycle, though CHPT/PURR/KURA are one cycle's worth of candidates, not one each against the running 13-check history — running total against real capital remains 13 checks, 13 rejections, 0 trades, unchanged; today added the first real candidates screened under the IV/HV method that failed on catalyst rather than cap/delta, a new failure mode worth tracking separately from the structural cap/delta wall.**
+
+---
+
+## 2026-09-17, 9:09am ET — momentum scanner. RETO collapses in real time. WETO gated on its known dilution trap. No alert.
+
+**Guard passed:** SPY premarket print 13:10:07 UTC (today), $754.09→$763.49. Market open.
+
+### RETO — the collapse, caught in real time
+
+At the 8:35am S7 check RETO was $2.85-2.92 (+56%). This cycle's live quote: **$0.6158-$0.6403 — down 66% from yesterday's $1.84 close and roughly −78% off this morning's own peak, inside 35 minutes.** It has also dropped entirely out of both scanner results (no longer clears the RVOL/% change filters). No new catalyst search needed — this is the same catalyst-free serial mover this account has tracked all week, doing exactly what its own history predicts. No alert (it was never eligible for one), logged because a move this violent, this fast, belongs in the permanent record regardless.
+
+### WETO (Wetour Robotics) — largest % mover this cycle, gated on its own established dilution trap
+
+**$2.84-2.86, +54-55%.** This is the SAME name flagged in this account's history on 2026-09-04: "WETO was kept on a watchlist on a '+15.9% premarket bounce' while a $75M ATM had been on file since 08-26; it collapsed −41% within an hour." Ran the full three-source check plus the mandatory dilution pull given sub-$5 price and (checking) float:
+
+- **Stocktwits**: message volume **EXTREMELY_LOW (score 12)** despite the size of the move — real interest is thin, not broad. A linked StockTitan press release ("Wetour Robotics Launches Vantrapower... AI Industrial and Energy Markets in Texas," posted to Stocktwits 9:07am ET today) is the only lead. Per RULE ZERO, an unverified third-party link posted by a random user is a lead, not a source — did not treat it as confirmed.
+- **Robinhood/Benzinga**: nothing published today. Most recent WETO article is a routine 09-15 "movers" roundup; before that, four separate Benzinga pieces across 09-03/09-04 show this name has already popped and dropped repeatedly (+71.7% → −18.6% → +24.7% premarket → −19.35% intraday, all within the 09-03/09-04 window alone) — a serially volatile, thin-catalyst name, not a new pattern.
+- **Stocklake**: `get_stock_news` returned **zero articles in the last 3 days** — explicitly empty, not an error.
+- **Dilution — confirmed live, not assumed**: `get_sec_filing_index` shows a **424B5 prospectus filed 2026-08-26** (a second one on 08-24 too) — this is almost certainly the same $75M ATM shelf already on record from the prior collapse, still on file three weeks later. No evidence it has been withdrawn.
+
+**Three sources, zero corroborated catalyst, a live dilution filing already tied to this exact name's last collapse. No alert — this is the gate working exactly as designed on the cycle's biggest mover.**
+
+### Rest of the board, no material change
+
+DAIC $4.01 (fading, no new high), AEHL $11.575 (flat), VEEA $7.68 (continuing to fade off the $8.61 high), MEDS $6.69 (flat), FTFT $6.49 (−7.3%, still fading), TPST $1.05 (−13.1%, still fading). No re-alerts.
+
+### Message sent: none. Quiet cycle by design.

@@ -6479,3 +6479,28 @@ Board at the close, no new catalysts found: **VEEA $6.105 (+6.9%)**. DLXY's cata
 MEDS $6.63 (+9.2%, still extending, unchanged read). RETO $2.34-2.39 (+27%, still zero catalyst found, gated — this IS today's largest % mover after DAIC/AEHL, checked per the standing "largest mover" rule, nothing new). VEEA $6.89 (+13%, mild continuation). TPST $1.09 (−9.9%, still fading, vote-failure story still unconfirmed by any wire). FTFT $6.70 (−4.3%, still chatter-only). KXIN checked and dropped from consideration — peaked $2.74 at 4am ET, down to $1.91 by 7am with lower highs each 10-min bar since, already printed and fading, no fresh catalyst found beyond the same 602%-revenue story already priced in overnight.
 
 ### Message sent to user: DAIC and AEHL, both alerts carrying their dilution caveat explicitly.
+
+---
+
+## 2026-09-17, 8:09am ET — momentum scanner. VEEA breaks out on its real, still-live merger. DAIC/AEHL fading, no re-alert.
+
+**Guard passed:** SPY premarket print 12:09:47 UTC (today), $754.09→$761.85. Market open.
+
+### Cleared the gate (1) — VEEA
+
+**VEEA $8.23-8.32, +34.9% vs $6.10 close** (up hard from +13% just one cycle ago). **Real, accelerating volume**: 2.42M shares premarket = **1.29× its 1,878,883 float**, with **1.1× of that in the last 50 minutes alone** (98K→364K→186K→301K→506K→706K share bars, vs 1.4K-50K all morning before that). Making fresh multi-day highs right now — $6.90 → $7.10 → $7.34 → $7.80 → $8.00 → $8.61 across the last six 10-minute bars.
+
+**Catalyst — real, dated 2026-09-15 (Tuesday, this session), not stale despite being two sessions old**: Veea signed a term sheet to combine with **NovaGen Group B.V.** (edge-computing + regenerative-medicine software) under a new entity, NovaGen Health Networks, valuing the combined company at **$750M**, plus a parallel **$10M cornerstone investment from GeoNova Capital**. Confirmed via three independent Benzinga articles (09-15, 9:57am/12:58pm/1:06pm ET) plus MT Newswires (09-15 2:30pm ET). Stated explicitly why this still counts as "dated" under this account's own TNON precedent: the deal has **not closed** ("targeting execution of a definitive business combination agreement within the coming weeks" per the original article) and price is making **fresh new highs right now** on the same unresolved event — this is not a round-tripped, already-priced-in bounce, it is the live reaction to a pending deal still developing. A Stocktwits post this minute independently cites the same $750M figure, confirming the crowd is trading the same real thesis, not inventing a new one.
+
+**No sub-$5 dilution check required** (price is $8+), and this is structurally different from DAIC/AEHL's convertible-note dilution risk — VEEA's mechanism is a stock-for-stock merger with a cash cornerstone investment, not a discount-to-VWAP convertible note. Real risk here is different: deal-completion risk (term sheet, not signed definitive agreement) and a stock that's already up ~230% from Monday's close.
+
+### Already alerted, both fading — no re-alert, logged for the record
+
+- **DAIC** $4.30 → **$4.03-4.04** (+100% vs +115% last cycle). Continuing to give back the $5.00 premarket high from ~08:40 UTC. No new high, no re-alert per the standing rule.
+- **AEHL** $13.00 → **$11.71** (+27% vs +38.7% last cycle). Faded from the fresh high made last cycle. No new high, no re-alert.
+
+### Still gated / unchanged
+
+RETO $2.40 (+30%, still zero catalyst). MEDS $6.65 (+9.6%, flat). FTFT $6.42 (−8.3%, chatter-only, still fading). TPST $1.06 (−12.4%, still fading, vote-failure story still unconfirmed).
+
+### Message sent: VEEA only, with the "why still dated" reasoning included.

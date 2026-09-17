@@ -6708,3 +6708,19 @@ No corroboration for the "merger play" claim from either news source. Per the st
 AEMD $6.43 (flat, +350% vs $1.43 close, already logged). DAIC $5.06-5.07 (flat, +150%). BIAF $7.88 (down from last cycle's $8.45, still catalyst-free). KXIN $1.7653 (still ~35% off its $2.81 peak, structure gate still fails). DTSS $1.235 (bounced from $1.04, catalyst-free confirmation stands). NUWE $1.0563 (flat, no confirmed catalyst). WETO $1.86 (flat).
 
 ### Message sent: none. Quiet cycle — one new name checked and gated on an unconfirmed rumor, nothing else changed.
+
+---
+
+## 2026-09-17, ~4:05pm ET — Growth sleeve daily check: XP stop ratcheted, not yet armed, no redeploy
+
+**Guard passed:** SPY regular print 19:59:59 UTC, $762.64. Market just closed for the day, real fresh data.
+
+**XP (entered today, 09:30:01 ET, 18 sh @ $19.97):** Real intraday high since entry (5-min bars, 13:30-19:55 UTC): **$20.42** at 17:50 UTC. Peak gain **+2.25%** — `decide_profit_exit` correctly not armed (needs +5% to arm). Not a sell.
+
+`decide_stop_update(16.38, 20.42)` → ratchet to **$16.74** (18% below the new peak, rounded to the penny tick — Robinhood rejects subpenny increments above $1). Cancelled the $16.38 stop, verified `state: cancelled`, placed the new stop at $16.74, currently `state: queued` (placed at 20:03 UTC, 3 minutes after the 20:00 UTC close — expected next-open queuing, not a rejection). Position quantity re-verified: 18 shares held, 18 shares_held_for_sells — stop fully covers the position.
+
+**Technical signal check (standing, every run):** RSI(14) 64.49, ADX(10) 37.78 (real trend present), MACD histogram +0.047 (positive, MACD above signal). All three readings support the position; no signal against it, no early-close trigger.
+
+**Redeploy check:** buying_power $25.88 (GCT's $105.10 sale proceeds still unsettled T+1, settling 09-18). Ran the Growth Momentum scan (80 matches) — every name affordable under $25.88 was either a sub-$5 speculative name (BBD, CIG, SID, IQ, OPK) or would leave under $1 of buying power with no room for a stop-loss cushion. Judged this not a meaningful whole-share redeployment and held cash rather than force a token 1-share position. Will revisit 09-18 once GCT's proceeds settle (~$130 available).
+
+### Message sent: none. Routine ratchet, no profit exit, no redeploy — nothing rose to a user-facing update this cycle.

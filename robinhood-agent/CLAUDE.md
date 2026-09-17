@@ -475,3 +475,65 @@ the real historical earnings moves were pulled; the WOLF historical-move
 calculation was corrupted by 169 synthesized bars until `interpolated`
 was checked. Default to pulling real data over reasoning from a plausible
 number, especially before a conclusion gets committed to the repo.
+
+## Day-trade sleeve — NOT YET FUNDED, spec locked 2026-09-17, build this weekend
+
+User asked, 2026-09-17, for a same-day buy/sell sleeve using the momentum
+scanner's own alerts — buy premarket or on the open, sell later the same day
+for a profit, using analysis rather than a fixed open-sell. This is a NEW
+authorization that reverses the 2026-08-18 split ("I will execute the day
+trade but you will trade yourself for long run") — the user has not yet said
+those words explicitly for day trading, so **do not place a day-trade order
+until they do.** Everything below is prep, not permission.
+
+**Profit-taking philosophy, verbatim from the user, 2026-09-17:**
+"YOU CAN SELL LATER THAT DAY AS YOU CAN SET HOW MUCH PROFIT YOU ARE LOOKING
+FOR BASED ON YOUR ANALYSIS. IF THE STOCK SEEMS TO BE LOSING YOU CAN EVEN SELL
+IT BEFORE YOU LOSE. YOUR LOSS TOLERANCE SHOULD [BE] VERY LOW AS DAY TRADE IS
+MERCILESS. YOU NEED TO SCALP THE PROFIT." Concretely: asymmetric exits, not a
+mechanical open-sell — a profit target sized to the setup, a tight/early cut
+on any sign of failure, no round-trip left to chance. This is closer to
+scalp_signal.py's existing decide_exit shape (peak-trail profit lock, tight
+stop) than to growth_signal.py's wide 18% trail — re-use that logic rather
+than inventing a third exit model.
+
+**Journal requirement, mandatory BEFORE any capital is risked on this sleeve.**
+User, verbatim: "BEFORE YOU START TRADING, YOU CAN CREATE A MEMO AND KEEP
+RECORDS OF ALL THE STOCKS YOU CHOOSE EVERYDAY AND CHECK IF THE STOCK WAS
+WINNER OR LOSER. CALCULATE THE WINNING AND LOSING PERCENTAGE... FIND WHAT
+CAUSED THE STOCK TO BE A WINNER OR LOSER." Required fields per name, every
+alert (not just ones traded):
+  - symbol, alert time+price, session high, session close, result vs alert
+  - win/loss flag and % 
+  - catalyst present? source + how it was worded (strong/thin/rumor-only)
+  - did volume confirm the catalyst (RVOL at alert vs RVOL at peak)?
+  - if catalyst was weak/absent, what indicator state accompanied a win
+    anyway (float turnover, structure, RSI/ADX/MACD) -- i.e. can price
+    action alone explain a winner when gate 3 was thin or missing
+  - one-line root cause: why it won or lost
+This is the SAME analysis as the alert->open backtest already proposed
+(2026-09-17 evening) -- build them together, not as two separate passes.
+Every 09-15/09-16 alert already has enough logged in sources.md (catalyst
+text+source+timestamp, peak, close) to backfill this without re-pulling most
+of it; new alerts get logged to this format going forward instead of prose.
+
+**End-of-day analysis, standing requirement once this sleeve is live:**
+aggregate win rate, aggregate loss rate, and one written line on what would
+make tomorrow's selection or sizing better -- same discipline as the S9
+daily stop-check log, applied to day-trade outcomes instead of open positions.
+
+**Blockers already identified 2026-09-17, still true, do not re-derive:**
+- Cash account, T+1 settlement -- realistically ONE round trip per day on
+  the whole account's settled capital; selling before settlement risks a
+  good-faith violation (this account has one GFV incident on record already).
+- After GCT/XP fill, settled buying power will be near-zero until proceeds
+  clear -- this sleeve cannot be funded until real dollars are free.
+- Premarket spreads on sub-$5M-float names (WAFU-class) can run several
+  percent -- any premarket entry must be limit-only, and may not fill.
+
+**Where this fits the weekend plan:** build the alert-outcome journal +
+backtest FIRST (no money at risk), let the user see real win/loss/root-cause
+numbers across every logged alert, THEN decide sizing and get explicit
+go-live authorization for this sleeve specifically -- same go-live discipline
+S7/S9 already followed (built and tested before funded). Do not fund this
+sleeve off one day's n=3 (2026-09-16 MEDS/WAFU/TPST alert->open check).

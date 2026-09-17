@@ -6687,3 +6687,24 @@ No new names of note. Checked live quotes against yesterday's official close for
 - **WETO** $1.885 (+2.4% intraday), flat — no material change.
 
 ### Message sent: none. Quiet cycle — the board is chopping around the same names with no new ignition and no new catalysts.
+
+---
+
+## 2026-09-17, 3:09pm ET — momentum scanner. New name HSCS surfaces on an unconfirmed "merger play" claim — checked, not corroborated. Gated.
+
+**Guard passed:** SPY regular print 19:09:24 UTC, $762.84. Market open, regular hours.
+
+### HSCS (HeartSciences) — new to the board, no sourced catalyst behind the move
+
+**$4.80 vs yesterday's $3.79 close (+26.6%)**, float 4.6M. Checked before anything else since it's a fresh name clearing the >5% bar with real volume (RVOL 3.65 1D / 4.17 1H):
+
+- **Stocktwits**: one user has been posting bullishly on HSCS since 09-11, and today's messages include "**merger play**" (17:22 ET) and "this could be like $AEMD" (17:09 ET) — both unsourced claims from the same account, not a news item or filing anyone is discussing.
+- **Robinhood/Benzinga**: only two articles on file, both routine multi-stock roundups from 08-21 and 08-26 — neither mentions a merger or any other catalyst, and neither is dated anywhere near today.
+
+No corroboration for the "merger play" claim from either news source. Per the standing rule, an unverified Stocktwits claim is a lead, not a source — treated as unconfirmed. Gate reject, logged since it's a new name on the board today.
+
+### Rest of the board, no material change
+
+AEMD $6.43 (flat, +350% vs $1.43 close, already logged). DAIC $5.06-5.07 (flat, +150%). BIAF $7.88 (down from last cycle's $8.45, still catalyst-free). KXIN $1.7653 (still ~35% off its $2.81 peak, structure gate still fails). DTSS $1.235 (bounced from $1.04, catalyst-free confirmation stands). NUWE $1.0563 (flat, no confirmed catalyst). WETO $1.86 (flat).
+
+### Message sent: none. Quiet cycle — one new name checked and gated on an unconfirmed rumor, nothing else changed.

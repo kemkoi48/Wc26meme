@@ -6432,3 +6432,28 @@ That is the cleanest evidence in this log for the "no news, no trade" preconditi
 The gate did what the user asked: it stopped catalyst-free squeezes from reaching them, and the one that mattered most, RETO, ended the day below its open. The four names it did pass averaged +33% from alert to close. But the day also produced a suppressed +120% (QCLS), and three of the four alerts gave back most of a much larger intraday move before recovering — **entry quality is what this gate governs, and the exit is still entirely unaddressed.** The user's own n=108 order history says trades held past ~5 minutes are net negative, and nothing installed today touches that.
 
 Board at the close, no new catalysts found: **VEEA $6.105 (+6.9%)**. DLXY's catalyst was logged at 11:10am, so the step-3 "largest mover" paper-trail clause is already satisfied for today.
+
+---
+
+## 2026-09-17, 6:35am ET — premarket watchlist build. "September 16" → "September 17".
+
+**Guard passed:** SPY premarket print 10:34:40 UTC (today), $754.09→$760.69, real premarket activity — not a holiday.
+
+### Carried forward, all re-verified against live premarket data + Stocktwits pulse
+
+- **MEDS** — $6.06 close → **$7.38 premkt (+21.7%)**. Still extending; this is a fifth session of momentum. Real continued interest, not exhausted.
+- **VEEA** — $6.10 → $6.45 (+5.7%). Mild continuation, unremarkable but not dead.
+- **INTC** — $101.05 → $103.73 (+2.7%). SK hynix Ohio partnership chatter still live this morning (multiple fresh posts referencing "new factory otw"), plus sector tailwind from a same-morning Benzinga wire on GlobalFoundries' Japan-backed US chip plant. Message volume only NORMAL (53) — much quieter than the microcaps, as expected for a mega-cap.
+- **FTFT** — $7.00 → $6.75 (−3.6%). Message volume EXTREMELY_HIGH (94). **Still no dated catalyst found anywhere** — fourth-plus session of pure chatter-driven swings. Kept per this trigger's own standing rule (real sustained heavily-discussed momentum is itself a legitimate watchlist reason, same precedent as the XPON miss) — NOT because a catalyst was found. Flagged as high-risk, chatter-only.
+- **WAFU** — $1.48 → $1.39 (−6.1%). Message volume EXTREMELY_HIGH (96), but post content is thin ("just no idea when" a big announcement, "back to poo") — hope-driven, not substance. Fading for its second straight session off the $1.92 peak. Kept one more day since chatter is loud, not quiet (the rule's actual bar for dropping), but this is the weakest name on the list and the next cycle to fade further with no fresh catalyst should drop it.
+- **TPST** — $1.21 close → $1.06 premkt (**−12.4%**). Real dated catalyst from two sessions ago (Hebei Senlang CD7 CAR-T licensing option, Benzinga confirmed 09-16 11:25am ET) is still what's driving the name, but this morning's fade may be a NEW, separate, negative event: Stocktwits posts (23:38 ET, specific and detailed — cites vote percentages 67.7%→71.6%→72.7%) describe a special shareholder meeting that "adjourned after [a] proposal fell short of [a] 75% vote threshold." **This is NOT yet corroborated by the Robinhood/Benzinga wire** — newest article in the feed is still the 09-16 5:06pm health-care movers roundup, nothing on a vote. Treating the vote-failure story as unverified per RULE ZERO; the price action is real, the stated reason is not yet confirmed from a primary source. Kept on the list given a genuine still-live catalyst thread, flagged as reversing hard.
+
+### Added
+
+- **RETO** — $1.84 close → **$2.39-2.48 premkt (+30%)**, third bounce attempt in four sessions. **Message volume 99 — the highest score seen on any name checked this session**, higher than MEDS/FTFT/TPST/WAFU. Zero catalyst found, same as every prior check (five-plus consecutive gated cycles on the momentum-scanner side). Added here under this trigger's explicit "sustained heavily-discussed momentum is itself a legitimate reason to watch" rule — NOT as an implied catalyst pick, and NOT eligible for the hourly scanner's alert gate, which stays catalyst-required. This account's own record on RETO: 09-16 peaked $20.85, closed $1.83 (−91% off peak). Flagged explicitly as watch-only, highest-risk name on the list.
+
+### Not added
+
+- DLXY (−35.8% premkt, already round-tripped past its own halt-heavy day, played out), KXIN/DAIC/YFOR (scan matches, no real catalyst or notable chatter found), earnings calendar (YI/IPHA/UPXI/KNDI/CFSB/CLGN/BRTX — all micro-cap/unverified, nothing that fits this list's low-float momentum profile), Stocktwits trending list (IOVA/APLD/WULF/SOUN/NOK/CIFR/SMCI etc. — liquid, well-covered names without a fresh dated catalyst; not this watchlist's typical profile).
+
+**Description updated in place** (watchlist's own 256-char field). Full reasoning above survives here per the standing practice.

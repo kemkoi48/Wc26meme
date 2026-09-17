@@ -6504,3 +6504,31 @@ MEDS $6.63 (+9.2%, still extending, unchanged read). RETO $2.34-2.39 (+27%, stil
 RETO $2.40 (+30%, still zero catalyst). MEDS $6.65 (+9.6%, flat). FTFT $6.42 (−8.3%, chatter-only, still fading). TPST $1.06 (−12.4%, still fading, vote-failure story still unconfirmed).
 
 ### Message sent: VEEA only, with the "why still dated" reasoning included.
+
+---
+
+## 2026-09-17, 8:35am ET — S7 options screen + pre-open watchlist rectify
+
+**Guard passed:** SPY premarket print 12:35:44 UTC (today), $754.09→$763.86. Market open.
+
+### Part A — watchlist rectify (material change)
+
+Added **DAIC** and **AEHL** to the "September 17" list — both real, catalyst-confirmed morning movers (see the 7:09am scanner entry) that predated the 6:35am build's own scans. Now 9 items. Updated description to reflect the two adds plus VEEA's live acceleration and RETO's fresh push to +56% (still zero catalyst, unchanged status). Current spot check at rectify time: DAIC $3.90-3.95 (fading, +94% from +115%), AEHL $11.50-11.99 (flat from 8:09am), VEEA $7.25-7.65 (pulled back from the $8.61 high but still +20%+), RETO $2.85-2.92 (fresh acceleration, +56%), WAFU/TPST/FTFT unchanged and weak.
+
+### Part B — S7 options screen
+
+**Position check:** `get_option_positions` — flat, no open S7 position. Proceeding to entry screen.
+
+**Track 2 (dated catalyst):** `get_earnings_calendar`, both a 2-day high-cap window and a 5-day full window — **empty of anything overlapping the Track 1 survivor list.** No dated-earnings candidates today.
+
+**Track 1 (IV/HV sweep) — the real work this cycle.** `run_scan` on 47f4f938 (Cheap IV vs HV): 397 total matches, 200 returned. 42 cleared the 0.90 cap, 12 cleared the 0.80 Method-2 threshold.
+
+Top-ranked **CHPT (ratio 0.412)** — rejected as an artifact, the exact AMLX-shaped failure. Real daily bars show a **+75% single-day gap on 2026-09-03** (44.1M shares vs a ~300-600K baseline) that is **90.6% of the trailing window's variance** — worse than AMLX's 70.1%. Ex-outlier, annualized HV collapses from 201% to 63% and the real ratio flips to **1.33 — rich, not cheap**, the opposite conclusion from the raw scan rank.
+
+Next two real (non-artifact) survivors, checked in full:
+- **PURR (Hyperliquid Strategies, ratio 0.670)** — passed the artifact check (biggest single day is 46.4% of variance, elevated but not dominant; this name is genuinely volatile every week, not gapping on one event). **Rejected on Track 3**: no dated catalyst specific to PURR today. The real move is sector sympathy — crypto-linked names rallying on the CLARITY Act procedural vote (09-16) and general BTC/ETH sentiment (Tapiero interview 09-11, Cantor Fitzgerald price-target raise 09-11) — all 1-6 days stale, nothing fresh and nothing PURR-specific published today.
+- **KURA (Kura Oncology, ratio 0.726)** — passed the artifact check cleanly (biggest day only 24.3% of variance). **Rejected on Track 3**: Stocktwits chatter references an upcoming clinical "readout," a Wainwright $40 price target, and a $180M near-term payment, but none of it is a confirmed, dated event — no PDUFA date, no named conference, no scheduled readout date found in the news feed. Chatter is a lead, not a catalyst, per the standing rule.
+
+**Track 3 (soft catalyst on the rest of the list):** not run individually past PURR/KURA — the next tier (EROC 0.749, HMY 0.755, HPE 0.766, TH 0.780, MARA 0.784) all cluster closer to the 0.80 cap with less separation from the pack, and with the two best-ranked real candidates both failing on catalyst, running the full remaining list wasn't a good use of this cycle's budget. Flagged as unfinished, not exhausted.
+
+**Result: nothing passes. 14/14 rejected across the full life of S7 (13 prior + CHPT/PURR/KURA this cycle, though CHPT/PURR/KURA are one cycle's worth of candidates, not one each against the running 13-check history — running total against real capital remains 13 checks, 13 rejections, 0 trades, unchanged; today added the first real candidates screened under the IV/HV method that failed on catalyst rather than cap/delta, a new failure mode worth tracking separately from the structural cap/delta wall.**

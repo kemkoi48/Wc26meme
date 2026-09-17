@@ -6457,3 +6457,25 @@ Board at the close, no new catalysts found: **VEEA $6.105 (+6.9%)**. DLXY's cata
 - DLXY (−35.8% premkt, already round-tripped past its own halt-heavy day, played out), KXIN/DAIC/YFOR (scan matches, no real catalyst or notable chatter found), earnings calendar (YI/IPHA/UPXI/KNDI/CFSB/CLGN/BRTX — all micro-cap/unverified, nothing that fits this list's low-float momentum profile), Stocktwits trending list (IOVA/APLD/WULF/SOUN/NOK/CIFR/SMCI etc. — liquid, well-covered names without a fresh dated catalyst; not this watchlist's typical profile).
 
 **Description updated in place** (watchlist's own 256-char field). Full reasoning above survives here per the standing practice.
+
+---
+
+## 2026-09-17, 7:09am ET — momentum scanner. First cycle. Two new names clear the gate: DAIC, AEHL.
+
+**Guard passed:** SPY premarket print 11:09:52 UTC (today), $754.09→$760.55. Market open.
+
+### Cleared the gate (2) — both with real, dated, SEC-filing-sourced catalysts
+
+| | Price | % chg | Premkt turnover | Float | vs premkt high |
+|---|---|---|---|---|---|
+| **DAIC** | $4.30 | +115% | **7.74× float** (6.82M sh / 881,107 float) | 881,107 | −14% off $5.00 (2.5h ago), but just reclaimed on the morning's biggest bar (1.25M sh in 10 min) — a fresh leg, not a stale fade |
+| **AEHL** | $13.00 | +38.7% | **0.12× float** (134,270 sh / 1,148,999 float) — thin, several literal zero-volume bars before the last one | 1,148,999 | AT a fresh high, made in the last 10 minutes |
+
+- **DAIC (CID HoldCo)** — catalyst: **acquiring Envoy Technologies, Inc.** (a vehicle-sharing platform) from BladeRanger Ltd, plus a debt restructuring, per an **8-K filed 2026-09-16** (confirmed directly via `get_sec_filing_index`, not just the news writeup). Benzinga, **2026-09-17 03:21am ET**, "CID HoldCo Stock Climbs Over 72% After Hours." **Dilution — severe, and it's baked into the catalyst itself, not a separate shelf**: the acquisition issues ~10.8M new shares to BladeRanger, ≈**67.3% of the post-closing fully diluted share count** — existing holders are diluted to roughly a third of the company by the terms of the deal being celebrated. Also a $550K convertible note (H Capital Ventures, 09-10) and a $1.09M debt-to-equity conversion at $0.386/share. RSI 45.3, down 97.6% over 12 months per Benzinga's own Edge data.
+- **AEHL (Antelope Enterprise)** — catalyst: closed an **$6M 8% convertible promissory note offering** (net proceeds ~$5.965M), disclosed pre-market Wednesday, priced to Stratosphere Capital Management under an agreement signed 09-09. Benzinga, **2026-09-16 11:18pm ET**. **Volume caveat, stated plainly because it's the weaker half of this alert**: premarket turnover is only 0.12× float — the tape was largely dead (several bars with literally zero volume) until a real 96,937-share print in the most recent 10-minute bar. This is a genuine catalyst and a genuine fresh high, but it is NOT yet volume-confirmed the way DAIC is; a thin tape making a fresh high can reverse just as fast as it ran. **Dilution — real and structurally dangerous**: the notes convert at **80% of the lowest 3-day VWAP**, a discount-to-market mechanic (same class as RETO's pre-paid share purchases, WETO's ATM). Benzinga's own Edge Rankings call this "negative price trend across all time frames," trading near its 52-week low, down 97.1% over 12 months — a badly beaten-down name bouncing hard on a toxic financing.
+
+### Also checked (already on today's watchlist, no material change from the 6:35am build)
+
+MEDS $6.63 (+9.2%, still extending, unchanged read). RETO $2.34-2.39 (+27%, still zero catalyst found, gated — this IS today's largest % mover after DAIC/AEHL, checked per the standing "largest mover" rule, nothing new). VEEA $6.89 (+13%, mild continuation). TPST $1.09 (−9.9%, still fading, vote-failure story still unconfirmed by any wire). FTFT $6.70 (−4.3%, still chatter-only). KXIN checked and dropped from consideration — peaked $2.74 at 4am ET, down to $1.91 by 7am with lower highs each 10-min bar since, already printed and fading, no fresh catalyst found beyond the same 602%-revenue story already priced in overnight.
+
+### Message sent to user: DAIC and AEHL, both alerts carrying their dilution caveat explicitly.

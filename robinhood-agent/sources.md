@@ -6843,3 +6843,39 @@ $4.03-4.08 vs $1.74 close (+132%). Same verdict as this morning's watchlist chec
 All three scans returned the same cohort as the 7:09am cycle, no new safety-net-only catches this time (SSM and TCRT are back in the regular scan's results too). TCRT flat at $2.28 (no fresh high since its $3.13 peak, still ~27% off it). CPOP has faded out of the regular scans' top rows entirely (% change dropped further). AEMD -10.6%, DAIC -20.4% (both continuing to fade). AKAN +14.6% (still catalyst-free, sustained-momentum watch only). SSM/IMCC unchanged, still catalyst-free.
 
 ### Message sent: none. Quiet cycle, nothing materially changed from 7:09am.
+
+---
+
+## 2026-09-18, 8:35am ET — S7 options screen + pre-open watchlist rectify
+
+**Guard passed:** SPY premarket print 12:35:18 UTC, $760.47-762.64. Market open.
+
+### Part A — watchlist rectify
+
+No material change since the 6:35am build. TCRT $2.26 (flat, no fresh high since $3.13), CPOP $4.40 (still chopping, no fresh high), AKAN $3.25 (continuing steady climb, no new development), VEEA $5.13-5.31 (flat/fading slightly), DTSS $1.00 (continuing to fade from $1.22 close), DAIC $4.03-4.08 (continuing to fade from $5.30 close). No adds/drops — nothing crossed the material-change bar.
+
+### Part B — S7 options screen
+
+**Position check:** `get_option_positions` — the only row returned is a stale, zero-quantity QQQ record from an expired 2026-08-24 position, not a live holding. Confirmed flat, proceeding to entry screen.
+
+**Track 1 (IV/HV sweep) — the real work this cycle.** `run_scan` on 47f4f938 (Cheap IV vs HV): 398 total matches, 200 returned with valid IV/HV. 33 cleared the 0.90 cap, 11 cleared the 0.80 Method-2 threshold.
+
+Checked the top 7 real names (not just the top 1-2) against real daily bars for the concentration/outlier artifact check:
+
+- **AMLX (ratio 0.264)** — re-confirmed artifact. Real daily bars: the 2026-08-18 gap (+49.4% single-day log-return) is **74.8% of the full ~63-day variance window** — same name, same precedent as this account's original 2026-09-04 AMLX rejection, still dominated by one event.
+- **CHPT (ratio 0.425)** — re-confirmed artifact. The 2026-09-03 gap (+55.9%) is **64.5%** of the variance window — same event flagged and rejected in yesterday's (09-17) cycle, still present.
+- **AAP (ratio 0.459)** — new check. The 2026-08-20 gap (-28.2%, an earnings-reaction crash) is **55.6%** of the variance window — a real single event dominating "cheapness." **Rejected as an artifact.**
+- **COO (ratio 0.526)** — new check. The 2026-09-09/09-10 crash (-15.9% on the worst single day, part of a two-day ~-24% earnings-reaction move) is **53.1%** of the variance window. **Rejected as an artifact.**
+- **BRZE (ratio 0.590)** — new check. **Passed the concentration test** (worst single day only 37.5% of variance, genuinely NOT a one-event artifact). But real news confirms the cheap IV/HV is still an echo of a real, already-played-out event: Braze beat Q2 estimates and raised guidance but fell ~20% on 2026-09-09 (weak Q3 EPS guidance, cRPO deceleration narrative) — 9 calendar days stale. Stocktwits shows only reactions to that same old move ("looking good to fill the gap," bullish chart comments), nothing dated today. **Rejected on Track 3 — no live catalyst**, cheap IV is necessary but not sufficient per the trigger's own rule.
+- **GAP (ratio 0.642)** — new check. Also **passed the concentration test** (29.1% share, not an artifact), but same shape of rejection: the 2026-08-28 earnings pop (+12.2% single day) has since fully round-tripped — Stocktwits explicitly confirms it ("Earnings pump n dump complete. 25.80 back to 20.50," "GAP Stock Heads For Monthly Loss," "should hit 52 week low soon"). **Rejected on Track 3 — no live catalyst, and the move has already reversed.**
+- **BNC (ratio 0.660)** — new check, excluded without a full workup: a 2026-09-08 gap (+40.8%, 70M shares vs a ~200-500K daily norm) makes up 39.7% of variance, AND average options volume is only ~2,180 with OI ~5,134 — thin enough that a real two-sided market to exit into is doubtful regardless of the IV/HV read.
+
+**New distinction worth recording:** passing the concentration/artifact check is NECESSARY but not SUFFICIENT — BRZE and GAP both proved genuinely low ratios without being dominated by one day, but the reason their historical volatility is elevated is still a real, dated, but now-STALE catalyst already fully priced (and in GAP's case, already reversed). Cheap IV relative to an HV window inflated by an old, played-out event isn't the same as cheap IV relative to genuine ongoing volatility — the concentration check catches single-day artifacts, but a live-catalyst check is still required to know whether the "cheapness" reflects anything forward-looking.
+
+**Track 2 (dated catalyst):** `get_earnings_calendar`, 3-day forward window, high-market-cap filter — empty. No dated-earnings candidates today.
+
+**Track 3:** not run as a separate full pass — the Track 1 survivors down to BNC all failed on catalyst or liquidity before reaching a dedicated Track 3 soft-catalyst search, and the remaining unchecked Track 1 names (FPS 0.81, ASST 0.81, SBET 0.82, METC 0.82) are all close to the 0.80/0.90 caps with much less separation from the pack — not a good use of this cycle's remaining budget given every better-ranked name already failed on catalyst.
+
+**Result: nothing passes. 7 real candidates fully worked this cycle (AMLX, CHPT, AAP, COO, BRZE, GAP, BNC) — 2 re-confirmed artifacts, 2 new artifacts, 2 passed the artifact check but failed on stale/reversed catalyst, 1 excluded on liquidity.**
+
+### Message sent: none — quiet cycle on both parts.

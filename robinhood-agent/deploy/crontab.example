@@ -1,0 +1,23 @@
+# Cron schedules for robinhood-agent. Pick ONE style per strategy.
+# Install with: crontab -e   (paste the lines you want, edit paths)
+# All times below are US/Eastern market times expressed for a UTC host —
+# adjust if your host runs in another timezone or for DST (these use EDT,
+# UTC-4; during EST winter months shift hours by +1).
+
+# --- Daily symbol screener (only needed if risk.auto_screen: true) ---------
+# Runs BEFORE the market opens so the trading run below has a fresh list.
+# 9:00 ET = 13:00 UTC in EDT. Writes daily_allowlist.json.
+0 13 * * 1-5  cd /opt/robinhood-agent && .venv/bin/python screener.py --config config.json >> cron.log 2>&1
+
+# --- Daily trend strategy (config.json) -------------------------------------
+# One cycle per weekday, 30 min after the open (10:00 ET = 14:00 UTC in EDT).
+# DRY RUN — add --live only after reviewing audit.jsonl.
+0 14 * * 1-5  cd /opt/robinhood-agent && .venv/bin/python run.py --config config.json >> cron.log 2>&1
+
+# --- Pattern Scalp (config.pattern-scalp.json) ------------------------------
+# Fires every 5 minutes during the first ~90 minutes of the session
+# (9:35-11:00 ET = 13:35-15:00 UTC in EDT), weekdays only.
+# RESEARCH/DRY-RUN ONLY on a cash account — same-day round-trips cause
+# good-faith violations. Do not add --live to this one on the cash account.
+35,40,45,50,55 13 * * 1-5  cd /opt/robinhood-agent && .venv/bin/python run.py --config config.pattern-scalp.json >> cron.log 2>&1
+*/5 14 * * 1-5               cd /opt/robinhood-agent && .venv/bin/python run.py --config config.pattern-scalp.json >> cron.log 2>&1

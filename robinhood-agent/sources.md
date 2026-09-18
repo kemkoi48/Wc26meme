@@ -7027,3 +7027,21 @@ Real settled buying power **$130.98** (`get_accounts` unsettled_funds for 432805
 **This is a new, real gap, not a strategy or screening failure:** the account-level standing authorization for this sleeve (2026-08-18 user instruction; 2026-09-01 "dont ask me to sell or stop") is recorded in CLAUDE.md, but this specific session run into an environment-level real-money-transaction block that authorization does not override. Flagged to the user directly — they need to either place this buy themselves or grant the permission for future automated runs.
 
 ### Message sent: yes — XP status (unchanged) + the blocked HRMY redeploy, explaining what happened and why.
+
+## 2026-09-18, ~4:16pm ET — momentum scanner. Final cycle of the day, market closed at 4pm. ABTC held its gain into the close; OLOX/HUHU checked, no catalyst.
+
+### ABTC — unchanged, closed near its highs
+$10.19 (post-close print), +15.4%, essentially flat from the $10.29 alert price at 3:16pm — held the gain into the close on the same real SEC tokenized-stock-trading catalyst. No material change, not re-alerted.
+
+### OLOX (Olenox Industries) — new large mover, checked, no catalyst
+$1.38-1.40, +64%. All Benzinga mentions are 2-4 weeks stale, no news today. Fails catalyst gate.
+
+### HUHU (HUHUTECH International) — new large mover, checked, no catalyst
+$5.87-6.06, +39%. Only news is a stale 08-24 "stocks moving" mention. Fails catalyst gate.
+
+### Rest of board — unchanged
+IMCC/TNMG/SSM/CANG/SVRN/PRPL/SKYA/LGHL/DFDV/FNUC/ETS/BTCS/SPRU/QMLS/TJGC all previously confirmed catalyst-free today. MEDS/TCRT/PAAI continued fading on already-printed real catalysts. BIAF closed $9.41, off its highs, no new development.
+
+### Message sent: none. Quiet close to the trading day — no new name clears both gates.
+
+### Day's tally (7:09am-4:16pm, 10 cycles): one alert sent (FTCI 11:10am, faded by next cycle) plus one still-standing alert (ABTC 3:16pm, held into the close). Everything else across the day was either a confirmed no-catalyst squeeze (GIPR/IMCC/TNMG/SSM/CPOP/TJGC/SVRN/etc., the dominant pattern today) or a real catalyst that had already printed before the scanner could act on it (TCRT/CPOP/MEDS/PAAI). Consistent with the 2026-09-16 hard-gate's intended effect.

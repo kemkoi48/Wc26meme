@@ -6917,3 +6917,18 @@ Now $1.29, +194%, still no news. Unchanged conclusion.
 $11.32, +29%, still near highs. No material change since covered live in conversation this session — not re-alerted.
 
 ### Message sent: none. Entire cycle is a no-news squeeze basket (GIPR/IMCC/TNMG/XRTX/SSM/CPOP all catalyst-free); BIAF's status was already communicated.
+
+## 2026-09-18, 11:10am ET — momentum scanner. FTCI clears both gates — first real alert since the 09-16 hard-gate change. Rest of board unchanged/fading squeeze basket.
+
+### FTCI (FTC Solar) — ALERTED
+$2.64, +23.9% (from $2.13 close), RVOL 9.8x (real field, market open). Float 11.1M. Catalyst: UBS upgraded to Buy from Neutral, PT raised to $3.60 from $3.50 — MT Newswires, published 2026-09-18 6:33am ET. Structure: climbed steadily all regular session from ~$2.25 to a high of $2.73 (10:45-10:50am ET), now $2.61-2.65 — within ~5% of high, ~20min old, real sustained volume building through the move (37K-105K/5min bars, not a single print). One dilution-relevant filing on record: a 424B3 prospectus (shelf takedown) filed 2026-08-18, a month stale, mentioned to the user as context, not a blocker.
+
+### SVRN, TJGC — checked, no qualifying catalyst
+SVRN: appears in "stocks moving" roundups 3 separate days with no named reason. TJGC: only real filing is a $100M mixed shelf registration from 2026-09-02 (dilution, stale, negative) — no new news today.
+
+### IMCC/GIPR/TNMG/SSM/MEDS/TCRT/PAAI — unchanged, all fading off yesterday/this-morning's peaks, still catalyst-free (GIPR/IMCC/TNMG/SSM) or already-printed real catalysts (MEDS/TCRT/PAAI). No re-check needed, no material change.
+
+### BIAF — faded off high, no fresh development
+$10.21 vs ~$11.32-11.98 earlier peaks — now ~15% off high, over an hour old. Structurally now "already printed" rather than igniting. Not re-alerted (no new information, and it's fading, not breaking out).
+
+### Message sent: yes — FTCI only.

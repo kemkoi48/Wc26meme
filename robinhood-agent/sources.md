@@ -6895,3 +6895,25 @@ Day 2 of a move that was +270% on 9/17. Today: Stocktwits posts in real time des
 Same as prior cycles — appears in every "stocks moving" roundup with no named reason. No new development.
 
 ### Message sent: none. BIAF's status was already communicated live in conversation; PAAI and GIPR both fail the gate (structure and catalyst respectively).
+
+## 2026-09-18, 10:10am ET — momentum scanner. Confirmed no-news squeeze-basket day: GIPR/IMCC/TNMG/XRTX all catalyst-free. BIAF unchanged.
+
+### Market-open guard
+SPY quote fresh (venue_last_trade_time 2026-09-18T14:10:40Z, regular session) — market open. RVOL fields now reliable (past 9:30am ET).
+
+### IMCC (IM Cannabis) — largest mover this cycle, no catalyst
+$7.78, +347%, RVOL 141x (real field, market open). Benzinga's own "stocks moving" roundup names no reason. Stocktwits confirms: recent reverse-split, 545k float, 621.75% borrow rate — a pure no-news short-squeeze mechanic, same shape as GIPR. One live post: "rug pull."
+
+### TNMG (TNL Mediagene) — no catalyst
+$4.38, +63%, RVOL 550x. Zero Robinhood/Benzinga articles at all. Stocktwits: pure squeeze chatter and price targets, no news cited.
+
+### XRTX (XORTX Therapeutics) — no catalyst
+$2.19, +32%. Same "stocks moving" roundup appearances for 3 straight days with no named reason each time.
+
+### GIPR — re-confirmed no catalyst (see this session's direct analysis ~9:40am ET)
+Now $1.29, +194%, still no news. Unchanged conclusion.
+
+### BIAF — still the only real-catalyst name, unchanged
+$11.32, +29%, still near highs. No material change since covered live in conversation this session — not re-alerted.
+
+### Message sent: none. Entire cycle is a no-news squeeze basket (GIPR/IMCC/TNMG/XRTX/SSM/CPOP all catalyst-free); BIAF's status was already communicated.

@@ -7002,3 +7002,28 @@ $2.79, +17.5%. All news is stale from August (earnings, pre/post-market chop). N
 IMCC/TJGC/TNMG/SSM/CANG/QMLS/SVRN/SKYA/LVWR/ETS/LGHL/DFDV/FRSX/BTCS all previously confirmed catalyst-free this session, no new development. BIAF/FTCI continue chopping below their earlier daily highs.
 
 ### Message sent: yes — ABTC only.
+
+## 2026-09-18, ~4:02pm ET — Growth sleeve daily check. XP unchanged; redeploy candidate found but order BLOCKED by session permissions.
+
+### Market-holiday guard
+SPY real 4pm close print (19:59:59Z) plus a post-close 20:02:19Z print — market open today, real session.
+
+### XP (18sh, entry $19.97, 09-17) — quantity-verified, no action needed
+Resting stop confirmed: order 6aac47ab, state=confirmed, stop_price $16.74, quantity 18 — matches real position (18sh, get_equity_positions). No manual-buy gap.
+
+**Real peak since entry:** $20.42 (09-17 finalized daily high). Today's real intraday high (30-min bars, regular session) was $20.245 (17:00 UTC bar) — does NOT exceed the existing peak, so $20.42 stands.
+
+**Profit lock:** `decide_profit_exit(entry=19.97, peak=20.42, current=20.015)` → peak_gain +2.25% < 5.0% trigger — **not armed**, unchanged from yesterday's read.
+
+**Stop ratchet:** `decide_stop_update(current=16.74, peak=20.42)` → computed 16.7444, rounds to the same $16.74 already resting — no real change, same edge case as the 2026-09-04 LYFT precedent (a cancel/replace for a sub-cent difference would briefly unprotect the position for zero benefit). No action taken.
+
+**Technical check:** RSI(14) 67.02 (09-17, approaching but not over 70), ADX(10) 38.96 (>25, strong real trend), MACD histogram +0.0425 — positive but shrinking for 5 straight sessions (0.181→0.125→0.072→0.043→0.042, 09-11 through 09-17). Momentum decelerating but the histogram has NOT crossed negative — this does not meet the ADX>25-plus-MACD-turning-against signal bar. **No signal fired.**
+
+### Redeploy check — candidate found, order BLOCKED
+Real settled buying power **$130.98** (`get_accounts` unsettled_funds for 432805174 = $0.00 — confirmed nothing hiding in T+1). Re-ran the Growth Momentum scan (68 real matches). Checked fundamentals on 6 candidates with strong ADX: GTLB (PE -160.92, unprofitable — reject), TARS (PE -73.12 — reject), PLSE (PE -43.09 — reject), TAK (PE -57.57, unprofitable, and only 1% off its 52wk high — reject on both counts), CNH (PE 54.29, profitable but rich), **HRMY (PE 13.85, profitable, cheapest of the qualifying set — same selection criterion that picked GCT and XP)**: ADX(14) 42.67 (strong real trend), RSI 65.61 (mid-range, not overbought), 3.4% off its $43.49 52wk high (not chasing), pharma/neurological-disorders sector — diversifies cleanly away from XP's Brazilian-financials exposure. Real live quote confirmed $42.04 close.
+
+**Attempted:** GFD limit buy, 3 whole shares HRMY, $43.30 ceiling (~3% above the $42.04 close, same buffer convention as prior entries), account 432805174. **Order was BLOCKED by this session's own permission layer** ("Permission for this action was denied by the Claude Code auto mode classifier... [Real-World Transactions]") — not a broker rejection, a session-level guard on real-money order placement in this particular execution context. No order was placed; no fill exists; nothing to log to trades.csv.
+
+**This is a new, real gap, not a strategy or screening failure:** the account-level standing authorization for this sleeve (2026-08-18 user instruction; 2026-09-01 "dont ask me to sell or stop") is recorded in CLAUDE.md, but this specific session run into an environment-level real-money-transaction block that authorization does not override. Flagged to the user directly — they need to either place this buy themselves or grant the permission for future automated runs.
+
+### Message sent: yes — XP status (unchanged) + the blocked HRMY redeploy, explaining what happened and why.

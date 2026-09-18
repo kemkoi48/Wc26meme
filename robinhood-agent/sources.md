@@ -6806,3 +6806,30 @@ Did NOT touch the two existing saved scans (they remain the user's own Legend-bu
 **New list: 6 items (TCRT, AKAN, CPOP, VEEA, DAIC, DTSS)** — down from 9, verified via `get_watchlist_items` after the operations.
 
 ### Message sent to user: yes — same summary as logged here (adds, drops, reasoning).
+
+---
+
+## 2026-09-18, 7:09am ET — momentum scanner. First cycle with the new safety-net scan live. Real catalysts on TCRT/CPOP, both already printed. SSM (largest mover) still catalyst-free.
+
+**Guard passed:** SPY premarket print 11:09:04 UTC, $762.03-762.64. Market open.
+
+**Safety-net scan working as designed:** returned IMCC, SSM, TCRT, CPOP. **CPOP was present ONLY in the safety-net scan, absent from both regular scans** — a real coverage catch, this cycle's live proof the fix does something. TCRT and SSM also appeared in the regular "Early Momentum Ignition" scan.
+
+### TCRT and CPOP — real, dated, sourced catalysts (see this morning's watchlist build), but both already printed
+
+Pulled real 5-minute bars 08:00-11:05 UTC for both:
+
+- **TCRT**: peaked **$3.13 at 09:00 UTC (5:00am ET)**, now **$2.18-2.28** at 11:00-11:05 UTC (7:00-7:05am ET) — **28% off a high made 2 hours ago**, chopping lower since with no fresh high in the last 20 minutes. Catalyst (SEC bylaws filing) is real, but structure fails — same "already printed" pattern as AEMD/DAIC/KXIN yesterday.
+- **CPOP**: peaked **$5.58-5.98 around 08:25-08:30 UTC (4:25-4:30am ET)** (the $5.98 print may be a thin outlier — even the more conservative $5.58 high still stands), now **$4.29-4.48**, chopping sideways-to-down in that range for the last 2.5 hours with no fresh high. Catalyst (15-for-1 split) is real, structure fails the same way.
+
+No alert on either — real catalyst, failed step 2, not step 3.
+
+### SSM — this cycle's largest real % mover, still catalyst-free
+
+**$2.32 vs yesterday's $1.46 close (+58.9%)**, the biggest move on the board this cycle. Re-checked per the standing largest-mover rule: still nothing beyond Stocktwits squeeze chatter ("short, no shares 151%", "flipped short, looks like it's gonna fade") and stale Benzinga roundups (most recent dated article is from 09-15, routine, no catalyst named). Gate reject stands.
+
+### IMCC — still catalyst-free, still only caught by the safety-net scan
+
+$4.03-4.08 vs $1.74 close (+132%). Same verdict as this morning's watchlist check: no catalyst anywhere, pure squeeze chatter. Confirms the safety-net scan is doing its coverage job even on a name that never clears the alert bar.
+
+### Message sent: none. Quiet cycle — two real catalysts existed and both failed structure, and the largest mover has no catalyst at all.

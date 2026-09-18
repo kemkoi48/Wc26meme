@@ -6932,3 +6932,22 @@ SVRN: appears in "stocks moving" roundups 3 separate days with no named reason. 
 $10.21 vs ~$11.32-11.98 earlier peaks — now ~15% off high, over an hour old. Structurally now "already printed" rather than igniting. Not re-alerted (no new information, and it's fading, not breaking out).
 
 ### Message sent: yes — FTCI only.
+
+## 2026-09-18, 12:09pm ET — momentum scanner. FTCI faded off high, no fresh names clear catalyst gate. Quiet cycle.
+
+### FTCI — faded, no re-alert
+$2.40, +12.6% (down from the $2.73 high and +23.9% peak at last cycle). Now ~12% off high and the move is 40+ min old — already printed. Already alerted last cycle; no material change (no new news), so not re-flagged.
+
+### TJGC — new large mover, checked, no catalyst
+$16.02, +45.5% (up sharply from ~$13.28 earlier this morning). Only filing on record is the stale 2026-09-02 $100M mixed shelf (dilution, negative, 16 days old) — no new news today. Fails catalyst gate.
+
+### FRSX (Foresight Autonomous) — checked, no catalyst
+$1.24, +17%, RVOL 185x. Same "stocks moving" roundup appearances across multiple days with no named reason each time. Fails catalyst gate.
+
+### CANG (Cango) — checked, no catalyst
+$2.59, +19.4%. Only recent news is a Q2 earnings miss from 09-01 (negative, stale). No new news today. Fails catalyst gate.
+
+### IMCC — still largest real mover, still catalyst-free
+$5.78-5.82, +233-235%, RVOL 194x. Unchanged conclusion from prior cycles.
+
+### Message sent: none. Quiet cycle — the one active alert (FTCI) has faded and nothing new clears both gates.

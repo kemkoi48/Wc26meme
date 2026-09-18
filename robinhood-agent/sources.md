@@ -6879,3 +6879,19 @@ Checked the top 7 real names (not just the top 1-2) against real daily bars for 
 **Result: nothing passes. 7 real candidates fully worked this cycle (AMLX, CHPT, AAP, COO, BRZE, GAP, BNC) — 2 re-confirmed artifacts, 2 new artifacts, 2 passed the artifact check but failed on stale/reversed catalyst, 1 excluded on liquidity.**
 
 ### Message sent: none — quiet cycle on both parts.
+
+## 2026-09-18, 9:10am ET — momentum scanner. BIAF already covered live via user Q&A this session; PAAI new, real catalyst but faded off high.
+
+### Market-open guard
+SPY quote fresh (venue_last_non_reg_trade_time 2026-09-18T13:10:22Z, bid/ask live) — market open, not a holiday.
+
+### BIAF — real catalyst (Hong Kong CyPath Lung patent grant, 9/17), still igniting, but user already has full detail from this session's direct Q&A minutes earlier
+$10.10, +15.4%, float 594,921. Fresh high ~$10.45 at 8:50-8:55am ET, current print ~15-20min later — still within the igniting window, no material change since the interactive discussion. Not re-alerted to avoid repeating info the user already has (per explicit user feedback this session about not restating already-covered names).
+
+### PAAI (Paradium.AI) — real, dual-sourced catalyst ($1B/10yr Roundtable deal, Benzinga + MT Newswires, 9/17 ~2:31-3:07pm ET), but faded well off today's high — fails the structure gate
+Day 2 of a move that was +270% on 9/17. Today: Stocktwits posts in real time describe it spiking into the high-$5s and being shorted/fading back to $3.67-3.79 — extremely choppy, halt-prone price action, not a clean fresh-high setup. RVOL(1, 1H) field showed an absurd 66720 — another confirmed instance of the broken premarket RVOL field, self-computed check not needed since the "near high" test alone disqualifies it. Logged for the record; not alerted (fails "near day's high" requirement in step 2).
+
+### Largest real mover this cycle: GIPR (+155%), still catalyst-free
+Same as prior cycles — appears in every "stocks moving" roundup with no named reason. No new development.
+
+### Message sent: none. BIAF's status was already communicated live in conversation; PAAI and GIPR both fail the gate (structure and catalyst respectively).

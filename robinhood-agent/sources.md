@@ -6986,3 +6986,19 @@ $2.44-2.50, still ~10% below the $2.73 high. No material change.
 ### IMCC/TJGC/SSM/TNMG/CANG/QMLS/SVRN/SKYA/LVWR/ETS — unchanged, all previously confirmed catalyst-free.
 
 ### Message sent: none. Quiet cycle.
+
+## 2026-09-18, 3:16pm ET — momentum scanner. ABTC alert — clean uptrend on a real, sourced sector catalyst. FEAM/PRPL checked, no catalyst.
+
+### ABTC (American Bitcoin Corp) — ALERTED
+$10.29, +16.5% (prev close $8.83), float 23.7M, market cap $642M (not a dilution-risk microcap). Catalyst: Benzinga, today 2026-09-18 10:02am ET — named as one of several "big stocks moving higher" following the SEC's approval of a 5-year exemption for tokenized US stock trading, driving a broad crypto-stock rally (MSTR, GLXY, PURR, GEMI also cited moving on the same news). Also has an active BTIG Buy initiation, $15 PT, from 2026-09-16. Structure: clean, steady uptrend all afternoon (17:30 UTC $9.74 -> now $10.29), continuously making fresh highs on real accelerating volume (12K-65K/5min bars), price sitting right at the day's high — genuinely igniting, not faded.
+
+### FEAM (5E Advanced Materials) — checked, no catalyst
+$2.45, +18.7%. Only news is a Q4 earnings miss from 09-18 2am ET (stock fell on it, then round-tripped) and stale Aug articles. No fresh positive catalyst tied to today's rise. Fails catalyst gate.
+
+### PRPL (Purple Innovation) — checked, no catalyst
+$2.79, +17.5%. All news is stale from August (earnings, pre/post-market chop). Nothing today. Fails catalyst gate.
+
+### Rest of board — unchanged
+IMCC/TJGC/TNMG/SSM/CANG/QMLS/SVRN/SKYA/LVWR/ETS/LGHL/DFDV/FRSX/BTCS all previously confirmed catalyst-free this session, no new development. BIAF/FTCI continue chopping below their earlier daily highs.
+
+### Message sent: yes — ABTC only.

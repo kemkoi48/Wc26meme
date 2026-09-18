@@ -6968,3 +6968,21 @@ $2.63, +19.5%. Recurring "stocks moving" roundup appearances across 3+ separate 
 ### BIAF — unchanged, still faded off highs, no new development.
 
 ### Message sent: none. Quiet cycle.
+
+## 2026-09-18, 2:16pm ET — momentum scanner. Quiet cycle. FNUC/DFDV checked, no fresh catalyst. BIAF/FTCI bouncing but still below day's highs.
+
+### FNUC (Frontier Nuclear and Minerals) — checked, no catalyst
+$1.77, +23.4%. Zero news articles found. Fails catalyst gate.
+
+### DFDV (DeFi Development Corp) — checked, no fresh catalyst
+$5.79-6.05, +15.7-19.4%. Only two articles: an automated Benzinga transcript republish of an August 12 earnings call (no new info, not dated to today's move) and an 8/27 SOL-purchase story (stale). Move looks tied to general crypto/SOL price action, not a company-specific dated catalyst. Fails catalyst gate.
+
+### BIAF — bouncing but still below today's real high, no re-alert
+$10.44-10.55 now, up from the $10.10-10.21 seen last two cycles, but still well below the day's actual highs (~$11.32-11.98 earlier this morning). This is a recovery bounce within a downtrend, not a fresh ignition to new highs. No material change, not re-flagged.
+
+### FTCI — still chopping below its high, no re-alert
+$2.44-2.50, still ~10% below the $2.73 high. No material change.
+
+### IMCC/TJGC/SSM/TNMG/CANG/QMLS/SVRN/SKYA/LVWR/ETS — unchanged, all previously confirmed catalyst-free.
+
+### Message sent: none. Quiet cycle.

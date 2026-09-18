@@ -6951,3 +6951,20 @@ $2.59, +19.4%. Only recent news is a Q2 earnings miss from 09-01 (negative, stal
 $5.78-5.82, +233-235%, RVOL 194x. Unchanged conclusion from prior cycles.
 
 ### Message sent: none. Quiet cycle — the one active alert (FTCI) has faded and nothing new clears both gates.
+
+## 2026-09-18, 1:09pm ET — momentum scanner. Quiet cycle. FTCI continues fading, LGHL/ETS checked and fail catalyst gate.
+
+### FTCI — continues to fade, no re-alert
+$2.34, +9.9% (down further from +23.9% peak / $2.73 high, now ~2.5hrs stale). Already alerted; no new development.
+
+### LGHL (Lion Group Holding) — checked, no catalyst
+$8.00, +24%. Extremely thin float (45,877 shares). Zero news articles found at all. Fails catalyst gate.
+
+### ETS (Elite Express Holding) — checked, no catalyst
+$2.63, +19.5%. Recurring "stocks moving" roundup appearances across 3+ separate days (09-08, 09-09, 09-16) with no named reason each time. Fails catalyst gate.
+
+### IMCC/GIPR/TNMG/SSM/TJGC/CANG — unchanged, all previously confirmed catalyst-free this session, still no news.
+
+### BIAF — unchanged, still faded off highs, no new development.
+
+### Message sent: none. Quiet cycle.

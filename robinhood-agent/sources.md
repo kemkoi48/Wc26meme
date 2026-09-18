@@ -6749,3 +6749,26 @@ AEMD $6.43 (flat, +350% vs $1.43 close, already logged). DAIC $5.06-5.07 (flat, 
 AEMD $6.21 (+334% vs $1.43 close, unchanged range, fully logged earlier). DAIC $5.18 (+158%, no fresh high). BIAF $8.60 (+61%, still catalyst-free squeeze). KXIN $1.75 (+55%, still well off its $2.81 peak). DTSS $1.20 (+103%, catalyst-free confirmed five times today). NUWE $1.08 (+33%, no confirmed catalyst). HSCS $4.88 (+29%, still on the unconfirmed "merger play" rumor from last cycle). GWAV $3.02, AEHL $11.86 — flat/no material change.
 
 ### Message sent: none. Day's tally: **zero alerts sent across nine cycles (7:09am-4:09pm)**, consistent with the 2026-09-16 gate's intended effect. Every single large mover today was checked; every one either lacked a sourced catalyst, or had one that failed the structure test, or (TCRT) had a claim that couldn't be independently verified.
+
+---
+
+## 2026-09-18, ~00:35 UTC — Coverage-gap fix: independent, RVOL-filter-free safety-net scan added after AEMD's 2026-09-17 miss
+
+User asked directly why the scanner didn't catch AEMD's real move (a $180M merger catalyst, Benzinga 08:29:50am ET) at the 7:09am/8:09am/9:09am cycles. Pulled AEMD's real 5-minute premarket bars to check — the honest answer required correcting an earlier, wrong claim (made mid-session that AEMD "hadn't ignited yet" by 9:09am). Real data shows otherwise:
+
+- 6:30am ET: ignition begins, $1.40 → $2.83 close (high $3.24), 865K volume.
+- 6:40am ET: $3.17 → $6.32 (high **$14.00**), 2.03M volume.
+- By 7:05am ET (just before the 7:09am cycle): **$7.61**, still on heavy sustained volume.
+- 9:05am ET (just before the 9:09am cycle): **$7.65-7.87**.
+
+So by the very first cycle of the day, AEMD was already up ~5-6x on real volume, clearing every hard filter on both saved scans (price $2-20, float 709,862 well under both caps, volume far above both minimums). It never appeared in any of the 7:09am/8:09am/9:09am results.
+
+**Root cause, best available explanation (can't be proven retroactively — `run_scan` has no history):** both saved scans use `Relative volume (1, 1H) > 3` as a hard *inclusion* filter, not just a displayed column. This account's own operating notes already document that Robinhood's Relative-volume field is unreliable before 9:30am ET (flat 1x placeholder or nonsensical spikes off a near-empty trailing average). If AEMD's premarket RVOL computed wrong at that hour, the scan's own filter could have silently dropped the row before it ever reached review — a failure no amount of careful reading of the *returned* rows could have caught.
+
+**Fix shipped this session, at the user's explicit request ("Sure do that, as a part of the scan"):**
+
+1. Created a new saved scan via `create_scan`: **"Premarket Movers — No RVOL Filter (safety net)"**, scan_id `a8db8ea4-8cca-4b50-b431-0961bace0550`. Filters: Last $1-50, Float <50M, daily `% Change` >15% (`changeFromCloseAllDayRatio`, a direct measure of the real move — not a relative-volume ratio), Volume >100K. **Deliberately no RVOL filter of any kind**, so nothing can be silently excluded by a broken pre-market RVOL calc. Sorted % Change desc via `update_scan_config`. Verified live and working (6 real matches at creation time, including TCRT still running from yesterday).
+2. Updated the momentum-scanner trigger's own stored prompt (`trig_011uqSeqdqMoS3e5ZUTk13jN`, via `update_trigger`) to add step 1b: run this scan every cycle (all day, not just 7-9am, since the same silent-drop risk isn't provably confined to premarket hours), diff its results against the two regular scans by symbol, and run any name that appears ONLY here through the normal structure+catalyst gates exactly like a normal survivor — with the same real-volume-via-historicals confirmation already required for the 7-9am fires, since this scan's job is coverage, not quality.
+3. Also folded in a second real lesson from yesterday (TCRT, 4:09pm cycle): an unconfirmed Stocktwits claim stays unconfirmed even when it comes with a link, unless independently verified — added as an explicit note in step 3's catalyst-verification section so it isn't lost.
+
+Did NOT touch the two existing saved scans (they remain the user's own Legend-built scans, per the standing "don't modify unilaterally" norm) — this is purely an additive third net.

@@ -347,6 +347,40 @@ fundamentals remain the working catalyst check for those. Always try the
 symbol before assuming Pro has it; treat `symbol_not_found` as a routine
 coverage miss, not a tool failure.
 
+## Third scan added 2026-09-18 — closes a real coverage gap the other two can silently hit
+
+AEMD ignited at 6:30am ET on 2026-09-17 (real merger catalyst, Benzinga
+08:29:50am) and was already trading ~$7.60 on heavy volume by 7:05am ET —
+clearing every hard filter on both saved scans (price, float, volume) — yet
+it never appeared in the 7:09am, 8:09am, or 9:09am scanner results. User
+asked why directly; the honest answer required correcting an earlier wrong
+claim made mid-session ("it hadn't ignited yet") after pulling AEMD's real
+5-minute bars and finding the move had started nearly two hours before the
+Benzinga article even published.
+
+Best-available root cause (not provable retroactively — `run_scan` carries
+no history): both saved scans use `Relative volume (1, 1H) > 3` as a hard
+INCLUSION filter, not just a column, and this account's own notes already
+document that field as broken/unreliable before 9:30am ET. A corrupted
+premarket RVOL calc can silently drop a real mover from a scan's result set
+before it's ever reviewed — no amount of care reading the rows that DO come
+back catches that failure mode.
+
+**Fix, user-requested ("Sure do that, as a part of the scan"):** created a
+third saved scan, **"Premarket Movers — No RVOL Filter (safety net)"**
+(scan_id `a8db8ea4-8cca-4b50-b431-0961bace0550`) — Last $1-50, Float <50M,
+daily `% Change` >15% (a direct move measure, not a volume ratio), Volume
+>100K, sorted % Change desc. Deliberately carries NO relative-volume filter
+of any kind, so nothing can be silently excluded the way AEMD was. Wired
+into the momentum-scanner trigger's own stored prompt as step 1b, every
+cycle all day: diff its results against the two regular scans by symbol,
+and treat any name appearing only here as a coverage-gap candidate — run it
+through the normal structure+catalyst gates like any other survivor, with
+real volume still confirmed via `get_equity_historicals` before acting (this
+scan buys coverage, not quality — that check still matters). Did not modify
+either existing scan; this is purely additive, consistent with the standing
+norm of not touching the user's own Legend-built scans unilaterally.
+
 ## Robinhood's own saved scanners — prefer these over a third-party screener
 
 The account has real saved scanners (`get_scans` / `run_scan`, built in

@@ -6772,3 +6772,37 @@ So by the very first cycle of the day, AEMD was already up ~5-6x on real volume,
 3. Also folded in a second real lesson from yesterday (TCRT, 4:09pm cycle): an unconfirmed Stocktwits claim stays unconfirmed even when it comes with a link, unless independently verified — added as an explicit note in step 3's catalyst-verification section so it isn't lost.
 
 Did NOT touch the two existing saved scans (they remain the user's own Legend-built scans, per the standing "don't modify unilaterally" norm) — this is purely an additive third net.
+
+---
+
+## 2026-09-18, ~6:35am ET — Premarket watchlist build. Renamed "September 17" -> "September 18".
+
+**Guard passed:** SPY premarket print 10:35:01 UTC (today), $762.64→$762.66. Market open.
+
+**New safety-net scan (added last night) already paying off:** `a8db8ea4-8cca-4b50-b431-0961bace0550` surfaced IMCC (+146% premarket) — not present in either regular saved scan this cycle. Checked it: no dated catalyst anywhere (Robinhood/Benzinga most recent article is a stale 09-03 routine roundup), Stocktwits chatter is pure squeeze talk with real disagreement ("bull trap" vs "definitely going higher"). Not added to the watchlist — no catalyst, no sustained multi-day chatter (single morning only) — but the scan did its job by surfacing it at all.
+
+### Added (4) — real reasons, not just "it's moving"
+
+- **TCRT (Alaunos Therapeutics)** — real, dated, sourced catalyst confirmed this morning: Benzinga, **2026-09-18 04:25:11am ET**, "shares jumped 21.8% to $1.95 in pre-market trading" following an **SEC filing showing the company adopted its Second Amended and Restated By-Laws** (effective Wednesday 09-16). This is a DIFFERENT catalyst than yesterday's still-unconfirmed Stocktwits patent claim — the bylaws filing is independently sourced and real. Currently $2.35-2.35, +47% vs yesterday's $1.60 close, still running.
+- **CPOP (Pop Culture Group)** — real, dated catalyst: Benzinga (same 04:25am article) confirms CPOP "recently announced a **15-for-1 stock split**" and rose 22.8% premarket on it. Currently $4.24-4.60, +15-24% vs $3.72 close. Stocktwits message volume EXTREMELY_HIGH (score 86), sentiment EXTREMELY_BULLISH (91) — real, broad interest, not one account.
+- **DTSS (Datasea)** — real catalyst from Thursday still fresh: company announced its Chinese operating entities entered **AI agent digital marketing service cooperation agreements and pre-order arrangements with five customers** (Benzinga, confirmed both in yesterday's coverage and again in this morning's roundup). Fading premarket today (-16.4%, $1.02) as the initial pop cools, but the catalyst itself is only ~36 hours old and still the live reason for the move — kept, not yet "played out."
+- **AKAN (Akanda)** — no single dated catalyst ever found across many checks yesterday, but real SUSTAINED momentum per the standing XPON precedent: present on multiple hourly scanner cycles all day yesterday AND again this morning (+18.4% premarket to $3.44-3.48), consistently one of the largest RVOL readings on the board. This is exactly the "no fresh press release but real, heavily-discussed multi-day momentum" case the XPON miss taught this list to keep watching.
+
+### Kept, unchanged reasoning
+
+- **VEEA** — pending NovaGen Group merger (term sheet signed 09-15, not yet a definitive agreement) still technically live; deal-completion risk, not catalyst risk. Faded to $5.01-5.31 from its $8.61 peak but still well above its pre-merger base.
+- **DAIC** — Envoy Technologies acquisition real and **expected to close Oct. 6** per Benzinga (confirmed 09-17 9:19pm ET wrap) — genuinely pending, not stale. Still elevated ($4.74-5.32) vs its pre-catalyst base despite fading off Wednesday's $7.15 high. Heavy dilution risk (67% of post-closing shares) unchanged from original note.
+
+### Dropped (7) — faded, catalyst fully played out, or never confirmed
+
+- **AEHL** — convertible-note catalyst fully priced in, now flat (+0.5% today, no longer moving).
+- **WAFU** — continuing multi-day decline (-5% today), the "vote-failure" story was never confirmed by any wire, quiet.
+- **RETO** — the collapse is now explained and confirmed: Benzinga (09-17 1:15pm ET) reports the crash followed **pricing of a $15M offering, 10M shares at $1.50** — a dilutive raise, not a mystery. Down to $0.196-0.209, effectively dead. This account's own poster child for "catalyst-free serial mover," now with the dilution mechanism on record.
+- **FTFT** — still fading (-6.9%), "chatter-only" story never sourced.
+- **TPST** — still fading (-6.7%), vote-failure story never confirmed by any wire, now 12+ days stale.
+- **MEDS** — the real catalyst (Helomics acquisition, 09-15) is 3 days old and fully priced in; now just fading (-7.1%).
+- **INTC** — flat (+2.85%, ordinary large-cap drift), never fit this list's low-float/day-trade theme to begin with; removed for cleanliness.
+
+**New list: 6 items (TCRT, AKAN, CPOP, VEEA, DAIC, DTSS)** — down from 9, verified via `get_watchlist_items` after the operations.
+
+### Message sent to user: yes — same summary as logged here (adds, drops, reasoning).

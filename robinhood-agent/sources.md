@@ -7123,3 +7123,28 @@ $4.44-4.50, +14-16%. Stocktwits chatter is a mix of bullish crypto-treasury narr
 SVRN/CISS/SCNI (safety-net scan, all previously rejected this morning, unchanged). MEDS/BTCT/XXI/TCRT/CLBK/BIAF/PAAI/SSM/TNMG/IMCC (Warrior scan) all previously-seen or catalyst-free.
 
 ### Message sent: yes — PRTH (new, real M&A catalyst, with the merger-arb caveat) and GRML (material update: new high, retested open).
+
+## 2026-09-21, ~8:35am ET — pre-open watchlist rectify + S7 options daily check. No watchlist change, no S7 trade. Flat.
+
+### Market-holiday guard
+SPY fresh extended-hours print (12:35:07 UTC = 8:35am ET, 26s old) — market open, no holiday.
+
+### Part A — watchlist rectify, "September 21" list
+CRML $8.55 (+27.1%) and GRML $7.60 (+166.9%) both still running, neither faded — no material change since the 6:35am build or the 7:16/8:18am scanner cycles. No edit made.
+
+### Part B — S7 options daily check
+No open S7 position (`get_option_positions` empty) — flat, screened fresh.
+
+**Track 1 (IV/HV sweep, scan `47f4f938-a4d9-413e-a1c7-e01855c09e45`):** 397 matches, 200 returned. 33 rows cleared the 0.90 cheap-IV cap. Worked up the real candidates:
+- **CRML — best candidate, REJECTED on chase timing.** IV/HV ratio 0.804 (IV 0.949 / HV 1.181), real catalyst already on record (Trump-Greenland deal), price $8.56 inside the $5-60 band. Concentration check PASSED — computed real daily log-return variance over the last 43 sessions: the single largest day contributes only 21.6% of total variance (next-largest 19.7%), nothing close to the 50%+ single-day dominance that killed AMLX/AAP/COO — this is genuine multi-day volatility (real moves on 08-21 +18.5% and 08-25 +13.7%), not an artifact. BUT real intraday structure kills it anyway: premarket high was $9.25 at ~8:00-8:05am ET: by 8:30am ET (4.5 hours later) it had drifted down to $8.45-8.50 in a shallow, lower-highs consolidation with no fresh breakout attempt. Per S7 governing rule 4 (no chasing an already-printed move), this morning's move already happened before the screen ran — entering calls now would be chasing, not catching. Rejected on structure, not on the math.
+- **GAP (0.599) and CHPT (0.415)** — both re-confirmed as the same known single-day earnings-crash artifacts already logged 2026-09-18 (GAP's reversed 08-28 pop, CHPT's 64.5%-of-variance crash day). Not re-derived in full, same conclusion holds.
+- **SMR (0.753), MARA (0.740), BMNR (0.827)** — the three most liquid remaining candidates by option volume/OI, spot-checked via Stocktwits. No dated, nameable catalyst on any of the three — SMR is Elliott-wave chart chatter, MARA/BMNR are generic Bitcoin-rally sector beta (BTC broadly "ripping" premarket), not company-specific news. All three fail the catalyst gate regardless of cheap IV.
+- Remaining ~25 names on the sub-0.90 list (ASO, PURR, RPD, ABTC, SBET, FPS, AMKR, CHWY, BKKT, BULL, FCEL, METC, BRUN, BBWI, CIFR, CRSP, SOFI, SBLK, ASST, NVAX, UEC, ERO, INIO, ASTS, BTU, IONQ, EGO) not individually catalyst-checked this cycle — cheap IV alone is not a trade signal, and none surfaced from this morning's other screening as carrying a real dated catalyst.
+
+**Track 2 (dated earnings, 1-3 day window, high-market-cap filter):** ABVX reports today (timing unverified/null), KBH/THO/MLKN/WOR/AZO report 09-22, CTAS/FUL/MANU/PAYX/GIS/SCS report 09-23 — none close enough to today's entry window to screen (next-day timing needed for a same-day IV-crush setup); not worked up further.
+
+**Track 3 (soft catalyst):** not run separately this cycle — Track 1's Stocktwits/news diligence on the liquid candidates already covers the same ground.
+
+### Result: no trade. Nothing cleared both the cheap-IV/real-catalyst bar AND fresh (non-chased) structure. Account stays flat on S7.
+
+### Message sent: none — no watchlist change, no new position, no closed position.

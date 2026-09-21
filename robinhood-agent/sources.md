@@ -7227,3 +7227,16 @@ Down from the $9.83 (+245%) peak alerted last cycle — a real fade, not a fresh
 PRTH ($7.77, flat), NCPL/CISS/SCNI/SVRN (all previously rejected). Safety-net names (STKE, NNVC, NXTT, TGL, RGNT, SLMT, FJET, SST, STI) all smaller movers (+16-25%), same list as last cycle, not individually re-checked given no material change.
 
 ### Message sent: yes — VRME re-alert only (real fresh ignition, same catalyst).
+
+## 2026-09-21, ~4:18pm ET — growth sleeve daily stop check. XP stop ratcheted on a real new peak. Idle capital redeployed into CRSR.
+
+### Market-holiday guard
+SPY real regular-session close print (19:59:59 UTC = 3:59:59pm ET) — market open all session, no holiday.
+
+### XP — stop ratcheted, quantity verified
+Real position confirmed: 18 shares (matches the resting stop's quantity, no manual-buy gap). Daily bars for 09-21 aren't finalized yet in the historicals feed (only 09-17/09-18 posted), so pulled real 30-min intraday bars for today instead: real high since entry was **$20.86** (3:30-4:00pm ET bar), a genuine new peak over the prior $20.42 (09-17). Profit lock checked: peak gain from the $19.97 entry is +4.46% — NOT armed (needs +5%), a near miss but honest: `decide_profit_exit` correctly did not fire. Technical check (last finalized data, 09-18, today's not yet computed): RSI 64.5 (neutral), ADX(10) 39.2 (very strong real trend), MACD histogram +0.021 but shrinking for 5 straight sessions (0.125→0.072→0.043→0.042→0.021) — still positive, no signal against the position (MACD hasn't flipped negative). Ratcheted the stop: cancelled the resting $16.74 (verified `state: cancelled`), placed a new one at **$17.11** (18% below the $20.86 real peak), verified `state: queued` (placed 20:17 UTC, right after the 20:00 close — next-open queuing, not a rejection).
+
+### Idle capital redeployed — CRSR
+Settled buying power $130.98 (confirmed via `get_accounts`, unsettled_funds $0.00 for this account — nothing hiding in T+1). Re-ran the Growth Momentum scan (79 real matches). Checked fundamentals on the top ADX>25 candidates affordable at this size: BMNR (PE -3.05, unprofitable crypto-treasury vehicle), NVAX (PE -6.64, unprofitable), SBET (PE -1.13, unprofitable crypto-treasury), SMMT (PE -15.95, unprofitable) — all rejected on the established negative-PE pattern. **CRSR (Corsair Gaming)** was the one real candidate: PE 43.6 (profitable), ADX(14) 26.5 (real trend, clears the 25 floor), RSI 60.16 (neutral), price $13.51 sits ~8.5% below its 52-week high ($14.978, set 08-10) — not chasing. Placed a GFD limit (9 sh, $13.75 ceiling) at 20:18:27 UTC (market closed for the day) — verified `state: queued`, next-open queuing. Scheduled a follow-up (`send_later`, 09:30:30 ET tomorrow 2026-09-22) to confirm the real fill and place the GTC stop at that precise timing — the lesson this sleeve converged on across HL (318s latency at a 09:34 check) → GCT (133s at 09:31) → XP (54s at 09:30:30). Not yet logged to trades.csv — will log the real fill + stop once confirmed tomorrow, consistent with this sleeve's fill-time logging convention.
+
+### Message sent: yes — XP stop ratchet (new $20.86 peak) and the CRSR redeployment.

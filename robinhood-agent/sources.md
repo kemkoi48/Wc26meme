@@ -7192,3 +7192,22 @@ $1.13, +53% (down from the +58-68% seen last cycle), RVOL now 0.54 (below averag
 GRML ($6.93, +143%, off its $7.60 peak, not a fresh high, no re-alert), PRTH ($7.77, unchanged), SVRN/CISS (unchanged, previously rejected).
 
 ### Message sent: yes — VRME (real, forward-looking dividend/merger catalyst) and VEEE (real but explicitly sympathy-trade catalyst, flagged as such).
+
+## 2026-09-21, ~11:17am ET — momentum scanner. GRML re-alerted on a major fresh high (+245%, accelerating). VEEE faded, no re-alert.
+
+### Market-holiday guard
+SPY regular-session trade at 15:16:26 UTC = 11:16am ET, fresh — market open, no holiday.
+
+### GRML — ALERTED again, major material change (new high, accelerating)
+$9.83, +245% (Friday close $2.85), RVOL 24x — genuinely reliable now that the market's open (not the broken premarket field). Real 5-min bars confirm a clean accelerating staircase, not a spike-and-fade: $6.75 (14:30 UTC) -> $7.59 (14:40) -> $7.99 (14:50) -> $8.28 (14:55) -> $9.18-9.85 (15:05-15:10), each bar making a higher high on real volume (1.1-4M shares/bar). Same real dual-sourced Greenland-security-deal catalyst as every alert today; same caveats still stand (three 424B5 dilution filings on file in the last month, now a very extended +245% move).
+
+### VEEE — faded to +107% from the +153% peak alerted last cycle, no re-alert
+$17.77, down from the $20.74-21.68 range an hour ago — a real pullback, not a fresh development. Sympathy-trade caveat from the last alert still applies; not re-alerted since nothing materially new to report (a fade, not an ignition).
+
+### VRME — roughly flat, no re-alert
+$1.10, +38-43%, essentially unchanged from the $1.07 alert an hour ago.
+
+### Rest of board — unchanged
+PRTH ($7.77, flat), NCPL/CISS/SCNI/SVRN (all previously rejected, no new catalyst). New safety-net names (ABLV, NXTT, STKE, NNVC, RGNT, SLMT, TGL, PWCM, FJET, STI) all smaller movers (+15-26%) well below GRML/VEEE/VRME in significance — not individually worked up this cycle given GRML's dominant, already-catalyst-confirmed move took priority.
+
+### Message sent: yes — GRML re-alert only (new high, accelerating, same catalyst/caveats).

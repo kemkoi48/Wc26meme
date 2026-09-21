@@ -7101,3 +7101,25 @@ $1.81-1.82, +16%. Stocktwits posts repeatedly quote a headline, "Scinai Regains 
 MEDS/BTCT/XXI/TCRT/CLBK/BIAF/SSM/TNMG/PAAI/IMCC (Warrior scan) all previously-seen, already-faded, or catalyst-free names. CRML not re-verified this cycle (already covered in this morning's watchlist build), still presumed unchanged.
 
 ### Message sent: none. No new qualifying name — SVRN/CISS/SCNI all fail the catalyst gate on real verification.
+
+## 2026-09-21, ~8:18am ET — momentum scanner (hourly trigger). PRTH (real M&A catalyst) and GRML (material change, new high) both alerted.
+
+### Market-holiday guard
+SPY fresh extended-hours print (12:17:11 UTC = 8:17am ET, 32s old) — market open, real session, no holiday.
+
+### PRTH (Priority Technology Holdings) — ALERTED, new name, real M&A catalyst
+$7.80, +33.8% (from Friday's $5.83 close), halted then reopened per Stocktwits. Found via the safety-net scan only (float 33.5M, above both regular scans' <20M/<50M float ceilings but still <50M safety-net cutoff) — a genuine coverage-gap catch. Catalyst confirmed real and dated: **MT Newswires, 2026-09-21 8:00am ET**, "Priority Technology to Go Private in $1.6 Billion Deal" — investor group led by Chairman/CEO Thomas Priore agreed to acquire all outstanding shares not already owned, all-cash, $8.05/share (38% premium to last close, 65% premium to the pre-rumor Nov. 7 price), special committee unanimously recommended, board approved, expected to close H1 2027 pending shareholder/regulatory approval. Flagged with an honest caveat: this is a merger-arb situation (trading ~3% below the $8.05 deal price) not a momentum breakout, and the H1 2027 close timeline means no near-term catalyst for further movement — reported because it clears the alert gate, not framed as a day-trade setup.
+
+### GRML — ALERTED again, material change from the two earlier cycles today
+$6.32 (bid), +127% on the day (Friday close $2.85) — a real new high, fully round-tripped from the $4.40 pullback low (~6:45am ET) back to retest and briefly exceed the $6.49 opening-print high (touched $6.50 in the 8:10-8:15am ET bar), on real accelerating volume (1.6M+ shares in that single 5-min bar). Same real dual-sourced Greenland security-pact catalyst already on record; dilution filings and structure caveats from the 7:16am alert still apply.
+
+### VEEE (Twin Vee PowerCats) — checked, REJECTED, no real catalyst
+$10.00 (Stocktwits), +16.5%. A Stocktwits post claims "Merger with USFM corp to close 3rd quarter of 2026" — checked via `get_equity_news`, found nothing: VEEE's real news history is just generic Benzinga mover roundups (08-11, 08-31), no merger announcement anywhere. Unconfirmed rumor, not a catalyst. Rejected.
+
+### AVX (Avax One Technology) — checked, REJECTED, no real catalyst
+$4.44-4.50, +14-16%. Stocktwits chatter is a mix of bullish crypto-treasury narrative (AVAX/BTC holdings) and a real but STALE (yesterday, 09-20) debt-restructuring post — one user even flags real dilution risk from debenture-to-share conversion rights. No fresh dated catalyst for today's move. Rejected.
+
+### Rest of board — unchanged/already covered
+SVRN/CISS/SCNI (safety-net scan, all previously rejected this morning, unchanged). MEDS/BTCT/XXI/TCRT/CLBK/BIAF/PAAI/SSM/TNMG/IMCC (Warrior scan) all previously-seen or catalyst-free.
+
+### Message sent: yes — PRTH (new, real M&A catalyst, with the merger-arb caveat) and GRML (material update: new high, retested open).

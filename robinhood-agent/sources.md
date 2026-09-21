@@ -7170,3 +7170,25 @@ $7.83, essentially flat from the 8:18am alert.
 SVRN/CISS (already rejected, roughly flat). XXI/BTCT/TCRT/CLBK/TNMG/SSM/BIAF/PAAI/IMCC (Warrior scan) all previously-seen or catalyst-free.
 
 ### Message sent: none.
+
+## 2026-09-21, ~10:18am ET — momentum scanner. VRME and VEEE alerted. LOBO real catalyst but faded structure, not alerted.
+
+### Market-holiday guard
+SPY regular-session trade at 14:16:41 UTC = 10:16am ET, 29s old — market open (regular hours now), no holiday.
+
+### VRME (VerifyMe) — ALERTED, new name, real forward-looking catalyst
+$1.07, +35%, RVOL ~6x (Stocktwits-cited). Catalyst confirmed via `get_equity_news`: **MT Newswires, 2026-09-18 4:32pm ET (Friday)** — VerifyMe declared a $0.15/share special dividend contingent on its OpenWorld merger closing; record date 2026-09-29, payable 2026-10-02. Stocktwits chatter (a linked X post reposting the same MT Newswires facts) independently corroborated, not just cited raw. Real and still forward-looking — record date is over a week out, so this isn't a same-day pop that already reversed; today's continued climb (Friday's +23% after-hours move continuing into a fresh +35% Monday) is consistent with the catalyst still working, not stale.
+
+### VEEE (Twin Vee PowerCats) — ALERTED, material continuation, sympathy-trade caveat
+$20.74 (new high, 5-min bars show a push from $16.35 to $20.74 in the last ~15 min), +153%, up sharply from the $14.39 seen an hour ago and $21.68 in the raw scan feed a few minutes earlier — real, accelerating, still igniting. Source: **Benzinga, 2026-09-21 9:41am ET**, "Twin Vee PowerCats Co shares were also up, gaining 93% to $16.32" explicitly grouped with GRML/GLND as "traders react to historic U.S.-Denmark Greenland security headlines." **Flagged with a hard caveat: VEEE manufactures powerboats and has no actual business connection to Greenland or rare earths** — this is real, sourced, dated sympathy/theme trading, not a fundamental catalyst about the company. Alerted because there IS a real dated explanation (clears the letter of the gate), but the explanation itself carries high reversal risk once the Greenland theme cools — same risk profile as a squeeze, just with an identifiable trigger.
+
+### LOBO — real catalyst, structure REJECTED (faded), not alerted
+$0.95-1.01, +90%. Real catalyst confirmed: **Benzinga, 2026-09-21 5:01am/6:02am ET** — Lobo Technologies reported H1 results (loss narrowed to -$0.07/share from -$0.28/share, sales up to $14.587M from $12.091M) and jumped premarket on it, a genuine earnings-improvement catalyst. BUT real 5-min bars show it peaked at $1.29 (14:00 UTC bar) and has faded to $0.95 by 14:10 UTC — down ~26% from a high set only ~15-20 minutes earlier, already reversing hard rather than igniting. Catalyst passed, structure failed — not alerted, logged for the record (a real catalyst is necessary but not sufficient; the "near the day's high" gate still applies).
+
+### NCPL — unchanged, still REJECTED (repeating squeeze pattern, RVOL now <1 — a real fade)
+$1.13, +53% (down from the +58-68% seen last cycle), RVOL now 0.54 (below average — real volume drying up, confirming the fade). No new catalyst found. Consistent with the already-logged repeating-squeeze pattern.
+
+### Rest of board — unchanged
+GRML ($6.93, +143%, off its $7.60 peak, not a fresh high, no re-alert), PRTH ($7.77, unchanged), SVRN/CISS (unchanged, previously rejected).
+
+### Message sent: yes — VRME (real, forward-looking dividend/merger catalyst) and VEEE (real but explicitly sympathy-trade catalyst, flagged as such).

@@ -7211,3 +7211,19 @@ $1.10, +38-43%, essentially unchanged from the $1.07 alert an hour ago.
 PRTH ($7.77, flat), NCPL/CISS/SCNI/SVRN (all previously rejected, no new catalyst). New safety-net names (ABLV, NXTT, STKE, NNVC, RGNT, SLMT, TGL, PWCM, FJET, STI) all smaller movers (+15-26%) well below GRML/VEEE/VRME in significance — not individually worked up this cycle given GRML's dominant, already-catalyst-confirmed move took priority.
 
 ### Message sent: yes — GRML re-alert only (new high, accelerating, same catalyst/caveats).
+
+## 2026-09-21, ~12:17pm ET — momentum scanner. VRME re-alerted on a fresh, real volume ignition. GRML pulled back, no re-alert.
+
+### Market-holiday guard
+SPY regular-session trade at 16:16:24 UTC = 12:16pm ET, fresh — market open, no holiday.
+
+### VRME — ALERTED again, real fresh ignition (not a stale continuation)
+$1.62, +104% (up from +35-43% at the last two checks). Real 5-min bars confirm this is a genuine fresh move: volume was running ~50-150K/5-min bar through 15:55 UTC, then jumped to 3.3M (16:00 UTC), 4.1M (16:05), 2.9M (16:10) — a real, sharp volume expansion starting exactly at 12:00pm ET, not manufactured or stale. Same catalyst as the original alert (MT Newswires, 2026-09-18 — special dividend tied to the OpenWorld merger); no new separate news found, but Stocktwits chatter (RETAlerts: "float rotation sitting at 2.96x already") shows real momentum-chasing compounding on top of the existing real catalyst.
+
+### GRML — pulled back to $8.98 (+215%), no re-alert
+Down from the $9.83 (+245%) peak alerted last cycle — a real fade, not a fresh high. No new development to report.
+
+### Rest of board — unchanged
+PRTH ($7.77, flat), NCPL/CISS/SCNI/SVRN (all previously rejected). Safety-net names (STKE, NNVC, NXTT, TGL, RGNT, SLMT, FJET, SST, STI) all smaller movers (+16-25%), same list as last cycle, not individually re-checked given no material change.
+
+### Message sent: yes — VRME re-alert only (real fresh ignition, same catalyst).

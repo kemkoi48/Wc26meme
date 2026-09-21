@@ -7065,3 +7065,20 @@ SPY fresh extended-hours print (10:31-10:34 UTC = 6:31-6:34am ET, real move off 
 - **AKAN** — never had a real dated catalyst (only "sustained multi-day squeeze"), and the squeeze itself has been fading for days (down again premarket, $2.96 vs $3.22 Friday close).
 
 ### Message sent: yes — CRML/GRML adds with the real catalyst, the 6 drops and why.
+
+## 2026-09-21, 7:16am ET — momentum scanner. GRML alerted with real caveats (dilution risk + already-off-high structure). CRML confirmed but excluded from both scans (likely float too large).
+
+### GRML (Greenland Mines) — ALERTED, with caveats
+$5.31-5.37, +87-88% (safety-net scan; Early Momentum Ignition and Warrior Trading Style both also caught it). Catalyst: real, dated, dual-sourced (MT Newswires + Benzinga, both 2026-09-21 before 5am ET) — the Trump-Denmark-Greenland security agreement, and GRML is directly named as a beneficiary in both articles, with real underlying assets (Sarfartoq rare earths, Skaergaard project). Already added to today's watchlist this morning.
+
+**Structure — mixed, not a clean setup:** real premarket high was $6.49, set at the very open (~4:00-4:05am ET) — over 3 hours ago and NOT yet retested; price then chopped down hard to a $4.40 low (~6:45am ET). It's now recovering with real, accelerating volume (390K -> 425K -> 1.44M shares in the last three 5-min bars, 7:00-7:15am ET) but is still ~18% below the morning's actual high. This is a fresh breakout attempt within the day's range, not a fresh high — flagged honestly rather than dressed up as "igniting."
+
+**Dilution risk — real and worth flagging:** three separate 424B5 prospectus supplements on file in the last month (2026-08-24, 08-25, 08-27) — active shelf/ATM-style dilution mechanics on a stock that's up ~90% today. Float (2.93M) sits just above this account's sub-1M hard-dilution-check trigger, but the filing pattern itself is the real signal.
+
+### CRML (Critical Metals) — same real catalyst, but did not surface in either scan
+$8.53-8.55, +26.9%. Same dual-sourced catalyst as GRML, real underlying assets (Tanbreez processing breakthrough, REalloys offtake, Romanian refinery economics). Did not appear in Early Momentum Ignition or Warrior Trading Style — most likely its float/market cap sits above those scans' low-float thresholds (it's a larger, more institutionally-held name than GRML). Not re-verified via a scan catch this cycle, but already covered in this morning's watchlist build with the same catalyst sourcing.
+
+### Rest of board — unchanged, no other qualifying names
+MEDS/XXI/BTCT/TCRT/SSM/CLBK/BIAF/PAAI/TNMG/IMCC and the broader Early Momentum Ignition list all previously-seen names or catalyst-free price action. SVRN (safety-net scan, +18%) not checked this cycle — small mover, deprioritized against GRML/CRML.
+
+### Message sent: yes — GRML, with the dilution and structure caveats stated plainly, plus a note on CRML.

@@ -7148,3 +7148,25 @@ No open S7 position (`get_option_positions` empty) — flat, screened fresh.
 ### Result: no trade. Nothing cleared both the cheap-IV/real-catalyst bar AND fresh (non-chased) structure. Account stays flat on S7.
 
 ### Message sent: none — no watchlist change, no new position, no closed position.
+
+## 2026-09-21, ~9:18am ET — momentum scanner. No new qualifying name. NCPL (largest mover, +59-68%) checked and rejected — serial catalyst-free squeeze.
+
+### Market-holiday guard
+SPY fresh premarket print (13:17:17 UTC = 9:17am ET, 29s old) — market open, no holiday.
+
+### NCPL (Netcapital) — largest % change this cycle, checked, REJECTED, no catalyst
+$1.17-1.20 (Warrior/safety-net scans) to $14.39 for VEEE's own separate move — NCPL itself +58-68%, huge volume (127M+ shares on a 7.3M float). One Stocktwits user in the live feed literally asks "whats causing the premarket run?" — no one in the crowd has a real answer. Checked `get_equity_news`: no article dated today; NCPL's own recent history (pulled from the same feed) shows this is a REPEATING catalyst-free squeeze pattern — "jumped 126%" on 2026-08-26, reversed -27% and -22% within the same 24 hours, twice, with nothing but "Reading International"-style generic mover-roundup mentions since. Classic catalyst-free serial squeeze. Rejected.
+
+### VEEE — re-checked given material continuation (+15% earlier -> +68% now), still REJECTED
+$14.39, up from the $9.87-10.72 range seen at the 7:35/8:18am cycles. Re-ran `get_equity_news`: still nothing dated today, same generic old-earnings mention as before. Confirms the earlier rejection — no real catalyst has emerged despite the much bigger move.
+
+### GRML — unchanged, no re-alert
+$7.24, still up big on the day but not a fresh high since the 8:18am alert ($6.50 high at the time; has since run to $7.60+ and settled back to $7.24 — no new development to report).
+
+### PRTH — unchanged, no re-alert
+$7.83, essentially flat from the 8:18am alert.
+
+### Rest of board — unchanged
+SVRN/CISS (already rejected, roughly flat). XXI/BTCT/TCRT/CLBK/TNMG/SSM/BIAF/PAAI/IMCC (Warrior scan) all previously-seen or catalyst-free.
+
+### Message sent: none.

@@ -7082,3 +7082,22 @@ $8.53-8.55, +26.9%. Same dual-sourced catalyst as GRML, real underlying assets (
 MEDS/XXI/BTCT/TCRT/SSM/CLBK/BIAF/PAAI/TNMG/IMCC and the broader Early Momentum Ignition list all previously-seen names or catalyst-free price action. SVRN (safety-net scan, +18%) not checked this cycle — small mover, deprioritized against GRML/CRML.
 
 ### Message sent: yes — GRML, with the dilution and structure caveats stated plainly, plus a note on CRML.
+
+## 2026-09-21, ~7:35am ET — momentum scanner. No new qualifying names. GRML unchanged, no re-alert. SVRN/CISS/SCNI checked and rejected on the catalyst gate.
+
+### GRML — unchanged from the 7:16am alert, no re-alert
+$5.32 (Stocktwits pulse), essentially flat from the $5.31-5.37 already alerted this morning. Same real dual-sourced Greenland security-pact catalyst, same caveats already on record (dilution filings, off-the-morning-high structure). Nothing new to add.
+
+### SVRN — checked, REJECTED, pure squeeze chatter, no dated catalyst
+$24.36-25.99, +19.9%. Stocktwits message volume EXTREMELY_HIGH, sentiment EXTREMELY_BULLISH (93), but every post is short-squeeze hype with no underlying news event ("should be over $100 based purely on its assets," "going to $1K," "borrow rate looking great, squeeze the shorty time"). No dated press release, filing, or news article found anywhere. Classic catalyst-free low-float squeeze — the dominant excluded pattern this account already established (2026-09-16 hard gate).
+
+### CISS — checked, REJECTED, pure squeeze chatter, no dated catalyst
+$1.59-1.61, +24.8%. Same pattern: retail chatter about being "loaded," a PE-ratio jab, no real news. No catalyst found.
+
+### SCNI — checked, REJECTED, claimed catalyst does NOT check out against real news
+$1.81-1.82, +16%. Stocktwits posts repeatedly quote a headline, "Scinai Regains Compliance with Nasdaq Minimum Bid Price Requirement," as if it were breaking news. Pulled real news via `get_equity_news(SCNI)` — no article with that headline or date exists; the most recent real article is a 2026-09-15 Benzinga after-market mover roundup (SCNI -11%), and SCNI's actual news history for the past two weeks is nothing but generic Benzinga "stocks moving" roundups with wild, unexplained swings (+86.9% one premarket, -33.2% the next session, +45% another day) — a volatile, catalyst-free chop name being passed around on unverified retail claims. Per Rule Zero, an unconfirmed claim repeated on social media is not a real catalyst until cross-checked against an actual news source, and this one didn't check out. Rejected.
+
+### Rest of board — unchanged
+MEDS/BTCT/XXI/TCRT/CLBK/BIAF/SSM/TNMG/PAAI/IMCC (Warrior scan) all previously-seen, already-faded, or catalyst-free names. CRML not re-verified this cycle (already covered in this morning's watchlist build), still presumed unchanged.
+
+### Message sent: none. No new qualifying name — SVRN/CISS/SCNI all fail the catalyst gate on real verification.

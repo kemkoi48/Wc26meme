@@ -7045,3 +7045,23 @@ IMCC/TNMG/SSM/CANG/SVRN/PRPL/SKYA/LGHL/DFDV/FNUC/ETS/BTCS/SPRU/QMLS/TJGC all pre
 ### Message sent: none. Quiet close to the trading day — no new name clears both gates.
 
 ### Day's tally (7:09am-4:16pm, 10 cycles): one alert sent (FTCI 11:10am, faded by next cycle) plus one still-standing alert (ABTC 3:16pm, held into the close). Everything else across the day was either a confirmed no-catalyst squeeze (GIPR/IMCC/TNMG/SSM/CPOP/TJGC/SVRN/etc., the dominant pattern today) or a real catalyst that had already printed before the scanner could act on it (TCRT/CPOP/MEDS/PAAI). Consistent with the 2026-09-16 hard-gate's intended effect.
+
+## 2026-09-21, ~6:35am ET — Premarket watch. Renamed "September 18" -> "September 21". Full turnover: dropped all 6 prior names, added CRML/GRML on a real geopolitical catalyst.
+
+### Market-holiday guard
+SPY fresh extended-hours print (10:31-10:34 UTC = 6:31-6:34am ET, real move off Friday's $761.69 close) — market open, real session, no holiday.
+
+### Added (2) — real, dated, multi-source catalyst
+**CRML (Critical Metals Corp)** — $8.44 premarket, +25-31%. Catalyst: Trump announced a US-Denmark-Greenland security agreement (Truth Social), confirmed via MT Newswires (2026-09-21 3:54am ET) and Benzinga (2026-09-21 5:01am ET) — both explicitly name CRML among the Greenland-linked stocks moving on the news. Real underlying assets, not just sympathy: CRML's Tanbreez heavy rare earth project (Greenland) just hit a real processing breakthrough (>99% eudialyte dissolution, announced 9/16) plus a 15-year REalloys offtake deal and Romanian refinery economics ($1.8-2.2B projected annual revenue). This is a fundamentally grounded name catching a fresh macro tailwind, not a bare squeeze.
+
+**GRML (Greenland Mines)** — $4.82-4.94 premarket, +69-73%. Same catalyst, same two-source confirmation. Real assets too: closed the Sarfartoq Nd-Pr rare earths project acquisition 9/1, also holds the Skaergaard palladium-platinum-gold-vanadium project. Flagged with more caution than CRML: Stocktwits sentiment is EXTREMELY_BULLISH (92.6%) but message volume shows real disagreement in the thread itself — one widely-liked post (5 likes) argues the security pact covers military/missile-defense rights only and does NOT grant commercial mining/drilling licenses, predicting "a big pullback Monday." Real catalyst, but more speculative follow-through risk than CRML.
+
+### Dropped (6) — all stale, no fresh catalyst or momentum
+- **DAIC** — no merger news found anywhere in the record (the prior "pending merger" caution note doesn't check out against real news); has been fading for days (-27.7% Friday alone), quiet again this morning.
+- **VEEA** — the NovaGen merger news is 6 days stale (2026-09-15); stock has fallen hard since (-15.58% Friday), no follow-through.
+- **DTSS** — the AI-deals catalyst is 4 days stale (2026-09-17); already faded hard (-22.96% Friday, -20.5% premarket that same day), nothing new today.
+- **TCRT** — the SEC bylaws-filing catalyst fully played out and reversed; this is the same name whose crash inside a live position was discussed directly with the user on 2026-09-18. Structurally done.
+- **CPOP** — 15-for-1 stock split catalyst, mechanical and priced in since 9/17; choppy/flat this morning, no fresh news.
+- **AKAN** — never had a real dated catalyst (only "sustained multi-day squeeze"), and the squeeze itself has been fading for days (down again premarket, $2.96 vs $3.22 Friday close).
+
+### Message sent: yes — CRML/GRML adds with the real catalyst, the 6 drops and why.

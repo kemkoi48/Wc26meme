@@ -7312,3 +7312,90 @@ SPY fresh premarket print (12:20:09 UTC = 8:20am ET) — market open, no holiday
 - No new symbols appeared in either regular scan or the safety-net scan vs. the 8:03am run.
 
 ### Message sent: none — correct output for a quiet cycle per the hard gate. Two cycles 17 minutes apart on an unchanged board is exactly the case where silence beats a repeat alert.
+
+---
+
+## 2026-09-22, 8:35am ET — S7 options screen + pre-open watchlist rectify (scheduled trigger)
+
+**Step 0 market-open guard: PASSED.** SPY fresh print at 12:36:26 UTC today.
+
+### Part A — watchlist rectify: no change made
+- **GRML** $13.55 (+43.8%) — holding the morning's move.
+- **BB** $9.13 (+7.0%) — holding this morning's add.
+- **CRML** $9.02-9.09 (-3.3%) — consolidating, not a hard fade. Below the hard-fade threshold, so no removal.
+
+No rectify needed.
+
+### Part B — S7 entry screen: FLAT, no entry
+
+`get_option_positions` returned empty, so the entry screen ran. Track 1 IV/HV sweep on scan
+`47f4f938-a4d9-413e-a1c7-e01855c09e45` returned 397 items / 200 rows; **33 names cleared the 0.90
+cheapness cap.** Every one of them was rejected. Gate kills below.
+
+#### The de-gapped-ratio method (new this run — worth keeping)
+
+The standing concentration check asked whether one day dominates the HV window. This run made the
+test quantitative instead of a yes/no: compute HV from real daily closes with the single largest
+log-return removed, scale Robinhood's reported HV by `HV_ex_top / HV_full`, and re-state the ratio
+against that de-gapped HV. If the gap day is what made a name look cheap, the adjusted ratio jumps
+back over the cap. Direction is always the same sign — de-gapping lowers HV, so the adjusted ratio
+is always HIGHER (less cheap) — which is the correct conservative direction for a BUYER of premium.
+
+Caveat recorded honestly: this assumes Robinhood's HV window is close to a 30-session close-to-close
+annualized calc. Spot-check supports that (EIX mine 88.5% vs RH 104.1%; CMCSA mine 32.8% vs RH 34.8%)
+but it is an approximation, not an identity. It is used to REJECT, never to justify an entry.
+
+#### Kill list — which gate killed what
+
+**Band 1, ratio < 0.63 — cheapness artifact (5 fresh rejections):**
+
+| | HV(30d) | HV ex-top-day | Top single day | Gap date |
+|---|---|---|---|---|
+| EIX | 88.5% | 46.2% | **73.7%** | 08-31, -26.2% |
+| PCG | 79.4% | 46.5% | **66.9%** | 08-31, -22.4% |
+| PYPL | 48.4% | 28.6% | **66.3%** | 08-28, -13.6% |
+| TTAN | 119.4% | 60.8% | **74.9%** | 09-09, -35.6% |
+| HRL | 35.9% | 17.9% | **76.1%** | 08-27, -10.8% |
+
+Calibration: CRML PASSED yesterday at 21.6%. The known-failed cohort — AMLX 70.1%, CHPT 64.5%,
+AAP 55.6%, COO 53.1% — sits exactly where these five sit. EIX and PCG share the same gap date:
+one California utility event, two tickers, both showing up as "cheap."
+
+Also in this band: **BRZE** (rejected 09-18, stale 09-09 earnings catalyst) and **GAP**
+(known-rejected, reversed earnings pop). No re-work needed.
+
+**Band 2, 0.70-0.90 but illiquid — spread/liquidity gate:**
+TH, TENB, QFIN, ABTC, BKKT, METC, CAI, BEAM, FIVN, GEMI, NAVN, PLAY, SHAK, CPRT, BBWI, ASO.
+All 2-8k average options volume and 5-40k open interest. Not worth paying the spread on.
+
+**Band 3, 0.70-0.90 and genuinely liquid — de-gapped ratio kills all but one:**
+
+```
+SNAP  0.799 -> 0.889     BRUN  0.822 -> 0.903     PINS  0.756 -> 0.904
+SOFI  0.882 -> 0.940     IOT   0.825 -> 0.970     S     0.853 -> 0.999
+PURR  0.801 -> 1.005     UEC   0.869 -> 1.055     CMCSA 0.871 -> 1.066
+CELH  0.897 -> 1.162
+```
+
+Nine of ten cross back over the 0.90 cap once their gap day is removed. **SNAP** is the only
+survivor at 0.889 — and that is still nowhere near the 0.80 McMillan Method-2 threshold S7
+actually wants.
+
+**The catalyst gate finishes it.** Of all 33 names, only two carry a verified dated catalyst inside
+a 31-day window: **UEC** (2026-09-29, am, verified) and **CMCSA** (2026-10-22, am, verified). Both
+de-gap to ABOVE 1.00 — IV sitting above realistic forward vol, the exact opposite of the S7 setup.
+**SNAP**, the only name to clear cheapness, has no scheduled report in the window at all.
+
+Nothing reached the delta (>=0.30) or premium (<=$150) gates, because nothing cleared
+cheapness-plus-catalyst first. No entry. Staying flat.
+
+### Pattern worth noting
+Three straight S7 runs have now died at a pre-delta gate: 09-18 BRZE on a stale catalyst, 09-21 CRML
+on structure (cheapness and concentration both PASSED, but the high was 4.5 hours old), 09-22 the
+entire board on cheapness-artifact plus no-catalyst. The IV/HV scan is reliably surfacing gap
+wreckage rather than cheap optionality. The screen is working as designed — it is the late-August /
+early-September gap cluster (08-27, 08-28, 08-31, 09-09) still sitting inside every 30-day HV
+window and manufacturing fake cheapness across unrelated sectors. That cluster rolls out of the
+window in early October; expect the cheap tail to be far smaller and more trustworthy after that.
+
+### Message sent: none — no S7 entry, nothing actionable on the watchlist.

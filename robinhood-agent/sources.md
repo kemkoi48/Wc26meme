@@ -7521,3 +7521,59 @@ Two open growth positions: **XP** 18sh @ $19.97 entry, stop $17.11 (ratcheted 09
 **CRSR** 9sh @ $13.52 entry, stop $11.09. Both stops verified resting today.
 
 Logged to trades.csv as row 20 and to CLAUDE.md's S9 row with the real numbers.
+
+---
+
+## 2026-09-22, ~9:39am ET — SCANNER DEFECT FOUND: DCOY invisible to all three scans for ~2 hours despite clearing every filter, including the RVOL-filter-free safety net
+
+User asked "why wasn't DCOY alerted earlier" after I flagged it at 9:33am. Investigated with real data
+rather than assuming a process miss.
+
+**Catalyst timing, confirmed from real bars:** DCOY was flat at $2.545 (its real official 09-21 close,
+confirmed via `get_equity_quotes`) with **zero volume** from premarket open through 07:29 ET. The
+07:30:00 UTC->ET press release (PRNewswire, "Decoy Therapeutics Exploring Pan-Filovirus Program via
+FDA Animal Rule Pathway and Non-Dilutive Funding") lines up exactly with the first real 10-min bar
+(11:30 UTC): high $5.216 on 2.7M shares from a standing start.
+
+**By 8:03am ET (~33 min post-catalyst) DCOY cleared every filter on all three saved scans:**
+- Price ~$4.66-5.14 (+83% to +102% vs the real $2.545 close)
+- Float 652,092 (well under the 20M/50M caps on all three)
+- Volume already several million shares (over every scan's 100K/300K/10M floor)
+
+**It did not appear.** Checked directly against the 9:19am ET cycle's actual results (the scheduled
+momentum-scanner fire earlier this same hour): Early Momentum Ignition (89 total matches), Warrior (6),
+and the safety-net scan (6) were all pulled and none of the three contained DCOY, despite DCOY by then
+being ~2 hours post-catalyst, over $5, on real volume in the millions. It first appeared when I manually
+re-ran all three scans at 9:33am ET — by then it was already >$6 (+100%+ from close).
+
+**Why this is worse than the 09-17 AEMD gap, not just a repeat of it.** AEMD's root cause was traced to
+the two regular scans' hard `Relative volume (1, 1H) > 3` INCLUSION filter, combined with Robinhood's
+own documented broken premarket RVOL field. The safety-net scan (`a8db8ea4-...`) was built specifically
+to have **no RVOL filter of any kind** so a broken RVOL calc could never again silently drop a real
+mover. DCOY still didn't appear in it for ~2 hours despite clearing its Last/%Change/Volume/Float
+filters by a wide, unambiguous margin. That means the safety net's fix, while real and already proven
+once (LHSW and CPOP before it), does not cover every version of this failure mode. The likely remaining
+culprit is scanner-backend indexing/propagation lag on a newly-explosive micro-float name rather than
+any filter logic — but this is not proven, only the strongest remaining candidate after ruling out every
+filter threshold on paper.
+
+**Not fixed unilaterally** — same handling as the Last-$20-ceiling defect and the MACD-blind-spot gap:
+surfaced to the user rather than silently worked around. Worth considering a fourth scan or a periodic
+raw `search`/quote sweep on extreme-%-change names as a cross-check, but that is the user's call, not
+mine to add.
+
+**Catalyst quality, checked and logged honestly:** PRNewswire release is early-stage/exploratory
+language — in vitro cell-assay data against Ebola/Marburg, no IND, no clinical trial, "non-dilutive
+funding" is intent-to-pursue with no grant secured. Float 652K also carries a live overhang: an S-1
+(filed 2026-07-10, recirculated on Stocktwits today as if new) registers 3.77M resale shares tied to
+June PIPE warrants, up to ~$19.1M further dilution if exercised for cash. Real catalyst, clears the
+hard gate, but thin — would be alerted with the preclinical-not-clinical framing and the dilution
+overhang stated up front, not presented clean.
+
+### QNME advice given (context, not a trade placed)
+User asked whether to stay or exit QNME. No position or order exists for QNME on the agentic account
+(432805174) -- checked `get_equity_positions` and `get_equity_orders` directly, confirmed empty. Gave a
+structure-only read: high $1.76 at 7:44am ET, ~2 hours old with no retest above $1.62, real RVOL(1H)
+only 1.33x post-open, catalyst already fully priced in since 7:10am -- textbook "already printed," and
+the account's own order-history rule (n=108, trades held past ~5min net negative) was cited. No order
+placed; this alert-only job places no orders per its standing rule regardless.

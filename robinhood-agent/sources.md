@@ -7276,3 +7276,25 @@ $1.42-1.43, +98%, huge volume (64.5M shares) — the single largest % mover this
 CRML, BB, PRTH, NCPL, VRME, VEEE, CISS, SCNI, GDC all previously covered or catalyst-free (GDC re-appeared, +28%, same no-catalyst conclusion as this morning's premarket-watch check).
 
 ### Message sent: yes — GRML re-alert (fresh breakout) and QNME (new, real catalyst). TOPS explicitly named and rejected with reasoning.
+
+## 2026-09-22, ~8:03am ET — momentum scanner (user asked "Scan again"). QNME re-alerted on a real volume explosion. IMCC checked and rejected. GRML faded, no re-alert.
+
+### Market-holiday guard
+SPY fresh premarket print (11:59:50 UTC = 7:59am ET) — market open, no holiday.
+
+### QNME — RE-ALERTED, material continuation + real volume expansion
+$1.47-1.48, **+130%** (yesterday's close $0.6396), up from the +72% at the 7:10am alert. The volume expansion is the real signal: extended-hours 10-min bars ran 111K / 79K / 68K through the quiet 10:30-10:50 UTC stretch, then the 11:00 UTC breakout printed **2.38M / 2.75M / 6.43M / 2.66M / 8.05M / 3.17M** in consecutive bars. Same confirmed catalyst (Benzinga 2026-09-22 5:30am ET, Compal Electronics Purchase and Sale Agreement for 32 GPU server units). **Structure stated honestly rather than dressed up:** it spiked to $1.76 in the 11:40-11:50 UTC bar (7:40-7:50am ET) and has pulled back ~16% to $1.47 — the high was 15-20 minutes before this cycle ran, so it is at the boundary of the "still igniting" window, not cleanly inside it. Price remains well above the $1.33-1.34 base it broke from.
+
+### IMCC — checked, REJECTED, no catalyst + textbook whipsaw profile
+$4.26-4.28, +38%, float 573,636 (sub-1M) at a sub-$5 price — the exact cohort the 2026-09-04 WETO dilution rule covers. Catalyst gate failed first, so no alert regardless: Stocktwits is pure float-math/squeeze talk ("500k float and 600k outstanding, 8x v/f ratio, explosion likely 8.6/9.5", "let's see some movement to $8 and $9") with no dated news, and one bearish post arguing it just reverts at the open. `get_equity_news` confirms the pattern has NO news attached at any point: +143% Friday, then -11.3% Friday after-hours, then -30.3% premarket / -23.5% intraday Monday, now +38% today — every single mention is a generic Benzinga "stocks moving" roundup that names no reason. This is the RETO precedent the hard gate cites by name (three catalyst-free sessions, violent whipsaw). Rejected.
+
+### GRML — faded off its high, no re-alert
+$12.95-13.03, +37.5-38% (yesterday's close $9.42). Pulled back ~8% from the $14.10 high set at 7:00-7:10am ET, ~55 minutes before this cycle — past the "still igniting" window and not a fresh high. Same catalyst, no new development. For the record, Benzinga (2026-09-21 1:06pm ET) confirms Monday's real move: GRML "rose 232.6% to $9.48 during Monday's regular session."
+
+### TOPS — unchanged, still REJECTED
+$1.30, +81%, faded from the $1.43 seen at 7:10am. No catalyst found then or now; dilution flags (active ATM, 50M ELOC, 13 reverse splits since 2008) unchanged.
+
+### Honest follow-up on yesterday's VRME alerts — fully round-tripped
+VRME **-16% today at $1.155**, having reversed both of yesterday's alerts (sent at +35% and again at +104% on the real MT Newswires special-dividend/OpenWorld-merger catalyst). The catalyst was real and verified, and the move it produced has completely given back. Recorded here because this sleeve's rule is that outcomes go in the record, not just entries — a verified catalyst is not a guarantee of follow-through.
+
+### Message sent: yes — QNME re-alert with the spike-top caveat stated plainly; IMCC/TOPS named and rejected; GRML fade and the VRME round-trip both disclosed.

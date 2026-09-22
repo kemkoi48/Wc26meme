@@ -7399,3 +7399,81 @@ window and manufacturing fake cheapness across unrelated sectors. That cluster r
 window in early October; expect the cheap tail to be far smaller and more trustworthy after that.
 
 ### Message sent: none — no S7 entry, nothing actionable on the watchlist.
+
+---
+
+## 2026-09-22, ~9:19am ET — momentum scanner. LHSW ALERTED: real verified catalyst, explosive real volume, spike-fade caveat stated.
+
+**Step 0 guard: PASSED.** SPY non-reg print 2026-09-22T13:19:36Z.
+
+### LHSW (Lianhe Sowell International Group) — ALERTED, new name, safety-net-only catch
+
+Surfaced **ONLY by the safety-net scan** (`a8db8ea4-...`), absent from both regular scans. Both
+absences are explainable by documented filters, not a silent RVOL drop: Early Momentum Ignition
+filters Last $2-20 and LHSW is $1.28-1.40; the Warrior scan requires volume >=10M and the scan's
+own Volume field read 468,612. Still a real catch — this is the second live proof (after CPOP on
+09-18) that the safety net earns its place.
+
+**Catalyst: REAL, DATED, INDEPENDENTLY VERIFIED.** GlobeNewswire, **2026-09-22 08:00 ET** —
+"Lianhe Sowell International Group Ltd. Signs Strategic Cooperation Agreement with Subsidiary of
+Chery Group Holding Company to Advance Intelligent Equipment in China's Automotive Aftermarket."
+Partner is Kumquat Technology, a Chery Group subsidiary operating 1,000 automotive service centers;
+scope is intelligent operating equipment across 24 automotive aftermarket processes, plus
+demonstration sites and possible international expansion.
+- Surfaced as a LINK on Stocktwits, then **verified directly against the GlobeNewswire release
+  itself** rather than cited from chatter — per the TCRT 09-17 precedent that a linked claim stays
+  gated until independently confirmed. This one confirmed.
+- NOT yet picked up by Robinhood/Benzinga: their 08:06 ET roundup still had LHSW at +26.8%/$0.55
+  with no mention of the agreement. Stocktwits-first ordering is what caught this.
+
+**Catalyst weakness, stated plainly:** the release discloses **no dollar value, no contract size and
+no revenue figure**. It is a framework/cooperation agreement, not a purchase order with a number
+attached — materially weaker than QNME's Compal deal ($18.8M, 32 GPU units, in an SEC filing).
+
+**Dilution check:** `get_sec_filing_index` shows **424B4 prospectus filed 2026-09-03** and a 6-K on
+09-04; the GlobeNewswire page's related-links section confirms an **$11 million follow-on public
+offering that CLOSED 2026-09-03**. So the dilution is recent and already done rather than a pending
+overhang — but it is three weeks of fresh supply into this move, and it belongs in the alert.
+
+**Volume — the scan's own field is badly wrong, real bars used instead.** The safety-net scan
+reported Volume 468,612. Real 10-minute extended-hours bars show premarket volume of roughly
+**65.3M shares against an 8.77M float (~7.4x float turnover)**:
+```
+12:00 UTC  5.07M   (the 08:00 ET release bar; 0.439 -> 0.544)
+12:10     10.63M
+12:20      6.79M
+12:30      8.41M
+12:40      6.26M
+12:50     10.24M
+13:00      5.98M
+13:10     11.92M   (0.975 -> 1.450, high 1.560)
+```
+Base before the release was flat $0.428 on a few hundred shares per bar. This is a genuine ignition,
+not one print. Logged as another instance of a broken scan column — same class of defect as the
+Relative-volume field, now also seen in Volume. Do not trust either at face value.
+
+**Structure — the honest read.** High of **$1.560** printed in the 13:10-13:20 UTC bar
+(9:10-9:20am ET), i.e. minutes before this cycle. By 13:22:08 UTC the quote was **$1.28 bid /
+$1.29 ask, ~18% off that high and falling** (the 9:19 scan row had it at $1.4002). It is inside the
+"~15-20 minutes of a fresh high" igniting window by the clock, but it is reversing hard within that
+window — the same boundary case as QNME at 8:03am. Alerted with the fade stated up front, not
+dressed up.
+
+### Rest of the board — nothing else qualified
+- **QNME** $1.32, +106% — already alerted twice today ($1.10 at 7:10am, $1.47-1.48 at 8:03am; spike
+  high $1.76). Now BELOW the 8:20am read of $1.44-1.45 and further off the high. No new high, no
+  fresh volume expansion. Correctly skipped per the already-alerted rule; catalyst already logged.
+- **IMCC** $4.45, +44.2% — made a fresh high vs this morning's $4.18, so it was re-checked rather
+  than assumed unchanged. Still **no named catalyst**: every Benzinga mention across 09-18 to today
+  is a "stocks moving" roundup with no reason given. Hard gate applies — no alert. Float 573,636,
+  sub-$5; had it carried a catalyst the sub-1M-float dilution check would have been mandatory.
+- **TOPS** $1.2989 (+80.9%), **GDC** $1.78 (+21.9%) — unchanged from earlier rejections, still no
+  catalyst in any source.
+- **GRML** $13.11-13.15, +39-40% — already alerted at 7:10am, still below the $14.10 high set then.
+  A recovery toward a prior high is not a new high. No re-alert.
+- Early Momentum Ignition's other >5% names (AEHL, BIAF, TGL, CANG, STFS, SLMT, AKAN, SST) all sit
+  on modest real volume with no catalyst surfaced; none displaced LHSW as this cycle's one real
+  setup.
+
+### Message sent: yes — LHSW, with the no-dollar-value caveat, the closed $11M offering, and the
+18%-off-the-spike structure all stated in the alert rather than buried.

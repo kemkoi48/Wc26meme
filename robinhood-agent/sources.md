@@ -7298,3 +7298,17 @@ $1.30, +81%, faded from the $1.43 seen at 7:10am. No catalyst found then or now;
 VRME **-16% today at $1.155**, having reversed both of yesterday's alerts (sent at +35% and again at +104% on the real MT Newswires special-dividend/OpenWorld-merger catalyst). The catalyst was real and verified, and the move it produced has completely given back. Recorded here because this sleeve's rule is that outcomes go in the record, not just entries — a verified catalyst is not a guarantee of follow-through.
 
 ### Message sent: yes — QNME re-alert with the spike-top caveat stated plainly; IMCC/TOPS named and rejected; GRML fade and the VRME round-trip both disclosed.
+
+## 2026-09-22, ~8:20am ET — momentum scanner (hourly trigger, 17 min after the manual 8:03am cycle). QUIET — nothing materially changed, no alert.
+
+### Market-holiday guard
+SPY fresh premarket print (12:20:09 UTC = 8:20am ET) — market open, no holiday.
+
+### Nothing qualified — every name is one already handled today
+- **QNME** $1.44-1.45, +125-127% — slightly BELOW the $1.47-1.48 at the 8:03am re-alert, and well below its $1.76 spike high. No new high, no fresh volume expansion. Correctly skipped per the "already alerted unless materially changed" rule. Largest real % change this cycle, so checked per the standing rule — catalyst (Compal GPU server agreement) already logged today, nothing new to add to the paper trail.
+- **GRML** $13.68, +45.2% — recovered from the $12.95 fade but still under the $14.10 high set at 7:00-7:10am ET, which was already covered by the 7:10am alert. A recovery toward a prior high is not a new high; re-alerting at a price BELOW the earlier alert would be noise, so no message.
+- **TOPS** $1.30-1.31 (+82%), **IMCC** $4.18 (+35.5%), **GDC** $1.76 (+20.5%) — all unchanged from earlier rejections, still no catalyst in any source.
+- **VRME** $1.13, **-18%** — continuing to deteriorate (was -16% at 8:03am), further confirming the full round-trip of yesterday's two alerts.
+- No new symbols appeared in either regular scan or the safety-net scan vs. the 8:03am run.
+
+### Message sent: none — correct output for a quiet cycle per the hard gate. Two cycles 17 minutes apart on an unchanged board is exactly the case where silence beats a repeat alert.

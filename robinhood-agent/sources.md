@@ -7577,3 +7577,33 @@ structure-only read: high $1.76 at 7:44am ET, ~2 hours old with no retest above 
 only 1.33x post-open, catalyst already fully priced in since 7:10am -- textbook "already printed," and
 the account's own order-history rule (n=108, trades held past ~5min net negative) was cited. No order
 placed; this alert-only job places no orders per its standing rule regardless.
+
+---
+
+## 2026-09-22, ~10:19am ET — momentum scanner. No new alert; DCOY's scanner-gap now resolved.
+
+**Step 0 guard: PASSED.** SPY regular-hours print 14:19:23Z.
+
+**DCOY now visible in all three scans** (Early Momentum Ignition, Warrior, safety net) for the first
+time this session -- confirms the ~2-hour coverage gap logged at 9:39am has closed on its own, root
+cause still unconfirmed (scanner backend propagation lag remains the leading candidate). Currently
+$6.16-6.18, below the $6.71 high printed at 9:39am -- not a fresh high, already fully covered with the
+user directly this morning, no re-alert.
+
+**NCT (Intercont Cayman) -- checked fresh, REJECTED, no catalyst.** $6.45, +13.2%, float 977,402.
+Only Benzinga mention is the same 08:06 ET "movers" roundup with no reason given. Stocktwits is pure
+pump-group chatter, including a literal paid promo post from a group calling itself "TOB" and a
+comment referencing ".26 cents a week ago before the split" -- a recent reverse split, the kind of
+pattern this account treats as a red flag on its own. Hard gate blocks it regardless.
+
+**MAZE and SPRO -- safety-net-only catches, both REJECTED, no catalyst.** MAZE ($28.24, +26.1%,
+$1.3B market cap) only cleared the net on the 49.3M float technicality, not a real low-float momentum
+name; most recent news is a stale 09-09 roundup mention. SPRO ($1.38, +21.1%, float 48.3M) most recent
+news is an 09-14 analyst price-target raise, 8 days stale, not a dated catalyst for today's move.
+
+**QNME** continuing to fade as read at 9:33-9:39am: now $1.09, well below every earlier level today
+(7:10am $1.10, 8:03am $1.47-1.48, 9:19am $1.32-1.40). No re-alert.
+
+**GRML/IMCC** unchanged from earlier today.
+
+### Message sent: none -- quiet cycle, nothing clears the catalyst gate.

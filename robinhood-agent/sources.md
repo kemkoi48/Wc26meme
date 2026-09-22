@@ -7664,3 +7664,55 @@ alert.
 
 ### Message sent: yes — GRML re-alert with the dual catalyst and the dilution/volatility risk both
 stated up front; WSHP named and rejected with reasoning.
+
+---
+
+## 2026-09-22, ~12:19pm ET — momentum scanner. JAGX ALERTED (real catalyst, fresh, extreme risk flagged). FLNA checked, rejected on structure.
+
+**Step 0 guard: PASSED.** SPY regular-hours print 16:19:11Z.
+
+### JAGX (Jaguar Health) — ALERTED, new name, real catalyst but severe compounding risk
+
+Last trade $4.26 (16:06:17Z), live bid/ask jumped further to $5.30/$5.30 (16:20:17Z) -- +98%+ vs
+yesterday's $2.67 close and still accelerating in real time. Float 339,900.
+
+Catalyst: REAL, DATED. Napo Pharmaceuticals (Jaguar subsidiary) received an FDA PDUFA fee waiver for
+Mytesi FY2027; a second fee waiver for Canalevia-CA1 (veterinary) same day. Sourced from the company's
+own investor-relations release + StockTitan, published ~9:05-11:28am ET today -- not just Stocktwits
+chatter.
+
+Structure: the real spike (10-min bar $3.17->$4.26, volume 90,706 in that one bar -- essentially the
+day's entire real volume) hit at 12:00-12:10pm ET, 10-20 min before this check. Inside the igniting
+window by the clock.
+
+**Honesty check, stated in the alert:** the FDA fee-waiver news published 3+ hours before this specific
+spike. Cannot confirm it's the proximate cause of the 12:00pm move. Absolute volume (91K shares) is tiny
+even though the RVOL multiple is huge on this micro-name.
+
+**Severe compounding red flag, verified directly via get_sec_filing_index (not taken from chatter):**
+8-K filed 09-21 confirms a 1-for-15 reverse stock split executed the day before this move. PRE 14A filed
+09-18 is a proxy for a FURTHER 1-for-150 reverse split. Market cap ~$1.5M -- a serial reverse-split
+shell. Stocktwits users (informed, citing specific SEC exhibit URLs) estimate heavy dilution overhang
+from preferred-share conversions, ATM, and ELOC commitments, separate from any further split math.
+Bid=ask both pinned at $5.30 is itself a liquidity/spread warning -- any fill estimate here is unreliable.
+
+Alerted WITH the risk given equal weight to the catalyst, consistent with this account's established
+practice (WETO/GRML/VEEE precedent: real catalyst gets alerted, real risk gets stated prominently, never
+buried) -- but this is about as high-risk as this cohort gets even by that standard.
+
+### FLNA (Filana Therapeutics, formerly Cassava Sciences/SAVA) — checked, REJECTED on structure
+
+$1.049. Real catalyst exists (FDA lifted a clinical hold on simufilam for a TSC-epilepsy Phase 2a trial
+-- 8-K + company press release, today) but structure is stale: real high $1.30 printed ~100 min before
+this check (10:30-10:40am ET), a second leg to $1.11 also faded ~35 min before this check, current price
+below both. Also carries its OWN active Nasdaq delisting notice for bid-price non-compliance, an 8-K
+filed just 4 days ago (09-18) -- verified directly via SEC filing index. 47.3M float rules out squeeze
+mechanics. No alert; logged for the record per the "largest mover gets checked regardless" rule.
+
+### Rest of board
+GRML $16.16 (continuing to fade from the $18.13 high, below my 11:19am/11:48am reads, no re-alert).
+DCOY $4.73 (continuing to fade). IMCC, WSHP, NCT, GURE, STI, VEEA unchanged/still catalyst-free or
+already covered.
+
+### Message sent: yes — JAGX alerted with the fee-waiver catalyst and the serial-reverse-split/dilution
+risk both stated with equal prominence; FLNA named and rejected with reasoning.

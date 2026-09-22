@@ -7819,3 +7819,81 @@ unchanged/still catalyst-free.
 
 ### Message sent: yes — brief JAGX third-leg update, kept short given the risk framing was already
 established; RAIN's unchanged rejection noted.
+
+---
+
+## 2026-09-22, ~4:05pm ET — growth sleeve daily stop check. XP profit lock ARMED (not yet exiting). Both stops ratcheted on real new peaks.
+
+**Step 0 guard: PASSED.** SPY regular session closed 19:59:59 UTC (4:00:00 PM ET exactly), fresh
+post-close extended print at 20:11:51 UTC. Today's real session confirmed.
+
+Real positions pulled fresh via `get_equity_positions`: XP 18sh (avg $19.97), CRSR 9sh (avg $13.52).
+Both resting stops verified `confirmed` and correctly sized (18/18, 9/9) before any action taken.
+
+### Real peak since entry -- finalized daily bars + today's real intraday bars, not a live snapshot alone
+
+**XP** (entered 09-17): finalized daily highs 09-17 $20.42, 09-18 $20.245, 09-21 $20.86. Today's real
+30-min bars (not yet finalized, but the best available for today) show a high of **$21.31** at
+15:30-16:00 ET (19:30-20:00 UTC bar). Real peak since entry = **$21.31**.
+
+**CRSR** (entered TODAY 09-22 at 09:30:01 ET): only today's bars count -- prior days (09-17/09-18/09-21)
+predate the position and were correctly excluded from the peak calc. Real intraday high today =
+**$13.6499** (10:00-10:30 ET bar). Real peak since entry = **$13.6499**.
+
+### Profit lock check (growth_signal.decide_profit_exit) -- run BEFORE the stop ratchet, per the standing order
+
+**XP: ARMED, not yet exiting.** `decide_profit_exit(19.97, 21.31, 21.21)` -> peak +6.71% (clears the 5%
+trigger), current price only 0.47% off that peak (needs a 2% pullback from peak to fire). Not selling.
+**Flagging the known limitation explicitly, as required:** this check runs once daily at the close, so a
+2% pullback from the $21.31 peak could happen and fully reverse within a single session before the next
+check. XP is now being watched at daily resolution only while armed.
+
+**CRSR: not armed.** `decide_profit_exit(13.52, 13.6499, 13.58)` -> peak +0.96%, well under the 5%
+trigger. No action.
+
+### Technical signal check (real values, logged every run regardless of outcome)
+
+**XP:** RSI(14) 69.71 (just under the 70 overbought line, elevated), ADX(10) 40.51 (real, strong trend
+-- well above the 25 floor), MACD histogram +0.0468, positive and **ticked back up** after three prior
+sessions of shrinking (+0.0696 -> +0.0405 -> +0.0403 -> +0.0193 -> +0.0468). Real trend confirmed, but
+MACD is not turning against the position -- **no real signal** per this account's own definition (needs
+ADX>25 AND MACD turning against and/or RSI leaving the neutral band against the position). RSI being
+close to 70 alone does not meet that bar.
+
+**CRSR:** RSI(14) 61.80 (neutral), ADX(10) 30.39 (real trend), MACD histogram +0.0557, positive but
+drifting down over five sessions (+0.0744 -> +0.0636 -> +0.0719 -> +0.0610 -> +0.0557) -- still solidly
+positive, hasn't crossed negative. **No real signal.**
+
+### Stop ratchet -- both positions, mechanical, independent of the profit-lock arm state
+
+`decide_stop_update`: XP $17.11 -> **$17.4742** (new peak raises trail); CRSR $11.09 -> **$11.192918**.
+Both real changes, not a same-cent no-op (the LYFT 09-04 edge case doesn't apply here).
+
+Rounded to the protective side (ceiling to the cent, consistent with this morning's CRSR-fill rounding
+convention) rather than nearest-cent, so neither stop sits a fraction of a cent below its true 18%
+trail: XP -> **$17.48**, CRSR -> **$11.20**.
+
+Executed in the correct order per the no-OCO rule: cancelled both existing stops first, verified
+`cancelled` on both (XP order `6ab190eb`, CRSR order `6ab2830e`) before placing anything new. Placed new
+GTC stop_market orders -- XP 18sh @ $17.48 (order `6ab2e195`), CRSR 9sh @ $11.20 (order `6ab2e197`).
+**Both came back `state: queued`** -- correct and expected, not a rejection: the market closed at 4:00pm
+ET and these were submitted at ~4:14pm ET, so a regular_hours stop_market queues for tomorrow's open,
+same pattern documented for every after-close order this sleeve has placed.
+
+### Quantity cross-check
+Both stops sized to the full real position (18/18 XP, 9/9 CRSR) -- no repeat of the 08-24 LYFT
+shortfall.
+
+### Redeploy check
+Real settled `buying_power` (get_portfolio): **$9.30**. `unsettled_funds` on this account (get_accounts):
+**$0.00** -- nothing hiding in T+1. $9.30 cannot buy a whole share of any realistic growth candidate.
+No redeployment attempted this cycle; correct outcome given the real number, not a missed opportunity.
+
+### Sleeve state after this cycle
+Two open positions, both re-protected with fresh ratcheted stops queued for tomorrow's open: XP 18sh
+(entry $19.97, real peak $21.31, new stop $17.48, PROFIT LOCK ARMED) and CRSR 9sh (entry $13.52, real
+peak $13.65, new stop $11.20, not armed).
+
+trades.csv not updated this cycle -- no position closed, only stop ratchets, consistent with this
+sleeve's logging convention (ratchets recorded here and in CLAUDE.md's S9 narrative, not as new
+trades.csv rows).

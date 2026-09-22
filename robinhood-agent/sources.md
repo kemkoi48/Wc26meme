@@ -7784,3 +7784,38 @@ JAGX $12.10, stabilizing well off the $17.08 high from the 1:19pm cycle, no new 
 fade). IMCC, WSHP, NCT, GURE, STI all unchanged/still catalyst-free.
 
 ### Message sent: none — RAIN named and rejected with reasoning; nothing else materially changed.
+
+---
+
+## 2026-09-22, ~3:19pm ET — momentum scanner. JAGX third leg: fresh high $18.73, still extremely volatile.
+
+**Step 0 guard: PASSED.** SPY regular-hours print 19:19:16Z.
+
+### JAGX — third major leg today, brief update
+
+Real high **$18.73** at 19:00-19:05Z (3:00-3:05pm ET) -- a new high above the $17.08 from the 1:19pm
+cycle. Full pattern today: $4.26 (12:10pm) -> $17.08 (1:05pm) -> crashed to $11.66 (1:20pm) -> chopped
+$11-13 through the 2:00-2:45pm range -> surged to $18.73 (3:00pm) -> now $16.80 (last trade 19:19:27Z,
+bid/ask $16.70/$16.80 -- real two-sided quote this time, not pinned identical like the earlier crash).
+Down ~10% off the fresh high, holding noticeably better than the 32% crash off the first high.
+
+No new filing or news found to explain this third leg -- same FDA fee-waiver catalyst already logged at
+12:19pm, nothing fresh since. Continues to read as thin-float mechanical volatility (serial
+reverse-split shell, real absolute volume still modest in dollar terms despite the huge % swings) rather
+than catalyst-driven. Kept the update brief since the core risk framing was already established across
+the 12:19pm and 1:19pm entries -- this is a record-keeping note on a name that has now moved roughly 6x
+intraday across three separate legs, not a new analysis.
+
+### RAIN — reappeared across all three scans, unchanged rejection
+
+$1.035 (+56.6%). No new catalyst found since the 2:19pm rejection (paid-promotion pattern, no SEC
+filing, no real dated news). Still rejected.
+
+### Rest of board
+GRML $13.21 (continuing to fade from the $18.13 high). FLNA $1.055 (roughly flat). DCOY $3.10
+(continuing to fade). IMCC $4.94 (elevated but unchanged catalyst status -- still no catalyst found
+earlier today, no new check this cycle since nothing about it materially changed). WSHP, NCT, GURE, STI
+unchanged/still catalyst-free.
+
+### Message sent: yes — brief JAGX third-leg update, kept short given the risk framing was already
+established; RAIN's unchanged rejection noted.

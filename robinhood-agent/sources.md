@@ -7477,3 +7477,47 @@ dressed up.
 
 ### Message sent: yes — LHSW, with the no-dollar-value caveat, the closed $11M offering, and the
 18%-off-the-spike structure all stated in the alert rather than buried.
+
+---
+
+## 2026-09-22, 09:30 ET — CRSR fill confirmed, stop placed and verified. Fastest protection this sleeve has managed.
+
+Scheduled `send_later` follow-up to the 09-21 4:18pm redeployment fired on time at 13:30:16Z.
+
+- **FILLED:** order `6ab19113`, 9 shares @ **$13.52** avg, single execution at **13:30:01.725Z** (09:30:01.725 ET).
+  $0.23 under the $13.75 ceiling, exactly at the prior session's $13.52 close. Cost basis $121.68.
+- **STOP PLACED:** GTC `stop_market`, 9 sh @ **$11.09**. `growth_signal.trailing_stop_price(13.52)` returns
+  11.0864; there is no rounding helper in the module, so the caller rounds — rounded to $11.09, i.e. UP to
+  the protective side, leaving the stop a fraction of a cent tighter than the raw 18% trail rather than looser.
+- **VERIFIED:** first response came back `state: unconfirmed`. Re-checked in the SAME turn per the post-IPST
+  rule rather than assumed — `state: confirmed` at 13:30:54.374Z. Genuinely resting.
+- **STOP LATENCY 53s** (13:30:01.725Z → 13:30:54.374Z).
+
+### The stop-latency lesson is now settled, not still converging
+```
+HL   2026-09-04   318s   check booked 09:34
+GCT  2026-09-14   133s   check booked 09:31
+XP   2026-09-17    54s   check booked 09:30:30
+CRSR 2026-09-22    53s   check booked 09:30:30
+```
+Two consecutive runs at 09:30:30 have landed at 54s and 53s. That timing should now be treated as this
+account's settled convention and reused directly, not re-derived from the HL/GCT history each time.
+
+### Quantity cross-check (the 08-24 LYFT lesson)
+`get_equity_positions` pulled in the same turn: CRSR quantity 9.000000, `shares_held_for_sells` 9.000000 —
+the stop covers the entire position. XP likewise 18.000000 held / 18.000000 held-for-sells against its
+$17.11 stop. No shortfall on either.
+
+### Pre-open read, recorded because it was briefly called wrong
+At 09:22 ET the CRSR order still showed `state: confirmed`, unfilled, with bid $13.50 / ask $14.00 against the
+$13.75 ceiling. I first described the market as open; it was not — 09:22 is pre-open, and the order was
+unfilled simply because the session had not started. Corrected in the same cycle. The failure mode worth
+noting: `venue_last_trade_time` on a pre-open quote still carries the PRIOR session's regular-hours print,
+so reading it as "current" is exactly the stale-data trap Rule Zero exists for. Check the clock, not just the
+quote.
+
+### Sleeve state after this cycle
+Two open growth positions: **XP** 18sh @ $19.97 entry, stop $17.11 (ratcheted 09-21 off a $20.86 peak) and
+**CRSR** 9sh @ $13.52 entry, stop $11.09. Both stops verified resting today.
+
+Logged to trades.csv as row 20 and to CLAUDE.md's S9 row with the real numbers.

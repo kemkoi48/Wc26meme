@@ -7716,3 +7716,43 @@ already covered.
 
 ### Message sent: yes — JAGX alerted with the fee-waiver catalyst and the serial-reverse-split/dilution
 risk both stated with equal prominence; FLNA named and rejected with reasoning.
+
+---
+
+## 2026-09-22, ~1:19pm ET — momentum scanner. JAGX update: spiked to $17.08, already violently reversing.
+
+**Step 0 guard: PASSED.** SPY regular-hours print 17:19:43Z.
+
+### JAGX — materially changed since 12:19pm alert, re-flagged as an outcome update not a new entry signal
+
+Since the 12:19pm alert (last trade $4.26, bid $5.30), JAGX went fully parabolic then reversed hard
+within the same cycle:
+- Real high **$17.08** at 17:05-17:10Z (1:05-1:10pm ET) on genuine volume -- 535,526 shares in that
+  single 5-min bar, a real step up from the ~90K-share bar that drove the earlier move. +540% vs
+  yesterday's $2.67 close at the peak.
+- Collapsed immediately after: last trade $13.02 (17:16:51Z). Live bid/ask AS OF THE CHECK ITSELF
+  (17:19:49Z) is **$11.66/$11.66** -- down 32% from the high in well under 15 minutes, still falling as
+  the quote was pulled.
+- Bid=ask pinned identical again (same liquidity warning as the 12:19pm alert), now compounded by price
+  actively dropping through it in real time.
+
+No way to confirm the FDA fee-waiver catalyst (already logged last cycle) justifies a move of this
+magnitude on a $1.5M-market-cap serial reverse-split shell. Reads as a classic thin-float
+parabolic-spike-and-crash rather than a catalyst-driven re-rating -- exactly the outcome the dilution/
+liquidity risk flagged an hour ago warned about.
+
+Framed to the user explicitly as an outcome update (tracking a real mover through its full round-trip,
+same honesty standard as VRME earlier today), NOT a fresh buy signal.
+
+### FLNA — ticked back up, not re-verified in full this cycle
+
+$1.1491 (+55.4%), up from $1.045-1.07 at the 12:19pm check. Noted but deprioritized behind JAGX's much
+larger, more time-sensitive move this cycle. Same underlying issues as before still apply (active
+Nasdaq delisting notice, 47.3M float) if this gets picked up again next cycle.
+
+### Rest of board
+GRML $16.16 -- unchanged to the dollar from the 12:19pm read, no re-alert. DCOY $3.29 (continuing to
+fade). IMCC, AKAN, NCT, GURE, STI unchanged/still catalyst-free.
+
+### Message sent: yes — JAGX outcome update (spike to $17.08, already reversing to $11.66 bid),
+explicitly framed as not a new entry signal.

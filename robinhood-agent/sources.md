@@ -7897,3 +7897,45 @@ peak $13.65, new stop $11.20, not armed).
 trades.csv not updated this cycle -- no position closed, only stop ratchets, consistent with this
 sleeve's logging convention (ratchets recorded here and in CLAUDE.md's S9 narrative, not as new
 trades.csv rows).
+
+---
+
+## 2026-09-22, ~4:19pm ET — momentum scanner (last hourly fire, post-close). JAGX closing note; IPDN rejected (4th reverse-split+paid-promo pattern today).
+
+**Step 0 guard: PASSED.** SPY regular session closed 19:59:59 UTC (4:00:00 PM ET), fresh extended print
+at 20:18:59Z. This fire lands 19 min after the close -- results reflect the closing session plus
+extended-hours activity, not an intraday-actionable setup.
+
+### JAGX — closing note, not a new alert
+
+Closed the regular session at **$34.00** (+1173% vs yesterday's $2.67 close), last regular trade
+19:59:58Z. Still running in extended hours: real high **$41.53** (19:50-19:55Z bar), currently
+$41.13/$41.45 bid/ask (20:19:26Z). No new catalyst since the FDA fee-waiver story logged at 12:19pm --
+this is the fourth leg of pure thin-float volatility on a serial reverse-split shell, now well outside
+regular-hours actionability. Treated as a closing record entry rather than a fresh push, since today's
+risk framing (12:19pm, 1:19pm, 3:19pm entries) already covers it in full.
+
+### IPDN (Professional Diversity Network) — checked, REJECTED, no catalyst
+
+Now $6.95 in extended trading (regular close $3.925, already +108% on the day before this further
+extended move). The one seemingly-fresh link (Stocktwits, 20:13:39Z today) points to a real SEC 424B4 --
+but the filing itself is dated **2026-08-12**, over a month old, recirculated today rather than new.
+IPDN underwent a **1-for-30 reverse split effective 09-14** (verified via a Nasdaq corporate-actions
+notice linked in the same thread). Also showing up repeatedly in the same explicitly-disclosed
+paid-promotion campaign ("Temple of Boom" -- "$IPDN all paid," "$IPDN banger, Join us") already flagged
+on GRML and RAIN today. No real dated catalyst found anywhere. Hard gate blocks it.
+
+**Pattern worth naming plainly:** four names today -- JAGX, RAIN, IPDN, and (on the compliance side)
+FLNA -- all share the same shape: a recent or pending reverse split, thin real liquidity, and/or an
+explicitly paid promotion campaign, moving on no real news. This account's hard gate (2026-09-16) is
+doing exactly the job it was built for today.
+
+### Message sent: yes — brief JAGX regular-session close/extended-hours note; IPDN named and rejected
+with the reverse-split + paid-promotion pattern spelled out.
+
+### Day tally, 7:10am-4:19pm ET (10 cycles)
+Alerts sent: QNME (7:10am, 8:03am re-alert), LHSW (9:19am), GRML (11:19am re-alert on fresh catalyst),
+JAGX (12:19pm, 1:19pm update, 3:19pm update, 4:19pm closing note). Rejected with reasoning: TOPS, IMCC
+(repeated), DCOY (repeated, once for a real scanner coverage-gap finding), NCT, MAZE, SPRO, FLNA, WSHP,
+RAIN, IPDN. One real scanner defect found and logged (DCOY, ~2h invisible to all three scans despite
+clearing every filter).

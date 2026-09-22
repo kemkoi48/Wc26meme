@@ -7607,3 +7607,60 @@ news is an 09-14 analyst price-target raise, 8 days stale, not a dated catalyst 
 **GRML/IMCC** unchanged from earlier today.
 
 ### Message sent: none -- quiet cycle, nothing clears the catalyst gate.
+
+---
+
+## 2026-09-22, ~11:19am ET — momentum scanner. GRML RE-ALERTED on a materially new high + dual real catalyst.
+
+**Step 0 guard: PASSED.** SPY regular-hours print 15:19:22Z.
+
+### GRML (Greenland Mines) — RE-ALERTED, materially changed since 7:10am
+
+$17.52 (live quote 15:20:16Z), +85.9% vs yesterday's $9.42 close. Real high **$18.13** printed in the
+14:50-15:00Z bar (10:50-11:00am ET) -- roughly 20-30 min before this check, inside the "still igniting"
+window. Materially above the $14.10 high from the 7:10am alert, so this clears the "skip unless
+materially changed" exception cleanly (new high +28.6% over the prior alert level).
+
+**Two real, dated, sourced catalysts, checked independently:**
+1. Company-specific: Sarfartoq rare earth district land-position expansion (+262 km^2, to ~454 km^2
+   total) -- Benzinga, today 05:36:56 ET, its own dedicated article (not just a roundup mention).
+2. Macro/sector: Trump-Denmark-Greenland security agreement, **signing today** at the UN General
+   Assembly -- Reuters (published today), corroborated independently by ABC News and Newsmax. Driving a
+   whole basket simultaneously (GRML, GLND, CRML all named in the same Benzinga "Greenland Stocks
+   Explode" piece from 09-21). A sector-wide news-driven move is a different, generally more durable
+   catalyst class than an isolated company PR release -- but also carries headline/political risk (the
+   deal could disappoint on terms or be delayed) that a company-specific filing doesn't.
+
+**Real volume expansion confirmed via bars**, not just the scanner's RVOL field: 10-min bars ramped from
+a ~1.4-2.4M baseline to 3.6-3.8M on the breakout legs (14:40Z and 15:00Z bars), clearly above the
+22.7M 2-week average pace.
+
+**Dilution/volatility risk stated plainly in the alert, not buried:** real fundamentals pulled --
+float only 2.87M shares, 52-week range **$2.82 (set just 4 days ago, 09-18) to $36.99** (03-04-26). This
+is a name that has already round-tripped from $37 to $2.82 and is now 6x off that low. SEC filing index
+shows THREE separate 424B5 prospectus supplements (08-24, 08-25, 08-27) plus 8-Ks the same week --
+live ATM capacity (~$50M per the prospectus terms referenced in Stocktwits chatter, cross-checked
+against the filing index rather than taken from chatter alone) that lets the company sell fresh shares
+directly into a spike like this one. No new dilution filing today (most recent filing is 09-11, eleven
+days old) -- this is a standing mechanism, not fresh news, but real and worth the caveat given the
+52-week collapse it likely contributed to.
+
+Financial status indicator: CC0 (no description/flag) -- notably NOT carrying a compliance-deficiency
+flag the way QNME's CC4/Noncompliant status was. Real distinguishing data point between the two names.
+
+### WSHP (WeShop Holdings) — checked, REJECTED, no catalyst
+
+$6.07, +16.7%, float 1.1M. Only news is two stale Benzinga "movers" roundup mentions (08-26, 09-14),
+no reason given either time. Stocktwits is squeeze/pump chatter ("the pump begins," "is it squeezing"),
+including a user's own concern about 84% insider ownership. No dated catalyst anywhere -- hard gate
+blocks it.
+
+### Rest of board
+DCOY $5.045 (fading further, now well below the 10:19am read, no re-alert). IMCC, EDBL, XNDU, STI, NCT,
+GURE, AKAN unchanged/still catalyst-free. New safety-net names AIXC, GOAI, SPRO, MAZE, AEHL, FEAM --
+none checked individually this cycle given GRML's re-alert took priority; none showed dated-catalyst
+language in the scan rows themselves and none are large enough movers to warrant delaying the GRML
+alert.
+
+### Message sent: yes — GRML re-alert with the dual catalyst and the dilution/volatility risk both
+stated up front; WSHP named and rejected with reasoning.

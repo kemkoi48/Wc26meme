@@ -7756,3 +7756,31 @@ fade). IMCC, AKAN, NCT, GURE, STI unchanged/still catalyst-free.
 
 ### Message sent: yes — JAGX outcome update (spike to $17.08, already reversing to $11.66 bid),
 explicitly framed as not a new entry signal.
+
+---
+
+## 2026-09-22, ~2:19pm ET — momentum scanner. RAIN checked and rejected (paid-promotion pattern, no catalyst). Quiet cycle otherwise.
+
+**Step 0 guard: PASSED.** SPY regular-hours print 18:20:19Z.
+
+### RAIN (Rain Enhancement Technologies) — checked, REJECTED, no catalyst
+
+$1.2301, +86.1%, float 7.7M (a Stocktwits paid-promo post separately claims 3.35M float, unverified
+independently). No SEC filing today -- checked directly via get_sec_filing_index, most recent filing is
+08-21 (an 8-K, likely tied to a delisting notice an older post referenced). Benzinga's only mention
+today (13:06 ET roundup) had RAIN at $0.81, well below the current $1.23 -- doesn't explain the
+continued run to today's level.
+
+**Stocktwits activity for this name is dominated by an explicitly disclosed paid promotion campaign**
+("FonsieTrader... compensated by Retaivolts Inc," posting regularly since 09-09) -- the opposite of a
+real catalyst. The single post from today (17:25Z) announces a Reddit AMA *rescheduled to Thursday
+09-24*, a future event, not something explaining today's move. No real, dated news found across any
+source. Hard gate blocks it -- textbook version of the paid-promotion squeeze pattern the 2026-09-16
+gate exists to filter out.
+
+### Rest of board -- no re-alerts
+JAGX $12.10, stabilizing well off the $17.08 high from the 1:19pm cycle, no new high. GRML $13.79
+(continuing to fade from $18.13). FLNA $1.115 (roughly flat vs 1:19pm). DCOY $3.36 (continuing to
+fade). IMCC, WSHP, NCT, GURE, STI all unchanged/still catalyst-free.
+
+### Message sent: none — RAIN named and rejected with reasoning; nothing else materially changed.

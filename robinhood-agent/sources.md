@@ -7240,3 +7240,20 @@ Real position confirmed: 18 shares (matches the resting stop's quantity, no manu
 Settled buying power $130.98 (confirmed via `get_accounts`, unsettled_funds $0.00 for this account — nothing hiding in T+1). Re-ran the Growth Momentum scan (79 real matches). Checked fundamentals on the top ADX>25 candidates affordable at this size: BMNR (PE -3.05, unprofitable crypto-treasury vehicle), NVAX (PE -6.64, unprofitable), SBET (PE -1.13, unprofitable crypto-treasury), SMMT (PE -15.95, unprofitable) — all rejected on the established negative-PE pattern. **CRSR (Corsair Gaming)** was the one real candidate: PE 43.6 (profitable), ADX(14) 26.5 (real trend, clears the 25 floor), RSI 60.16 (neutral), price $13.51 sits ~8.5% below its 52-week high ($14.978, set 08-10) — not chasing. Placed a GFD limit (9 sh, $13.75 ceiling) at 20:18:27 UTC (market closed for the day) — verified `state: queued`, next-open queuing. Scheduled a follow-up (`send_later`, 09:30:30 ET tomorrow 2026-09-22) to confirm the real fill and place the GTC stop at that precise timing — the lesson this sleeve converged on across HL (318s latency at a 09:34 check) → GCT (133s at 09:31) → XP (54s at 09:30:30). Not yet logged to trades.csv — will log the real fill + stop once confirmed tomorrow, consistent with this sleeve's fill-time logging convention.
 
 ### Message sent: yes — XP stop ratchet (new $20.86 peak) and the CRSR redeployment.
+
+## 2026-09-22, ~6:45am ET — Premarket watch. Renamed "September 21" -> "September 22". Kept GRML/CRML (real, still active, day 2). Added BB (real dated catalyst). Checked and declined GDC/VKTX (no fresh catalyst).
+
+### Market-holiday guard
+SPY fresh premarket print (10:44:04 UTC = 6:44am ET, ~1 min old) — market open, no holiday.
+
+### Kept — GRML, CRML
+Both still real and active on day 2 of the Trump-Denmark-Greenland security-deal catalyst. GRML premarket $11.98-12.00 (+27.4%), real accelerating volume (per Early Momentum scan, RVOL(1H) 730x). CRML $9.23 (-1.1%, consolidating after yesterday's +27% move but still elevated and heavily discussed — Stocktwits trending rank 13, EXTREMELY_HIGH message volume, a real research write-up circulating on its 92.5% Tanbreez ownership). No reason to drop either.
+
+### Added — BB (BlackBerry)
+$9.11 premarket, +6.8%, Stocktwits trending rank 1 (150K+ watchers), real chatter mostly squeeze talk but grounded in something real underneath: **RBC Capital Markets, 2026-09-21 11:07am ET** (MT Newswires) — RBC expects BB's fiscal Q2 revenue to beat consensus (14% YoY growth, high end of guidance), reaffirming FY27 outlook expectations, ahead of real **earnings due Thursday 2026-09-24 premarket**. Also real same-day news: **MT Newswires, 2026-09-22 4:18am ET** — BlackBerry's QNX unit and Vector announced Coretura selected Alloy Kore for its commercial-vehicle software platform (financial terms undisclosed, but a real, dated, named partnership). Two real dated sources plus a nearby earnings catalyst — added.
+
+### Checked and NOT added — GDC, VKTX
+**GDC (GD Culture Group)** — $1.83-1.99 premarket, +23-25%, second straight day of gains (+13% Monday). Benzinga (2026-09-22 5:30am ET) confirms the real move but does not name a catalyst — describes the price action only. Stocktwits chatter is entirely volume/squeeze commentary ("this ain't retail trading this much," "sellers selling short brilliant") with zero dated news cited. Micro-cap ($6-8M market cap) with the classic catalyst-free-squeeze shape. Not added.
+**VKTX (Viking Therapeutics)** — $32.08 premarket, +6.5%, Stocktwits trending rank 2 (38K+ watchers). Real news pulled is all stale relative to today: an 08-03 Oppenheimer note, a 09-15 "why is it dipping" article, and 08-24/09-16 options-flow noise pieces. Today's chatter cites a CNBC Novo Nordisk CEO interview (about Novo, not VKTX — sympathy) and generic "buyout rumor"/Phase 3 speculation with no fresh dated trigger. Not added.
+
+### Message sent: yes — BB add with its real catalyst, GDC/VKTX checked and declined, GRML/CRML unchanged.

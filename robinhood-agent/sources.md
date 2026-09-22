@@ -7257,3 +7257,22 @@ $9.11 premarket, +6.8%, Stocktwits trending rank 1 (150K+ watchers), real chatte
 **VKTX (Viking Therapeutics)** — $32.08 premarket, +6.5%, Stocktwits trending rank 2 (38K+ watchers). Real news pulled is all stale relative to today: an 08-03 Oppenheimer note, a 09-15 "why is it dipping" article, and 08-24/09-16 options-flow noise pieces. Today's chatter cites a CNBC Novo Nordisk CEO interview (about Novo, not VKTX — sympathy) and generic "buyout rumor"/Phase 3 speculation with no fresh dated trigger. Not added.
 
 ### Message sent: yes — BB add with its real catalyst, GDC/VKTX checked and declined, GRML/CRML unchanged.
+
+## 2026-09-22, ~7:10am ET — momentum scanner (first cycle after re-enable). GRML re-alerted on a fresh breakout. QNME alerted, real GPU-purchase catalyst. TOPS rejected (no catalyst, real dilution risk).
+
+### Market-holiday guard
+SPY fresh premarket print (11:09:56 UTC = 7:09am ET, ~4s old) — market open, no holiday.
+
+### GRML — ALERTED again, fresh real breakout
+$13.86-14.10, +47-49% (Friday close $2.85, now ~+390%). Real extended-hours 10-min bars confirm this is a fresh ignition, not a stale continuation: chopped $10.15-11.25 through most of premarket, then broke out hard over the last 40 minutes ($11.97 -> $12.45 -> $13.86, high $14.10) on real accelerating volume (635K, 360K, 1.6M shares in the last three bars). Same real dual-sourced Greenland-security-deal catalyst; dilution filings and now-extreme-extension caveats still apply and are worsening with the size of the move.
+
+### QNME (Quanome Technologies) — ALERTED, new name, real dated catalyst
+$1.10, +72%, float 31.7M. Catalyst confirmed real and dated: **Benzinga, 2026-09-22 5:30am ET** (already surfaced in this morning's premarket-watch research) — Quanome announced it entered into a Purchase and Sale Agreement and related purchase order with Compal Electronics for 32 GPU server units, a genuine named business development. Real, EXTREMELY_HIGH Stocktwits message volume (98), still pushing higher per live chatter ("next push over 1 and to 1.20"). No prior history with this name on this account — flagged as unusually volatile even for this cohort.
+
+### TOPS (TOP Ships) — checked, REJECTED, no catalyst, real dilution risk flagged
+$1.42-1.43, +98%, huge volume (64.5M shares) — the single largest % mover this cycle, checked per the standing rule regardless of outcome. No catalyst found: one Stocktwits user directly asks "what's the news here?" and gets no answer from the thread. Another user flags real, specific dilution mechanics: an active ATM, a 50M-share ELOC, and 13 historical reverse splits since 2008 (net effect described as "one hell of a historical paperwork tailwind behind a fade"). Classic catalyst-free squeeze with real, elevated dilution risk. Rejected.
+
+### Rest of board — unchanged
+CRML, BB, PRTH, NCPL, VRME, VEEE, CISS, SCNI, GDC all previously covered or catalyst-free (GDC re-appeared, +28%, same no-catalyst conclusion as this morning's premarket-watch check).
+
+### Message sent: yes — GRML re-alert (fresh breakout) and QNME (new, real catalyst). TOPS explicitly named and rejected with reasoning.

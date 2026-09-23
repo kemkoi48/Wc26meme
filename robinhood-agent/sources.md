@@ -8114,3 +8114,15 @@ Pulled Stocklake get_market_movers (gainers, min-cap unfiltered) + Stocktwits ge
 **Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification.
 
 ### Message sent: none
+
+## 2026-09-23, ~1:50pm ET — Research note (user-requested backtest): what predicted today's biggest float squeezes?
+
+User asked whether today's ballistic movers (BENF, ARTL, FTFT, HCTI, TNMG, GRML, IPDN, KIDZ, etc.) shared a "Chinese stock" pattern or an "open high / close low" candlestick pattern. Checked real company HQ data via get_equity_fundamentals — only 2 of 12 checked are mainland-China HQ'd (WAFU-Beijing, LXEH-Zhejiang) and 2 are Taiwan-HQ'd (YMAT, TNMG); the rest (BENF, HCTI, ARTL, FTFT, GRML, DCOY, IMCC, IPDN, KIDZ) are US or Israel-domiciled. The "open high, close low" candlestick pattern only held for GRML and IPDN (both US-domiciled) — the actual China/Taiwan names either barely moved (WAFU, LXEH) or did the opposite, opening low and spiking up (YMAT, TNMG). **Neither theory held up against the data.**
+
+**What actually predicted move size: recency of the 52-week/multi-month low**, checked via `high_52_weeks_date`/`low_52_weeks_date` from get_equity_fundamentals:
+- Low hit in the trailing 5-8 days → violent squeeze: BENF (low yesterday 9/22, ran +450-580%), ARTL (low 7d ago, +287%), HCTI (low 6d ago, +189% before failing), GRML (low 5d ago, +71% before fading back to its low), IPDN (low 7d ago, +73% before crashing), IMCC (low 8d ago, already exhausted -35% today), DCOY (low 2d ago, +24%, still building).
+- Low hit 6+ weeks ago → weak/no squeeze: TNMG (low 65d ago, spiked +77% intraday but fully round-tripped to flat), YMAT (low 15d ago, only +16-18%), WAFU (low 47d ago, +15%), LXEH (low 145d ago, +15%).
+
+**Float size correlated with move DURABILITY, not ignition**: HCTI had by far the largest float of the group (14.6M vs. sub-3M for the rest) and was the one name whose move failed to hold (crashed -49% off its high within 15 min). Smaller float (ARTL 547K, IPDN 476-597K, TNMG 589K, BENF 2.27M) tracked with more violent AND more sustained moves — consistent with fewer shares available for shorts to cover into.
+
+**Working theory for this account going forward**: a beaten-down microcap making a *fresh* (within ~1 week) 52-week/multi-month low, on a sub-3M float, is a coiled-spring candidate for a violent capitulation/short-covering squeeze on any spark — real or rumor. This is a **structural/mechanical pattern, not a catalyst**, and per the standing hard gate it still requires a real dated catalyst before it's alertable — this note is background context for interpreting scanner hits faster, not a new alert trigger. User explicitly declined to turn this into a live screen or to loosen the alert gate; this is a one-time backtest/research note only.

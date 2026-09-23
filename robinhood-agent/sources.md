@@ -8161,3 +8161,13 @@ User asked whether today's ballistic movers (BENF, ARTL, FTFT, HCTI, TNMG, GRML,
 **How each of the 11 squeezes lines up:** only 1 had a filing on D-1 (JAGX). 4 had a news filing on the *same day* (DCOY 6/29, BDRX 9/11, AEMD 9/17, BIAF 9/17), meaning the news landed premarket on the morning of the move. **6 of 11 had no SEC filing on either day** (RETO, IMCC, GRML, WETO, PPCB, YMAT). Those were driven by press releases, promotions or nothing at all, none of which shows up in the SEC index.
 
 **Conclusion:** the trigger arrives the morning *of* the move, not the evening before, so there is no buy-at-prior-close edge from filings. This supports the existing setup, where the edge is reacting quickly to premarket news, and that is the job of the 7am scanner and its catalyst gate. **Potential improvement (not yet applied): treat a 424B or S-1 filed within the prior day as a hard reject signal.** Small sample (11 squeezes); directional only. No strategy, scan or order changes were made.
+
+## 2026-09-23, ~2:16pm ET — Momentum scanner alert check. Quiet cycle, no message sent.
+
+**Guard:** SPY live trade 18:16:19 UTC, regular session.
+
+**VSA** (VisionSys AI) — **found only via the safety-net scan; missing from both regular scans.** HQ: Hebei, China, per its own 6-K. It was dead flat at ~$2.00-2.28 until 1:30pm ET, then ignited to $3.72 (+88%, RVOL ~128) by 1:45pm ET and was **halted there**; Stocktwits reports the halt ask at $5.38. **No catalyst:** Stocktwits users are asking "no news? what is happening", and Robinhood/Benzinga has only price recaps (9/9-9/15). The only filing anyone cites is a **July 2026 6-K private placement of 125 *billion* Class A shares at $0.000734/share (~$91.75M)**. That is extreme dilution, not a catalyst. The SEC filing index returned no filings for VSA (coverage gap). Hard gate: **not alerted.**
+
+**Rest of the board:** BENF $2.60, ARTL $10.50 (off its $15.73 high), IPDN $5.44, MSS $2.14, HCTI $1.09. All were already logged as no-catalyst, with no material change.
+
+### Message sent: none

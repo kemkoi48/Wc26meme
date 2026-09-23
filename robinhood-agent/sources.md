@@ -8229,3 +8229,19 @@ User asked whether today's ballistic movers (BENF, ARTL, FTFT, HCTI, TNMG, GRML,
 **Redeploy:** settled buying power is $9.30. The XP proceeds ($375.48) are UNSETTLED (T+1, cash account), so no whole-share position is affordable today. Deferred to the 09-24 4:05pm check after settlement. This is a concrete settlement reason, not idle cash.
 
 **Records:** trades.csv rows 19 (XP closed) and 20 (CRSR note) updated. CLAUDE.md S9 row updated (n=9, 1 open: CRSR).
+
+## 2026-09-23, ~4:16pm ET — Momentum scanner alert check (final fire of the day, post-close). Quiet cycle, no message sent.
+
+**Guard:** SPY last regular print 19:59:59Z today; the session was real.
+
+**DBGI** (Digital Brands Group, $7.10-7.14, +51%, float 575K). Found via the Ignition and safety-net scans, not in Warrior. **No catalyst:**
+- A Stocktwits user posted "no news" (20:14Z); the rest is price-target chatter ($50, $77, "$78 buyout", which is unverified and not a source).
+- The latest Robinhood/Benzinga items are 09-11 to 09-18 price recaps.
+- SEC index: the latest 8-Ks are 09-11 and 09-02, none today.
+- Per today's research, this is exactly the after-hours/no-filing profile: median -10%, 36% win rate. Gated, not alerted.
+
+**BKYI** (+16%, float 1.4M, 347K volume): thin, not pursued.
+
+**Largest mover:** BENF, $2.57 (+377%), same unresolved 8-K. The rest of the board (VSA, MSS, ARTL, IPDN, DCOY, TNMG, LXEH) has no change from earlier no-catalyst logs.
+
+### Message sent: none

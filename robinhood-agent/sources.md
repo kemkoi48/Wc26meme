@@ -7959,3 +7959,19 @@ clearing every filter).
 **Decision:** no composition change — GRML, CRML, BB all remain justified; IPDN/SQFT confirmed rejected under the paid-promotion pattern.
 
 ### Message sent: yes (paired with PushNotification per standing alert-delivery fix)
+
+## 2026-09-23, ~7:19am ET — Momentum scanner alert check. Quiet cycle, no message sent.
+
+**Step 0 guard:** PASSED — SPY premarket print at 11:19:10 UTC, today's date, fresh.
+
+**Scans run:** Early Momentum Ignition (103 matches), Warrior Trading Style (10 matches), safety-net no-RVOL-filter scan (3 matches: IPDN, DCOY, GRML — no coverage gap vs. the two regular scans).
+
+**IPDN** ($8.13, +108.7%, float 413K-597K): Benzinga recap articles across today/yesterday show zero stated reason for the move, only price-action mentions grouped with other reverse-split/low-float names. Stocktwits dominated by the same "Top Stock Alerts" aggregator account and a paid Webull-affiliate YouTube channel pushing IPDN/WHLR/GRML/DCOY together — no real catalyst chatter, just trade calls. Structure: today's high ($11.2385) printed at 4:45am ET, already ~2.5 hours old with a -27% fade off it by fire time — "already printed," not igniting. Matches this morning's premarket-watch rejection of the same name. **Not alerted** — fails both catalyst and structure gates.
+
+**DCOY** ($4.41, +42.7% from close): the real underlying catalyst (Decoy Therapeutics "refined corporate strategy to explore D-MAVs for additional candidates") is dated **2026-09-22, yesterday** — already fully priced in over Tue's session (ran to a $6.24 intraday high off it). No new dated news or filing today (SEC index's most recent filing is an 8-K from 09-15, nothing filed 09-23). Also found: an MT Newswires article (09-22) on a **$3.85M warrant inducement deal** — a real dilutive event (1.18M Series B warrants exercised at $3.25, plus new warrants for up to 2.37M more shares) — consistent with Stocktwits users independently warning "dilution today be careful." Stocktwits chatter is otherwise pure short-covering/momentum talk (shorts, "pump it", fractal chart calls), no catalyst content. Structure: today's high ($5.217) was only ~14 min old at fire time (still within the igniting window), but **no fresh catalyst today** — hard gate fails regardless of structure. **Not alerted.**
+
+**GRML** ($18.61, +31.4%): real, dated catalyst (Greenland-Denmark security agreement signed today) already fully covered and messaged to the user in this morning's ~6:44am ET premarket-watch cycle. Structure has since faded: today's high ($21.90) printed 65 min before this fire, now down ~15% off it — "already printed." No material new high or volume expansion since the last mention. Per standing rule (skip already-alerted names absent a material change), **not re-alerted**.
+
+**Decision:** no name clears both the structure and catalyst gates this cycle. Quiet cycle — no user message, no PushNotification.
+
+### Message sent: none

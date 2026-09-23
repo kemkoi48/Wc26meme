@@ -7975,3 +7975,19 @@ clearing every filter).
 **Decision:** no name clears both the structure and catalyst gates this cycle. Quiet cycle — no user message, no PushNotification.
 
 ### Message sent: none
+
+## 2026-09-23, ~8:20am ET — Momentum scanner alert check. Quiet cycle, no message sent.
+
+**Step 0 guard:** PASSED — SPY premarket print at 12:20:43 UTC, today's date, fresh.
+
+**Scans run:** Early Momentum Ignition (102 matches), Warrior Trading Style (10 matches), safety-net scan (5 matches: BENF, IMCC, IPDN, DCOY, GRML). **BENF found only via the safety-net scan, missing from both regular scans** — a real coverage-gap case (its RVOL(1H) is presumably being miscalculated off a near-zero premarket trailing average, exactly the failure mode the safety net exists to catch), run through full gates below per standing instruction.
+
+**BENF** ($2.35-2.43, +203% to +336% depending on scan snapshot, float 2.33M): historicals show it was dead flat ~$0.51-0.53 all morning until 11:30 UTC (7:30am ET), then ignited — still within the fresh-move window (~45-50 min old, last leg's high $2.80 printed only ~15 min before this check). Stocktwits has one message quoting filing-style legal language: *"The Company has not entered into a definitive agreement with respect to the proposed resolution, and there can be no assurance that a consensual resolution will be reached"* — consistent with Beneficient's known distressed/restructuring situation (BENF fell 25% on 9/17 per Benzinga, described then as a troubled micro-cap). **SEC filing index confirms a real 8-K was filed today (2026-09-23)** — but `get_sec_filing` and the facts catalog both return empty/unavailable (too fresh to be parsed). Robinhood/Benzinga news has nothing past 9/17; Stocklake has zero articles in the last 2 days. **Cannot independently confirm what the 8-K actually discloses.** Per the TCRT precedent (2026-09-17: a topically-plausible Stocktwits claim stays gated until confirmed at the primary source, even with a same-day filing pointing the same direction) — **not alerted this cycle.** Worth re-checking next cycle once the 8-K content is likely parsed.
+
+**IMCC** ($7.31, +82%, float 574K): Stocktwits (via a linked third-party aggregator, Open Outcrier — not one of the three approved sources) claims IM Cannabis entered a non-binding LOI today to acquire 51% of Space Defense Innovations (a Polish UAS/drone company), with specific deal terms (common shares, pre-funded warrants, 24-month 9% seller loan, €2.3M credit line) — detailed enough to read as real, not hype. **SEC filing index confirms a real 6-K was filed today (2026-09-23)** — same story as BENF: content not yet available via get_sec_filing or the facts catalog. Robinhood/Benzinga's own news feed has nothing today beyond a generic price-recap article (8:06am ET) that doesn't mention SDI. Structure: today's high ($10.71) printed ~40 min before this check, already -32% off it — leaning "faded," not fresh. This is also IMCC's ~6th wild swing day this month (own record shows +153%/-33%/+246%/-24%/+72%/+56% swings across the last three weeks) — a serial "hot potato," not a clean single-catalyst setup even before the sourcing question. **Not alerted this cycle** — same unconfirmed-primary-source gate as BENF, compounded by already-faded structure.
+
+**IPDN / DCOY / GRML:** all continuing to fade from this morning (IPDN $6.46 vs $8.14 last cycle; DCOY $4.22 flat; GRML $17.97 vs $18.59 last cycle) — no material new high or volume expansion. Not re-alerted, no change from prior cycle's log.
+
+**Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification. Flagging BENF and IMCC 8-K/6-K content for a re-check next cycle (9:20am ET) once filing text is likely parsed.
+
+### Message sent: none

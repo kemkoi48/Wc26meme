@@ -7939,3 +7939,23 @@ JAGX (12:19pm, 1:19pm update, 3:19pm update, 4:19pm closing note). Rejected with
 (repeated), DCOY (repeated, once for a real scanner coverage-gap finding), NCT, MAZE, SPRO, FLNA, WSHP,
 RAIN, IPDN. One real scanner defect found and logged (DCOY, ~2h invisible to all three scans despite
 clearing every filter).
+
+## 2026-09-23, ~6:44am ET — Premarket watch: build the day's watchlist. Renamed list to "September 23", no composition change (GRML/CRML/BB kept, IPDN/SQFT rejected).
+
+**Step 0 guard:** PASSED — SPY fresh premarket print at 10:45:00 UTC, today's date, market open normally.
+
+**List found:** "September 22" (list_id 28897739-a4e8-40fa-ac57-6fb0eb30137b), 3 items: GRML, BB, CRML. Renamed in place to "September 23" per standing rule (never create a second dated list).
+
+**GRML** ($19.43-$19.50 premarket vs $14.15 prior close, +37-38%): catalyst materially upgraded and confirmed — the Trump-Denmark-Greenland security agreement was **actually signed today** (AP News, "Trump signs US-Denmark-Greenland agreement to bolster Arctic security," 2026-09-23), a genuine second-day follow-through on yesterday's pre-signing catalyst. Real risk signal also found and logged honestly (not dismissed, not treated as fact): multiple unverified Stocktwits posts allege pump-and-dump/wash-trading manipulation and urge SEC tip submissions. Keep on list; signing-day catalyst is real and dated, but note the manipulation chatter for anyone reading this before entering.
+
+**CRML** ($8.42-$8.45 vs $8.54 close, roughly flat to -1.1%): real news found — Yahoo Finance/24/7 Wall St describe the Greenland-theme trade cooling/reversing on profit-taking even as the deal formally signs today. Still real and active (same underlying catalyst as GRML), keep on list, but flag the cooldown/profit-taking nuance — this is not behaving like GRML today.
+
+**BB** ($8.73-$8.77 vs $8.62 close, +1.3%): Stocktwits get_symbol_pulse shows EXTREMELY_HIGH message volume (score 83) and EXTREMELY_BULLISH sentiment (90.3% bull). A user quoted directly from BB's own 8-K confirming the QNX/Coretura design win adds "over $100 million" to the QNX royalty backlog — reinforces and adds specificity to the catalyst already logged yesterday (RBC Q2-beat note 9/21 + QNX/Coretura deal 9/22am) ahead of Thu 9/24 earnings. Still valid, keep as-is.
+
+**IPDN** (premarket ~$8.97-$9.00, +130%+) and **SQFT** (new name, +16.8%): checked and explicitly rejected. Benzinga: only recap mentions, no stated reason for the move. Stocktwits: only an explicitly promotional "Sam/Toptraderacademy" account pushing IPDN/WHLR/LXEH/SQFT/IONL together as a paid "daytrade setup" — no organic multi-trader conviction, no dated catalyst. Matches the reverse-split + paid-promotion hard-gate pattern already flagged this week on JAGX/RAIN/IPDN/FLNA. **Decision: not added.**
+
+**JAGX** (continuing to crash hard premarket, down into $14-25 range from Tuesday's $34 close / $41.53 extended-hours high): not a watchlist candidate, no action — already exhaustively covered by the hourly scanner job, not on this dated list.
+
+**Decision:** no composition change — GRML, CRML, BB all remain justified; IPDN/SQFT confirmed rejected under the paid-promotion pattern.
+
+### Message sent: yes (paired with PushNotification per standing alert-delivery fix)

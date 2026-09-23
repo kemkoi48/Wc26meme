@@ -8050,3 +8050,21 @@ Pulled Stocklake get_market_movers (gainers, min-cap unfiltered) + Stocktwits ge
 **Conclusion:** confirmed across both the low-float scanner and the broader market-movers list — nothing today clears both gates (fresh + real catalyst). TLSI remains the closest real-catalyst name but its move already happened in yesterday's after-hours.
 
 ### Message sent: reply to user in chat (no push)
+
+## 2026-09-23, ~10:20am ET — Momentum scanner alert check. Quiet cycle, no message sent.
+
+**Guard:** market confirmed open, regular session (SPY $769.12, live trade at 14:20:11 UTC).
+
+**HCTI** (Healthcare Triangle) — largest mover this cycle, peaked ~+189% intraday ($1.09→$3.15 by 10:00am ET), volatility-halted, then collapsed to $1.60 (-49% off high) within ~15 min, RVOL 128. **No catalyst found anywhere** — Robinhood/Benzinga's only HCTI articles are from mid-August (describing it as a loser then). Stocktwits users are asking outright "what is the good news?!!! How is it good?" and "how long till unhalt" — nobody, including bulls, can name a reason. Multiple users independently call it "pump n dump," "rug pulled," and compare it explicitly to JAGX's pattern. Textbook hard-gate rejection — **not alerted** despite the huge RVOL and % move.
+
+**TNMG** (TNL Mediagene) — +37.6% to +38% (peaked $5.38 in the most recent 5-min bar, still igniting), RVOL ~19-25. **No catalyst**: Robinhood/Benzinga news is empty for this symbol. Stocktwits is pure price-target speculation ("Could we see $30 today?", "$1500 in 15 seconds, not bad for a flip", "Run to $5") — zero mentions of an actual reason. Not alerted.
+
+**LXEH** — RVOL 933 (highest of the cycle) but only +6.9%, and already fading ($1.75 high → $1.48 now over 45 min). Not pursued further given the fade and immaterial size.
+
+**BENF** — largest-%-change check per standing rule: still $1.68 (+212% vs. $0.5383 close), well below its $2.80 high from ~2.5 hours ago — already printed. 8-K content re-checked, **still unavailable/unparsed** via get_sec_filing (404). Remains unconfirmed; not re-alerted.
+
+**GRML/IMCC/DCOY/MSS/IPDN**: all continuing to fade or unchanged from prior logs, no material new development.
+
+**Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification.
+
+### Message sent: none

@@ -8146,3 +8146,18 @@ User asked whether today's ballistic movers (BENF, ARTL, FTFT, HCTI, TNMG, GRML,
 **Conclusion:** on price and volume alone there is no precise, tradeable D-1 pattern. "Crushed microcap near its lows" is the *context* in which squeezes happen, but the *trigger* is overnight or premarket news, filings or promotion (BENF's 8-K today, JAGX's FDA fee waiver, AEMD's Benzinga item). None of that is visible in the D-1 price. The median trade on every rule loses money, and the positive mean depends on catching 1-in-40 lottery tickets while holding through drawdowns of up to -51%. **Selection-bias caveat:** these tickers were chosen *because* they squeezed, so real-world hit rates would be lower still.
 
 **Candidate non-price features worth testing next** (not yet tested): (1) an 8-K or 6-K filed after the close on D-1; (2) a reverse split that became effective within the last ~10 days (float shrink); (3) a spike in Stocktwits message volume on the D-1 evening; (4) borrow fee or short interest. No strategy, scan or order changes were made.
+
+## 2026-09-23, ~2:40pm ET — Research: after-close filing test (user-requested follow-up). Result: a filing the day before does NOT predict a squeeze.
+
+**Data:** get_sec_filing_index for all 23 tickers since 2026-03-01, joined to the same daily bars. FTFT, ARTL and TNMG were excluded because the index returned no filings, which is a coverage gap. JAGX, IPDN and YMAT are also sparsely covered. Each ticker was tested only inside its own coverage window (from its earliest filing onward): 1,202 days, 11 first-day squeezes (next-day close up 50% or more). **Limitation:** the index gives the filing *date* only, not the time, so a 4:05pm filing cannot be separated from a 10am filing.
+
+**Results (buy at the D-1 close):**
+- Baseline: 0.9% of days were followed by a squeeze. Median next-day close -0.8%.
+- NEWS filing (8-K/6-K/425) dated D-1: 80 days, 1 squeeze (1.2%). **Median -2.5%**, and 18.8% closed down 10% or more. The mean of +12.3% is entirely JAGX (8-K filed 9/21, FDA fee waiver, +1191% on 9/22).
+- **DILUTION filing (424B/S-1) dated D-1: 27 days, 0 squeezes. Median -2.0%, mean -4.1%.** This is the one useful finding, and it is a *negative* filter.
+- INSIDER filing (Form 3/4/5) dated D-1: 21 days, 0 squeezes.
+- For comparison, a NEWS filing dated the *same day* as the move: 72 days, 4 squeezes (5.6%, about 6x baseline). Median high +5.1%.
+
+**How each of the 11 squeezes lines up:** only 1 had a filing on D-1 (JAGX). 4 had a news filing on the *same day* (DCOY 6/29, BDRX 9/11, AEMD 9/17, BIAF 9/17), meaning the news landed premarket on the morning of the move. **6 of 11 had no SEC filing on either day** (RETO, IMCC, GRML, WETO, PPCB, YMAT). Those were driven by press releases, promotions or nothing at all, none of which shows up in the SEC index.
+
+**Conclusion:** the trigger arrives the morning *of* the move, not the evening before, so there is no buy-at-prior-close edge from filings. This supports the existing setup, where the edge is reacting quickly to premarket news, and that is the job of the 7am scanner and its catalyst gate. **Potential improvement (not yet applied): treat a 424B or S-1 filed within the prior day as a hard reject signal.** Small sample (11 squeezes); directional only. No strategy, scan or order changes were made.

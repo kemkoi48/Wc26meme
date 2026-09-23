@@ -8100,3 +8100,17 @@ Pulled Stocklake get_market_movers (gainers, min-cap unfiltered) + Stocktwits ge
 **Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification.
 
 ### Message sent: none
+
+## 2026-09-23, ~1:16pm ET — Momentum scanner alert check. Quiet cycle, no message sent.
+
+**Guard:** SPY live trade 17:16:27 UTC, regular session confirmed.
+
+**ARTL** — rechecked given it nearly doubled again since the 11:19am log ($6.96→$12.75, halted repeatedly, chatter mentions a $15.73 print). Still **no catalyst**: no new Robinhood/Benzinga article since 9/16, and current Stocktwits chatter is pure halt/price-target speculation ("We were about to head to $20 why kill it now?", "let's just run to 20 bucks") with zero mention of news. Confirmed still gated.
+
+**YMAT** (J-Star Holding) — new this cycle, +17.8%, RVOL 153. **No catalyst**: Stocktwits users openly call it a "scam pump" and "such trash," and one explicitly questions whether the company's claimed "US expansion" story is even real. Robinhood/Benzinga news is only routine price-recap mentions across 9/15-9/18, no dated reason for today's move. Not alerted.
+
+**BENF**: $2.48, still below its earlier highs, largest-mover check unchanged, 8-K still unreadable.
+
+**Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification.
+
+### Message sent: none

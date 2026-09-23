@@ -7991,3 +7991,34 @@ clearing every filter).
 **Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification. Flagging BENF and IMCC 8-K/6-K content for a re-check next cycle (9:20am ET) once filing text is likely parsed.
 
 ### Message sent: none
+
+## 2026-09-23, ~8:35am ET — S7 options screen + pre-open watchlist rectify. Quiet cycle, no message sent.
+
+**Step 0 guard:** PASSED — SPY premarket print at 12:35:21 UTC, today's date, fresh.
+
+### Part A: pre-open watchlist rectify
+Today's list ("September 23", 3 items: GRML/BB/CRML) re-checked against the ~6:44am build.
+- **GRML** ($17.46-17.49, +23.4% vs prior close): a Stocktwits post + a second corroborating account both cite "Greenland Mines Ltd. Applies to More than Double Mining Footprint in West Greenland," linking to an ibn.fm/MiningNewsWire article. **Checked and NOT treated as confirmed** — no Benzinga/Robinhood article today mentions this claim (only a generic pre-market-movers recap), Stocklake has zero GRML articles in 2 days, and no new SEC filing is on file since the last check. IBN/MiningNewsWire is a paid press-release syndication network, not independent reporting, so this doesn't clear the "real, sourced article or SEC filing" bar. This morning's actually-confirmed catalyst (the Denmark-Greenland signing, AP-sourced) remains the operative reason GRML is on the list; the "doubled footprint" claim stays unconfirmed.
+- **CRML** ($8.41-8.48, ~flat/-1.5%): still the same Greenland theme, sentiment extremely bullish (score 90) but chatter is now split (some "getting destroyed"/"rug pull" concern vs. bulls) — consistent with yesterday's "cooling" note, no new distinct catalyst.
+- **BB** ($8.69-8.73, +0.8-1.3%): more Stocktwits detail on the same already-logged QNX/Coretura Alloy Kore catalyst (design win backlog math), nothing new. Also confirmed via get_earnings_calendar: **BB reports earnings tomorrow AM (2026-09-24)** — noted for Part B.
+- **Decision: no watchlist edit.** All three names remain justified on their existing (already-logged) catalysts; nothing material enough to add, drop, or re-describe.
+
+### Part B: S7 options daily check
+No open S7 position (`get_option_positions` on 432805174, nonzero=true → empty) — ran the entry screen.
+
+**Track 1 (IV/HV sweep, scan 47f4f938...):** 200 rows returned (398 total matches). 27 cleared the 0.90 "cheap" cap, several cleared 0.80. Checked the cheapest for the outlier-concentration artifact (get_equity_historicals, ~63 trading days):
+- **EIX** (ratio 0.332, lowest in the set): **REJECTED as a cheapness artifact** — a single day (-26.2%) accounts for 65.3% of its variance, the same magnitude as the AMLX precedent (70.1%) that established this check. Ex-outlier the ratio is materially higher; the "cheap" read is a gap artifact, not real opportunity.
+- **PYPL** (ratio 0.4555, top-day contribution a much more normal 39.3% — not an artifact): **REJECTED on catalyst** — Stocktwits chatter claims "news hitting the wire" / "10% up today" but the real quote shows +0.28%, no corroborating Benzinga/Robinhood/Stocklake article found. Unconfirmed rumor only.
+- **COO** (ratio 0.4715, 51.4% top-day contribution): **REJECTED on catalyst** — real news exists (WSJ 9/18: Jana Partners pushing for a CEO change; insider buying 9/14-9/16) but it's 5-7 days stale, already priced in, nothing dated today.
+- **BRZE** (ratio 0.5976): **REJECTED on catalyst** — chatter and news (Forge 2026 conference announcement, earnings-call recap) all 1-2+ weeks old, nothing today.
+- **HRL** (ratio 0.6521): **REJECTED on catalyst** — chatter is stale marketing fluff; next earnings not until 12/02, far outside any near-term catalyst window.
+
+**Earnings-mismatch check on BB specifically** (real catalyst already confirmed, reports AM tomorrow 9/24): pulled its trailing 6 post-earnings moves via get_earnings_results + get_equity_historicals (9.12%, 12.47%, 8.90%, 12.93%, 8.22%, 19.95% → median historical_move_pct ≈ 10.8%). Pulled the 9/25 expiry (1 day past the effective catalyst date, satisfies min_days_after_catalyst=1) ATM straddle (8.5 strike: call mid $0.645, put mid $0.515) → expected_move_from_straddle ≈ $0.986 ≈ 11.35% of spot. mismatch_ratio = 11.35/10.8 ≈ **1.05 — above the 0.85 cap. REJECTED on economics**: the market is already pricing about as much move as BB's own history justifies, so there's no real edge despite the catalyst and earnings timing lining up structurally. (9.0 strike call, delta 0.437, ask $0.45/contract, would otherwise have cleared delta/premium cleanly — the mismatch ratio is the only thing that killed it.)
+
+**Track 2/3:** effectively covered by the BB earnings check above; no other near-term (1-3 day) high-market-cap earnings names showed a live, checkable soft catalyst worth screening today.
+
+**Decision:** no order placed — every checked candidate failed a specific, named gate (cheapness artifact / no catalyst / catalyst-but-not-cheap-enough). No trades.csv or CLAUDE.md update needed.
+
+**Message:** none — both parts fully quiet (no watchlist change, no position opened).
+
+### Message sent: none

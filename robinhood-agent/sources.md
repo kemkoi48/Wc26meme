@@ -8068,3 +8068,19 @@ Pulled Stocklake get_market_movers (gainers, min-cap unfiltered) + Stocktwits ge
 **Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification.
 
 ### Message sent: none
+
+## 2026-09-23, ~11:19am ET — Momentum scanner alert check. Quiet cycle, no message sent.
+
+**Guard:** SPY live trade 15:19:21 UTC, regular session confirmed.
+
+**ARTL** (Artelo Biosciences) — new this cycle, genuinely igniting: $4.06 open → $6.96 (volatility-halted at that level), fresh high printed in the last 5-min bar, RVOL 3.9-5.3. **No catalyst today.** Real news exists but is a week old (9/16: ART27.13 obesity-data readout — notably the stock *fell* 24% same-day on that "positive" data) and Benzinga has nothing since. Stocktwits users are explicitly mocking the lack of a reason: "Patent application???? And running? Lmmfao... take profits!", "A company that cures dog shit ran 1500% yesterday its irrelevant," and one directly asks "is it another Jagx??" Structurally this is the freshest/most igniting name of the day, but the hard gate is unconditional — **not alerted.**
+
+**TJGC** — +27.8%, float 6.8M, but volume only 204K (thin/illiquid) — not pursued further.
+
+**MSS/HCTI/TNMG**: all continuing their no-catalyst runs from prior cycles (MSS now $2.70/+73%, HCTI $1.23 after its halt-and-crash, TNMG $4.52) — no new catalyst found, no re-check needed since status is unchanged (still gated).
+
+**BENF/GRML/IMCC**: continuing to chop/fade, no material new high or catalyst confirmation. BENF's 8-K remains unreadable.
+
+**Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification.
+
+### Message sent: none

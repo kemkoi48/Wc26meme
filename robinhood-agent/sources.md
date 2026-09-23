@@ -8207,3 +8207,25 @@ User asked whether today's ballistic movers (BENF, ARTL, FTFT, HCTI, TNMG, GRML,
    - The 12 biggest losers had 0/12 same-day filings. Coverage was verified for them: each has filings indexed on other dates.
 
 **Conclusion:** there is no tradeable price/volume "buy at the close" pattern for these stocks. The move is news-released-after-the-close. The only edge candidate is the existing HARD GATE ("no catalyst = no trade"), applied to the after-hours window. No strategy/scanner change made; proposed to the user.
+
+## 2026-09-23, ~4:12pm ET — Growth sleeve daily check. PROFIT EXIT on XP; CRSR stop ratcheted.
+
+**Guard:** SPY last regular trade 19:59:59Z today, post-market print 20:12:24Z. The session is real.
+
+**XP** (18 sh, entry $19.97):
+- Real peak since entry: $21.57, today's 09:30-10:00 ET 30-min high. It is above 09-22's finalized $21.31, so today's bar is not finalized yet but its high is used.
+- Regular close $20.875.
+- `decide_profit_exit`: armed at +8.01%, drawdown 3.22% > 2% → **exit**.
+- Cancelled the $17.48 stop first (verified cancelled). Sold via an extended-hours limit at the $20.84 bid; **filled 18 @ $20.86**.
+- Realized **+$16.02 (+4.46%)**.
+- Technicals (09-22 finalized daily): RSI(14) 72.5 (overbought), ADX(14) 34.6 (strong trend), MACD histogram +0.086 and rising (momentum still up). No adverse technical signal; the exit came from the profit-lock rule alone.
+
+**CRSR** (9 sh, entry $13.52):
+- Peak since entry: $13.83 (today's 11:30 ET 30-min high; entry was 09-22, so the 09-21 $13.84 high is excluded). That is +2.29%, so the profit lock is not armed.
+- Stop ratchet: 11.20 → **11.34** (18% trail). Old stop cancelled (verified); new GTC stop_market 9 sh @ $11.34, state: queued (after the close).
+- Quantity matches the position (9/9).
+- Technicals (09-22 daily): RSI 61.7 (neutral), ADX 26.5 (just above the 25 trend floor), MACD histogram +0.051 but declining three bars in a row (0.063 → 0.058 → 0.051). Momentum is fading but has not turned negative. **No real signal**: the histogram is still positive and RSI is neutral. Stated limitation: the S11 backtest found no exploitable edge in these crossovers.
+
+**Redeploy:** settled buying power is $9.30. The XP proceeds ($375.48) are UNSETTLED (T+1, cash account), so no whole-share position is affordable today. Deferred to the 09-24 4:05pm check after settlement. This is a concrete settlement reason, not idle cash.
+
+**Records:** trades.csv rows 19 (XP closed) and 20 (CRSR note) updated. CLAUDE.md S9 row updated (n=9, 1 open: CRSR).

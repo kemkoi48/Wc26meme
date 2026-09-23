@@ -8022,3 +8022,15 @@ No open S7 position (`get_option_positions` on 432805174, nonzero=true → empty
 **Message:** none — both parts fully quiet (no watchlist change, no position opened).
 
 ### Message sent: none
+
+## 2026-09-23, ~9:09am ET — Manual re-scan (user request "Scan again"). No alert-grade name.
+
+**Guard:** SPY premarket print 13:09:00 UTC, fresh. All three scans run.
+
+- **MSS** ($2.49-2.96, +60%, float 569K) — **found only via the safety-net scan**, missing from both regular scans. Fresh ignition (dead ~$1.55 until 8:50am ET, spiked to $3.17 by ~9:05am). **No catalyst**: Robinhood/Benzinga's only MSS news is from 2026-08-19 (insider sale); Stocktwits users themselves say "there is no news" and "this stock loves offering." Hard gate — not alerted.
+- **TLSI** ($5.69-5.74, +16%, float 46.7M): **real, dated catalyst** — FDA 510(k) clearance for TriNav Advance (MT Newswires, 2026-09-22 4:44pm ET) plus HC Wainwright PT raise $11→$12 (Benzinga, 2026-09-23 8:57am ET). But **structure fails**: the move's high was $7.15 in the 4:00-4:30pm ET after-hours bar yesterday; it has held a $5.50-5.90 range for ~16 hours and sits ~20% below that high. Gap-and-hold, not igniting. Not alerted; noted as a watch-at-open name only.
+- **IMCC** collapsed: $7.99 → $2.15 inside the single 8:35-8:40am ET bar (-73% in 5 min), now ~$3.18 (-24% on the day, from the $10.71 high). Consistent with the dilution/"hot potato" read logged at 8:20am. The 6-K content is still not parsed (get_sec_filing 404 again).
+- **BENF** $1.94-2.01, fading from $2.80 high (~1 hr old) — already printed. 8-K content still 404.
+- **IPDN/DCOY/GRML**: no material change (DCOY bounced to $4.62, still stale-catalyst + warrant dilution; GRML $16.80 fading).
+
+### Message sent: reply to user in chat (no push — user present, nothing alert-grade)

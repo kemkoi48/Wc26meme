@@ -8189,3 +8189,21 @@ User asked whether today's ballistic movers (BENF, ARTL, FTFT, HCTI, TNMG, GRML,
 **Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification.
 
 ### Message sent: none
+
+## 2026-09-23, ~4-5pm ET — Research (user-requested: "do we have a profile of these stocks? don't stop until you find the pattern")
+
+**Scope:** 461 micro-float names (float <5M, $0.30-$50, the full universe per a research scan created for this: "Research universe — micro-float (<5M) all names", scan 9a3cbb3c). One year of daily bars: 98,883 stock-days, with 1,201 next-day highs of +50% or more (base rate 1.2%). Then hourly extended-hours bars Jul-Sep for 180 names (80 event-heavy plus a random 100 for de-biasing, weighted back to the universe).
+
+**Findings, in order:**
+1. **Profile (descriptive, real):** squeeze candidates are crushed (80%+ below their 60-day high: 2.7× base), extremely volatile (top 20-day vol bucket: 3.5×), squeezed recently (within 7 days: 4.2×), sub-1.4M float (1.4×), and repeat serial-reverse-split names (split-adjusted "highs" in the $1,000s: ZNB, BENF, VSA). An out-of-sample model (train to Apr, test May-Sep) ranks them well (AUC 0.82). Its top 1% hit +50% 19% of the time vs a 1.4% base.
+2. **But buying at the prior close loses money.** The top-ranked picks have a negative median next-day return (-4% to -6%) and negative expectancy ex-top-5. Price features detect volatility, not direction.
+3. **Look-ahead trap found and removed:** Robinhood daily-bar *volume* includes after-hours volume even with bounds=regular. PRFX 5/28 showed "18.6M" daily volume, but regular session was only ~37K; the rest printed 5-8pm ET after news. A first model (AUC 0.85, +7-14% per trade) was built on that leak and is INVALID. Also removed a corrupted split-day bar (QNCX 6/30: adjusted series shows raw prices on the split date).
+4. **Timing:** of 289 ballistic days in the hourly sample, the first +20% cross came premarket in 50%, after hours (4-8pm) in 35%, and during the regular session in only 16%. The news drops after the close. That is why no close-based pattern works.
+5. **After-hours breakout, mechanical (+15% over the 4pm close on 20× hourly volume, buy at that hour's close, sell at next open):** it looked like +11%/trade on the event-heavy names, but that is **selection bias**. On the random de-bias sample it went 14% win on names that later had events and 0/4 on names that never did. Universe-weighted: -1% mean, -13% median before costs. Premarket-breakout buying was negative in every variant.
+6. **Only separator found = a real catalyst.** All 103 AH triggers were checked against SEC filing index (8-K/6-K dated trigger day or next business day):
+   - With filing: n=21, 52% win, mean +16.4%, median +7.4% (ex-top-3: +2.2% mean, -1.4% median).
+   - No filing: n=75, 36% win, median -10.4%.
+   - Permutation p: median diff 0.03, mean diff 0.15, win-rate diff 0.13. **Suggestive, not proven** (21 trades, 3 months, fat-tailed; AH spreads of 3-6% eat much of it).
+   - The 12 biggest losers had 0/12 same-day filings. Coverage was verified for them: each has filings indexed on other dates.
+
+**Conclusion:** there is no tradeable price/volume "buy at the close" pattern for these stocks. The move is news-released-after-the-close. The only edge candidate is the existing HARD GATE ("no catalyst = no trade"), applied to the after-hours window. No strategy/scanner change made; proposed to the user.

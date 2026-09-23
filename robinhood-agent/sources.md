@@ -8126,3 +8126,23 @@ User asked whether today's ballistic movers (BENF, ARTL, FTFT, HCTI, TNMG, GRML,
 **Float size correlated with move DURABILITY, not ignition**: HCTI had by far the largest float of the group (14.6M vs. sub-3M for the rest) and was the one name whose move failed to hold (crashed -49% off its high within 15 min). Smaller float (ARTL 547K, IPDN 476-597K, TNMG 589K, BENF 2.27M) tracked with more violent AND more sustained moves — consistent with fewer shares available for shorts to cover into.
 
 **Working theory for this account going forward**: a beaten-down microcap making a *fresh* (within ~1 week) 52-week/multi-month low, on a sub-3M float, is a coiled-spring candidate for a violent capitulation/short-covering squeeze on any spark — real or rumor. This is a **structural/mechanical pattern, not a catalyst**, and per the standing hard gate it still requires a real dated catalyst before it's alertable — this note is background context for interpreting scanner hits faster, not a new alert trigger. User explicitly declined to turn this into a live screen or to loosen the alert gate; this is a one-time backtest/research note only.
+
+## 2026-09-23, ~2:10pm ET — Research: day-before-squeeze backtest (user-requested). Result: no tradeable price-only pattern.
+
+**Goal (user's words):** find a precise profile visible at the D-1 close that predicts a big next-day move, so the stock can be bought near the prior close.
+
+**Data:** real daily bars (get_equity_historicals, split-adjusted, interpolated bars dropped), 2026-03-01 → 2026-09-22, 23 tickers: every repeat-squeeze name in this log (JAGX, RETO, IPW, BDRX, WETO, AEMD, PPCB, BIAF, TCRT, FTFT) plus today's movers (BENF, ARTL, HCTI, TNMG, GRML, IPDN, IMCC, DCOY, MSS, KIDZ, YMAT, WAFU, LXEH). 2,737 testable days. A squeeze was defined as a next-day close-to-close gain of at least 50%: 24 found, of which **19 were first-day ignitions** and 5 were day-2 continuations (excluded).
+
+**The D-1 profile is real but weak** (ignition median vs. baseline median): 64% vs 36% below the 20-day high; 8% vs 12% above the 20-day low; close location in the day's range 0.22 vs 0.42 (closes near the low, consistent with the user's "close is low" intuition); D-1 change -7.0% vs -1.3%; D-1 volume 0.25x vs 0.38x the 20-day average (a quiet day).
+
+**Rule tests (buy at the D-1 close, measure the next day):**
+- Baseline (any day in these tickers): 0.7% closed up 50% or more.
+- R4 (≥40% below 20-day high, bottom-30% close, red day, within 15% of 20-day low): 299 matches, 2.3% squeezed. Mean +3.99%, **median -1.45%**, win rate 40%. **Excluding the 3 best trades the mean is -0.30%.** With a +20% target and a -15% stop the mean is -0.49%.
+- R6 (stricter): 133 matches, 4.5% squeezed. Mean +9.64%, **median -1.16%**. Excluding the 3 best trades the mean is +0.01%. With the target and stop the mean is -0.14%.
+- The entire edge is 3 trades: RETO +676%, AEMD +374% and GRML +231%. The worst trade was -51% overnight.
+
+**Out-of-sample check (today, which was not in the data used to build the rules):** **0 of 15** of today's movers matched R4 or R6 at the 9/22 close. BENF (+424%) failed only on close location (0.51, mid-range). ARTL (+207%) closed near its high (0.85) and was only 39% below its high. The close-near-low feature that looked distinctive in-sample missed both of today's biggest movers, so it is likely overfit.
+
+**Conclusion:** on price and volume alone there is no precise, tradeable D-1 pattern. "Crushed microcap near its lows" is the *context* in which squeezes happen, but the *trigger* is overnight or premarket news, filings or promotion (BENF's 8-K today, JAGX's FDA fee waiver, AEMD's Benzinga item). None of that is visible in the D-1 price. The median trade on every rule loses money, and the positive mean depends on catching 1-in-40 lottery tickets while holding through drawdowns of up to -51%. **Selection-bias caveat:** these tickers were chosen *because* they squeezed, so real-world hit rates would be lower still.
+
+**Candidate non-price features worth testing next** (not yet tested): (1) an 8-K or 6-K filed after the close on D-1; (2) a reverse split that became effective within the last ~10 days (float shrink); (3) a spike in Stocktwits message volume on the D-1 evening; (4) borrow fee or short interest. No strategy, scan or order changes were made.

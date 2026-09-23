@@ -8084,3 +8084,19 @@ Pulled Stocklake get_market_movers (gainers, min-cap unfiltered) + Stocktwits ge
 **Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification.
 
 ### Message sent: none
+
+## 2026-09-23, ~12:16pm ET — Momentum scanner alert check. Quiet cycle, no message sent.
+
+**Guard:** SPY live trade 16:16:26 UTC, regular session confirmed.
+
+**FTFT** (Future FinTech Group) — new this cycle, genuinely igniting: $3.86 → $6.13 over the last hour (still near high, multiple trading halts along the way), RVOL 13.5. **No catalyst** — a Stocktwits user asks outright "who's got the news?" and gets no real answer; the only Robinhood/Benzinga articles are stale price-recaps from 9/15-9/21 describing FTFT as a repeat catalyst-less mover (this is the exact ticker already flagged in this job's own standing precedent: "FTFT +179% on no catalyst then -28% the next day," 9/15-9/16). Same pattern repeating today. **Not alerted.**
+
+**BENF** — now $2.94 (+446%), RVOL 103, still the largest % mover of the day per the standing largest-mover check. 8-K still unreadable (checked again, still 404). Unconfirmed, not re-alerted.
+
+**TJGC, DAIC, LGCL, SMJF, NCPL, TLSA, FLYE**: all modest gainers on thin/unremarkable volume, none pursued further.
+
+**HCTI/TNMG/ARTL/MSS/IMCC/GRML**: continuing their already-logged no-catalyst or already-printed status, no material change.
+
+**Decision:** no name clears both gates. Quiet cycle — no user message, no PushNotification.
+
+### Message sent: none

@@ -8360,3 +8360,12 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
 - GCTK: faded from ~4.2 premarket to 2.30. No alert.
 - PFSA / NCPL / WETO: still gated (no confirmed catalyst).
 - Result: quiet cycle, no alert sent.
+
+### Momentum scan 2026-09-24 10:17 ET (14:17Z), market open (SPY printing 14:17Z)
+- ALERT GRML $15.79 (+41%): fresh HOD 15.85 at 10:16 on a 1-min volume spike (418K + 325K). Catalyst: $42M+ registered direct offering from existing investors plus warrant exercise (MT Newswires 07:06 ET 9/24; Benzinga 05:05 ET). FLAGGED: the catalyst is a financing, not a business event. Day 4 of a run from 2.85 (9/18); 9/23 faded 17.99 -> 11.19. Float 2.9M, 17.4M shares traded by 10:17 (~6x float) but slower pace than 9/21-9/23. Found in all 3 scans.
+- SRZN: new HOD 35.86 at 09:50 (above the 8:17 alert level), now ~32.9 (-8%). High is 27 min old and not retested. Today's Benzinga cites only the 9/8 IND. No re-alert.
+- APUS: opened to 8.74 HOD at 09:30, now 5.90 (-32% off high). Faded.
+- PFSA: Benzinga 09:43 cites ISO 13485 certification from GMED (catalyst now sourced), but it's at 3.02 vs the 4.36 premarket high. Faded, no alert.
+- PMAX $2.28 (+150%, spiked to 2.81 at 10:05): RH news shows only a 8/3 $200M shelf. No catalyst found, price action only. Live shelf = dilution risk.
+- SPHL $2.84 (+23%): only "stocks moving" lists, no catalyst. GATED. HOD 3.67 at the open.
+- SKYQ / NCPL / WETO / GCTK / HCWB / SVRN: no alert (no catalyst, or thin volume).

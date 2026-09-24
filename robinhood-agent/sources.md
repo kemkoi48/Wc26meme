@@ -8271,3 +8271,22 @@ User asked whether today's ballistic movers (BENF, ARTL, FTFT, HCTI, TNMG, GRML,
 - ARTL: a provisional patent filing for ART27.13 with GLP-1 agonists.
 
 Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index during the session, so the gate held them correctly under the rules. Both are fading today: BENF -35% to $1.87, ARTL -29% to $5.20.
+
+## 2026-09-24, ~7:17am ET — Momentum scanner alert check. ALERT SENT: GCTK.
+
+**Guard:** SPY premarket prints today; the session is live.
+
+**GCTK** — in all three scans. **Alerted.**
+- Price: $4.37-4.50 premarket vs a $2.03 prior close (+115%), float 798K.
+- Structure: premarket high $5.05 (4:20am ET), dipped to $3.75 (6:20am), re-ignited to $4.78 in the 7:00-7:10am bar. That is a fresh local high within ~10 min, so igniting, not printed.
+- Volume (self-computed from real 10-min extended bars, not the broken RVOL field): 1.38M shares in the 7:00-7:10 bar alone, vs a 1.34M full-day average (per Benzinga). Genuinely elevated.
+- Catalyst: Benzinga 2026-09-23 23:14 ET. The Lokahi Therapeutics subsidiary signed its first external fee-for-service partnership (Innovate GBM). 8-K and 425 filed 09-23.
+- Dilution check (sub-$5, sub-1M float): S-1 registration filed 09-17. Live offering risk; flagged in the alert.
+
+**WETO** ($2.22-2.25, +54%, all three scans): no fresh catalyst (last week's subsidiary launch) and a $75M ATM on file. Gated.
+
+**GRML** ($12.58, fading from the $15.39 premarket high): the news is a financing (the $42M registered direct). Already on the watchlist; already printed. Not alerted.
+
+**Largest mover check:** GCTK itself.
+
+### Message sent: GCTK alert (one line), plus a PushNotification.

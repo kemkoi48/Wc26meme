@@ -8397,3 +8397,10 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
 - YDES $4.42 (+37%): safety net only, thin (380K). WETO 1.92 (+32%) and QCLS 1.15 (+30%): no catalysts (WETO gated all day).
 - APUS 5.22 / SRZN 31.41 / STAK 1.30 / PMAX 1.59 / SVRN 43.40: fading.
 - Result: quiet cycle, no alert sent.
+
+### Momentum scan 2026-09-24 15:16 ET (19:16Z), market open (SPY printing 19:16Z)
+- FOFO $2.67 (+52%, float 3.9M): ignited 15:00 ET, 2.20 -> 2.78 on 202K in 10 min, halted up (Stocktwits). Ignition + safety net. RH news: latest is a 9/3 "stocks moving" list; Stocktwits users themselves call it "no news pump." No catalyst found, price action only. GATED.
+- VBIO $3.28-3.44 (+20%): steady afternoon grind to 3.52, still no RH news. GATED.
+- SRZN 32.66 (+102%): recovering but still below the 35.86 HOD from 09:50. No re-alert.
+- GRML 14.92, APUS 5.24, PFSA 2.93, STAK 1.36, PMAX 1.70: no new highs.
+- Result: quiet cycle, no alert sent.

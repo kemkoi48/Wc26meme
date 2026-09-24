@@ -8404,3 +8404,20 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
 - SRZN 32.66 (+102%): recovering but still below the 35.86 HOD from 09:50. No re-alert.
 - GRML 14.92, APUS 5.24, PFSA 2.93, STAK 1.36, PMAX 1.70: no new highs.
 - Result: quiet cycle, no alert sent.
+
+### Momentum scan 2026-09-24 16:16 ET (20:16Z): after the close
+- Fired after the 4pm bell. Regular session over, RVOL fields unreliable post-close. No new scan acted on; last in-session read (15:16) was quiet. No alert.
+
+### Growth sleeve daily check 2026-09-24 ~16:16 ET (fired 20:16Z)
+- Holiday guard: SPY regular print 19:59:59Z today plus AH print 20:16Z. Market was open.
+- CRSR 9 sh, entry 13.52, close 13.55. Peak since entry 13.83 (9/23 finalized daily high; 9/24 high 13.60).
+  - decide_profit_exit: NOT armed, peak +2.29% < 5% trigger.
+  - Technicals (daily): RSI(14) 60.9 (neutral); ADX(14) 26.6 (real trend); MACD 0.525 vs signal 0.489, histogram +0.036, shrinking 3 sessions (0.058 -> 0.051 -> 0.036). Momentum fading but still positive. No signal against the position (RSI neutral, hist still > 0). No action.
+  - decide_stop_update -> 11.3406, rounds to 11.34 = resting stop 6ab432f8 (confirmed, 9 sh = full position). No cancel/replace (LYFT rounding edge case).
+- REDEPLOY: settled buying_power $384.78 (unsettled 0; XP proceeds settled).
+  - Growth Momentum scan 2514847d: 99 rows. Filtered to price $5-190, ADX >= 25.
+  - Rejected: NEO/AVTR (negative PE); CDNA (at 52w high 63.09 today); HALO (116.10 vs 116.85 52w high, within 1%); TEVA (1.4% off high, PE 65); IOVA (unprofitable biotech).
+  - Considered: ECO (PE 7.3, ADX 46.8; 4 sh only, $72 idle); FRO; PBR.A; CNH.
+  - PICK: INSP $68.81, PE 15.0, ADX(14) 46.2, RSI 54.9, 1MO +9.2%, 53% below its 52w high 147.03. Q2 beat + FY26 guidance raise (Benzinga, 8/3). Freedom Capital PT 71 -> 97 (Benzinga 9/21). Pulled back from 76.78 (9/18). Filings since 8/15: only a Form 4 (9/2), no dilution.
+  - ORDER: buy 5 INSP, limit 70.20, regular_hours gfd. Order 6ab58583-dded-41ac-b3f4-b0eae6429c54, state QUEUED for the 9/25 open ($351 max).
+  - STOP NOT YET PLACED: a stop can't rest before the fill. The send_later follow-up for ~09:30 ET was DENIED by the permission classifier, so no dedicated follow-up is scheduled. Fallback: next session turn (S7 pre-open ~8:35, then the 9:17 scanner) must verify the fill and place a GTC stop at trailing_stop_price(fill). Expect up to ~47 min unprotected after the open unless the user places it manually.

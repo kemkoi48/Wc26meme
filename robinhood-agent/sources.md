@@ -8339,3 +8339,16 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
 - **Track 2:** today's reporters BB, DRI and SNX are already reported (IV crush). COST reports after the close but is far beyond the $150 cap.
 - **Track 3:** SRZN has a bullish read-through, but after +62% premarket it is chasing and its IV will be rich. Not screened for entry.
 - **Result: no S7 trade.** Gates that killed each: ACVA = deal pin; ALMS = no fresh catalyst; EIX = premium $155 > $150 (and a soft catalyst); the rest = cheapness artifacts.
+
+## 2026-09-24, ~8:45am ET — User asked about APUS (manual check).
+
+**APUS** (Apimeds Pharmaceuticals / MindWave Innovations):
+- Price: $5.08 premarket vs a $2.29 close (+122%); premarket high $5.50.
+- Float 563K (1.51M outstanding); 9.0M shares traded premarket, ~16× the float. Flat at ~$2.12 until ~8:30am ET, then ignited.
+- **Catalyst confirmed via primary wire:** GlobeNewswire 2026-09-24. MindWave Innovations (an APUS subsidiary) signed a 12-month technology services agreement with Singapore's AQUAE Holdings to build and operate AQUAEChain, a platform for insured ALCI (environmental) credits. It pays contracted service fees plus an allocation of 20% of ALCI credits outstanding.
+- Not yet in Robinhood/Benzinga news.
+- Red flags:
+  - A paid IR campaign started 09-18 (the "Engages IBN for Corporate Communications" release).
+  - The company pivoted from a bee-venom biotech (7 employees) to a blockchain / digital-asset-treasury story.
+  - Three 8-Ks since 08-21 (09-22, 09-11, 08-21) are unreadable (404), so dilution status is unknown.
+  - The 52-week high is $59.70 (05-05), so the stock is down about 96%.

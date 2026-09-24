@@ -8390,3 +8390,10 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
 - VBIO $3.14 (+15%, float 886K): Ignition + safety net. No RH news. GATED.
 - STAK 1.29 (from 1.69 HOD), APUS 5.60, SRZN 31.79, PMAX 1.55, HCWB 2.03, SVRN 45.92: faded/no new highs, no catalysts beyond those already logged.
 - Result: quiet cycle, no alert sent.
+
+### Momentum scan 2026-09-24 14:16 ET (18:16Z), market open (SPY printing 18:16Z)
+- PFSA $3.10-3.15 (+51%): midday bounce from 2.39 low to 3.24 (13:30 bar) on a 1.0M 10-min bar. Has a catalyst (Benzinga 9/24: ISO 13485 cert from GMED), but it's ~25% below the 4.18 RTH HOD from the open. Not near the high, no alert.
+- GRML 14.40 (alerted twice): fading off the 15.98 HOD, no action.
+- YDES $4.42 (+37%): safety net only, thin (380K). WETO 1.92 (+32%) and QCLS 1.15 (+30%): no catalysts (WETO gated all day).
+- APUS 5.22 / SRZN 31.41 / STAK 1.30 / PMAX 1.59 / SVRN 43.40: fading.
+- Result: quiet cycle, no alert sent.

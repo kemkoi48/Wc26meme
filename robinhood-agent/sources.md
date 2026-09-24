@@ -8369,3 +8369,10 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
 - PMAX $2.28 (+150%, spiked to 2.81 at 10:05): RH news shows only a 8/3 $200M shelf. No catalyst found, price action only. Live shelf = dilution risk.
 - SPHL $2.84 (+23%): only "stocks moving" lists, no catalyst. GATED. HOD 3.67 at the open.
 - SKYQ / NCPL / WETO / GCTK / HCWB / SVRN: no alert (no catalyst, or thin volume).
+
+### Momentum scan 2026-09-24 11:17 ET (15:17Z), market open (SPY printing 15:17Z)
+- HCWB $2.58-2.79 (+68%): found ONLY via the safety-net scan (missing from both regular scans). Spiked 1.69 -> 3.12 (10:25), faded to 1.83, re-spiking 2.61 at 11:10. RH news: latest is a 9/2 patent allowance and a 7/29 $1.6M private placement. Stocktwits "news coming" is chatter. No catalyst found, price action only. GATED.
+- SVRN $46.6 (+41%): safety net only. HOD 51.86 at 10:45. Thin volume (~300K). RH news only "stocks moving" lists (9/21-22). No catalyst, GATED.
+- GRML (alerted 10:17): back to 14.82 from the 15.85 HOD, no new high, no re-alert.
+- SRZN 32.27 / APUS 5.37 / PMAX 1.69 / PFSA 2.60: all faded off their highs, no action.
+- Result: quiet cycle, no alert sent.

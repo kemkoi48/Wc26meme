@@ -8376,3 +8376,10 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
 - GRML (alerted 10:17): back to 14.82 from the 15.85 HOD, no new high, no re-alert.
 - SRZN 32.27 / APUS 5.37 / PMAX 1.69 / PFSA 2.60: all faded off their highs, no action.
 - Result: quiet cycle, no alert sent.
+
+### Momentum scan 2026-09-24 12:17 ET (16:17Z), market open (SPY printing 16:17Z)
+- RE-ALERT GRML $15.81 (+40%): new HOD 15.98 (12:10 bar), above the 10:17 alert's 15.85 high, with 5-min volume expanding to 663K/523K from ~200K all late morning. Same catalyst ($42M registered direct, MT Newswires 9/24). Overhead: 9/22 high 18.21. All 3 scans.
+- STAK $1.45-1.57 (+65%): ignited 11:55 ET, 0.93 -> 1.69 in 20 min, halted up (Stocktwits). Float 810K. No RH news at all; Stocktwits has zero catalyst (users asking "what's the catalyst?"). Only a 6-K 9/15 in SEC filings since 8/1. No catalyst found, price action only. GATED. Regular scans (Warrior) + safety net.
+- AVX $5.16 (+26%): steady grind, 1.4M volume. Latest news is the 8/19 CFO resignation and 8/13 Q2 call. No fresh catalyst. GATED.
+- SVRN 49.48 (+52%): thin (376K). Still no catalyst.
+- APUS 5.84 / SRZN 31.64 / PFSA 2.79 / PMAX 1.60: no new highs.

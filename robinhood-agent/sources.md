@@ -8421,3 +8421,23 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
   - PICK: INSP $68.81, PE 15.0, ADX(14) 46.2, RSI 54.9, 1MO +9.2%, 53% below its 52w high 147.03. Q2 beat + FY26 guidance raise (Benzinga, 8/3). Freedom Capital PT 71 -> 97 (Benzinga 9/21). Pulled back from 76.78 (9/18). Filings since 8/15: only a Form 4 (9/2), no dilution.
   - ORDER: buy 5 INSP, limit 70.20, regular_hours gfd. Order 6ab58583-dded-41ac-b3f4-b0eae6429c54, state QUEUED for the 9/25 open ($351 max).
   - STOP NOT YET PLACED: a stop can't rest before the fill. The send_later follow-up for ~09:30 ET was DENIED by the permission classifier, so no dedicated follow-up is scheduled. Fallback: next session turn (S7 pre-open ~8:35, then the 9:17 scanner) must verify the fill and place a GTC stop at trailing_stop_price(fill). Expect up to ~47 min unprotected after the open unless the user places it manually.
+
+## 2026-09-24 ~4:40pm ET: user asked "what should I buy based on our latest stock profile"
+- Applied the 9/23 research profile: an after-hours break of +15% or more over the 4pm close, on heavy volume, with a same-day company filing or release.
+- Scanned the safety-net list (30 names) and compared after-hours prices to today's 4pm close.
+- **INLF, the only match.**
+  - Price action: 4pm close 2.89, then 2.95 at 4:00-4:30 on ~1K shares, then broke to 4.17 in the 4:30 bar on 94K shares; last 4.36 (+51% over the 4pm close).
+  - Catalyst: PR Newswire, 9/24 4:30pm ET, H1 FY2026 results.
+    - Revenue $12.94M (+26%); net income $1.01M vs a -$1.98M loss.
+    - Gross margin 36% vs 17.5%; cash $45.47M at 6/30 vs $6.72M at 12/31.
+  - Share count and market cap: 1.05M Class A shares post-consolidation. That is about a $4.6M market cap at 4.36, against $45M in cash at 6/30.
+  - Filing: no same-day 6-K in the index yet (latest 9/17; 9/9 was the EGM adjournment). The research counted next-day filings.
+  - Risks:
+    - The cash came from a $32.3M PIPE plus a $21.2M ATM, so it is a serial diluter; the share count after 6/30 is unknown.
+    - Two 6-Ks since the 9/15 EGM.
+    - Stocktwits users are asking "what's the news"; a user flagged its offering history on 9/17.
+- **Not qualifying:**
+  - After-hours gain under 15%: ISPC +13%, NCPL +13.5%, SVRN +13% (thin), PMAX +10%.
+  - No filings: ISPC and NCPL have none since 9/20.
+- The profile's edge is suggestive, not proven: with a filing, n=21, median +7.4%, but ex-top-3 median -1.4%.
+- Agentic account: ~$33 free after the queued INSP order. Not traded here. Told the user.

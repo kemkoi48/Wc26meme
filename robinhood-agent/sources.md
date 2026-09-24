@@ -8290,3 +8290,23 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
 **Largest mover check:** GCTK itself.
 
 ### Message sent: GCTK alert (one line), plus a PushNotification.
+
+## 2026-09-24, ~8:17am ET — Momentum scanner alert check. ALERT SENT: SRZN (read-through catalyst).
+
+**Guard:** live premarket tape confirmed.
+
+**SRZN** (Surrozen) — **found only via the safety-net scan.** At ~$21-23.42 it is above both regular scans' $20 ceiling, the known BIAF defect. **Alerted.**
+- Price: $23.42 (+45%) vs a $16.16 close, float 6.5M.
+- Structure: zero premarket prints until 7:00am ET, then $16.50 → $20.00 (7:00-7:30) → $22.23 high (7:30-8:00). A fresh high inside the last ~20 min, so igniting.
+- Volume: 25K then 78K shares per 30 min from a dead-flat premarket. Real, but modest in absolute terms.
+- Catalyst (read-through, not company news): MT Newswires 2026-09-24 07:18 ET via Robinhood MRK news. Merck's Phase 2b/3 BRUNELLO trial in diabetic macular edema met its primary endpoint. MT Newswires labels the drug "ranibizumab"; Merck's own release (linked on Stocktwits) names remigromig, a tri-specific **Wnt** agonist.
+- Why it moves SRZN: Surrozen's lead SZN-8141 is a Wnt agonist in the same indication (IND filed 09-08, MT Newswires), and SZN-413 is licensed to Boehringer. This is pathway validation, not a Surrozen event.
+- SEC: no SRZN filing since 09-15. Not sub-$5 or sub-1M float, so the dilution check is not triggered.
+
+**PFSA** (Profusa, $4.04-4.49, +100%, float 605K) — found only via the safety-net scan. **GATED.** It exploded 7:30-8:00am ET on 11.3M shares. Stocktwits claims it "cleared major hurdle to sell their product to EU", but Benzinga has only an 8:05 ET movers list with no reason, Stocklake is empty (3d), and the SEC index has nothing since 09-01. Unconfirmed claim, per the TCRT precedent. Re-check next cycle.
+
+**GCTK:** already alerted at 7:17; no new high since ($3.86-4.30 chop below the $4.78/$5.05 highs). No re-alert.
+
+**WETO:** gated (no fresh catalyst). **VBIO** (+23%): trivial volume (~6K/30min), no news.
+
+### Message sent: SRZN alert plus a PushNotification.

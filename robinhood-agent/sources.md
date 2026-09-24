@@ -8383,3 +8383,10 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
 - AVX $5.16 (+26%): steady grind, 1.4M volume. Latest news is the 8/19 CFO resignation and 8/13 Q2 call. No fresh catalyst. GATED.
 - SVRN 49.48 (+52%): thin (376K). Still no catalyst.
 - APUS 5.84 / SRZN 31.64 / PFSA 2.79 / PMAX 1.60: no new highs.
+
+### Momentum scan 2026-09-24 13:17 ET (17:17Z), market open (SPY printing 17:16Z)
+- GRML (alerted 10:17, re-alerted 12:17): 15.08, off the 15.98 HOD (12:10), no new high, no re-alert.
+- QMCO $29.90 (+15%, ~$1B cap): safety net only. Benzinga 9/24 has only "stocks moving" lists plus a 9/23 bullish call sweep; the move looks like storage-sector sympathy with Everpure (P, FY28 outlook). No company-specific catalyst. GATED.
+- VBIO $3.14 (+15%, float 886K): Ignition + safety net. No RH news. GATED.
+- STAK 1.29 (from 1.69 HOD), APUS 5.60, SRZN 31.79, PMAX 1.55, HCWB 2.03, SVRN 45.92: faded/no new highs, no catalysts beyond those already logged.
+- Result: quiet cycle, no alert sent.

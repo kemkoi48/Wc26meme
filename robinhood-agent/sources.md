@@ -8352,3 +8352,11 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
   - The company pivoted from a bee-venom biotech (7 employees) to a blockchain / digital-asset-treasury story.
   - Three 8-Ks since 08-21 (09-22, 09-11, 08-21) are unreadable (404), so dilution status is unknown.
   - The 52-week high is $59.70 (05-05), so the stock is down about 96%.
+
+### Momentum scan 2026-09-24 09:17 ET (13:17Z), premarket
+- APUS: catalyst OK (GlobeNewswire 9/24, MindWave/AQUAE services deal). Ran 1.92 -> high 6.99 (13:00 bar), then lower highs 6.86/6.51, last 5.98 (-14% off high). Structure fading, so NO alert. Re-alert only on a reclaim of 6.99.
+- SRZN: tagged 31.05 (13:05) above the 29.89 re-alert level but failed. Last 28.90, back below. Failed breakout, no re-alert.
+- SKYQ $3.10 (+21%): latest RH news is 9/10 (crude-sector piece), no fresh catalyst. GATED.
+- GCTK: faded from ~4.2 premarket to 2.30. No alert.
+- PFSA / NCPL / WETO: still gated (no confirmed catalyst).
+- Result: quiet cycle, no alert sent.

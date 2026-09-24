@@ -8310,3 +8310,32 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
 **WETO:** gated (no fresh catalyst). **VBIO** (+23%): trivial volume (~6K/30min), no news.
 
 ### Message sent: SRZN alert plus a PushNotification.
+
+## 2026-09-24, ~8:36am ET — Pre-open rectify + S7 options screen. Watchlist +SRZN; S7 no trade (EIX near-miss on the premium cap).
+
+**Guard:** SPY premarket print 12:36:07Z; the session is live.
+
+### Part A — pre-open rectify
+- **Added SRZN**: $26.20 premarket (+62% vs $16.16), premarket high $29.89, float 6.09M. Read-through catalyst: Merck's Phase 2b/3 BRUNELLO trial of its Wnt agonist in DME met its primary endpoint (MT Newswires 07:18 ET). Surrozen's lead is a Wnt agonist in DME.
+- **BB**: reported before the bell, a beat and raise (MT Newswires 07:35 ET). FQ2 adjusted EPS $0.07 vs $0.04 est; revenue $163.3M vs $141.8M; FY27 guide raised to EPS $0.19-0.22 and revenue $616-636M. Premarket reaction flat ($8.38, 0.0%). Kept.
+- GCTK $4.22 (+108%) holding; GRML $12.99 (+16%); CRML $7.80 (+1%). No change.
+- Float check (user request, from Robinhood fundamentals):
+  - GCTK: 643K float, 798K outstanding
+  - PFSA: 519K float, 606K outstanding
+  - SRZN: 6.09M float, 11.75M outstanding
+  - The scanner's "Float" column appears to report shares outstanding for the micro-caps.
+
+### Part B — S7
+- Open S7 position: none.
+- **Track 1** (scan 47f4f938, 200 rows): 32 rows had IV/HV < 0.90, 14 had < 0.80. Artifact check on the top 10, using real daily bars and the single-day variance share over 20- and 30-day windows (ex-outlier IV/HV in brackets):
+  - **ACVA** (0.157): the IV is correctly low. It is a **merger-arb pin**: Copart's $10.50 cash tender (MT Newswires 09-17, expires 10-01). REJECT, no directional edge.
+  - **ALMS** (0.170): one day (-83.4%, 09-01) = 88% of variance; still cheap ex-outlier (0.60-0.65). But the catalyst is stale (the 09-04 insider buy, the 09-03 downgrade). REJECT, no fresh catalyst.
+  - **EIX** (0.348): the 08-31 -26.2% day = 71-73% of variance. Ex-outlier 0.68-0.75, still under 0.90 today because IV dropped vs prior cycles (real option IV 0.36-0.40 at the Oct 16 puts). Catalyst: bearish and soft (UBS PT cut $63→$57 on 09-23; the wildfire-liability overhang since 08-31).
+    - **NEAR-MISS on the premium cap**: Oct 16 $52.50 put, delta -0.395, bid/ask $1.50/$1.60, mid $1.55 = **$155 vs the $150 cap**.
+    - Oct 16 $50 put: $0.63 = $63, but delta -0.212 < the 0.25 floor.
+    - The quotes are the 09-23 close snapshot (not live pre-open) and the catalyst is only a PT cut, so not forced.
+  - WBD [1.44-2.01], PCG [1.00-1.14], ROIV [1.15-1.27], HRL [1.44-1.47], RARE [2.12-2.46]: all ARTIFACTS, rich ex-outlier.
+  - GAP [0.86/0.96] and CRML [1.46/0.99]: borderline / fail on one window.
+- **Track 2:** today's reporters BB, DRI and SNX are already reported (IV crush). COST reports after the close but is far beyond the $150 cap.
+- **Track 3:** SRZN has a bullish read-through, but after +62% premarket it is chasing and its IV will be rich. Not screened for entry.
+- **Result: no S7 trade.** Gates that killed each: ACVA = deal pin; ALMS = no fresh catalyst; EIX = premium $155 > $150 (and a soft catalyst); the rest = cheapness artifacts.

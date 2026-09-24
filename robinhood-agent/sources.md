@@ -8245,3 +8245,29 @@ User asked whether today's ballistic movers (BENF, ARTL, FTFT, HCTI, TNMG, GRML,
 **Largest mover:** BENF, $2.57 (+377%), same unresolved 8-K. The rest of the board (VSA, MSS, ARTL, IPDN, DCOY, TNMG, LXEH) has no change from earlier no-catalyst logs.
 
 ### Message sent: none
+
+## 2026-09-24, ~6:45am ET — Premarket watch: renamed the list to "September 24". Added GCTK; kept GRML/BB/CRML.
+
+**Guard:** SPY premarket print 10:44:40Z today; the session is real.
+
+**Added:**
+- **GCTK** (GlucoTrack), ~$3.70-4.06 premarket vs a $2.03 close (+100%), float 798K, 27.6M volume.
+  - Dated catalyst: Benzinga 2026-09-23 23:14 ET. The Lokahi Therapeutics subsidiary signed its first external fee-for-service partnership (Innovate GBM, glioblastoma asset search). It is also in the 05:05 ET premarket movers list.
+  - SEC: 8-K and 425 dated 09-23.
+  - **First live instance of yesterday's research profile:** after-hours break (+80-90% AH) with a same-day 8-K. Paper-track it: entry reference is the first AH break, exit at the next regular open.
+  - Caveats: S-1 registration 09-17 (live dilution mechanics); the catalyst is weak (a nonprofit services deal, no revenue terms); the 52-week high is $135.75 (serial reverse splits); already fading premarket from the $4.42 high, with Stocktwits turning ("scam company", "premarket pump looked suspicious").
+
+**Kept:**
+- **GRML**: $13.62 premarket (+22%) on a $42M registered direct offering plus warrant exercises (Benzinga 09-24 05:05 ET). This is a financing, not an operating catalyst; the Greenland theme is still live.
+- **BB**: reports FQ2 this morning (AM, verified, EPS est $0.04). Trending on Stocktwits; $8.23 premarket (-1.8%).
+- **CRML**: flat at $7.71. Kept as the Greenland/critical-minerals theme companion to GRML.
+
+**Not added:**
+- **WETO** (+52-65% premarket, $2.20-2.40): the "catalyst" is last week's Vantrapower subsidiary launch, which is not fresh. A $75M ATM has been on file since 08-26 (the WETO precedent). No same-day filing. Gated.
+- **NLST** (+12% post-market on Stocktwits): not resolvable on Robinhood ("instrument not found").
+
+**Record correction (yesterday's gated names):** Benzinga's 09-24 premarket recap now attributes two of yesterday's moves to real news:
+- BENF: a strategy to eliminate HCLP debt and Heppner Equity Interests (the 8-K that returned 404 all day).
+- ARTL: a provisional patent filing for ART27.13 with GLP-1 agonists.
+
+Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index during the session, so the gate held them correctly under the rules. Both are fading today: BENF -35% to $1.87, ARTL -29% to $5.20.

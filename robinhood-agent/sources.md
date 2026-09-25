@@ -8467,3 +8467,9 @@ Renamed "September 24" -> "September 25" in place (list 28897739-a4e8-40fa-ac57-
 - ONCO $1.15-1.18 (+26-30%): real catalyst (SRX Global investment disclosed MT Newswires 9/24 1:14pm, tied to pending Realbotix acquisition). Smaller/secondary story, logged not alerted.
 - IFBD $1.34-1.39 (+19-23%): real catalyst (own H1 results, Benzinga 9/25 1:00am) but the results themselves are bad (revenue -46%, loss widened to $15.8M) — a "priced the relief, not the news" move. Already faded from the $1.63 afterhours peak. Logged not alerted.
 - NCPL, SDEV: no fresh catalyst today, gated.
+
+### Momentum scan 2026-09-25 8:17 ET (12:17Z)
+- RE-ALERT INLF ~$6.80-6.82 (+131% vs 2.95 close): major new breakout. 8:05am ET bar alone: 1.19M shares, price 5.93->6.36 (high 6.55) — versus 100-300K/bar all morning. Next bar another 562K, high 6.45. Quote now $6.80-6.82, above all prior highs today ($6.32 at 7:00am, $6.14 overnight). Real, large, fresh (<10min) volume expansion. Same catalysts (H1 earnings beat + 6-K filing).
+- GRML $16.41: faded from the 7:17am $17.60 alert high, already printed, no re-alert.
+- APUS $6.27-6.29: roughly flat, no new high, no action.
+- ONCO/IFBD/NCPL/SDEV: unchanged from 7:17 read, still gated/secondary.

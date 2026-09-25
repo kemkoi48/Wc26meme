@@ -8441,3 +8441,21 @@ Neither was confirmable from Stocktwits, Robinhood/Benzinga or the SEC index dur
   - No filings: ISPC and NCPL have none since 9/20.
 - The profile's edge is suggestive, not proven: with a filing, n=21, median +7.4%, but ex-top-3 median -1.4%.
 - Agentic account: ~$33 free after the queued INSP order. Not traded here. Told the user.
+
+## 2026-09-25 6:40am ET — Premarket watch, watchlist rebuilt to "September 25"
+Holiday guard: SPY fresh premarket print (10:40:50Z, today). Market open normally.
+
+Renamed "September 24" -> "September 25" in place (list 28897739-a4e8-40fa-ac57-6fb0eb30137b).
+
+**Kept (6 -> 5, one dropped):**
+- **INLF** $5.48 premkt (+86% vs 2.95 close). H1 FY26 results (PR Newswire 9/24 4:30pm ET): revenue +26% to $12.94M, net income $1.01M vs prior-year loss, cash $45.5M. NOW HAS a same-day 6-K filed 9/24 (two filings) — satisfies the after-hours-breakout research profile's "with filing" case (n=21, 52% win, median +7.4% historically). Peaked $6.14 overnight (4:40am ET), round-tripped to $5.20s multiple times, now $5.48. Real dilution history (PIPE+ATM funded the cash) — flagged to user directly overnight.
+- **GRML** $16.38 premkt (+10% vs 14.89 close), continuing its multi-day run. Benzinga 9/25 confirms real catalyst: "$42M from existing investors" financing (already known) with "robust investor support" framing for the Sarfartoq rare earth project. Stocktwits users independently confirm this AM it's the financing closing, not silent dilution. Real, sustained, heavily-chattered momentum (GLND/GRML basket).
+- **SRZN** $35.35 premkt (+5% vs 33.68 close). Yesterday's Merck Wnt DME read-through catalyst still working; thin premkt volume, watching not urgent.
+- **APUS** (re-added, was dropped after fading twice yesterday) $6.37-7.30 premkt (+30-48% vs 4.92 close). FRESH leg: 30-min bars show real acceleration 5.03->7.30 between 8:30-9:30 UTC (4:30-5:30am ET) on 617K+343K volume, way above yesterday's premarket/afterhours prints. Same underlying catalyst (AQUAEChain deal, 9/24) but real NEW volume, not stale chatter. Currently pulled back to $6.37-6.63.
+- **BB** $9.05 premkt (+3.6%), quiet continuation of the beat+raise. Low urgency, kept for continuity.
+- **CRML** $8.34 premkt (+2%), quiet, Greenland theme sympathy. Low urgency, kept.
+
+**Dropped:**
+- **GCTK** — faded to $2.30-2.45 premkt, BELOW yesterday's $2.58 close (-11%). No fresh catalyst today (Lokahi/Innovate GBM story is now 2 days old, fully priced). Move played out.
+
+**Not added:** nothing else cleared the bar. Stocktwits trending list (AMD, NKE, AKAM, MU, VST, NVAX, IOVA, RCAT, ONDS, etc.) is all liquid large/mid-caps without a fresh low-float-momentum catalyst — not this list's profile. Earnings calendar (CLGN, CBAT, OPTT, TBN, DTSS) — no high-market-cap names, nothing that fits.

@@ -8540,3 +8540,11 @@ Ignition 27 / Warrior 15 / safety-net 13. SPY live (771.59 @ 16:16:46Z).
 - TDIC (Dreamland) $3.17-6.7 range, +61-70%, float 3.2M: new name, halted intraday per Stocktwits ("got out at top before halt"). RH news is a stale 8/11 movers-list mention only. Stocktwits explicitly: "China algo... classic... only buy rugs on these," "why do it rugpull," "fuck this scam took all my money" (same user complained on both TDIC and earlier MSGY). No catalyst. GATED.
 - ELPW (Elong Power) $3.73 (+39%, float 929K): appearing only via safety-net + ignition, not Warrior at first check. Being actively promoted on Stocktwits by one repeat poster ("Mega") spamming an unverified "$32M cash, $2.8M mcap" claim across multiple MSGY/TDIC threads since 15:10 ET — textbook coordinated-promotion pattern, not a sourced catalyst. No RH/Benzinga news since 8/11 (reverse-split mention). No catalyst. GATED.
 Pattern note: MSGY -> TDIC -> ELPW is a rotating low-float Chinese-ADR pump chain, each one promoted using the prior one's move as bait ("MSGY to ELPW", "don't miss ELPW"). None has a real catalyst. Consistent with this account's hard no-catalyst gate.
+
+## 2026-09-25 13:17 ET — scanner cycle (quiet, no alert)
+Ignition 39 / Warrior 16 / safety-net 15. SPY live (771.09 @ 17:16:36Z).
+- MSGY continues fading: $7.17 (down from $11.42 high). Same story, no new catalyst.
+- IPDN $4.97 (+19%, float ~413-597K): halted intraday ("$IPDN halt down"). RH news is only a Benzinga movers-list mention (9/25 13:05 ET, no reason given) plus stale 9/24 items. A Stocktwits user posted a detailed technical/speculative writeup citing "TalentAlly plus the new PDN Intelligence GPU/AI arm" but that is an unverified user claim, not sourced news — no dated press release or filing found. No catalyst confirmed. GATED.
+- NCPL $1.535 (+21%, float 7.3M): Stocktwits is pure squeeze chatter — "massive short position," "570% CTB," "we all know where this is headed." No real news since 9/21 (old). No catalyst. GATED.
+- SLMT (Brera Holdings) $4.58 (+22%, float 9.2M): only news is 9/22 Ark Invest DUMPING 309K shares (bearish, and 3 days old). No fresh catalyst. GATED.
+Nothing cleared the gate this cycle either.

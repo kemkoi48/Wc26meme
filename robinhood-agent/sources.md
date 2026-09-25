@@ -8548,3 +8548,8 @@ Ignition 39 / Warrior 16 / safety-net 15. SPY live (771.09 @ 17:16:36Z).
 - NCPL $1.535 (+21%, float 7.3M): Stocktwits is pure squeeze chatter — "massive short position," "570% CTB," "we all know where this is headed." No real news since 9/21 (old). No catalyst. GATED.
 - SLMT (Brera Holdings) $4.58 (+22%, float 9.2M): only news is 9/22 Ark Invest DUMPING 309K shares (bearish, and 3 days old). No fresh catalyst. GATED.
 Nothing cleared the gate this cycle either.
+
+## 2026-09-25 14:17 ET — scanner cycle (quiet, no alert)
+Ignition 45 / Warrior 16 / safety-net 15. SPY live (771.38 @ 18:17:07Z). All survivors are repeats already gated this session (MSGY continues fading to $6.38; INLF, APUS, WHLR, IPST, JAGX, TDIC, AIFF, FFAI, CNET, SDEV, ONCO, BENF, GRML, NCPL, SLMT, WFF, IPDN — no change to catalyst status).
+- DTST (Data Storage Corp) $3.30 (+16%, float 2.1M): only new name. RH news today is a movers-list mention with no reason given; most substantive recent item is a 9/24 Stocktwits-linked "cash shell trading below liquidation value" research piece (thesis/opinion, not a dated catalyst) plus stale 8/14 Q2 earnings. Volume only ~112K, thin. No catalyst. GATED.
+Nothing cleared the gate this cycle.

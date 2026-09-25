@@ -8526,3 +8526,10 @@ Ignition 18 / Warrior 9 / safety-net 13. Market open (the ad-hoc 10:00 scan saw 
 - MSGY $2.25-2.50 (+24-27%, float 807K): spiked to 3.34 at 10:00 on 577K, then crashed to 2.00 within 10 min. RH news is latest 9/16 (a movers list). No catalyst. GATED.
 - JAGX $10.7-11.2: new high 12.10 at 10:00, now off it. Still only dilution news (9/24 8-K, 548K shares to Streeterville). GATED, same as 10:00.
 - Largest % change is MGLD +93%, pinned at $1.93. Catalyst already checked at 10:00 (the 9/24 8-K content is unavailable). Nothing new.
+
+## 2026-09-25 11:17 ET — scanner cycle (quiet, no alert)
+Ignition 17 / Warrior 13 / safety-net 14. SPY live (769.07 @ 15:17:50Z).
+- MSGY $5.95 (+202%, float 807K, 23.3M vol ≈ 29x float): MATERIALLY CHANGED vs 10:17 (was $2.25). Found in Warrior + safety net; it dropped out of Ignition. Ran 2.18 -> 5.95 between 10:15 and 11:05, then halted (interpolated 11:10 bar; Stocktwits bid/ask ~$6.5-6.9 during the halt). The only RH/Benzinga item today (9/25 11:03 ET, "Dow Gains 150 Points") lists it as "shot up 110%" with NO reason given. Stocktwits: "china low floater", no news cited. No catalyst found, price action only. GATED.
+- RDGT $1.15-1.23 (+27%, float 3.5M): found only via the safety-net scan, missing from both regular scans. Went 0.96 -> 1.30 at 10:55-11:05 on ~1.8M. RH news is latest 8/27 (a movers list). No catalyst. GATED.
+- MGLD $1.935 (+93%): CATALYST NOW CONFIRMED. Benzinga 9/25 11:03 ET: Madison Dearborn Partners is acquiring it in an all-cash deal at $2.00/share (100% premium). This explains the flat pin at 1.93-1.96 since the open. It's a merger-arb spread (~3.4% to $2.00), not a momentum setup, so no alert.
+- JAGX faded to $8.45 (from 12.10). INLF faded to $4.75. APUS $6.85. All already printed.

@@ -1,0 +1,899 @@
+<title>Catalyst Gate Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --paper:#EDEFE8; --band:#E0E6D8; --raise:#F5F7F0; --ink:#171B14; --ink-2:#4C543F;
+  --muted:#828A75; --rule:#C3CBB4; --rule-soft:#D6DCC9;
+  --stamp:#A93226; --gain:#2E6B4A; --perf:#CDD4BE; --warn:#8A6A1F;
+  --f-display:"Fraunces","Iowan Old Style",Georgia,serif;
+  --f-body:"Newsreader","Iowan Old Style",Georgia,serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --gutter:clamp(16px,3.4vw,44px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#14170F; --band:#1D2117; --raise:#191D13; --ink:#E7EBDA; --ink-2:#AEB79B;
+  --muted:#828B70; --rule:#343B28; --rule-soft:#262C1D;
+  --stamp:#DC6A54; --gain:#68B98F; --perf:#2A3022; --warn:#C9A64E;
+}}
+:root[data-theme="dark"]{
+  --paper:#14170F; --band:#1D2117; --raise:#191D13; --ink:#E7EBDA; --ink-2:#AEB79B;
+  --muted:#828B70; --rule:#343B28; --rule-soft:#262C1D;
+  --stamp:#DC6A54; --gain:#68B98F; --perf:#2A3022; --warn:#C9A64E;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;
+  line-height:1.55;font-optical-sizing:auto;-webkit-font-smoothing:antialiased;margin:0}
+
+.shell{max-width:1560px;margin:0 auto;padding-inline:var(--gutter)}
+
+/* ---------- masthead ---------- */
+.mast{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--paper);
+  border-bottom:1.5px solid var(--ink)}
+.mast-in{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding-block:12px}
+.brand{margin-right:auto;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand h1{font-family:var(--f-display);font-variation-settings:"SOFT" 46,"WONK" 1,"opsz" 60;
+  font-weight:600;font-size:clamp(21px,2.6vw,28px);letter-spacing:-.02em;margin:0;line-height:1}
+.brand .tag{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+select,button.btn{font-family:var(--f-mono);font-size:11.5px;color:var(--ink);background:var(--raise);
+  border:1px solid var(--rule);padding:8px 11px;border-radius:0;cursor:pointer;max-width:260px}
+select:hover,button.btn:hover{border-color:var(--stamp)}
+button.btn[disabled],select[disabled]{opacity:.5;cursor:default}
+.mkt{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--rule);
+  color:var(--muted);white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none}
+.mkt.open{color:var(--gain);border-color:var(--gain)} .mkt.open .dot{background:var(--gain)}
+.mkt.pre,.mkt.post{color:var(--warn);border-color:var(--warn)} .mkt.pre .dot,.mkt.post .dot{background:var(--warn)}
+
+/* ---------- tiles ---------- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  border-bottom:1.5px solid var(--ink);margin-top:0}
+.tiles div{padding:14px 16px 13px 0;border-right:1px solid var(--rule)}
+.tiles div:last-child{border-right:0}
+.tiles dt{font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 6px}
+.tiles dd{margin:0;font-family:var(--f-display);font-variation-settings:"SOFT" 30,"WONK" 0,"opsz" 60;
+  font-size:clamp(26px,3.4vw,36px);line-height:1;letter-spacing:-.02em;font-weight:500;font-variant-numeric:tabular-nums}
+.tiles .sub{display:block;font-family:var(--f-body);font-size:12px;color:var(--muted);margin-top:7px;
+  line-height:1.3;font-variation-settings:normal}
+.tiles dd.hot{color:var(--stamp)} .tiles dd.up{color:var(--gain)}
+
+/* ---------- layout ---------- */
+.cols{display:flex;gap:22px;align-items:flex-start;padding-top:18px}
+.mainc{flex:1 1 0;min-width:0}
+.sidep{flex:0 0 380px;width:380px;position:sticky;top:78px;max-height:calc(100vh - 100px);
+  overflow-y:auto;background:var(--raise);border:1px solid var(--rule)}
+@media (max-width:1180px){.cols{display:block}.sidep{display:none}}
+
+/* ---------- board ---------- */
+.board-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:9px}
+.board-head h2{font-family:var(--f-display);font-variation-settings:"SOFT" 40,"WONK" 1,"opsz" 60;
+  font-weight:500;font-size:clamp(20px,2.4vw,25px);margin:0;letter-spacing:-.018em}
+.board-head .sub{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em}
+.tbl-wrap{border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:800px;font-family:var(--f-mono);
+  font-size:13px;font-variant-numeric:tabular-nums}
+thead th{position:sticky;top:0;background:var(--paper);text-align:right;font-size:9px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500;
+  padding:10px 11px 8px;border-bottom:1px solid var(--rule);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:first-child{text-align:left}
+thead th:hover{color:var(--stamp)}
+thead th .ar{opacity:0;margin-left:3px} thead th.on .ar{opacity:1;color:var(--stamp)}
+tbody td{text-align:right;padding:10px 11px;border-bottom:1px solid var(--rule-soft);white-space:nowrap}
+tbody td:first-child{text-align:left}
+tbody tr:nth-child(even){background:var(--band)}
+tbody tr[data-sym]{cursor:pointer}
+tbody tr[data-sym]:hover td{background:var(--rule-soft)}
+tbody tr.sel td{background:var(--rule-soft);box-shadow:inset 3px 0 0 var(--stamp)}
+.sym{font-weight:600;font-size:14px;letter-spacing:-.01em}
+.cn{font-family:var(--f-body);font-size:11.5px;color:var(--muted);max-width:200px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;display:block}
+.pos{color:var(--gain)} .neg{color:var(--stamp)} .zero{color:var(--muted)}
+.meter{display:flex;align-items:center;gap:7px;justify-content:flex-end}
+.meter .tr{width:42px;height:5px;background:var(--rule-soft);flex:none;overflow:hidden}
+.meter .fl{height:100%;background:var(--warn);display:block}
+.meter .fl.s{background:var(--gain)}
+.gates{display:inline-flex;gap:4px;justify-content:flex-end}
+.g{width:9px;height:9px;border:1.4px solid var(--rule);border-radius:50%;display:block}
+.g.y{background:var(--gain);border-color:var(--gain)}
+.g.n{background:transparent;border-color:var(--stamp)}
+.g.q{background:var(--rule);border-color:var(--rule)}
+
+.stateb{padding:38px 20px;text-align:center;color:var(--ink-2);font-size:15px}
+.stateb .big{font-family:var(--f-display);font-variation-settings:"SOFT" 40,"WONK" 1,"opsz" 60;
+  font-size:22px;color:var(--ink);margin-bottom:8px;font-weight:500}
+.stateb .fix{font-size:13.5px;color:var(--muted);margin-top:10px;max-width:56ch;margin-inline:auto}
+.skel{height:12px;background:var(--rule-soft);margin:14px 11px}
+
+.footbar{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:12px;
+  font-family:var(--f-mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em}
+.lgd{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto}
+.lgd span{display:inline-flex;align-items:center;gap:5px}
+
+/* ---------- side detail ---------- */
+.sd-empty{padding:26px 18px;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.55}
+.sd-empty .b{font-family:var(--f-body);font-size:15px;color:var(--ink-2);font-weight:600;margin-bottom:6px}
+.sd-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px 16px;
+  border-bottom:1px solid var(--rule);background:var(--band);position:sticky;top:0;z-index:2}
+.sd-head .sy{font-family:var(--f-mono);font-size:20px;font-weight:600;letter-spacing:-.015em;display:block}
+.sd-head .nm{font-family:var(--f-body);font-style:italic;font-size:12.5px;color:var(--muted)}
+.sd-x{font-family:var(--f-mono);font-size:12px;color:var(--muted);background:var(--raise);
+  border:1px solid var(--rule);width:25px;height:25px;line-height:1;cursor:pointer;flex:none}
+.sd-x:hover{border-color:var(--stamp);color:var(--stamp)}
+.sd-body{padding:14px 16px 20px}
+.px-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:13px}
+.px-row .px{font-family:var(--f-mono);font-size:24px;font-weight:600;letter-spacing:-.02em}
+.px-row .ch{font-family:var(--f-mono);font-size:15px;font-weight:600}
+.sd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:1px;
+  background:var(--rule-soft);border:1px solid var(--rule-soft);margin-bottom:14px}
+.sd-grid > div{background:var(--raise);padding:8px 9px}
+.sd-grid .k{display:block;font-family:var(--f-mono);font-size:8.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.sd-grid .v{font-family:var(--f-mono);font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
+.sd-sec{margin-bottom:15px}
+.sd-sec h4{font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 7px;font-weight:500}
+.gaterow{display:flex;align-items:center;justify-content:space-between;gap:9px;font-family:var(--f-body);
+  font-size:13.5px;padding:7px 9px;background:var(--band);margin-bottom:4px}
+.gaterow .st{font-family:var(--f-mono);font-size:11px;font-weight:600}
+.gaterow .st.y{color:var(--gain)} .gaterow .st.n{color:var(--stamp)} .gaterow .st.q{color:var(--muted)}
+.sd-chart{background:var(--raise);border:1px solid var(--rule);padding:8px}
+.sd-chart svg{display:block;width:100%;height:auto}
+.newsit{font-size:13px;line-height:1.5;color:var(--ink-2);border-left:2px solid var(--rule);
+  padding-left:10px;margin-bottom:10px}
+.newsit .src{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);display:block;margin-top:4px}
+.mini-btn{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:6px 11px;border:1px solid var(--rule);background:var(--raise);color:var(--ink-2);cursor:pointer}
+.mini-btn:hover{border-color:var(--stamp);color:var(--stamp)}
+
+/* ---------- learn sections ---------- */
+details.learn{border-top:1px solid var(--rule);margin-top:0}
+details.learn > summary{cursor:pointer;padding:16px 0;list-style:none;display:flex;align-items:baseline;gap:11px}
+details.learn > summary::-webkit-details-marker{display:none}
+details.learn > summary::before{content:"▸";color:var(--stamp);font-size:11px;flex:none;transition:transform .15s}
+details.learn[open] > summary::before{transform:rotate(90deg)}
+details.learn > summary h3{font-family:var(--f-display);font-variation-settings:"SOFT" 40,"WONK" 1,"opsz" 60;
+  font-weight:500;font-size:clamp(20px,2.5vw,27px);margin:0;letter-spacing:-.018em}
+details.learn > summary .s{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted)}
+.learn-body{padding-bottom:26px}
+.learn-body > p{max-width:64ch;color:var(--ink-2)}
+.learn-body > p b{color:var(--ink);font-weight:600}
+
+.patterns{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,236px),1fr));
+  border-top:1px solid var(--rule);margin-top:14px}
+.pat{border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:18px 18px 20px 0}
+@media (max-width:920px){.pat{border-right:0;padding-right:0}}
+.pat-fig{display:flex;align-items:flex-end;gap:10px;height:74px;margin-bottom:12px}
+.pat h4{font-family:var(--f-body);font-size:16.5px;font-weight:600;margin:0 0 2px}
+.pat .says{font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:8px}
+.pat .says.bull{color:var(--gain)} .pat .says.bear{color:var(--stamp)} .pat .says.neut{color:var(--muted)}
+.pat p{margin:0 0 8px;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.pat .cav{font-size:12.5px;color:var(--muted);border-left:2px solid var(--rule);padding-left:9px}
+
+.inds{border-top:1px solid var(--rule);margin-top:14px}
+.ind{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,5fr) minmax(0,4fr);
+  gap:clamp(14px,2.2vw,30px);padding:20px 0;border-bottom:1px solid var(--rule);align-items:start}
+@media (max-width:860px){.ind{grid-template-columns:minmax(0,1fr);gap:9px}}
+.ind h4{font-family:var(--f-body);font-size:18px;font-weight:600;margin:0 0 2px}
+.ind .full{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block}
+.ind p{margin:0;font-size:15px;color:var(--ink-2);line-height:1.52}
+.ind .we{font-family:var(--f-mono);font-size:12px;line-height:1.55;color:var(--ink);background:var(--band);padding:10px 12px}
+.ind .we b{color:var(--stamp);font-weight:600;display:block;font-size:8.5px;letter-spacing:.16em;
+  text-transform:uppercase;margin-bottom:5px}
+
+/* vault */
+.lockbox{background:var(--band);border:1px solid var(--rule);padding:22px;max-width:56ch;margin-top:14px}
+.lockbox p{margin:0 0 15px;font-size:14.5px;color:var(--ink-2);line-height:1.5}
+.lockform{display:flex;flex-wrap:wrap;gap:8px}
+.lockform input{font-family:var(--f-mono);font-size:13px;padding:10px 11px;border:1px solid var(--rule);
+  background:var(--paper);color:var(--ink);min-width:0;flex:1 1 180px;border-radius:0}
+.lockform button{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;
+  padding:10px 18px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;border-radius:0}
+.lockform button:hover{background:var(--stamp);border-color:var(--stamp)}
+.lockform button[disabled]{opacity:.55;cursor:wait}
+#lockmsg{font-family:var(--f-mono);font-size:11px;margin-top:11px;min-height:1.2em;color:var(--stamp)}
+.vault-intro{max-width:62ch;color:var(--ink-2)} .vault-intro b{color:var(--ink);font-weight:600}
+.strat{border-top:1px solid var(--rule);padding:20px 0}
+.strat:first-of-type{border-top:1.5px solid var(--ink);margin-top:18px}
+.strat-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 13px;margin-bottom:8px}
+.sid{font-family:var(--f-mono);font-size:11.5px;font-weight:600;color:var(--stamp);letter-spacing:.05em}
+.sname{font-family:var(--f-body);font-size:20px;font-weight:600;letter-spacing:-.01em}
+.sstat{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 8px 3px;border:1px solid currentColor;line-height:1}
+.sstat.live{color:var(--gain)} .sstat.dead{color:var(--stamp)}
+.sstat.draft{color:var(--muted)} .sstat.research{color:var(--ink-2)}
+.strat p{margin:0 0 9px;color:var(--ink-2);max-width:64ch;font-size:15.5px}
+.strat-rec{font-family:var(--f-mono);font-size:12.5px;line-height:1.55;background:var(--band);
+  padding:11px 13px;margin:11px 0;max-width:64ch;font-variant-numeric:tabular-nums}
+.strat-lesson{border-left:2px solid var(--stamp);padding-left:12px}
+
+.limits{background:var(--band);border-top:2px solid var(--stamp);padding:26px clamp(18px,2.6vw,32px);margin-top:26px}
+.limits h3{font-family:var(--f-display);font-variation-settings:"SOFT" 40,"WONK" 1,"opsz" 60;
+  font-weight:500;font-size:clamp(21px,2.6vw,29px);margin:0 0 13px;letter-spacing:-.018em}
+.limits ul{margin:0;padding-left:1.15em;max-width:66ch}
+.limits li{margin-bottom:11px;color:var(--ink-2);font-size:15px} .limits li:last-child{margin-bottom:0}
+.limits li b{color:var(--ink);font-weight:600}
+
+.colo{border-top:1.5px solid var(--ink);margin-top:30px;padding-block:24px clamp(40px,6vw,70px);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:24px 36px;
+  font-size:13px;color:var(--muted);line-height:1.5}
+.colo h4{font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-2);margin:0 0 7px;font-weight:500}
+.colo p{margin:0 0 9px} .colo p:last-child{margin-bottom:0}
+.colo b{color:var(--ink-2);font-weight:600}
+
+a{color:inherit;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--stamp);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="mast">
+  <div class="shell mast-in">
+    <div class="brand">
+      <h1>Catalyst Gate</h1>
+      <span class="tag">Live momentum board</span>
+    </div>
+    <div class="ctl">
+      <span id="mkt" class="mkt"><span class="dot"></span><span id="mkt-t">—</span></span>
+      <select id="pick" aria-label="Saved scan"><option>Loading scans…</option></select>
+      <button class="btn" id="refresh" type="button">Refresh</button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <dl class="tiles">
+    <div><dt>Matches</dt><dd id="t-n">—</dd><span class="sub" id="t-n-s">&nbsp;</span></div>
+    <div><dt>Up over 5%</dt><dd class="up" id="t-mv">—</dd><span class="sub">real gainers</span></div>
+    <div><dt>Volume behind it</dt><dd class="hot" id="t-rv">—</dd><span class="sub">relative volume 5×+</span></div>
+    <div><dt>Cleared both numeric gates</dt><dd id="t-g">—</dd><span class="sub">catalyst still checked by hand</span></div>
+  </dl>
+
+  <div class="cols">
+    <main class="mainc">
+      <div class="board-head">
+        <h2>The board</h2>
+        <span class="sub" id="board-sub">—</span>
+      </div>
+      <div class="tbl-wrap">
+        <table id="tbl">
+          <thead><tr id="head"></tr></thead>
+          <tbody id="body"></tbody>
+        </table>
+        <div id="slot"></div>
+      </div>
+      <div class="footbar">
+        <span id="upd">—</span>
+        <span class="lgd">
+          <span><i class="g y" style="width:9px;height:9px;border-radius:50%;display:block"></i>gate met</span>
+          <span><i class="g n" style="width:9px;height:9px;border-radius:50%;display:block"></i>gate failed</span>
+          <span><i class="g q" style="width:9px;height:9px;border-radius:50%;display:block"></i>not checked</span>
+        </span>
+      </div>
+
+      <section style="margin-top:34px">
+        <details class="learn" id="d-pat">
+          <summary><h3>Candle patterns</h3><span class="s">Eight shapes · what they claim · how they fail</span></summary>
+          <div class="learn-body">
+            <p>Every candle is four prices: where the period <b>opened</b>, where it <b>closed</b>, and the
+            <b>highest and lowest</b> anything traded in between. A filled body closed below its open; the thin
+            wicks are prices that were reached and rejected. These eight shapes recur constantly — each is a
+            story about who won the last few minutes. <b>None of them is a prediction</b>, and every one fails
+            routinely.</p>
+            <div class="patterns" id="patgrid"></div>
+            <p style="margin-top:18px;font-size:14px;color:var(--muted);max-width:66ch"><b style="color:var(--ink)">The
+            rule that outranks every shape:</b> a pattern on low volume is noise. The same candle means something
+            entirely different on 3 million shares than on 5,000 — read it together with the volume bar and with
+            where it sits. A hammer at the bottom of a long decline is a signal; a hammer mid-range is a candle.</p>
+          </div>
+        </details>
+
+        <details class="learn" id="d-ind">
+          <summary><h3>The indicators</h3><span class="s">Plain English · with this account's real thresholds</span></summary>
+          <div class="learn-body">
+            <p>Every indicator below is used somewhere in this system. The third column is not a textbook
+            default — it is <b>the real threshold this account trades on</b>, and where the number came from.</p>
+            <div class="inds">
+              <div class="ind"><div><h4>RVOL</h4><span class="full">Relative volume</span></div>
+                <p>Today's volume against a normal day's at the same time. <b>RVOL of 5 means five times the
+                usual crowd is in the room.</b> The best single answer to “is anything actually happening here,
+                or is this one print?”</p>
+                <div class="we"><b>Here</b>5× is the pillar. Before 9:30am the broker's own field is a broken
+                flat “1”, so it gets recomputed from raw bars — a <b style="display:inline;font-size:inherit;letter-spacing:0;text-transform:none">*</b> marks a self-computed value.</div></div>
+              <div class="ind"><div><h4>Float</h4><span class="full">Shares free to trade</span></div>
+                <p>Not shares outstanding — only those actually available. <b>A small float means a small amount
+                of buying moves the price a long way</b>, in both directions. It is why these names run 300% and
+                give it all back.</p>
+                <div class="we"><b>Here</b>Under 20M to qualify. Seen as low as 114,503 — with premarket volume
+                at 9.5× the entire float.</div></div>
+              <div class="ind"><div><h4>RSI</h4><span class="full">Relative strength index, 0–100</span></div>
+                <p>How much of recent movement has been upward. Above 70 is “overbought”, below 30 “oversold”.
+                <b>The common mistake is reading it as a sell signal</b> — a strong trend sits above 70 for weeks.</p>
+                <div class="we"><b>Here</b>Entry band 50–70 on the growth screen. Deliberately not above 70 —
+                that is buying something already extended.</div></div>
+              <div class="ind"><div><h4>ADX</h4><span class="full">Average directional index</span></div>
+                <p>Measures <b>how strong a trend is, not which way it points.</b> A high ADX on a falling stock
+                means a strong downtrend. The indicator most often misread as bullish.</p>
+                <div class="we"><b>Here</b>Above 25 = a real trend; below it no signal is acted on. One candidate
+                was rejected at ADX 38 because the trend it measured was down.</div></div>
+              <div class="ind"><div><h4>MACD</h4><span class="full">Moving average convergence divergence</span></div>
+                <p>Two moving averages and the gap between them. The <b>histogram</b> draws that gap as bars:
+                shrinking bars mean momentum fading, a flip through zero means direction changed.</p>
+                <div class="we"><b>Here</b>Logged daily on every open position. A negative histogram
+                <i>shrinking</i> five sessions running is momentum converging back, not against.</div></div>
+              <div class="ind"><div><h4>VWAP</h4><span class="full">Volume-weighted average price</span></div>
+                <p>The average price everyone actually paid today, weighted by size. <b>Above it the average
+                buyer is up; below it they are down.</b> That is why it acts as a line traders defend.</p>
+                <div class="we"><b>Here</b>Holding above VWAP through pullbacks is the real “still going up”
+                tell. A single cross means little on its own.</div></div>
+              <div class="ind"><div><h4>ATR</h4><span class="full">Average true range</span></div>
+                <p>How far this stock typically moves in a day, in dollars. <b>It is how you size a stop that
+                noise will not hit.</b> A 2% stop on a name with a 12% daily range gets taken out by nothing.</p>
+                <div class="we"><b>Here</b>The growth sleeve's 18% trailing stop is deliberately wide for this
+                reason — a stated risk tolerance, not a backtested number.</div></div>
+              <div class="ind"><div><h4>Dilution</h4><span class="full">ATM · shelf · S-1 · 424B</span></div>
+                <p>Not an indicator — a filing. <b>It means the company can legally print new shares into your
+                rally.</b> On a microcap this outweighs every chart pattern on this page combined.</p>
+                <div class="we"><b>Here</b>Mandatory on any sub-$5 stock with a sub-1M float. Of six low-float
+                movers checked in one day, <b style="display:inline;font-size:inherit;letter-spacing:0;text-transform:none">five</b> had live dilution mechanics. That is the norm.</div></div>
+            </div>
+          </div>
+        </details>
+
+        <details class="learn" id="d-vault">
+          <summary><h3>Strategy vault</h3><span class="s">Private · AES-256 encrypted in this page</span></summary>
+          <div class="learn-body">
+            <div class="lockbox" id="lockbox">
+              <p>Eleven strategies, their real results, and what each taught — including the two that lost money
+              and the four that never ran. <b>This section is encrypted inside the page.</b> Without the
+              passphrase it is not merely hidden; there is no plaintext in the source to find.</p>
+              <form class="lockform" id="lockform">
+                <label for="pass" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Passphrase</label>
+                <input type="password" id="pass" autocomplete="off" placeholder="passphrase" spellcheck="false">
+                <button type="submit" id="unlockbtn">Unlock</button>
+              </form>
+              <p id="lockmsg" role="status"></p>
+            </div>
+            <div id="vaultbody"></div>
+          </div>
+        </details>
+
+        <details class="learn" id="d-gates">
+          <summary><h3>How the gate works</h3><span class="s">Three tests · all three hard</span></summary>
+          <div class="learn-body">
+            <p><b>1 · Real volume, verified against raw bars.</b> Meaningful positive change on a float under 20M
+            with relative volume genuinely elevated. Before 9:30am the broker's RVOL field is a flat “1”
+            placeholder, so premarket figures are recomputed from historical bars — today's cumulative volume
+            against the same window across five prior sessions. A number that leaves the scanner untouched is
+            not trusted.</p>
+            <p><b>2 · Still near the high, and time-aware about it.</b> A name faded well off its high has already
+            printed. But a stock within fifteen minutes of a fresh high is igniting, not finished, even if it has
+            pulled back — a high set an hour ago and never retested is the real already-printed case.</p>
+            <p><b>3 · A catalyst, or silence.</b> Three sources in order: Stocktwits for the lead, the Benzinga
+            wire and Stocklake for the sourced, dated story. <b>Chatter is never a catalyst</b> — a squeeze rumour
+            is a thing to verify, never a thing to cite. Any sub-$5 microcap with a sub-1M float also gets its SEC
+            filing index pulled. <b>If nothing is found, nothing is sent</b>, however large the move.</p>
+            <p style="color:var(--stamp)"><b>Gate 3 is not automated and never will be.</b> The board scores the
+            two numeric gates. The catalyst is the one you check yourself, every time — that is the whole point
+            of it.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="limits">
+        <h3>What this board does not do</h3>
+        <ul>
+          <li><b>It places no orders.</b> It reads your saved Robinhood scans and nothing else. A row appearing
+          here is not a recommendation — it means the stock cleared that scan's numeric filters, no more.</li>
+          <li><b>It governs entry only.</b> Nothing here tells you when to sell. Your own order history, across
+          108 round trips, shows a <b>60% win rate that is still net negative</b>, because losses ran 1.6× bigger
+          than wins — and every holding bucket past five minutes was negative. Decide the exit before you enter.</li>
+          <li><b>The two automated gates are necessary, not sufficient.</b> A stock can clear both and still be a
+          catalyst-free squeeze with a live dilution filing. That is exactly what gate 3 is for.</li>
+          <li><b>The patterns here are vocabulary, not edge.</b> Every formation on this page fails routinely.
+          They describe what just happened; they do not tell you what happens next.</li>
+          <li><b>Outside regular hours the data degrades.</b> Relative volume goes placeholder, spreads widen and
+          quotes go stale. The board says which session it is in at the top — believe it.</li>
+        </ul>
+      </section>
+
+      <footer class="colo">
+        <div><h4>Data</h4>
+          <p>Every row, price, float and candle is read live from <b>Robinhood</b> — your own saved scans and
+          market data, at the moment you load the page. Nothing on this board is stored or hardcoded.</p>
+          <p>Catalyst headlines come from Robinhood's <b>Benzinga</b>-sourced feed, fetched on demand.</p></div>
+        <div><h4>Refresh</h4>
+          <p>The board re-reads the active scan every <b>30 seconds</b> while open, and caches for 30s so a
+          reload is not a new request. Use Refresh to force a fresh pull.</p>
+          <p>Fundamentals and candles are fetched per symbol when you open a row, and cached.</p></div>
+        <div><h4>Standing</h4>
+          <p>Not investment advice. Nothing here is a recommendation to buy or sell any security.</p>
+          <p>Alerts, where shown, fire only while this tab is open — this page cannot send real push
+          notifications.</p></div>
+      </footer>
+    </main>
+
+    <aside class="sidep" id="sidep" aria-label="Stock detail">
+      <div class="sd-empty" id="sd-empty">
+        <div class="b">Select any row</div>
+        Price, the gate scorecard, fundamentals, a real candlestick chart and the dated catalyst open here —
+        and stay open while you keep scanning.
+      </div>
+      <div id="sd-content" hidden>
+        <div class="sd-head">
+          <div><span class="sy" id="sd-sym">—</span><span class="nm" id="sd-nm"></span></div>
+          <button type="button" class="sd-x" id="sd-x" aria-label="Close">✕</button>
+        </div>
+        <div class="sd-body" id="sd-body"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+"use strict";
+var SERVER = "Robinhood";
+var mcp = null, unwatch = null, rows = [], sortKey = "chg", sortDir = -1, selected = null;
+var fund = {};              /* symbol -> fundamentals */
+var els = {};
+["pick","refresh","mkt","mkt-t","t-n","t-n-s","t-mv","t-rv","t-g","head","body","slot",
+ "upd","board-sub","sidep","sd-empty","sd-content","sd-sym","sd-nm","sd-body","sd-x"]
+ .forEach(function(id){ els[id] = document.getElementById(id); });
+
+var esc = function(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+var num = function(v){ var n = parseFloat(v); return isFinite(n) ? n : null; };
+function fmtN(v,d){ return v==null ? "—" : v.toFixed(d==null?2:d); }
+function fmtBig(v){
+  if(v==null) return "—";
+  if(v>=1e9) return (v/1e9).toFixed(2)+"B";
+  if(v>=1e6) return (v/1e6).toFixed(2)+"M";
+  if(v>=1e3) return (v/1e3).toFixed(0)+"K";
+  return String(Math.round(v));
+}
+function pctCls(v){ return v==null ? "zero" : v>0 ? "pos" : v<0 ? "neg" : "zero"; }
+function pctTxt(v){ return v==null ? "—" : (v>0?"+":"")+v.toFixed(1)+"%"; }
+
+/* ---------------- market session ---------------- */
+function session(){
+  var now = new Date();
+  var et = new Date(now.toLocaleString("en-US",{timeZone:"America/New_York"}));
+  var d = et.getDay(), m = et.getHours()*60 + et.getMinutes();
+  if(d===0||d===6) return {k:"closed",t:"Weekend — market closed"};
+  if(m>=240 && m<570)  return {k:"pre", t:"Premarket"};
+  if(m>=570 && m<960)  return {k:"open",t:"Market open"};
+  if(m>=960 && m<1200) return {k:"post",t:"After hours"};
+  return {k:"closed",t:"Market closed"};
+}
+function paintMkt(){
+  var s = session();
+  els.mkt.className = "mkt " + (s.k==="closed" ? "" : s.k);
+  els["mkt-t"].textContent = s.t;
+}
+
+/* ---------------- row shaping ---------------- */
+function shape(r){
+  var c = r.columns || {};
+  var chg = num(c["% Change"]);
+  return {
+    sym:  r.ticker || c.Symbol || "",
+    name: c.Name || "",
+    last: num(c.Last),
+    chg:  chg==null ? null : chg*100,
+    rvol: num(c["Relative volume"]),
+    rvolH:num(c["Relative volume (1, 1H)"]),
+    vol:  num(c.Volume),
+    flt:  num(c.Float),
+    mcap: num(c["Market cap"])
+  };
+}
+/* the two numeric gates the board can actually score */
+function gates(r){
+  var f = fund[r.sym];
+  var g1 = (r.chg!=null && r.chg>=5) && (bestRvol(r)!=null && bestRvol(r)>=5);
+  var g2 = null;
+  if(f && f.high!=null && r.last!=null && f.high>0){
+    g2 = ((f.high - r.last) / f.high) <= 0.08;   /* within 8% of the day's high */
+  }
+  return {g1:g1, g2:g2, g3:null};
+}
+function bestRvol(r){
+  var a = r.rvol, b = r.rvolH;
+  if(a!=null && a>1.0001) return a;
+  if(b!=null) return b;
+  return a;
+}
+
+/* ---------------- table ---------------- */
+var COLS = [
+  {k:"sym", l:"Symbol"},
+  {k:"last",l:"Last"},
+  {k:"chg", l:"% Chg"},
+  {k:"rvol",l:"Rel. vol"},
+  {k:"flt", l:"Float"},
+  {k:"vol", l:"Volume"},
+  {k:"gate",l:"Gates"}
+];
+function paintHead(){
+  els.head.innerHTML = COLS.map(function(c){
+    return '<th data-k="'+c.k+'" class="'+(sortKey===c.k?"on":"")+'">'+esc(c.l)+
+           '<span class="ar">'+(sortDir<0?"▼":"▲")+'</span></th>';
+  }).join("");
+  Array.prototype.forEach.call(els.head.querySelectorAll("th"), function(th){
+    th.addEventListener("click", function(){
+      var k = th.dataset.k;
+      if(k==="gate") return;
+      if(sortKey===k) sortDir = -sortDir; else { sortKey=k; sortDir=-1; }
+      paintHead(); paintRows();
+    });
+  });
+}
+function paintRows(){
+  var list = rows.slice().sort(function(a,b){
+    var x=a[sortKey], y=b[sortKey];
+    if(sortKey==="sym"){ return String(x).localeCompare(String(y)) * (sortDir<0?-1:1); }
+    if(x==null) return 1; if(y==null) return -1;
+    return (x-y) * (sortDir<0?-1:1);
+  });
+  els.body.innerHTML = list.map(function(r){
+    var g = gates(r), rv = bestRvol(r);
+    var pct = rv==null ? 0 : Math.min(100, (rv/10)*100);
+    return '<tr data-sym="'+esc(r.sym)+'" tabindex="0" class="'+(selected===r.sym?"sel":"")+'">'+
+      '<td><span class="sym">'+esc(r.sym)+'</span><span class="cn">'+esc(r.name)+'</span></td>'+
+      '<td>'+(r.last==null?"—":"$"+fmtN(r.last, r.last<10?4:2))+'</td>'+
+      '<td class="'+pctCls(r.chg)+'">'+pctTxt(r.chg)+'</td>'+
+      '<td><span class="meter"><span class="tr"><span class="fl'+(rv>=5?" s":"")+'" style="width:'+pct+'%"></span></span>'+
+        '<span>'+(rv==null?"—":rv.toFixed(rv<100?1:0)+"×")+'</span></span></td>'+
+      '<td>'+fmtBig(r.flt)+'</td>'+
+      '<td>'+fmtBig(r.vol)+'</td>'+
+      '<td><span class="gates">'+
+        '<i class="g '+(g.g1?"y":"n")+'" title="Volume gate"></i>'+
+        '<i class="g '+(g.g2==null?"q":(g.g2?"y":"n"))+'" title="Near-high gate"></i>'+
+        '<i class="g q" title="Catalyst — check by hand"></i>'+
+      '</span></td></tr>';
+  }).join("");
+  Array.prototype.forEach.call(els.body.querySelectorAll("tr[data-sym]"), function(tr){
+    tr.addEventListener("click", function(){ select(tr.dataset.sym); });
+    tr.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); select(tr.dataset.sym); }});
+  });
+  paintTiles();
+}
+function paintTiles(){
+  els["t-mv"].textContent = rows.filter(function(r){return r.chg!=null && r.chg>=5;}).length;
+  els["t-rv"].textContent = rows.filter(function(r){var v=bestRvol(r); return v!=null && v>=5;}).length;
+  els["t-g"].textContent  = rows.filter(function(r){var g=gates(r); return g.g1 && g.g2===true;}).length;
+}
+function showState(big, msg, fix){
+  els.slot.innerHTML = '<div class="stateb"><div class="big">'+esc(big)+'</div>'+esc(msg)+
+    (fix?'<div class="fix">'+esc(fix)+'</div>':'')+'</div>';
+  els.body.innerHTML = "";
+}
+function clearState(){ els.slot.innerHTML = ""; }
+function skeleton(){
+  els.slot.innerHTML = '<div>'+Array(6).join('<div class="skel"></div>')+'</div>';
+  els.body.innerHTML = "";
+}
+
+/* ---------------- detail panel ---------------- */
+function select(sym){
+  selected = sym;
+  Array.prototype.forEach.call(els.body.querySelectorAll("tr"), function(tr){
+    tr.classList.toggle("sel", tr.dataset.sym===sym);
+  });
+  var r = rows.filter(function(x){return x.sym===sym;})[0];
+  if(!r) return;
+  els["sd-empty"].hidden = true;
+  els["sd-content"].hidden = false;
+  els["sd-sym"].textContent = r.sym;
+  els["sd-nm"].textContent  = r.name || "";
+  var g = gates(r), f = fund[sym] || {};
+  els["sd-body"].innerHTML =
+    '<div class="px-row"><span class="px">'+(r.last==null?"—":"$"+fmtN(r.last,r.last<10?4:2))+'</span>'+
+      '<span class="ch '+pctCls(r.chg)+'">'+pctTxt(r.chg)+'</span></div>'+
+    '<div class="sd-grid">'+
+      '<div><span class="k">Float</span><span class="v">'+fmtBig(r.flt)+'</span></div>'+
+      '<div><span class="k">Volume</span><span class="v">'+fmtBig(r.vol)+'</span></div>'+
+      '<div><span class="k">Rel. vol</span><span class="v">'+(bestRvol(r)==null?"—":bestRvol(r).toFixed(1)+"×")+'</span></div>'+
+      '<div><span class="k">Day high</span><span class="v">'+(f.high==null?"—":"$"+fmtN(f.high,f.high<10?4:2))+'</span></div>'+
+      '<div><span class="k">Day low</span><span class="v">'+(f.low==null?"—":"$"+fmtN(f.low,f.low<10?4:2))+'</span></div>'+
+      '<div><span class="k">Mkt cap</span><span class="v">'+fmtBig(r.mcap)+'</span></div>'+
+    '</div>'+
+    '<div class="sd-sec"><h4>Gate scorecard</h4>'+
+      gateRow("Volume — >5% on 5×+ rel. volume", g.g1===true?"y":"n", g.g1===true?"MET":"NOT MET")+
+      gateRow("Structure — within 8% of day high", g.g2==null?"q":(g.g2?"y":"n"), g.g2==null?"NEEDS DATA":(g.g2?"MET":"NOT MET"))+
+      gateRow("Catalyst — nameable and dated", "q", "CHECK BY HAND")+
+    '</div>'+
+    '<div class="sd-sec"><h4>Five-minute candles, today</h4>'+
+      '<div class="sd-chart" id="sd-chart"><div style="color:var(--muted);font-family:var(--f-mono);font-size:11px;padding:14px;text-align:center">Loading bars…</div></div></div>'+
+    '<div class="sd-sec"><h4>Catalyst check</h4><div id="sd-news">'+
+      '<button class="mini-btn" id="newsbtn">Fetch headlines</button></div></div>';
+  document.getElementById("newsbtn").addEventListener("click", function(){ fetchNews(sym); });
+  fetchBars(sym);
+}
+function gateRow(label, st, txt){
+  return '<div class="gaterow"><span>'+esc(label)+'</span><span class="st '+st+'">'+esc(txt)+'</span></div>';
+}
+
+/* ---------------- candles ---------------- */
+function fetchBars(sym){
+  var start = new Date(Date.now() - 36*3600*1000).toISOString().replace(/\.\d+Z$/,"Z");
+  mcp.callTool(SERVER, "get_equity_historicals",
+    { symbols:[sym], interval:"5minute", bounds:"regular", start_time:start },
+    { cache:{ staleTime:60000 } })
+  .then(function(res){
+    if(selected!==sym) return;
+    var p = res && res.payload;
+    var rs = p && p.data && p.data.results;
+    var bars = rs && rs[0] && rs[0].bars;
+    if(!Array.isArray(bars) || !bars.length){ chartMsg("No bars returned for this symbol."); return; }
+    bars = bars.filter(function(b){ return !b.interpolated; });
+    /* keep the most recent session only */
+    var lastDay = bars[bars.length-1].begins_at.slice(0,10);
+    var day = bars.filter(function(b){ return b.begins_at.slice(0,10)===lastDay; });
+    drawCandles(day.length>3 ? day : bars.slice(-60));
+  })
+  .catch(function(e){ if(selected===sym) chartMsg("Could not load bars: "+(e&&e.message||"error")); });
+}
+function chartMsg(m){
+  var el = document.getElementById("sd-chart");
+  if(el) el.innerHTML = '<div style="color:var(--muted);font-family:var(--f-mono);font-size:11px;padding:14px;text-align:center">'+esc(m)+'</div>';
+}
+function drawCandles(bars){
+  var host = document.getElementById("sd-chart"); if(!host) return;
+  var W=340,H=190,L=40,R=8,T=8,PH=130,GP=10,VH=32;
+  var lo=Infinity,hi=-Infinity,vmax=0;
+  bars.forEach(function(b){
+    var l=+b.low_price,h=+b.high_price,v=+b.volume;
+    if(l<lo)lo=l; if(h>hi)hi=h; if(v>vmax)vmax=v;
+  });
+  if(!isFinite(lo)||!isFinite(hi)||hi<=lo){ chartMsg("Bar data out of range."); return; }
+  var pad=(hi-lo)*0.07; lo-=pad; hi+=pad;
+  var n=bars.length, step=(W-L-R)/n, bw=Math.max(1.4, step*0.6);
+  var y=function(p){ return T+PH-((p-lo)/(hi-lo))*PH; };
+  var vy=function(v){ return T+PH+GP+VH-(vmax?(v/vmax)*VH:0); };
+  var cx=function(i){ return L+step*i+step/2; };
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Five-minute candlestick chart">';
+  [0,0.5,1].forEach(function(f){
+    var p=lo+(hi-lo)*f;
+    s+='<line x1="'+L+'" y1="'+y(p)+'" x2="'+(W-R)+'" y2="'+y(p)+'" stroke="var(--rule-soft)" stroke-width="1"/>';
+    s+='<text x="'+(L-5)+'" y="'+(y(p)+3)+'" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">$'+p.toFixed(p<10?2:1)+'</text>';
+  });
+  bars.forEach(function(b,i){
+    var o=+b.open_price,h=+b.high_price,l=+b.low_price,c=+b.close_price,v=+b.volume;
+    var up=c>=o, col=up?"var(--gain)":"var(--stamp)", X=cx(i);
+    s+='<line x1="'+X+'" y1="'+y(h)+'" x2="'+X+'" y2="'+y(l)+'" stroke="'+col+'" stroke-width="1"/>';
+    var yt=y(Math.max(o,c)), bh=Math.max(1,Math.abs(y(o)-y(c)));
+    s+='<rect x="'+(X-bw/2)+'" y="'+yt+'" width="'+bw+'" height="'+bh+'" fill="'+(up?"var(--raise)":col)+'" stroke="'+col+'" stroke-width="1"/>';
+    s+='<rect x="'+(X-bw/2)+'" y="'+vy(v)+'" width="'+bw+'" height="'+((T+PH+GP+VH)-vy(v))+'" fill="'+col+'" opacity="0.45"/>';
+  });
+  var f=bars[0], la=bars[bars.length-1];
+  s+='<text x="'+L+'" y="'+(H-3)+'" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">'+esc(f.begins_at.slice(11,16))+'</text>';
+  s+='<text x="'+(W-R)+'" y="'+(H-3)+'" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">'+esc(la.begins_at.slice(11,16))+' UTC · '+n+' bars</text>';
+  s+='</svg>';
+  host.innerHTML=s;
+}
+
+/* ---------------- catalyst ---------------- */
+function fetchNews(sym){
+  var host=document.getElementById("sd-news"); if(!host) return;
+  host.innerHTML='<div style="color:var(--muted);font-family:var(--f-mono);font-size:11px">Checking the wire…</div>';
+  mcp.callTool(SERVER,"get_equity_news",{symbol:sym,limit:4},{cache:{staleTime:600000}})
+  .then(function(res){
+    if(selected!==sym) return;
+    var p=res&&res.payload;
+    var arts=(p&&p.data&&(p.data.news||p.data.articles||p.data.results))||[];
+    if(!Array.isArray(arts)||!arts.length){
+      host.innerHTML='<div class="newsit"><b>Nothing on the wire.</b> That is not proof there is no catalyst — '+
+        'it means this feed has none. Check Stocktwits and the SEC filing index before treating the move as unexplained. '+
+        'Under the standing rule, no nameable dated catalyst means no alert.</div>';
+      return;
+    }
+    host.innerHTML=arts.slice(0,4).map(function(a){
+      var t=a.title||a.headline||"(untitled)";
+      var src=(a.source||a.author||"")+(a.published_at||a.updated_at?" · "+String(a.published_at||a.updated_at).replace("T"," ").slice(0,16):"");
+      return '<div class="newsit">'+esc(t)+'<span class="src">'+esc(src)+'</span></div>';
+    }).join("")+'<div style="font-family:var(--f-mono);font-size:10.5px;color:var(--muted);margin-top:6px">'+
+      'A headline is only a catalyst if it is dated to <i>this</i> move.</div>';
+  })
+  .catch(function(e){
+    host.innerHTML='<div class="newsit">Wire lookup failed: '+esc(e&&e.message||"error")+'</div>';
+  });
+}
+
+/* ---------------- fundamentals enrichment ---------------- */
+function ensureFund(syms, done){
+  var need = syms.filter(function(s){ return s && !fund[s]; }).slice(0,20);
+  if(!need.length){ done && done(); return; }
+  var batches=[];
+  for(var i=0;i<need.length;i+=10) batches.push(need.slice(i,i+10));
+  Promise.all(batches.map(function(b){
+    return mcp.callTool(SERVER,"get_equity_fundamentals",{symbols:b},{cache:{staleTime:120000}})
+      .then(function(res){
+        var p=res&&res.payload;
+        var list=(p&&p.data&&(p.data.results||p.data.fundamentals))||[];
+        list.forEach(function(f){
+          var s=f.symbol||f.Symbol; if(!s) return;
+          fund[s]={high:num(f.high),low:num(f.low),open:num(f.open),
+                   pe:num(f.pe_ratio),wk52h:num(f["52_week_high"]||f.high_52_weeks)};
+        });
+      }).catch(function(){});
+  })).then(function(){ done && done(); });
+}
+
+/* ---------------- scan wiring ---------------- */
+function onResult(res){
+  var p=res&&res.payload;
+  var result=p&&p.data&&p.data.result;
+  var list=result&&result.results;
+  if(!Array.isArray(list)){
+    showState("Unexpected response","The scan came back in a shape this page does not recognise.","");
+    return;
+  }
+  rows=list.map(shape);
+  clearState();
+  if(!rows.length){
+    showState("No matches right now",
+      "This scan's filters returned nothing at the moment. That is an answer, not a failure — most hours nothing qualifies.","");
+    paintTiles();
+  } else {
+    paintRows();
+    ensureFund(rows.slice(0,20).map(function(r){return r.sym;}), function(){
+      paintRows();
+      if(selected) select(selected);
+    });
+  }
+  els["t-n"].textContent = rows.length;
+  var tot=result.total_items;
+  els["t-n-s"].textContent = (typeof tot==="number" && tot>rows.length) ? "of "+tot+" matching" : " ";
+  var when=(res.cache&&res.cache.storedAt)||Date.now();
+  els.upd.textContent = "Updated "+new Date(when).toLocaleTimeString()+" · re-reads every 30s";
+  els["board-sub"].textContent = session().t+" · live from your saved scan";
+}
+function start(scanId){
+  if(!scanId) return;
+  if(unwatch){ try{unwatch();}catch(e){} unwatch=null; }
+  skeleton();
+  try{ localStorage.setItem("cg.scan", scanId); }catch(e){}
+  unwatch = mcp.watchTool(SERVER,"run_scan",{scan_id:scanId},
+    function(ev){
+      if(ev.type==="data") onResult(ev.result);
+      else showState("Could not read the scan", (ev.error&&ev.error.message)||"The request failed.",
+        "It will retry automatically. Use Refresh to force a new pull.");
+    },
+    { cache:{staleTime:30000}, refetchInterval:30000 });
+}
+
+/* ---------------- patterns ---------------- */
+(function patterns(){
+  var grid=document.getElementById("patgrid"); if(!grid) return;
+  var P=[
+    {n:"Doji",s:"neut",k:"Indecision",c:[[.5,.9,.1,.5]],
+     d:"Opens and closes at almost the same price with range either side. Buyers and sellers fought to a draw.",
+     w:"On its own it means nothing. It matters only after a long run — a draw at the top of a trend beats a draw mid-range."},
+    {n:"Hammer",s:"bull",k:"Lower prices rejected",c:[[.62,.72,.05,.70]],
+     d:"Price fell hard, then buyers dragged it all the way back before the close. The long lower wick is the money that came in low.",
+     w:"Only a hammer after a decline. The same shape mid-range is just a candle, and it needs the next bar to confirm."},
+    {n:"Shooting star",s:"bear",k:"Higher prices rejected",c:[[.28,.95,.20,.34]],
+     d:"The mirror image. Price spiked, sellers took it all back, and it closed near the low. Upper wick at least twice the body.",
+     w:"Prints constantly inside rallies that keep going. It marks a top far less often than it appears."},
+    {n:"Bullish engulfing",s:"bull",k:"Buyers took control",c:[[.58,.66,.40,.44],[.38,.88,.34,.84]],
+     d:"A down bar, then an up bar whose body completely covers it. Everything the sellers did is undone in one bar.",
+     w:"Size matters — engulfing a tiny body means little. Check the volume on the second bar; without it, it is not a takeover."},
+    {n:"Bearish engulfing",s:"bear",k:"Sellers took control",c:[[.44,.62,.36,.60],[.86,.90,.16,.20]],
+     d:"The reverse: an up bar swallowed whole by the next down bar. Common at the end of a run.",
+     w:"Appears at the top of a move — and equally often in the middle of one. Never trade it without context."},
+    {n:"Marubozu",s:"neut",k:"One-sided conviction",c:[[.88,.90,.10,.12]],
+     d:"Almost no wicks. It opened at one end and closed at the other with no pushback. Pure directional force.",
+     w:"Strong signal of momentum, weak signal of what comes next. A down marubozu into support often marks capitulation."},
+    {n:"Inside bar",s:"neut",k:"Compression",c:[[.24,.94,.08,.86],[.46,.62,.36,.56]],
+     d:"A bar whose entire range fits inside the previous bar's range. The market has paused and narrowed.",
+     w:"A coiled spring that can release either way. The trigger is the break of the outside bar's high or low, not the inside bar."},
+    {n:"Tweezer top",s:"bear",k:"A level rejected twice",c:[[.30,.90,.24,.72],[.70,.90,.28,.34]],
+     d:"Two bars reaching almost the same high, the second failing to pass it. Price tested a ceiling twice and was turned away.",
+     w:"The most useful shape here for low-float names, because it marks an actual price level — and a level is something you can set a stop against."}
+  ];
+  var ns="http://www.w3.org/2000/svg";
+  P.forEach(function(p){
+    var card=document.createElement("div"); card.className="pat";
+    var fig=document.createElement("div"); fig.className="pat-fig";
+    var svg=document.createElementNS(ns,"svg");
+    var w=p.c.length*26+8;
+    svg.setAttribute("viewBox","0 0 "+w+" 74"); svg.setAttribute("width",w); svg.setAttribute("height",74);
+    svg.setAttribute("aria-hidden","true");
+    p.c.forEach(function(c,i){
+      var o=c[0],h=c[1],l=c[2],cl=c[3], up=cl>=o, col=up?"var(--gain)":"var(--stamp)";
+      var Y=function(v){ return 74-(v*70)-2; }, X=14+i*26;
+      var wk=document.createElementNS(ns,"line");
+      wk.setAttribute("x1",X); wk.setAttribute("y1",Y(h)); wk.setAttribute("x2",X); wk.setAttribute("y2",Y(l));
+      wk.setAttribute("stroke",col); wk.setAttribute("stroke-width","1.6"); svg.appendChild(wk);
+      var bd=document.createElementNS(ns,"rect");
+      bd.setAttribute("x",X-6.5); bd.setAttribute("y",Y(Math.max(o,cl)));
+      bd.setAttribute("width",13); bd.setAttribute("height",Math.max(1.6,Math.abs(Y(o)-Y(cl))));
+      bd.setAttribute("fill",up?"var(--paper)":col); bd.setAttribute("stroke",col);
+      bd.setAttribute("stroke-width","1.6"); svg.appendChild(bd);
+    });
+    fig.appendChild(svg); card.appendChild(fig);
+    var h4=document.createElement("h4"); h4.textContent=p.n; card.appendChild(h4);
+    var sy=document.createElement("span"); sy.className="says "+p.s; sy.textContent=p.k; card.appendChild(sy);
+    var d=document.createElement("p"); d.textContent=p.d; card.appendChild(d);
+    var cv=document.createElement("p"); cv.className="cav"; cv.textContent=p.w; card.appendChild(cv);
+    grid.appendChild(card);
+  });
+})();
+
+/* ---------------- encrypted vault ---------------- */
+var VAULT_BLOB="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", VAULT_ITER=250000;
+document.getElementById("lockform").addEventListener("submit", async function(e){
+  e.preventDefault();
+  var msg=document.getElementById("lockmsg"), btn=document.getElementById("unlockbtn");
+  var pass=document.getElementById("pass").value;
+  if(!pass){ msg.textContent="Enter the passphrase."; return; }
+  if(!(window.crypto&&window.crypto.subtle)){ msg.textContent="This browser cannot decrypt here."; return; }
+  btn.disabled=true; msg.textContent="Deriving key…";
+  try{
+    var raw=Uint8Array.from(atob(VAULT_BLOB),function(c){return c.charCodeAt(0);});
+    var km=await crypto.subtle.importKey("raw",new TextEncoder().encode(pass),"PBKDF2",false,["deriveKey"]);
+    var key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:raw.slice(0,16),iterations:VAULT_ITER,hash:"SHA-256"},
+      km,{name:"AES-GCM",length:256},false,["decrypt"]);
+    var plain=await crypto.subtle.decrypt({name:"AES-GCM",iv:raw.slice(16,28)},key,raw.slice(28));
+    document.getElementById("vaultbody").innerHTML=new TextDecoder().decode(plain);
+    document.getElementById("lockbox").hidden=true;
+    msg.textContent="";
+  }catch(err){ msg.textContent="Wrong passphrase."; btn.disabled=false; }
+});
+
+/* ---------------- boot ---------------- */
+els["sd-x"].addEventListener("click", function(){
+  selected=null;
+  els["sd-content"].hidden=true; els["sd-empty"].hidden=false;
+  Array.prototype.forEach.call(els.body.querySelectorAll("tr"),function(tr){tr.classList.remove("sel");});
+});
+
+(async function boot(){
+  paintMkt(); setInterval(paintMkt,30000);
+  paintHead(); skeleton();
+
+  try{
+    mcp = (window.claude && typeof window.claude.use==="function")
+      ? await window.claude.use("mcp") : null;
+  }catch(e){ mcp = null; }
+  if(!mcp){
+    els.pick.innerHTML='<option>Unavailable</option>'; els.pick.disabled=true; els.refresh.disabled=true;
+    showState("Live data is not available here",
+      "This board reads your saved Robinhood scans through the Claude connector, and this page cannot reach it from where it is being viewed.",
+      "It works when opened as the artifact on claude.ai, signed in to the account the Robinhood connector is attached to. A copy hosted on your own domain has no connector access and will always show this message — the reference sections below still work everywhere.");
+    return;
+  }
+  var scans;
+  try{
+    var res=await mcp.callTool(SERVER,"get_scans",{},{cache:{staleTime:300000}});
+    var p=res&&res.payload; scans=p&&p.data&&p.data.scans;
+  }catch(e){
+    els.pick.innerHTML='<option>Unavailable</option>'; els.pick.disabled=true;
+    showState("Could not reach Robinhood",(e&&e.message)||"The connector call failed.","Try Refresh in a moment.");
+    return;
+  }
+  if(!Array.isArray(scans)||!scans.length){
+    els.pick.innerHTML='<option>No saved scans</option>'; els.pick.disabled=true;
+    showState("No saved scans found","This board runs the scans saved on your Robinhood account, and none came back.",
+      "Create a scan in Robinhood, then reload.");
+    return;
+  }
+  els.pick.innerHTML=scans.map(function(s){
+    return '<option value="'+esc(s.scan_id)+'">'+esc(s.title||"Untitled scan")+'</option>';
+  }).join("");
+  var saved=null; try{ saved=localStorage.getItem("cg.scan"); }catch(e){}
+  var has=saved&&scans.some(function(s){return s.scan_id===saved;});
+  els.pick.value = has ? saved : scans[0].scan_id;
+  els.pick.addEventListener("change",function(){ selected=null; els["sd-content"].hidden=true; els["sd-empty"].hidden=false; start(els.pick.value); });
+  els.refresh.addEventListener("click",function(){
+    mcp.invalidate(SERVER,"run_scan").catch(function(){}).then(function(){ start(els.pick.value); });
+  });
+  start(els.pick.value);
+})();
+</script>

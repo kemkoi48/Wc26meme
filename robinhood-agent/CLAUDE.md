@@ -1,0 +1,573 @@
+# Operating notes — read this first
+
+My own standing instructions for this repo. Separate from `strategies.md`
+(trading content) and `sources.md` (research log) — this file is about how
+I work, not what I trade.
+
+## Scalp scanner is now live-trading authorized — Agentic account only
+
+User, 2026-08-18 ~09:31 ET, verbatim: **"you do your trading in your
+agentic account."** This is a standing authorization, not a one-off: when
+the two-scanner market scan (`scalp_signal.detect_entry`, see
+`scalp_scan.py`) fires — on the core four OR a fresh market-scan
+candidate — place the trade for real in account `432805174` (Agentic,
+`agentic_allowed: true`). Do not just report a fire on the dashboard and
+wait for the user to act; execute it, following the existing risk rules
+in `RULES.md` that aren't strategy-specific:
+
+- **Rule 2 sizing**: max $150 per buy. Checked 2026-08-18: account cash
+  $544.74, zero open positions, so a $150 buy is affordable and leaves
+  room for the 6% total-risk cap across positions.
+- **Rule 3**: GTC stop placed within 60 seconds of the fill, at the
+  signal's `stop_price` (entry − 2%, from `scalp_signal.py`).
+- **No fixed target** — this is the scalp exit, deliberately different
+  from S8's Rule 4/5. Exit on `decide_exit`'s trail trigger (close below
+  the prior bar's low) or the 15-bar time stop. Re-check `decide_exit`
+  each refresh while a scalp position is open.
+- Log every fill to `trades.csv` immediately, same as any other strategy.
+
+Verified same session: a fire that goes stale before it's acted on
+un-fires — SGLY fired at 8:40 ET ($7.44, stop $7.29) and by 9:31 ET had
+fallen to $6.25, well past where the stop would have triggered. Never
+trade a signal off a timestamp older than the refresh that's about to
+place the order; re-run `detect_entry` on fresh bars immediately before
+buying, not on what the dashboard last showed.
+
+**First live trade, 2026-08-18 10:18 ET (IPST, 13 sh @ $10.75):** stop
+landed 105 seconds after the fill, missing Rule 3's 60-second target —
+several `get_equity_orders` polls were spent confirming the fill before
+the stop went in. `place_equity_order` returns `state: unconfirmed` or
+`confirmed` immediately; it does NOT mean filled. Next time: poll faster
+and tighter (don't interleave dashboard/quote work between fill checks),
+and consider whether a marketable limit that's virtually certain to fill
+(deep book, tight spread) can go straight to placing the stop order
+provisionally rather than polling to confirm first — worth testing, not
+yet decided.
+
+## RULE — a placed stop is not a real stop until its state is verified
+
+**The failure that made the above lesson worse, same trade, same day.**
+The GTC stop for the IPST trade was placed at 14:20:26 ET (`stop_price:
+10.54`) and I moved on, treating "order submitted" as "position
+protected" — exactly the gap Rule Zero exists to prevent, and I made it
+anyway. The stop was actually **rejected** by the broker seconds after
+submission (`state: rejected`, no resting order, no protection at all).
+Nobody caught it — not me, not a scheduled refresh — until the user
+asked, ~3 minutes later, "make sure to sell it on time." By then the
+price had already fallen from $10.75 to $9.61-9.87, past where the -2%
+stop would have triggered. Sold at market for -$14.56 (-5.33R) instead
+of the ~$2.73 (-1R) the stop was supposed to cap it at. Root cause of
+the rejection itself is still undiagnosed — flagged in trades.csv row 9,
+needs checking before the next live scalp trade.
+
+**Standing rule now: after placing ANY protective order (stop, GTC
+sell), re-check its state within the same turn before considering the
+position protected.** `place_equity_order` returning a response is not
+confirmation the order is live — `confirmed` can still flip to
+`rejected` moments later, silently, with no separate notification. A
+stop that isn't verified resting is not a stop; it's a belief.
+
+## The Agentic account is a CASH account — proceeds don't settle same-day
+
+Discovered 2026-08-18 10:49 ET, mid-session, real money: a 4th scalp trade
+(XOS, freshly fired) was rejected with "Not enough buying power," even
+though `get_portfolio` showed `cash: $524.38`. The real spendable figure
+was `buying_power: $110.65` — proceeds from that morning's three closed
+trades (IPST, SXTC, WFF) hadn't settled yet. This account is `type: cash`
+per `get_accounts`, not margin, so a sell's proceeds are not spendable
+until settlement (typically T+1), regardless of the cash balance shown.
+
+**Before sizing a buy at the $150 Rule 2 cap, check `buying_power` from
+`get_portfolio`, not `cash`.** If a position closed earlier the same
+session, assume its proceeds are NOT available for the next buy until
+confirmed otherwise. This will keep recurring on any day with multiple
+round-trip scalp trades — it is not a one-off. By the time this was
+diagnosed, XOS had fallen from its $4.70 signal to $4.35 (past its own
+stop level) and was correctly skipped rather than chased — but a faster
+buying-power check would have caught this before the signal went stale,
+not after.
+
+## Profit-lock trail added to `decide_exit` — 2026-08-18
+
+User: "we are happy at 5% profit but if the momentum is there sell it at
+high." `scalp_signal.decide_exit` now arms a trailing exit once a trade
+has PEAKED at +5% or more, then exits on a 2%+ pullback from that peak —
+not a fixed target, still lets a running trade keep running. See the
+module docstring's "ADDED 2026-08-18" section and `PROFIT_TRIGGER_PCT` /
+`PROFIT_TRAIL_PCT` for the numbers, which are the user's stated comfort
+level and the stop's distance, not independently backtested. Tests added
+in `test_scalp_signal.py`; two pre-existing tests were adjusted because
+their bar values happened to cross the new +5% trigger, changing which
+rule fired first — not a regression, the new rule firing there is correct.
+
+## Long-run growth sleeve — new, 2026-08-18, agent-executed
+
+User, verbatim: *"you know what your strategy will be fast growing
+investment not the day trading and option trading... day trading is not
+feasible with your situation... You will be help me screen I will
+execute the day trade but you will trade yourself for long run."* Split
+of responsibility, effective immediately:
+
+- **Day trading (Surge Watch, scalp_signal.py)**: screening only from
+  here on. The dashboard still refreshes and reports fires, but the
+  autonomous 5-minute self-chained trading loop is OFF (user: "stop
+  surge watch screening for now" — the recurring `send_later` chain was
+  cancelled). The user executes any day-trade fire by hand.
+- **Long-run growth (growth_signal.py, new)**: agent-executed, same
+  Agentic account (432805174), same capital, funded as it settles —
+  no separate account or carve-out requested.
+
+**Entry screen**: Robinhood saved scan "Growth Momentum (long-run)"
+(scan_id `2514847d-25cb-4628-9731-bb5b0ee7d246`) — market cap >$1B, RSI
+50-70, 1-month change >5%, ADX>20, avg volume >500k. See
+`growth_signal.py`'s module docstring for the full derivation, including
+the unit-conversion bug caught before trusting the filter (the % Change
+expression returns a decimal ratio, not a percentage — an early draft
+demanded a 500% monthly move and matched zero instruments).
+
+**Exit**: a wide 18% trailing stop from the peak price since entry
+(`growth_signal.TRAIL_PCT`) — user chose "wide" over scalp-style 2% and
+over no stop at all. This is the user's stated risk tolerance, not a
+backtested number.
+
+**RULE — fractional-share equity orders cannot carry ANY stop trigger.**
+Discovered live 2026-08-18, the growth sleeve's first trade (trades.csv
+row 12). Tried a GTC stop_market on a 0.607998-share PLTR position:
+rejected, `"Invalid time in force for fractional order"`. Tried GFD
+instead: rejected again, `"Invalid trigger for fractional order"` — so
+it is not a time-in-force problem, fractional orders reject the `stop`
+trigger outright, confirming and sharpening the existing "Fractional
+shares: only on type=market" line in `place_equity_order`'s own
+parameter docs. **Consequence: a fractional buy for this sleeve cannot
+have a real resting stop.** Prefer a WHOLE-SHARE buy sized to whatever
+buying power is actually available, even if that means picking a
+cheaper name from the scan than the single best candidate, so
+`decide_stop_update`'s trailing stop can actually rest as a broker
+order. If a fractional buy is unavoidable, say so explicitly — "no
+resting stop, monitored by hand" — never imply broker-side protection
+that does not exist.
+
+**RULE — a same-day round trip does not return buying power to where it
+started, even in a cash account, even at zero net exposure.** Same
+trade: reversing the unprotectable PLTR fractional position (sold
+immediately, -$0.08 round-trip cost) dropped buying power from $110.65
+to $5.65 for the rest of the day — the sell's proceeds are unsettled
+same as any other sale (T+1), regardless of how recently the shares
+were bought. This should have been checked BEFORE reversing, not
+discovered after. **Before undoing any position to fix a mistake, check
+whether the undo itself is affordable in the same way a fresh trade
+would be** — an "instant fix" that costs the day's remaining buying
+power is not actually free.
+
+## Watchlist hygiene pass — 2026-08-18 night
+
+User asked to prune the "August 11" watchlist (a dated, single-day
+catalyst pick list — see its own pre-existing description) and check
+the others. Real methodology used: today's volume vs 2-week average
+volume (still active vs faded), proximity to 52-week high/low (still
+running vs reverted), and `financial_status_indicator` (exchange
+compliance flags) via `get_equity_fundamentals`. Result on "August 11"
+(16 -> 6 items): kept TISI (new 52w high same day), OABI/ABCL (both
+made new 52w highs within the prior 24h), SE/RIOT (durable, liquid,
+not really "stale catalyst" material), KPLT (merger catalyst still
+presumably pending, flagged caution same as the list's own original
+note). Removed EYPT (made a new 52-WEEK LOW the day before — thesis
+inverted), AIFC/BIOX (`financial_status_indicator` = noncompliant),
+VG/CNTB/ITP/DYAI (no elevated activity, no cited catalyst), WXM/BW
+(the list's own original note already said "no catalyst"/"halted,
+unconfirmed" at creation, both down further since).
+
+Also removed NAK from "Cryptos to Watch" — a mining stock, wrong asset
+class for a crypto list, correctly still lives in "penny".
+
+**Deliberately left "penny" and "timothy" untouched** despite being
+asked to filter them too — checked every name (fundamentals, 52w
+range, compliance flags), found real weakness in several (IGC, DJT,
+TLRY, GME all well off their highs) but none with an objective red
+flag comparable to August 11's noncompliance/52w-low/already-flagged-
+no-catalyst reasons. Those two lists are undated and not framed as
+single-day catalyst picks the way "August 11" explicitly is, so
+"off its highs" alone isn't a real basis to remove something from
+what might be a deliberate standing watch list — said so directly to
+the user rather than guessing at intent and pruning anyway.
+
+## RULE ZERO — real data, or say nothing. No guessing, ever.
+
+Stated by the user on 2026-08-17 as **the core architecture of this
+project**: *"there should be no guessing game while we are analyzing and
+build."* This outranks every other rule in this file. When it conflicts
+with being fast, being helpful, or having an answer ready, it wins.
+
+**Every number that reaches the user, a file, or a decision must be
+traceable to a tool call I actually made.** Not to a plausible estimate,
+not to a remembered figure, not to what a number "should" be.
+
+Concretely, and each of these has already gone wrong here at least once:
+
+- **Never invent a threshold.** Derive it by measuring, then say what was
+  measured. `scalp_signal.py`'s 3x surge / 2% return came from 1,530 real
+  minute bars; the ENVX historical moves came from real daily bars. An
+  early draft of `test_option_math.py` used *invented-but-plausible*
+  historical moves and flipped the verdict from "reject" to "buy" — the
+  exact failure this rule exists to prevent.
+- **Never read a number off a screenshot and treat it as data.** Screenshots
+  are a pointer to where the real data lives. On 2026-08-17 I reconstructed
+  the user's trades from images, then re-pulled them from
+  `get_equity_orders` — the second version had exact timestamps that
+  changed the conclusion (median hold 149s, which no screenshot showed).
+- **Never let a stale pull stand in for a live one.** Stocklake's movers
+  returned byte-identical numbers 6.5 hours apart on 2026-08-17; quoting
+  them as "current" would have been fabrication by omission. Cross-check
+  against a second source before calling anything live.
+- **Never report a computed result without the check that could break it.**
+  A +709% backtest that is 86% three trades on one symbol is not a +709%
+  backtest. Run the concentration/outlier check *before* reporting, not
+  after being asked.
+- **Discard synthesized bars before computing anything.** `interpolated:
+  true` and zero-volume bars are fabricated gap-fill. WOLF returned 169 of
+  331 such bars and turned a violently volatile name into a calm one.
+- **"I don't have that data" is a complete and acceptable answer.** So is
+  "that pull looks stale, let me verify." Guessing to avoid saying either
+  is the failure mode.
+
+When I state a number, I should be able to name the tool call it came from.
+If I can't, I don't state it.
+
+## A promise is not an action until a tool call backs it
+
+On 2026-08-12 I told the user "next check ~3:15pm, flatten-or-hold at
+~3:40pm" and then never called `send_later`. The sentence felt like
+enough. It wasn't — nothing fires from prose. Rule: any time I say I'll
+check back, follow up, or reassess at a later point, the scheduling tool
+call happens in the same turn, before I say it's done. If I can't make
+the call right then, I say "not yet scheduled" instead of implying it is.
+
+Redundancy beats a single point of failure: for anything consequential
+(an overnight position, a pending decision), book a second, independent
+verification check rather than trusting the first one to re-arm itself.
+
+## Strategy index — filter here before re-reading strategies.md in full
+
+| ID | Name | Status | Source | Note |
+| --- | --- | --- | --- | --- |
+| S1 | Trend Follow | WIRED BUT NEVER INVOKED | Miner + DailyFX SMA filter | Multi-day. **Has no stop** — that is its real defect, and it must not be funded until it has one. 2026-08-16: verified `daily_allowlist.json` does not exist, so its universe is empty by construction; nothing has ever been scheduled. It has not failed, it has not run. Wrong fit for the stated day-trade aim regardless. |
+| S2 | Opening Range Reversal | **TESTED — NEGATIVE, do not fund** | Sincere / Miner | Best-written spec in the repo and it still loses. Backtested 2026-08-16 on real 5-min bars, 29 days, 12 underlyings: 74 trades, 27% win rate, **−20.84R**, avg −0.28R. Fails on SPY/QQQ/IWM too (QQQ 0-for-8), so it was never an underlying problem. **0 of 20 parameter sets positive**, and raising the ATR filter monotonically worsens results — the premise is inverted. Never traded live; the cap blocker was protective. |
+| S3 | Low-Float Momentum Scan | RESEARCH ONLY — **do not modify without an explicit request** | Warrior Trading | 5 pillars: relative volume, % change, price range, float, catalyst (non-numeric, hand-checked). `momentum_scanner.py` structurally cannot place an order. Keep separate from ad hoc day-trade screening even when they overlap. |
+| S4 | Dual Timeframe Momentum | DRAFT, never run | Miner | |
+| S5 | Range Trade | DRAFT | DailyFX | |
+| S6 | Oz scan family | Logged; close-strength adopted elsewhere | Tony Oz | |
+| S7 | Options (long calls/puts) | **LIVE, agent-executed (2026-08-19)**, option_level_2 confirmed live | Passarelli + own catalyst-mismatch research + McMillan (2026-08-19, full-book read) | `option_math.py` + `option_scanner.py` built, unit-tested (`test_option_math.py`). Six contracts graded across three live runs (ONDS, LUNR, STNE, NKTR, ZIM, BULL), all six rejections, zero trades placed yet. 2026-08-17: added a second track for catalysts with no dated trigger — `SoftCatalystScanConfig`/`evaluate_soft_candidate`/`apply_soft_filters_and_rank`. 2026-08-19: read McMillan's *Options as a Strategic Investment* in full (`mcmillan/`); added `iv_cheap_vs_multi_window_hv()`. Same day: user asked to go live, capital rule set at $50/contract (already `max_premium_usd`'s existing default — no change needed); added `decide_option_exit()` (interim, not backtested: -50% stop, +100% profit-lock, 5-day time stop) since entry had a tested screen but exit had no coded rule at all. 2026-08-19 (later): user pushed back on the $50 cap ("crazy... we cannot lose... set the rule") — formalized S7's governing rules in strategies.md (gates are a hard no-override, $50 is a ceiling not a target, ≥0.30 delta floor, no buying into scheduled IV events, no chasing an already-printed move) and checked the MRNA "we had the news no?" claim against real hourly bars: flat $62-65 through Mon/Tue, abrupt gap starting exactly 2026-08-19T10:00 UTC (6am ET premarket) — no, the news was not available Monday or Tuesday. See strategies.md S7 "Governing rules" + "MRNA" subsections. 2026-08-20: daily trigger moved from 8am to 9:35am ET (`35 13 * * 1-5`) after discovering option quotes don't update until the 9:30am regular-session open (extended_hours_state disabled on every chain) — the 8am cycle was pulling yesterday's stale close pricing. Two more real checks, both rejected: BMNR (no strike on the 09-18 expiry clears both the $50 premium cap and the 0.30 delta floor at once — cheapest delta-qualifying strike was $94/contract) and BULL (clears every tradability gate, but real iv_hv_ratio computed from live data is 1.18-1.27, above the 0.90 cap — rich, not cheap, an IV-already-bid-up-by-the-move case). 2026-08-24 (user asked directly to find contracts to buy today): PDD and XPEV excluded before even reaching the chain — both reported earnings that same morning, so the reaction had already gapped at the open; buying now is chasing an already-printed move, not a mismatch_ratio setup, per governing rule 4. Checked AAOI and BABA instead (soft-catalyst track, real equity-offering/dilution news): same BMNR-shaped rejection — every AAOI strike near the $50 cap has delta 0.04-0.07 (08-28 $80-85p), and even paying **4.4x the cap** ($220/contract, AAOI $95p) only reaches delta -0.246, still short of the 0.30 floor. BABA was worse (delta 0.003-0.007 near the cap). No strike on either name clears both gates at once. Running total: 10/10 rejected, 0 trades. See strategies.md S7 "Fourth/fifth live runs" + sources.md 2026-08-24. 2026-08-25 (scheduled 9:35am ET run): AAOI re-checked at today's price ($111.45, bouncing) — $100p 08-28 costs $125/contract (2.5x cap) and still only reaches delta -0.168. OXY (new, real sector catalyst — oil extending its fall despite Iran sanctions) checked fresh: $58p 09-04 clears the cap ($48.50) but delta is only -0.241; $59p reaches real delta (-0.463) but costs $121.50 (2.4x cap). Same structural wall for the fourth time running (BMNR, AAOI, BABA, now OXY) — this account's $50 cap structurally cannot reach a 0.30-delta strike on any underlying trading much above ~$50-60/share, regardless of catalyst quality. Running total: 12/12 rejected, 0 trades. **2026-08-25 evening: user raised the cap $50 -> $150/contract** (asked directly "how much", user said $150) after this structural pattern was named explicitly as a cap/delta conflict rather than a setup-quality problem. Updated `option_math.py` (both `OptionScanConfig` and `SoftCatalystScanConfig`), `config.json`, and the test suite (fixture bumped $90 -> $157.50 so the cap-enforcement test still means something); all tests pass. Governing rules in strategies.md updated in place, not rewritten. OXY's $59p ($121.50/ct, delta -0.463) now clears both gates on today's numbers — real fresh re-check due at tomorrow's 9:35am run, not decided off stale after-hours data. **2026-09-18 ~8:35am ET run: a new distinction earned from real data — passing the concentration/artifact check is necessary but NOT sufficient.** Checked 7 real Track-1 candidates: AMLX (ratio 0.264) and CHPT (0.425) re-confirmed as known single-day artifacts (74.8% and 64.5% of variance from one gap day, same precedents as 09-04 and 09-17). Two NEW artifacts found the same way: AAP (0.459, the 08-20 earnings-crash day is 55.6% of variance) and COO (0.526, the 09-09/09-10 earnings-crash is 53.1%). BRZE (0.590) and GAP (0.642) both genuinely PASSED the concentration test (37.5% and 29.1% share, no dominant single day) — but both were still rejected, because the reason their HV is elevated is a real, dated, but now-STALE catalyst already fully priced (BRZE: -20% earnings reaction on 09-09, 9 days stale, Stocktwits only shows reactions to that same old move) or already REVERSED (GAP: the 08-28 earnings pop fully round-tripped, confirmed directly by Stocktwits: "Earnings pump n dump complete, 25.80 back to 20.50"). BNC (0.660) excluded on liquidity alone (avg options volume ~2,180, OI ~5,134, too thin for a real two-sided exit) without a full workup. **The lesson: cheap IV relative to an HV window inflated by an old, played-out event is not the same as cheap IV relative to genuine ongoing volatility** — the concentration check catches single-day artifacts, but a live-catalyst check is still required to know whether "cheap" reflects anything forward-looking. Nothing passed; 0 trades. **2026-08-31 ~9:36am ET run:** flat, dated-catalyst track. SAIC (only high-cap earnings today) had already reported before this ran — mismatch_ratio is a before-the-event tool, not a chase-the-gap one, so skipped. Of the real 09-01/09-02 reporters, everything above the confirmed ~$50-60 cap/delta danger zone (PANW/DELL/MDB/CRDO/SNOW/AVGO/FIVE/NTAP) was skipped without spending calls; checked the two price-eligible ones with real data. NIO (reports 09-01 AM): 6 real historical earnings moves, median 3.74%; ATM straddle for 09-04 implies an 8.2-11.5% move — mismatch_ratio 2.20-3.09, rejected as rich (not a cap/delta problem — premium and delta both would have cleared). GTLB (reports 09-01 PM): 6 real historical moves, median 8.975%; ATM straddle premium alone is $345-353/contract (>2.3x the $150 cap) with mismatch_ratio 1.46-2.10 — doubly rejected, and a real counterexample to assuming the cap/delta wall is purely a share-price problem (GTLB is under $50/share and still fails, on IV alone). Running total: 13/13 rejected, 0 trades. **2026-09-01: generalized to non-earnings dated catalysts** (`event_catalog.py` + `test_event_catalog.py`, 8 tests passing, real-data-verified) after the user asked for a system covering "everything," not just earnings-driven names -- `option_math.py`'s edge test was already catalyst-agnostic, the real gap was a source of non-earnings dated catalysts. Seeded with one real, verified series (AAPL fall product event, 2018-2025 dates cross-checked against real closes) -- deliberately not pre-loaded with a large unverified calendar, per Rule Zero. Live worked example (AAPL, 2026-09-01): real mismatch_ratio 2.87 (vs 0.85 cap) and premium $715/ct (vs $150 cap) -- REJECTED, same cap/delta-conflict pattern as GTLB/NIO/OXY at a mega-cap scale. Also surfaced that `OptionScanConfig`'s default $100 max_underlying_price (tuned for S7's small/mid-cap history) needs an explicit per-scan override to evaluate anything mega-cap -- not changed on the shared live default. Full detail: strategies.md "S7 extended to non-earnings dated catalysts." **Built and unit-tested only -- NOT wired into the daily S7 trigger**, same go-live discipline S7 itself followed before 2026-08-19. **2026-09-21 ~8:35am ET run: best Track-1 candidate rejected on structure, not math, for the first time.** CRML (ratio 0.804, IV 0.949/HV 1.181) had a real dated catalyst already confirmed that morning (Trump-Greenland security deal) and PASSED the concentration check with real numbers — max single-day variance share only 21.6% (next 19.7%), genuine multi-day volatility from two real catalyst days (08-21 +18.5%, 08-25 +13.7%), nothing like AMLX/AAP/COO's 50%+ single-day artifacts. Rejected anyway: real 5-min bars showed the premarket high ($9.25) was set at 8:00-8:05am ET and price had drifted down to $8.45-8.50 by 8:35am ET with no fresh breakout attempt — governing rule 4 (no chasing an already-printed move) killed it on timing alone. GAP (0.599) and CHPT (0.415) re-confirmed as the same known artifacts logged 2026-09-18, not re-derived. SMR/MARA/BMNR (the most liquid remaining sub-0.90 names) spot-checked via Stocktwits: all pure sector beta (nuclear chart chatter, generic Bitcoin-rally chatter), no company-specific dated catalyst. Running total: 14/14 real Track-1 workups rejected, 0 trades. See sources.md same timestamp for the full candidate list and the variance-concentration math. 2026-09-22 8:35am S7 run: FLAT, no entry — first run to reject an ENTIRE board (33 names under the 0.90 cap) with every kill diagnosable. Introduced the **de-gapped ratio** test, which makes the old yes/no concentration check quantitative: recompute HV from real daily closes with the single largest log-return removed, scale Robinhood's HV by `HV_ex_top/HV_full`, and re-state the ratio against it. De-gapping always LOWERS HV, so the adjusted ratio is always higher (less cheap) — the correct conservative direction for a premium BUYER; use it to reject, never to justify an entry. Cheap tail (<0.63) was 5/5 gap artifacts: EIX 73.7% of variance in one day (08-31 -26.2%), PCG 66.9% (08-31 -22.4%), TTAN 74.9% (09-09 -35.6%), HRL 76.1% (08-27 -10.8%), PYPL 66.3% (08-28 -13.6%) — vs CRML's passing 21.6% on 09-21. EIX+PCG shared one California utility event across two tickers. Liquid 0.70-0.90 band collapsed on de-gapping: CELH 0.897→1.162, CMCSA 0.871→1.066, UEC 0.869→1.055, PURR 0.801→1.005, S 0.853→0.999, IOT 0.825→0.970, SOFI 0.882→0.940, PINS 0.756→0.904, BRUN 0.822→0.903; only SNAP survived at 0.889 and it has no dated catalyst. Of all 33, only UEC (09-29) and CMCSA (10-22) had a verified dated catalyst, and both de-gap above 1.00. Nothing reached the delta or premium gates. Diagnosis: the 08-27/08-28/08-31/09-09 gap cluster is still inside every 30-day HV window, manufacturing fake cheapness across unrelated sectors; it rolls out in early October, so expect a smaller and more trustworthy cheap tail after that. |
+| S8 | Verified Catalyst Momentum | DRAFT, n=1 live trades, catalyst gate backtested | Not a book — reverse-engineered from this week's own trades and rejections | Written 2026-08-15 after noticing S1–S7 had contributed zero trades while the ad hoc screen carried the account. 2026-08-16: the float-turnover disqualifier was backtested (single day, n=11, not independent) and **demoted** — turnover magnitude didn't predict outcome and was actively suppressed on the one name that was halting. The catalyst check is the real gate now; turnover is secondary. See S8's "Float-turnover backtest" subsection. |
+| — | Day-trade equity screening (SMWB/RSKD picks) | Ad hoc, hand-run each time | Saved Robinhood scans + Stocktwits catalyst check | NOT S3. Don't conflate a finding here into a reason to edit S3. This is what S8 is trying to formalize — but S8 is not yet proven, so this ad hoc process stays the working method until S8 earns LIVE status on its own results. |
+| S9 | Growth sleeve (long-run, agent-executed) | LIVE, n=9 (1 reversed same-day, closed: +8.0%/-4.0%/-1.6%/-6.8%/-10.3%/+3.4%/+4.5% (XP profit-lock 2026-09-23), 1 open: CRSR, stop $11.34) | User's own risk split, 2026-08-18 | `growth_signal.py`. Screen: Robinhood scan `2514847d-25cb-4628-9731-bb5b0ee7d246`. Exit: 18% trail from peak, user's stated tolerance not a backtest. First trade (PLTR, row 12, 2026-08-18) reversed same-day after discovering fractional orders can't carry a stop. Second trade (BTG, row 13, 2026-08-19): buying power fully settled overnight ($5.65 → $524.30, confirming T+1 works as expected), bought 85 whole shares ($5.2599 avg) specifically so the 18% trail could rest as a real GTC stop_market ($4.31) — verified `state: confirmed`, not rejected. First growth position with actual broker-side protection. Daily stop check (2026-08-19 ~4:05pm ET): real peak close since entry was $5.39 (30-min bars), `decide_stop_update` said ratchet — cancelled the $4.31 stop (verified `state: cancelled`), placed a new one at $4.42 (18% below $5.39). New order shows `state: queued` (market closed at 4pm ET, regular_hours stop orders queue for next open — not a rejection, will rest live at tomorrow's open). Daily stop check (2026-08-21 ~4:03pm ET): real peak close since entry was $5.525 (today's own close, a new high over 08-19/08-20), `decide_stop_update` said ratchet again — cancelled the $4.42 stop (verified `state: cancelled`), placed a new one at $4.53 (18% below $5.525, rounded to the penny tick — Robinhood rejects subpenny increments above $1). New order shows `state: queued` (same next-open queuing as the prior ratchet, not a rejection). Mid-day check (2026-08-24 ~12:47pm ET, user noticed BTG running and asked directly): real intraday high was $5.7005 (5-min bars, new high over the $5.525 peak the $4.53 stop was based on), `decide_stop_update` said ratchet again — cancelled the $4.53 stop (verified `state: cancelled`), placed a new one at $4.67 (18% below $5.7005). Market was open this time, so the new order rests live immediately — verified `state: confirmed`, not queued. Third ratchet, same mechanism each time. Minutes later, user asked directly to tighten further to $5.50 ("let's take the profit") — this is a manual override of the 18% trail (not a decide_stop_update output), user's explicit real-time instruction on their own position. Cancelled the $4.67 stop (verified `state: cancelled`), placed $5.50 (verified `state: confirmed`, resting live). Locks in roughly +4.6% from the $5.26 average regardless of what happens next, versus the systematic trail's much wider room. **Position closed same day (2026-08-24 ~2:40pm ET):** user pushed back on sitting below a running price waiting for a pullback to sell ("take the profit... not just sit back and relax") — cancelled the resting $5.50 stop and sold outright via marketable limit at the bid, filled 85 sh @ $5.68. **Realized +$35.69 (+8.0%)**, closed by direct sell on explicit instruction rather than the stop ever triggering. Logged to `trades.csv` row 13. **New position same afternoon (2026-08-24 ~2:50pm ET):** re-ran the Growth Momentum scan live (356 real matches), checked fundamentals on 12 whole-share-affordable candidates given only $57.13 settled buying power (BTG's $482.78 proceeds unsettled T+1) — most unprofitable (negative PE), LYFT stood out at PE 2.44, unusually cheap for a genuinely profitable name with real scan-confirmed momentum. Bought 3 whole shares at $17.5779, GTC stop_market at $14.42 (18% below entry, `growth_signal.trailing_stop_price`) — verified `state: confirmed`, resting live within 8 seconds. Logged to `trades.csv` row 14. **Daily stop check (2026-08-24 ~4:11pm ET):** real intraday high since entry was $17.8698, `decide_stop_update` said ratchet — cancelled the $14.42 stop, placed $14.65 (18% below peak). Also caught a real gap: user had bought 1 more share directly on the account (outside the agent's orders, `placed_agent: user`) bringing the real position to 4 shares while the resting stop still only covered 3 — the new stop was sized for the full 4. New order shows `state: queued` (market closed right as this ran, next-open queuing, not a rejection). Updated the growth-sleeve trigger's stored instructions to check stop quantity against real position quantity every run, not just price, since manual buys can recur. **Daily stop check (2026-08-25 ~4:04pm ET):** verified real position still 4 sh and resting stop still covered all 4 (quantity check passed, no gap this time). Real intraday high today was $17.97 (5-min bars), a new peak over yesterday's $17.8698 — `decide_stop_update` said ratchet — cancelled the $14.65 stop (verified `state: cancelled`), placed a new one at $14.74 (18% below $17.97). Order placed at 4:04pm ET, 4 minutes after the 4pm close, so it shows `state: queued` (next-open queuing, not a rejection) — same as the 08-24 pattern. **Fourth position, SMCI (2026-08-26):** user asked to deploy the account's now-larger settled buying power ($489.67) into "options, stock, anything you can hunt" — re-ran the growth scan, ruled out four unprofitable candidates (SNAP/UEC/ZETA/GTLB, all negative PE), picked SMCI (PE 10.79, RSI 55, real momentum, well off its 52wk high). Placed a limit buy (12 sh, $39.50 ceiling) after the market closed the prior evening — queued for next open, not a live fill at the time. Scheduled a same-session follow-up; verified the real fill at market open (2026-08-26 09:30:00 ET, $38.00 — better than the ceiling, confirming a limit buy's ceiling isn't the expected fill price). Placed GTC stop_market at $31.16 (18% below entry) 98 seconds later — verified `state: confirmed`, resting live. Logged to `trades.csv` row 15. **Daily stop check (2026-08-26 ~4:03pm ET):** LYFT -- real position still 4 sh, stop still $14.74 covering all 4 (quantity check passed). Today's real high ($17.80) didn't exceed the existing peak ($17.97), so `decide_stop_update` said no change -- correctly left alone. SMCI -- real position still 12 sh, stop still $31.16 covering all 12 (quantity check passed). Today's real high since entry was $38.27 (5-min bars), a new peak -- `decide_stop_update` said ratchet -- cancelled the $31.16 stop (verified `state: cancelled`), placed a new one at $31.38 (18% below $38.27). Order placed 3.5 minutes after the 4pm close, so it shows `state: queued` (next-open queuing, not a rejection) -- same pattern as every other post-close ratchet this week. Also noted, not acted on: the user bought 1 share of SMR directly on the account today (2026-08-26 ~8:30am ET, $10.00, `placed_agent: user`) -- outside S9's scope (not a growth-scan pick), currently has no resting stop. Flagged to the user; not added to S9 tracking without being asked. **Resolved same evening:** user said the SMR share was bought by mistake and asked the agent to manage it -- placed GTC stop_market at $8.20 (18% below the $10.00 entry), verified `state: queued` (market closed). Logged to `trades.csv` row 16. Fifth growth-sleeve position, third currently open (alongside LYFT and SMCI). **Daily stop check (2026-08-27 ~4:03pm ET):** all three positions quantity-verified against real holdings (LYFT 4sh, SMCI 12sh, SMR 1sh, all matched their resting stops -- no manual-buy gap this time). LYFT: today's high $17.475 didn't exceed the existing $17.97 peak -- no change, stop stays $14.74. SMCI: real high since entry hit a new peak $38.91 (hourly bars) -- ratcheted stop $31.38 -> $31.91 (18% below $38.91); cancelled old (verified `state: cancelled`), placed new (verified `state: queued`, next-open queuing, market had just closed). SMR: real peak-since-entry high was $10.255 (08-26, the day of the takeover), which the original $8.20 stop was based on entry price ($10.00) rather than -- `decide_stop_update` correctly flagged this as a ratchet the first time the real peak was checked against it. Cancelled $8.20 (verified `state: cancelled`), placed $8.41 (18% below $10.255, verified `state: queued`). **Daily stop check (2026-08-31 ~4:03pm ET):** all three positions quantity-verified again (LYFT 4sh, SMCI 12sh, SMR 1sh, all matched -- no gap). LYFT: real high-since-entry across finalized daily bars (08-24 through 08-31) is still $17.97 (08-25) -- today's high only reached $17.72, no new peak, stop correctly left at $14.74. SMR: real high-since-entry is still $10.255 (08-26) -- today's high only $9.45, stop correctly left at $8.41. **SMCI -- real discrepancy found and corrected:** pulling the finalized daily bar for 08-27 (not the live hourly read used at the time) shows that day's actual high was **$39.47**, not the $38.91 the 08-27 ratchet was based on -- the live hourly snapshot taken during that session undercounted the day's real high, apparently because the print happened very close to the close and hadn't rolled into the hourly aggregate yet when checked. Today's own high ($37.59) doesn't change this -- $39.47 (08-27) is still the real peak since entry. Correct 18%-trail stop from $39.47 is $32.37, above the $31.91 currently resting -- `decide_stop_update` says ratchet regardless of which peak is used, but the size of the ratchet was previously understated. Cancelled the $31.91 stop (verified `state: cancelled`), placed a new one at $32.37 (verified `state: queued`, market had just closed at 4pm ET -- next-open queuing, not a rejection). Worth remembering: a live intraday snapshot near the close can undercount that day's real high; the finalized daily bar is the more trustworthy source once a session has settled, and it's worth a periodic re-check against older finalized bars, not just "today's" live read. **Standing technical-signal step added same day (2026-09-01), directly in response to user pushback that the daily check never analyzed signals on held positions:** the growth-sleeve trigger's stored prompt now requires pulling RSI(14)/ADX(10)/MACD(12,26,9) for every open position on every run, logged to sources.md regardless of outcome, with a real ADX>25-plus-MACD-turning-against-the-position combination treated as a standing reason to flag/act, not just price-peak ratcheting. **SMCI closed same day (2026-09-01 ~11:17am ET) on exactly that signal:** daily RSI declining (62.1->57.3 over 5 sessions, not oversold but losing momentum), ADX still >25 (29.8, confirming a real active trend though itself declining from 31.9), and the MACD histogram flipped negative on the 08-31 close (-0.045, first negative print after 4 days shrinking from +0.259) -- a real, materialized bearish crossover while long, not a hypothetical. Confirmed by real intraday price action (-2.1% from the 08-31 close at decision time). User explicitly authorized discretionary action without further confirmation ("dont ask me to sell or stop. do you analysis and do what you have to do"). Cancelled the resting $32.37 stop (verified `state: cancelled`). First sell attempt (marketable limit at $36.49, the bid at order time) went unfilled as price ticked down before it could execute -- cancelled with zero fill (verified `state: cancelled`, `cumulative_quantity: 0`), re-priced to the new bid ($36.48), refilled -- verified `state: filled`, 12 sh @ $36.4822 avg. **Realized -$18.21 (-4.0%)** on the $38.00 entry -- a real, disclosed loss, closed deliberately on a real signal rather than riding the wide 18% trail to a potentially larger one. Logged to `trades.csv` row 15 (updated in place with the close). Disclosed limitation carried into the decision, not hidden: this account's own S11 backtest found no exploitable edge in short-horizon technical-crossover signals on SPY/QQQ 5-min bars -- this is a different (daily-bar) horizon used as one real, current input alongside real price action, not a proven predictive system. Two growth positions remain open: LYFT (4sh, stop $14.74) and SMR (1sh, stop $8.41). **Sixth position, HL (2026-09-04):** opened directly in response to user pushback that capital was sitting idle -- ~$460 had sat unused for ~2.5 days since SMCI closed 09-01, whereas every prior close redeployed same-day (BTG 08-24 -> LYFT the same afternoon). That gap was a real execution failure, acknowledged as such, not a strategy disagreement. Re-ran the Growth Momentum scan overnight (55 real matches), pulled real fundamentals on 10 whole-share-affordable names, and rejected on this sleeve's established pattern: unprofitable (SDGR PE -28.1), already at/within ~1% of the 52wk high (AYA/GGB/LFST/DLO -- chasing), or ADX 20-22 below this account's own 25 "real trend" threshold (STNE/TTD/BEKE/GME). Picked HL: PE 26.6 (profitable), ADX(14) 31.5 -- the only candidate clearing 25 while not extended -- RSI 63.16, mid-range of its 52wk band, same precious-metals sector as BTG. Placed a GFD limit (20sh, $22.00 ceiling) at ~1:24am ET, verified `state: queued`; **FILLED 09-04 09:30:01 ET at $20.62** ($1.38 under the ceiling, and under the $21.21 prior close). GTC stop_market at $16.91 (18% below the real fill) came back `unconfirmed` first and was RE-CHECKED in the same turn per the post-IPST rule -- verified `state: confirmed`, genuinely resting. Stop latency 318s, outside the 60s target: the fill hit at 09:30:01 but the verification check had been scheduled for 09:34. **Process fix recorded: for an order queued overnight for the open, book the fill-verification check at ~09:31, not 09:34.** Also this date, the idle-capital failure was made structural rather than remembered -- the growth-sleeve trigger now carries a standing step 8 requiring a buying-power check EVERY run (not only after a close), a same-cycle rescreen-and-redeploy when settled cash supports a whole-share position, explicit handling of the cash-account T+1 unsettled-proceeds trap, the after-close queued-limit path so a 4:05pm fire can still act, and a one-line stated reason whenever it deliberately does NOT redeploy. Three growth positions now open. **Daily stop check (2026-09-04 ~4:05pm ET):** all three quantity-verified against their resting stops (LYFT 4sh, SMR 1sh, HL 20sh -- no manual-buy gap). HL ratcheted on its first day: real peak since the 09:30:01 entry was $20.94 (15:00 UTC hourly bar high), `trailing_stop_price(20.94)` = $17.17 above the resting $16.91 -- cancelled the old stop (verified `state: cancelled`), placed $17.17 (verified `state: queued`, four minutes after the close). LYFT surfaced a real edge case worth keeping: `decide_stop_update` returned should_update=True on a peak advance of $17.97 -> $17.98, but `trailing_stop_price(17.98)` = 14.7436, which rounds to **$14.74** -- identical to the resting stop. Took NO action; a cancel/replace would have briefly unprotected the position for zero benefit. That comparison is now a documented step in the trigger. SMR unchanged (peak still $10.255, stop $8.41). **Rule change, 2026-09-06 -- a technical signal now means TIGHTEN, not SELL.** Step 3 of the growth-sleeve trigger previously ended "act on a real signal; do not sit on one waiting for permission," which authorized a full early close on a technical-crossover signal -- the exact class of signal this account's own S11 backtest measured as having no exploitable edge, used to override an 18% trailing stop that carries no such measured defect. That contradiction predates any single trade's result and is the whole justification. The trigger now says: a signal by itself = tighten the stop ahead of the 18% schedule (a decisive action, not deferral); a full early CLOSE additionally requires a nameable, dated corroborating fact -- guidance cut, downgrade, dilution/ATM filing, earnings miss, sector break -- verified through `get_stock_news` / `get_sec_filing_index` / Stocktwits, the same catalyst gate entries already pass. With corroboration, close it without asking; the user's 2026-09-01 standing authorization is unchanged. SMCI is recorded as the illustration and explicitly NOT the proof (n=1): sold $36.4822 on 09-01, closed $39.59 on 09-04 with the $32.37 trail never threatened (low since $35.63), -$18.21 realized vs +$19.08 held. Outcome is not process. **Daily stop check (2026-09-08 ~4:04pm ET):** SMR real breakout day -- intraday high $11.37 (30-min bars) on real, sustained elevated volume, well past the $10.255 peak the $8.41 stop was based on -- cancelled (verified `state: cancelled`), placed $9.32 (18% below $11.37, verified `state: queued`, next-open queuing). LYFT and HL unchanged (no new peaks that day). **Daily stop check (2026-09-09 ~4:03pm ET):** HL made a new real peak, $21.17 (30-min bars, the 9:30-10:00am ET bar) -- cancelled the $17.17 stop (verified `state: cancelled`), placed $17.36 (18% below $21.17, verified `state: queued`, next-open queuing). LYFT dropped hard on a real, dated catalyst (Lyft named a new CFO -- Michael Brous replacing retiring Erin Brewer -- while reaffirming Q3 guidance; stock fell -8.2% to $14.91, now $0.17 above its $14.74 stop) but ADX (18.2) stayed below this account's 25 "real trend" floor, so the formal signal gate did not fire and no discretionary action was taken -- the mechanical trail is left to do its job. SMR unchanged (today's high $11.26 stayed under the $11.37 peak). Current state: LYFT (4sh, stop $14.74), SMR (1sh, stop $9.32), HL (20sh, stop $17.36). **LYFT CLOSED 2026-09-10 09:30:00 ET via its resting $14.74 GTC stop_market** -- filled 4 sh @ $14.71 avg, realized -$11.49 (-1.6%). Mechanical stop, not a discretionary close -- the 09-09 CFO-departure catalyst never cleared the ADX>25 signal gate (peaked at 18.2), so this was the trail doing its job on price alone. Proceeds $58.84 unsettled T+1, confirmed against get_accounts. Logged to trades.csv row 14 (updated in place with the close). **Daily stop check (2026-09-10 ~4:02pm ET):** SMR and HL quantity-verified (1sh / 20sh, both match their resting stops). Neither made a new peak today -- SMR's real high was $10.685 (30-min bars), still under the $11.37 (09-08) peak the $9.32 stop is based on; HL's real high was $20.53, still under the $21.17-21.18 (09-09) peak the $17.36 stop is based on. Both stops correctly left unchanged. Technical signal check: SMR -- RSI 61.0, ADX(10) 27.3 (real trend), MACD histogram positive and rising (0.015 -> 0.165 over the last 5 sessions) -- bullish, no signal. HL -- RSI 60.3, ADX(10) 33.8 (strong real trend), MACD histogram negative and deepening (-0.054 -> -0.095 over the last 5 sessions) -- this is a real ADX>25-plus-MACD-turning-against combination on a long position, ATE the 2026-09-06 tighten-not-sell gate. Checked for a corroborating catalyst (Stocktwits): none found, just retail silver-sector chatter, no dated news/downgrade/filing. Per the narrowed rule, no corroboration means no early close. Considered tightening the stop ahead of schedule but declined: the resting $17.36 stop is already ~13-14% below today's ~$20.02-20.27 close-ish prices (tighter than a fresh 18% trail would be), because price has drifted down from the $21.17 peak while the stop stayed pegged to that peak -- passive tightening already happened. Flagged to the user, no action taken. Idle capital: $49.06 settled buying power, same figure flagged in every prior check as the amount structurally blocking S7 (still unresolved with the user) -- not redeployed, same standing reason. LYFT's $58.84 proceeds settle ~09-11 morning, which will bring uncommitted cash to roughly $108 -- worth a fresh look once settled rather than force-fitting a sub-$50 pick today. **SMR CLOSED 2026-09-11 09:38:12 ET via its resting $9.32 GTC stop_market** -- filled 1 sh @ $9.32, realized -$0.68 (-6.8%). Caught retroactively at the 2026-09-11 ~4:02pm ET daily stop check (fill happened mid-morning; no earlier trigger in this sleeve's schedule checks for an intraday fill). SMR fell hard the same day (-15.7% intraday, $10.21 -> $8.605), confirming the stop saved a materially larger loss than the one realized. Logged to trades.csv row 16 (updated in place with the close). **Daily stop check (2026-09-11 ~4:02pm ET):** HL -- quantity-verified (20sh matches the resting $17.36 stop). Real peak since entry across finalized daily bars (09-04 through 09-10) is $21.18 (09-09 high, one cent above the $21.17 the resting stop was based on) -- a trivial, cent-level rounding difference, not a materially new peak (unlike the SMCI 08-31 discrepancy, which was 56 cents); took no action, a cancel/replace for one cent of stop distance would cost a brief unprotected window for zero real benefit. Technical signal check: RSI(14) 54.46 (neutral), ADX(10) 30.79 (real trend, >25), MACD histogram -0.156 and deepening for the fifth straight session (-0.026 -> -0.052 -> -0.090 -> -0.095 -> -0.156, 09-03 through 09-10) -- the same ADX>25-plus-MACD-turning-against combination flagged on 09-10, now further worsened. Checked for a corroborating catalyst: Stocktwits shows only general commodity/sector chatter (oil/silver price speculation, no dated news), Stocklake's news tool is unavailable this session (hit its 25-call guest daily limit earlier in the day), get_sec_filing_index returned zero HL filings since entry. No corroboration found -- per the narrowed rule, no early close; the resting $17.36 stop is left to do its job (already ~12% below today's ~$19.78 close, tighter than a fresh 18% trail would be from today's price). One growth position remains open (HL). **Redeployed idle capital same cycle:** settled buying power was $107.90 (confirmed via get_accounts unsettled_funds=$9.32, i.e. today's SMR stop proceeds, separate and not counted here). Re-ran the Growth Momentum scan (63 real matches), checked fundamentals on 10 affordable candidates, rejected on the established pattern: unprofitable (CRGY PE -338.3, TARS PE -75.1), already at/within ~1% of the 52-week high (SHEL, made a new 52wk high the prior session), or ADX <25 (KGS 24.27). Picked **GCT (GigaCloud Technology)**: PE 12.25 (cheap, profitable), ADX(14) 31.15 (real trend, not extended -- ~8% off its 52wk high), RSI 58.2 (mid-range), distribution/e-commerce sector (diversifies away from HL's precious-metals exposure). Placed a GFD limit (2sh, $53.00 ceiling) at 20:04:49 UTC (market had just closed for the day) -- verified `state: queued`, next-open queuing. Scheduled a follow-up (send_later) for 09:31 ET Monday 2026-09-14 to confirm the real fill and place the GTC stop, per the established 09:31-not-09:34 timing lesson from HL's 09-04 entry. Not yet logged to trades.csv -- will log the real fill + stop once confirmed Monday, consistent with this sleeve's fill-time logging convention. **GCT FILLED 2026-09-14 09:30:02 ET at $50.84** — $2.16 under the $53.00 ceiling and $1.03 under Friday's $51.87 close, because Monday opened risk-off (SPY -0.8%, QQQ -1.6%, broad AI/semis selloff) and the resting limit caught the weakness. Cost basis $101.68 for 2 whole shares. GTC stop_market at **$41.69** (18% below the real fill) came back `state: unconfirmed` and was RE-CHECKED in the same turn per the post-IPST rule — verified **`state: confirmed`**, genuinely resting. Logged to trades.csv row 18. Second position now open alongside HL. **Stop latency 133s, still outside the 60s Rule 3 target, and the root cause is now precisely identified: the fill hit at 09:30:02 but the verification trigger did not fire until 09:31:37 — already 95s late before any work began. This refines the HL lesson rather than repeating it: moving the check 09:34 -> 09:31 cut latency 318s -> 133s, but 60s is structurally unreachable for an open fill from a 09:31 fire. To actually hit Rule 3 on a queued-overnight order, the check must fire ~09:30:20-09:30:30.** **PROFIT LOCK ADDED 2026-09-14, after the user said plainly that the sleeve "won't take profit when you have chance."** They were right, and the gap was structural, not a judgment error: for its first seven positions this sleeve had an entry screen, a trailing stop, and a signal check that only ever TIGHTENED the stop. **Nothing in it could sell into strength.** The evidence is in its own record — BTG (+$35.69) was booked only because the user intervened *twice* (the first time I tightened a stop to $5.50 instead of selling), and SMR ran from $10.00 to an $11.37 peak, was never trimmed, and stopped out at $9.32 for -$0.68. Worse, the rule already existed: the user's 2026-08-18 instruction ("we are happy at 5% profit but if the momentum is there sell it at high") was implemented in `scalp_signal.py` that same day and then **stranded when the scalp loop was switched off**, leaving the only running sleeve with no take-profit logic at all. Now fixed: `growth_signal.decide_profit_exit()` (PROFIT_TRIGGER_PCT 5.0 / PROFIT_TRAIL_PCT 2.0, same semantics as the scalp version — arms at +5% peak, rides the PEAK not the entry, exits on a 2% pullback), 50 tests passing with both thresholds pinned on both sides so the value cannot drift back out silently. A boundary test caught a real float bug: an exact 2% pullback computes as 1.9999999999999944, so a bare `>=` never fired on the user's stated threshold — fixed with an explicit epsilon. **Wired into the growth-sleeve trigger as step 3, checked BEFORE the stop ratchet** — the whole point being not to repeat the build-it-and-strand-it failure. **Honest limits, recorded so the fix is not oversold:** replayed against the real closed trades it would have changed SMR from -$0.68 to roughly +$1.14 and made BTG automatic (exit ~$5.59 vs the $5.68 the user forced), but it would NOT have fired on SMCI (peak only +3.87%), HL (+2.72%) or LYFT (+2.29%) — **most of this sleeve's positions never got 5% above entry at all, which says the entries, not just the exits, are the constraint.** Second limit: the trigger runs once daily at the close, and a 2% pullback from peak can happen and fully reverse inside one session, so daily granularity will miss triggers — flagged to the user, not yet resolved. **Daily stop check (2026-09-14 ~4:01pm ET) — first run with the profit lock live.** Guard passed (SPY closing print 19:59:59Z today). Both positions quantity-verified against their resting stops (HL 20sh, GCT 2sh — no manual-buy gap). **Profit lock ran on both and armed on neither, which is the honest headline.** HL: real peak since entry $21.18 (09-09 finalized daily bar) = **+2.72%**, `not armed: peak +2.72% < 5.0% trigger`. GCT: real intraday peak **$53.115** at 1:30pm ET = **+4.47%**, `not armed: peak +4.47% < 5.0% trigger` — **the arm threshold was $53.382 and the real peak fell $0.267 (0.50%) short.** On its first live day the new rule came within half a percent of firing and did not, which is exactly the constraint recorded when it was built: this sleeve's entries rarely reach +5%, so a take-profit rule bolted onto them has little to act on. One near-miss is not evidence the threshold is wrong; it is one near-miss, recorded as such. **GCT stop ratcheted $41.69 -> $43.55** (`new peak raises trail: 41.6900 -> 43.5543`): cancelled the old stop and verified `state: cancelled` at 20:03:26Z BEFORE placing (no-OCO rule), new GTC stop_market 2sh @ $43.55 placed 20:03:34Z, verified `state: queued` — next-open queuing with the market already shut, so the 8-second gap carried no real exposure. **HL stop correctly left alone:** `decide_stop_update` returned should_update=False (`computed 17.3676 <= resting 18.5000`) — the $18.50 hard tighten taken earlier the same day on the user's explicit instruction sits $1.13 ABOVE what the mechanical 18% trail would set, and the rule never loosens a stop. **Technical signal check (both logged, per the standing audit requirement).** GCT: RSI 58.41 (neutral, flat), ADX(14) 30.37 (>25, real trend), MACD histogram -0.325 — negative but **shrinking five sessions running** (-0.542/-0.429/-0.376/-0.348/-0.325), i.e. momentum converging back toward the long rather than against it. **No signal.** HL: RSI 52.83 (neutral but falling, 59.97 -> 54.37 -> 52.83), ADX(14) 28.97 (>25, real trend, easing from 30.96), MACD histogram **-0.211 and widening negative for a fifth straight session** (-0.052/-0.090/-0.094/-0.155/-0.211). **That is a real ADX>25-plus-MACD-turning-against signal, the third consecutive session it has fired** (09-10, 09-11, 09-14, each worse than the last). Per the 2026-09-06 narrowing it authorizes a tighten only — and the stop was **already** hard-tightened to $18.50 that same morning, now just 1.7% under the $18.82 close, so no second tighten was taken: acting twice on one day's data is double-counting, and a stop that tight on a name with HL's daily range would be stopped out by noise, not by the signal. Corroborating catalyst for a full close: **none adopted.** Gold -2.3% and silver -3.1% on 09-14 (Benzinga) is real and dated, but a single down session in the metals is not a 'sector break' — calling it one to justify a close would be manufacturing the catalyst the rule exists to require. **No redeploy, with a real reason:** settled buying power **$15.54**, `get_accounts` unsettled_funds **$0.00** for this account (so nothing is hiding in T+1) — not enough for a whole share of anything in a scan universe filtered to >$1B market cap, and fractional shares cannot carry a resting stop (the PLTR lesson). **Gap surfaced, not silently fixed:** GCT was bought the same morning with its MACD histogram already negative. The Growth Momentum entry scan screens market cap / RSI / ADX / 1mo change / avg volume and **does not look at MACD**, while the daily monitoring check does — so this sleeve can buy into precisely the condition it would flag the next day. Reported to the user for a decision rather than reconciled unilaterally, same handling as the S7 delta-floor disagreement. **HL STOPPED OUT 2026-09-15 09:57:55 ET at $18.49** via the resting $18.50 GTC stop_market — 20 sh, single execution, **realized -$42.60 (-10.33%)** on the $20.62 entry. The sleeve's largest single loss to date. Mechanical trail, not a discretionary close. **Found at 11:10am by the momentum-scanner cycle, not by a growth trigger** — the next scheduled growth check was 4:01pm, so the close would have sat unlogged ~6 hours. This is the SECOND occurrence of the same coverage gap (SMR, 09-11, found retroactively at the 4:02pm check); it was discovered this time only because the scanner cycle ran `get_equity_orders(state=confirmed)` as an ad-hoc stop-verification check and noticed HL was missing from the list while trading below its stop. **Nothing in the current schedule checks for intraday stop fills** — recorded as a real structural gap, not a one-off. **The signal history cuts against the 2026-09-06 narrowing and is recorded as such:** the ADX>25-plus-MACD-against signal fired on HL three consecutive sessions (09-10, 09-11, 09-14), each reading worse than the last, and on every one a dated corroborating catalyst was searched for and not found — so under the narrowed rule the authorized action was tighten-only, taken once (to $18.50 on 09-14). Closing on the FIRST signal (09-10, HL ~$20.02–20.27) would have realized roughly **-$7 to -$12 instead of -$42.60**. **But the honest read is n=2 pointing in opposite directions:** SMCI was closed early on this same signal and holding would have been better (-$18.21 realized vs +$19.08 held); HL was not closed early and closing would have been better. Two cases, opposite conclusions. The narrowing's justification was never a win rate — it was that this account's own S11 backtest found no exploitable edge in crossover signals — and one adverse case no more overturns that than SMCI's adverse case established it. **Surfaced to the user as a real data point, not acted on as a rule change.** Proceeds $369.80 unsettled T+1, not redeployable today. One position remains open: GCT (2sh, stop $43.55, verified `confirmed` at 12:27:17Z — the post-close queued order activated correctly at today's open). **2026-09-15 4:05pm ET daily check:** real peak since entry $53.26 (today's real intraday high, 1:52pm ET, 1-minute bars, above the entry-day $53.12) — **profit lock still not armed**, arm threshold $53.382, missed by $0.12 (0.24pp), the closest miss yet. Stop ratcheted $43.55 → $43.67 (`decide_stop_update`, 18% off the new peak); cancelled and verified `cancelled`, new GTC stop_market placed and verified `queued` (market closed at check time, next-open queuing). Technical check: ADX(10) 23.76 — **below the 25 real-trend floor for the first time this position**, so no signal fired this cycle regardless of MACD direction; RSI 60.93 neutral; MACD histogram -0.259 (from the last finalized 09-14 bar, still negative but continuing to shrink for a fifth straight session). Redeploy check: real settled buying power only $15.54 (the $369.80 HL proceeds still T+1 unsettled), no whole share affordable — no redeployment this cycle. GCT remains the sleeve's only open position. **09:30:30 open-fill check, 2026-09-17 — both queued orders filled essentially at the bell.** GCT sold 2 sh @ $52.55 avg (limit $49.00 GTC, a floor not a target) at 09:30:01.755Z, **realized +$3.42 (+3.36%)** on the $50.84 entry — this is the profit lock closing the position (`decide_profit_exit` fired 09-16 4:05pm ET: peak $53.70 = +5.63%, pulled back 3.87%, modeled exit +1.53% off the $51.62 close read), but the real fill beat the model by capturing the actual open ($52.55) rather than the stale prior-evening price — the floor limit did its job without capping the upside. Logged to `trades.csv` row 18 (updated in place). **XP filled 18 sh @ $19.97 avg** (limit $20.40 GFD) at 09:30:01.335Z, cost basis $359.46. GTC stop_market at **$16.38** (`growth_signal.trailing_stop_price(19.97)` = 16.3754) came back `state: unconfirmed` and was RE-CHECKED in the same turn per the post-IPST rule — verified **`state: confirmed`**, genuinely resting. **Stop latency 54s (fill 09:30:01.335Z → confirmed 09:30:55.326Z) — the fastest this sleeve has protected a position yet**, achieved specifically because the check fired at 09:30:30 rather than 09:31 or 09:34, closing the loop on the timing lesson traced across HL (318s) → GCT (133s) → XP (54s). Logged to `trades.csv` row 19. **XP is the sleeve's only open position; GCT proceeds ($105.10) are unsettled T+1, not redeployable today.** Daily stop check (2026-09-17 ~4:05pm ET, XP's first check, entered same day): real intraday high since entry was $20.42 (5-min bars, 13:30-19:55 UTC), entry $19.97 → peak gain only +2.25%, `decide_profit_exit` correctly not armed (needs +5%). `decide_stop_update` said ratchet anyway (peak still raises the 18% trail even pre-arm) — cancelled the $16.38 stop (verified `state: cancelled`), placed a new one at $16.74 (18% below $20.42, rounded to the penny tick). New order shows `state: queued` (market had just closed at 20:00 UTC when placed at 20:03 UTC — next-open queuing, not a rejection). Technical check: RSI(14) 64.5, ADX(10) 37.8 (real trend), MACD histogram +0.047 (positive) — all supportive, no signal against the position. Buying power $25.88 (GCT's $105.10 still unsettled until 09-18) — screened the Growth Momentum scan for affordable whole-share names; the only candidates under $25.88 were either sub-$5 speculative names or would leave under $1 remaining. Judged not a meaningful redeployment and held cash rather than force a 1-share token position — will revisit 09-18 once GCT's proceeds settle (~$130 available). **Daily stop check (2026-09-21 ~4:18pm ET):** XP quantity-verified (18sh matches the resting stop). Daily bars for today weren't finalized yet in the feed, so real intraday 30-min bars were pulled instead: real peak since entry **$20.86** (3:30-4:00pm ET), a genuine new high over the $20.42 (09-17) the $16.74 stop was based on. Profit lock checked and correctly NOT armed: peak gain only +4.46% (needs +5%), a near miss. Technical check (last finalized data, 09-18 — today's not yet computed): RSI 64.5, ADX(10) 39.2 (very strong real trend), MACD histogram +0.021, still positive but shrinking for 5 straight sessions — no signal against the position. Ratcheted: cancelled $16.74 (verified `cancelled`), placed **$17.11** (18% below $20.86, verified `queued` — placed right after the 4pm close, next-open queuing). **Idle capital redeployed: CRSR, the sleeve's ninth position.** Settled buying power was $130.98 (GCT's proceeds now fully settled; `get_accounts` confirmed $0.00 unsettled for this account). Re-ran the Growth Momentum scan (79 real matches); checked fundamentals on the top ADX>25 affordable candidates — BMNR (PE -3.05), NVAX (PE -6.64), SBET (PE -1.13), SMMT (PE -15.95) all rejected as unprofitable, the established pattern. **CRSR (Corsair Gaming)** was the one real candidate: PE 43.6 (profitable), ADX(14) 26.5 (real trend), RSI 60.16 (neutral), price $13.51 sitting ~8.5% below its 52-week high — not chasing. Placed a GFD limit (9sh, $13.75 ceiling) at 20:18:27 UTC (market closed) — verified `state: queued`, next-open queuing. Scheduled a `send_later` follow-up for 09:30:30 ET tomorrow (2026-09-22) to confirm the real fill and place the GTC stop at the precise timing this sleeve converged on (HL 318s → GCT 133s → XP 54s, each earlier check landing closer to the actual fill). Not yet logged to trades.csv — will log the real fill + stop once confirmed. 2026-09-22 09:30 ET: **CRSR fill confirmed and protected** — the 09-21 queued GFD limit (9sh, $13.75 ceiling) FILLED at **$13.52** at 09:30:01.725 ET, $0.23 under the ceiling; cost basis $121.68. GTC stop_market placed at **$11.09** (`trailing_stop_price(13.52)` = 11.0864, rounded up to the protective side). Came back `unconfirmed`, re-checked in the same turn per the post-IPST rule, verified `confirmed`. **Stop latency 53s** — the sleeve's fastest yet, and the second consecutive run to land near the 60s target (HL 318s @09:34 → GCT 133s @09:31 → XP 54s @09:30:30 → CRSR 53s). **The 09:30:30 check timing is now confirmed twice and should be treated as settled, not re-derived each time.** Position quantity cross-checked against `get_equity_positions` in the same turn: 9 held, `shares_held_for_sells` 9 — full coverage, no repeat of the 08-24 LYFT 3-of-4 shortfall. Sleeve now holds two open positions: XP (18sh, stop $17.11, verified `confirmed` pre-open) and CRSR (9sh, stop $11.09). 2026-09-22 4:05pm ET daily check: real peak since entry pulled from finalized daily bars + today's real 30-min bars (not a live snapshot alone) -- XP peak $21.31 (was $20.86), CRSR peak $13.6499 (entered same-day, only today's bars counted). **XP PROFIT LOCK ARMED** — `decide_profit_exit` returned peak +6.71% (clears the 5% trigger), current price only 0.47% off peak (needs 2% pullback to fire); not selling, watched at daily resolution only per the documented limitation. CRSR not armed (+0.96%, under trigger). Technical check: XP RSI(14) 69.71 (elevated, just under 70), ADX(10) 40.51 (real strong trend), MACD histogram +0.0468 (positive, ticked back up after 3 shrinking sessions) — no real signal (MACD not turning against). CRSR RSI(14) 61.80 (neutral), ADX(10) 30.39 (real trend), MACD histogram +0.0557 (positive, drifting down but not negative) — no real signal. Both stops ratcheted mechanically regardless of the arm state: XP $17.11→$17.48 (`decide_stop_update` computed $17.4742, rounded up to the protective cent), CRSR $11.09→$11.20 (computed $11.192918, rounded up). Cancelled both existing stops, verified `cancelled` on each, placed both new GTC stops — came back `queued` (correct: market closed 4:00pm ET, orders submitted ~4:14pm ET, queues for tomorrow's open, not a rejection). Quantities cross-checked full (18/18, 9/9). Redeploy check: settled buying_power $9.30, unsettled_funds $0.00 — too small for any whole-share redeployment, correctly skipped. |
+| S10 | Same-day / 0DTE index option edge test | **DRAFT, n=0 live decisions** | Own research, same method as S7's `mismatch_ratio` | `intraday_edge.py` + `test_intraday_edge.py`. Built 2026-08-21 after the user hand-bought QQQ 0DTE calls on their own manual (non-agent) account, showed me the position down 35%, and I admitted "I don't have an edge model built for same-day index moves the way I do for the equity screens" — user's reply: "you need this." Method: `edge_ratio = historical_freq / implied_prob`, where `historical_freq` comes from real intraday bars (`daily_close_window_moves`, how often the underlying cleared a move this size in this many minutes before close, on real past days) and `implied_prob` is the option's own delta/chance-of-profit. Ratio ≥1.0 required to pass. Regression-tested against the user's actual position using 44 real trading days of QQQ 5-min bars: the $714 call (needed +0.15%, priced at 24.4% chance of profit) cleared only 18.2% of the time historically — edge ratio 0.75, correctly rejected; the $717 call (needed +0.53%, priced at 3.5%) cleared 0% of the time in 44 days — rejected even harder. Position went on to expire worthless. Caught and fixed a real directional bug in `realized_move_frequency` (put-side thresholds) via the test suite before this saw any live use. Not wired into any trigger or scan yet — 44 days is a thin sample, regime-blind, only validated on QQQ/108-minute so far. See strategies.md S10. |
+| S11 | "EMA fan-out" trend-momentum claim | **TESTED — no exploitable edge, do not fund** | User-shown trading-room marketing thread | `ema_fan_backtest.py`. Thread claimed a 13/48/200 EMA ribbon predicts trend continuation, wider spacing = stronger momentum, proven with 2 cherry-picked option winners (no backtest, no losers shown). Tested on 44 real trading days of 5-min SPY/QQQ bars (3,432 bars/symbol): bullish regime had a real but noise-level edge (56-57% hit rate, ~+0.02% mean 30-min fwd return — smaller than spread, can't carry option theta); bearish regime was a flat coinflip (~50% hit rate both symbols). The fan-width claim specifically failed and was non-monotonic across symbols — QQQ's widest tercile was its *worst* (-0.03% mean, 49.2% hit rate), beaten by its mid tercile (+0.05%, 58.0%); SPY's mid tercile underperformed its narrow one. Caught and fixed a real bug in the first draft (mixed/chop bucket was scored with an absolute-value return, printing a nonsensical 100% "hit rate") before reporting results. Not funded, not wired into anything. See strategies.md S11. |
+
+Read this table before re-deriving a strategy's status from scratch.
+
+## "It doesn't work" vs "it never ran" — check which one first
+
+2026-08-16. The account's entire P&L came from ad hoc screening while S1–S7
+contributed nothing, and the obvious reading was that the formal strategies
+had no edge. That reading was wrong. S1's allowlist file does not exist and
+S2 cannot place a single share of a $600 ETF under a $150 cap — **neither
+has ever placed an order.** Before concluding a strategy underperforms,
+verify it executed: look for its universe file, its state/log artifacts, and
+real fills in the order history. Absence of trades is far more often a
+plumbing failure than a signal failure, and the two call for opposite fixes.
+
+Related: this file's own strategy notes drifted. `strategies.md` claimed
+both S1 and S2 still carried "the old $5 notional cap" when both configs
+have read `max_order_notional_usd: 150` for some time. Re-read the config
+before repeating a number from prose.
+
+## Monday morning plan (2026-08-17) — hot potato strategy
+
+This week: test the "hot potato" effect from trader data (see premarket.py). Key insight: when the #1 leading gainer gets extended (up >20%), trader attention flows to #2-3 gainer with fresh catalyst. This is where the cleanest entry happens, 8:40am-9:15am.
+
+**Workflow:**
+1. **Sunday evening:** Print premarket-checklist.html, review RULES.md
+2. **7:00am - 8:30am:** Scan top 5 gainers. Fill in the checklist. Identify which one looks "obvious" to most traders.
+3. **8:40am - 9:15am:** Enter on breakout or bounce of freshest gainer (not extended #1)
+4. **Place stop within 60sec (Rule 3).** Pre-calculate target (Rule 4).
+5. **9:15am - 10:00am:** Exit at target or stop (Rule 5/7). Close by bell if no hit.
+6. **10:00am+:** Avoid high-risk zone (trader data shows big losses cluster here)
+
+**Log all fields** in trades.csv, especially: entry_time, extension_level (fresh_5%, extended_20%, etc.), float_millions, catalyst_source. After 10 trades, this data will show whether 8:40-9:15am is real for your method.
+
+## Results go in trades.csv, in R, or they don't count
+
+`trades.csv` + `tradelog.py` (added 2026-08-16, seeded from broker order
+history). Every fill gets logged with the strategy that produced it, and
+comparisons are made in R (realized ÷ planned risk), never in dollars —
+strategies on this account are funded unequally, so dollars cannot rank
+them. Log at entry time, not by reconstruction: the initial stop is what
+makes R computable, and it is the field most easily lost after the fact.
+
+## Strategies stay separate unless told to merge
+
+A problem noticed while running one strategy (e.g. S3's float cap looking
+wrong for a day-trade equity pick) does not get fixed by editing that
+strategy. It gets parked, or becomes its own thing, only on explicit
+instruction. 2026-08-13 precedent: the WEN float-cap question came from
+day-trade screening, not S3, and stays off S3.
+
+## Research posture
+
+The user supplies source material (books, guides) when they have it. I
+have standing permission to WebSearch for how real/expert practice
+handles a specific question — expected-move mechanics, IV rank, lotto-play
+base rates — rather than waiting to be handed a source. Log findings in
+`sources.md` the same way as book-derived material: attributed, not
+guessed, cross-checked against more than one source before treating a
+claim as fact (see the 2026-08-12 GFV correction — verify regulatory or
+mechanical claims before writing them into a strategy file).
+
+## Stocklake Pro — available, but check coverage before relying on it
+
+Pro tier went live on the account 2026-08-13. Unlocks the AI-pipeline
+tools: `get_stock_research` (full bundle: AI summary, verdict, flag score,
+news sentiment, insider/institutional signal), `get_insider_activity`,
+`get_stock` pro blocks (rating, stance_signals, relative_strength vs
+SPY/QQQ/sector), `get_screener`, `get_indicator_history`. The server is
+connected at the platform level in this session — there is nothing to
+install in this repo, and the bearer token must NEVER be written into any
+committed file. It belongs in `.env` (gitignored) if it is needed at all.
+
+**Coverage limit, verified 2026-08-13, not assumed:** the universe is
+~3,501 symbols and is NOT complete. Both of that day's live positions —
+RSKD and SMWB — returned `symbol_not_found` from `get_stock`,
+`get_stock_research`, AND `get_insider_activity`. AAPL returns full data.
+So Pro covers large/mid caps well and misses exactly the small-cap
+day-trade names our momentum screening actually surfaces.
+
+Consequence: Pro does NOT close S3's 5th-pillar catalyst gap or S7's
+catalyst-verification gap for small caps. Stocktwits + Robinhood
+fundamentals remain the working catalyst check for those. Always try the
+symbol before assuming Pro has it; treat `symbol_not_found` as a routine
+coverage miss, not a tool failure.
+
+## Third scan added 2026-09-18 — closes a real coverage gap the other two can silently hit
+
+AEMD ignited at 6:30am ET on 2026-09-17 (real merger catalyst, Benzinga
+08:29:50am) and was already trading ~$7.60 on heavy volume by 7:05am ET —
+clearing every hard filter on both saved scans (price, float, volume) — yet
+it never appeared in the 7:09am, 8:09am, or 9:09am scanner results. User
+asked why directly; the honest answer required correcting an earlier wrong
+claim made mid-session ("it hadn't ignited yet") after pulling AEMD's real
+5-minute bars and finding the move had started nearly two hours before the
+Benzinga article even published.
+
+Best-available root cause (not provable retroactively — `run_scan` carries
+no history): both saved scans use `Relative volume (1, 1H) > 3` as a hard
+INCLUSION filter, not just a column, and this account's own notes already
+document that field as broken/unreliable before 9:30am ET. A corrupted
+premarket RVOL calc can silently drop a real mover from a scan's result set
+before it's ever reviewed — no amount of care reading the rows that DO come
+back catches that failure mode.
+
+**Fix, user-requested ("Sure do that, as a part of the scan"):** created a
+third saved scan, **"Premarket Movers — No RVOL Filter (safety net)"**
+(scan_id `a8db8ea4-8cca-4b50-b431-0961bace0550`) — Last $1-50, Float <50M,
+daily `% Change` >15% (a direct move measure, not a volume ratio), Volume
+>100K, sorted % Change desc. Deliberately carries NO relative-volume filter
+of any kind, so nothing can be silently excluded the way AEMD was. Wired
+into the momentum-scanner trigger's own stored prompt as step 1b, every
+cycle all day: diff its results against the two regular scans by symbol,
+and treat any name appearing only here as a coverage-gap candidate — run it
+through the normal structure+catalyst gates like any other survivor, with
+real volume still confirmed via `get_equity_historicals` before acting (this
+scan buys coverage, not quality — that check still matters). Did not modify
+either existing scan; this is purely additive, consistent with the standing
+norm of not touching the user's own Legend-built scans unilaterally.
+
+## Robinhood's own saved scanners — prefer these over a third-party screener
+
+The account has real saved scanners (`get_scans` / `run_scan`, built in
+Legend, not created by this agent). Verified live 2026-08-18: "Early
+Momentum Ignition" (scan_id `9d3566de-aca8-4b0e-8099-304a3e474d92` — price
+$2-20, float <20M, 1h relative volume >3x) independently surfaced IPST and
+WFF, the user's own traded symbols, and its top mover (XOS) checked out
+against real 5-minute bars. User's own words, 2026-08-18: "robinhood has
+everything. you can refine it thats all."
+
+Use `run_scan` on this scan_id as the primary momentum coarse filter —
+it's sourced directly from the broker (same feed orders execute against,
+no second vendor that can go stale), and it already has float + hourly
+relative volume built in, which Stocklake's `get_screener` doesn't. A
+looser secondary net exists too: "Warrior Trading Style - Low Float
+Volume Movers" (scan_id `32ff11e9-065f-40b0-99a0-c5971241c435`). Stocklake
+still has a job downstream of this — `get_stock_research` and
+`get_insider_activity` for catalyst/insider verification once a candidate
+is found — just not as the scanner itself. See sources.md for the full
+test.
+
+**2026-08-18 overnight: checked every remaining saved scan and both
+accounts' positions/orders directly** (user: "check my other saved scans
+too... anything that is similar and seems important do it"). Account
+safety confirmed real, not assumed — Agentic account flat, real account's
+only resting-looking orders were rejected, never live. One dead position
+found (`ACETQZZ`, inactive/delisted, confirmed via `get_equity_quotes`
+erroring `inactive_instruments`) — informational, nothing to act on.
+Added "Warrior Trading Style" (scan_id `32ff11e9-065f-40b0-99a0-c5971241c435`)
+as a second scan net alongside Early Momentum Ignition — found real new
+candidates (AUUD, IVF) the first scan missed. Two more real, working
+scans found (options IV/volume — S7's territory; RSI/ADX trend — could
+unblock S1's missing allowlist someday) but deliberately NOT wired into
+the scalp dashboard — different strategies, logged in sources.md only.
+Full detail: sources.md, "All saved Robinhood scans checked" entry.
+
+## Using Stocklake tools for trade screening
+
+Stocklake is available as a connector at the platform level (authentication handled
+by Claude, no local config needed). Use these tools to verify catalysts and detect
+insider trading signals:
+
+**For insider activity check:**
+```
+mcp__Stocklake__get_insider_activity(symbol="AEYE")
+```
+Returns recent insider buys/sells/exercises with insider names, titles, amounts.
+Look for a **trend** (accumulation/distribution) — distribution by officers often
+precedes halts or reversals in small caps.
+
+**For research verdict + sentiment:**
+```
+mcp__Stocklake__get_stock_research(symbol="AEYE")
+```
+Returns verdict (BULLISH/BEARISH/NEUTRAL), tape sentiment, relative strength vs
+SPY/QQQ/sector. When this contradicts `get_signals`, research wins — it includes
+tape response to the catalyst.
+
+**For signals (headlines + news sentiment):**
+```
+mcp__Stocklake__get_signals(symbol="AEYE")
+```
+Returns headlines and AI-scored conviction. But NEVER trade off this alone —
+always cross-check with `get_stock_research` first (see MLTX example below).
+
+**For quick watchlist/data:**
+```
+mcp__Stocklake__get_stock(symbol="AEYE")
+```
+Returns fundamentals, relative strength, insider/institutional signal flags.
+
+**Manual control:** Call these tools only when you need fresh data. There is no
+auto-refresh hammer. The connector resets daily (midnight UTC), same quota as the
+ChatGPT screener was using. Use them deliberately: daily pre-market check on open
+positions (batch `get_insider_activity`), weekly deep dive on candidates
+(`get_stock_research`), never mindlessly refresh.
+
+**Coverage note:** Same limit as before — large caps return full data, small caps
+often return `symbol_not_found`. RSKD and SMWB (our live trades) were both missing
+2026-08-13. Fall back to Stocktwits + Robinhood fundamentals for small-cap catalyst
+verification.
+
+## NEVER trade off get_signals alone — cross-check get_stock_research
+
+Verified 2026-08-13 on MLTX. `get_signals` returned LONG, conviction 9/10,
+flag_score 9/10, sourced from the news pipeline: "Sonelokimab met primary
+endpoint in Phase 3." Same symbol, same day, `get_stock_research` returned
+**verdict BEARISH, near_term BEARISH**, headline "Positive Ph3 data can't
+stop the bleeding — insiders selling, tape rejecting catalysts."
+
+The reconciling facts: the stock FELL 5% on the Phase 3 headline; CEO, CFO
+and CSO sold $6.1M in clustered June-July sales with zero insider buys;
+negative relative performance vs SPY across every window; down 72.5% from
+its 52-week high.
+
+`get_signals` reads a headline and scores the NEWS, not the market's
+response to it. `get_stock_research` adds tape, insider flow, and relative
+strength. When they disagree, the research bundle is the one that
+incorporates whether the catalyst actually worked. Standing rule: any
+candidate sourced from `get_signals` must be cross-checked with
+`get_stock_research` (and insider_trend) before it goes anywhere near a
+trade. A bullish catalyst that the tape is rejecting is a trap, not an
+opportunity.
+
+## No OCO for equities — a stop and a target cannot both rest
+
+Verified 2026-08-16 against the tool schema. `place_equity_order` offers
+market / limit / stop_market / stop_limit, **single-leg only**. There is a
+`get_advanced_orders` read tool for OCO, but nothing that *places* one. So
+two resting sell orders cannot cover the same shares — whichever lands
+first holds them and the second is rejected.
+
+This already bit us: Friday's attempt to put a $7.80 stop on AEYE failed
+because the older $7.08 GTC stop held all 19 shares. Do not plan any
+strategy around a resting stop-plus-target bracket placed through this
+interface. Either the user places the bracket in the Robinhood app (which
+does support real OCO), or the agent has to monitor intraday and swap
+orders — and monitoring needs the agent invoked during market hours, which
+is the same gap that blocks S2.
+
+## Verify before writing a conclusion into strategies.md
+
+Two live corrections this repo has already needed: the ENVX
+"not-a-mismatch" call was first argued from IV alone and was wrong until
+the real historical earnings moves were pulled; the WOLF historical-move
+calculation was corrupted by 169 synthesized bars until `interpolated`
+was checked. Default to pulling real data over reasoning from a plausible
+number, especially before a conclusion gets committed to the repo.
+
+## Day-trade sleeve — NOT YET FUNDED, spec locked 2026-09-17, build this weekend
+
+User asked, 2026-09-17, for a same-day buy/sell sleeve using the momentum
+scanner's own alerts — buy premarket or on the open, sell later the same day
+for a profit, using analysis rather than a fixed open-sell. This is a NEW
+authorization that reverses the 2026-08-18 split ("I will execute the day
+trade but you will trade yourself for long run") — the user has not yet said
+those words explicitly for day trading, so **do not place a day-trade order
+until they do.** Everything below is prep, not permission.
+
+**Profit-taking philosophy, verbatim from the user, 2026-09-17:**
+"YOU CAN SELL LATER THAT DAY AS YOU CAN SET HOW MUCH PROFIT YOU ARE LOOKING
+FOR BASED ON YOUR ANALYSIS. IF THE STOCK SEEMS TO BE LOSING YOU CAN EVEN SELL
+IT BEFORE YOU LOSE. YOUR LOSS TOLERANCE SHOULD [BE] VERY LOW AS DAY TRADE IS
+MERCILESS. YOU NEED TO SCALP THE PROFIT." Concretely: asymmetric exits, not a
+mechanical open-sell — a profit target sized to the setup, a tight/early cut
+on any sign of failure, no round-trip left to chance. This is closer to
+scalp_signal.py's existing decide_exit shape (peak-trail profit lock, tight
+stop) than to growth_signal.py's wide 18% trail — re-use that logic rather
+than inventing a third exit model.
+
+**Journal requirement, mandatory BEFORE any capital is risked on this sleeve.**
+User, verbatim: "BEFORE YOU START TRADING, YOU CAN CREATE A MEMO AND KEEP
+RECORDS OF ALL THE STOCKS YOU CHOOSE EVERYDAY AND CHECK IF THE STOCK WAS
+WINNER OR LOSER. CALCULATE THE WINNING AND LOSING PERCENTAGE... FIND WHAT
+CAUSED THE STOCK TO BE A WINNER OR LOSER." Required fields per name, every
+alert (not just ones traded):
+  - symbol, alert time+price, session high, session close, result vs alert
+  - win/loss flag and % 
+  - catalyst present? source + how it was worded (strong/thin/rumor-only)
+  - did volume confirm the catalyst (RVOL at alert vs RVOL at peak)?
+  - if catalyst was weak/absent, what indicator state accompanied a win
+    anyway (float turnover, structure, RSI/ADX/MACD) -- i.e. can price
+    action alone explain a winner when gate 3 was thin or missing
+  - one-line root cause: why it won or lost
+This is the SAME analysis as the alert->open backtest already proposed
+(2026-09-17 evening) -- build them together, not as two separate passes.
+Every 09-15/09-16 alert already has enough logged in sources.md (catalyst
+text+source+timestamp, peak, close) to backfill this without re-pulling most
+of it; new alerts get logged to this format going forward instead of prose.
+
+**End-of-day analysis, standing requirement once this sleeve is live:**
+aggregate win rate, aggregate loss rate, and one written line on what would
+make tomorrow's selection or sizing better -- same discipline as the S9
+daily stop-check log, applied to day-trade outcomes instead of open positions.
+
+**Blockers already identified 2026-09-17, still true, do not re-derive:**
+- Cash account, T+1 settlement -- realistically ONE round trip per day on
+  the whole account's settled capital; selling before settlement risks a
+  good-faith violation (this account has one GFV incident on record already).
+- After GCT/XP fill, settled buying power will be near-zero until proceeds
+  clear -- this sleeve cannot be funded until real dollars are free.
+- Premarket spreads on sub-$5M-float names (WAFU-class) can run several
+  percent -- any premarket entry must be limit-only, and may not fill.
+
+**Where this fits the weekend plan:** build the alert-outcome journal +
+backtest FIRST (no money at risk), let the user see real win/loss/root-cause
+numbers across every logged alert, THEN decide sizing and get explicit
+go-live authorization for this sleeve specifically -- same go-live discipline
+S7/S9 already followed (built and tested before funded). Do not fund this
+sleeve off one day's n=3 (2026-09-16 MEDS/WAFU/TPST alert->open check).

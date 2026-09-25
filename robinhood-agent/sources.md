@@ -8459,3 +8459,11 @@ Renamed "September 24" -> "September 25" in place (list 28897739-a4e8-40fa-ac57-
 - **GCTK** — faded to $2.30-2.45 premkt, BELOW yesterday's $2.58 close (-11%). No fresh catalyst today (Lokahi/Innovate GBM story is now 2 days old, fully priced). Move played out.
 
 **Not added:** nothing else cleared the bar. Stocktwits trending list (AMD, NKE, AKAM, MU, VST, NVAX, IOVA, RCAT, ONDS, etc.) is all liquid large/mid-caps without a fresh low-float-momentum catalyst — not this list's profile. Earnings calendar (CLGN, CBAT, OPTT, TBN, DTSS) — no high-market-cap names, nothing that fits.
+
+### Momentum scan 2026-09-25 7:17 ET (11:17Z), premarket (7-9am fire — RVOL field ignored, cross-checked via real bars)
+- RE-ALERT GRML $17.15-17.20 (+15% vs 14.89 close): fresh high $17.60 in the 7:00-7:05am ET bar, real volume expansion (127K+131K+82K per 5-min bar vs 3-20K all the prior hour) — genuinely igniting now, high is <20min old. Same real catalyst ($42M financing, confirmed again in this AM's Benzinga). Materially changed since the 6:40am premarket-watch note (was $16.38 then).
+- RE-ALERT INLF $5.67-5.71 (+94% vs 2.95 close): fresh high $6.32 in the 7:00-7:05am ET bar (above the $6.14 overnight peak), real volume expansion (667K in that bar vs 100-300K the prior hour). Pulled back to $5.67-5.71 since (~17min after the high) — still within the "igniting" window per the time-aware rule, not yet "already printed." Same catalysts: H1 earnings beat + now-confirmed same-day 6-K filing.
+- APUS $5.88-6.14: NOT re-alerted. Peaked $7.30 around 5:00-5:30am ET (per 6:40am note), has since faded on declining volume (103K->50K->38K per 5-min bar) — no new high, already printed.
+- ONCO $1.15-1.18 (+26-30%): real catalyst (SRX Global investment disclosed MT Newswires 9/24 1:14pm, tied to pending Realbotix acquisition). Smaller/secondary story, logged not alerted.
+- IFBD $1.34-1.39 (+19-23%): real catalyst (own H1 results, Benzinga 9/25 1:00am) but the results themselves are bad (revenue -46%, loss widened to $15.8M) — a "priced the relief, not the news" move. Already faded from the $1.63 afterhours peak. Logged not alerted.
+- NCPL, SDEV: no fresh catalyst today, gated.

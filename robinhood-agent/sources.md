@@ -8518,3 +8518,11 @@ Ignition 16 / Warrior 7 / safety-net 15. SPY live (769.66). No alerts. Nothing n
 - INLF $5.24-5.30: fading. Opening bar 6.87 high, low of day 5.01. No re-alert.
 - APUS $7.12: fading from its 9.14 opening high. No re-alert.
 Stocklake guest limit was hit (25/day), so that news source is unavailable for the rest of today.
+
+## 2026-09-25 10:17 ET — scanner cycle (quiet, no alert)
+Ignition 18 / Warrior 9 / safety-net 13. Market open (the ad-hoc 10:00 scan saw a live SPY print). Every survivor is gated on catalyst.
+- IPST $3.91-4.28 (+40%, float 704K): Ignition + safety net. Went 2.98 -> 4.04 on thin volume (~200K), halted up 10:16. RH news is only August items (the 12b-25 late 10-Q and a -$80M H1 loss). Stocktwits is chatter only. No catalyst found, price action only. GATED.
+- FFAI $1.81 (+40%, float 3.8M): found only via the safety-net scan, missing from both regular scans. Fresh high 1.82 in the 10:10 bar on ~785K. RH news is latest 9/8 (August robot sales). Stocktwits users are asking "the reason is?" No catalyst found. GATED.
+- MSGY $2.25-2.50 (+24-27%, float 807K): spiked to 3.34 at 10:00 on 577K, then crashed to 2.00 within 10 min. RH news is latest 9/16 (a movers list). No catalyst. GATED.
+- JAGX $10.7-11.2: new high 12.10 at 10:00, now off it. Still only dilution news (9/24 8-K, 548K shares to Streeterville). GATED, same as 10:00.
+- Largest % change is MGLD +93%, pinned at $1.93. Catalyst already checked at 10:00 (the 9/24 8-K content is unavailable). Nothing new.

@@ -8473,3 +8473,29 @@ Renamed "September 24" -> "September 25" in place (list 28897739-a4e8-40fa-ac57-
 - GRML $16.41: faded from the 7:17am $17.60 alert high, already printed, no re-alert.
 - APUS $6.27-6.29: roughly flat, no new high, no action.
 - ONCO/IFBD/NCPL/SDEV: unchanged from 7:17 read, still gated/secondary.
+
+## 2026-09-25 8:35am ET — S7 options screen + pre-open watchlist rectify (fired 12:35Z)
+Holiday guard: SPY premarket print fresh (12:35:39Z). Market open normally.
+
+**Part A — watchlist rectify:** Checked all 6 names on "September 25" against the 8:17am scanner read. INLF pulled back to $6.47-6.49 from its $6.80+ peak (still the story, +120%+ on the day). GRML $16.16-16.36, continuing to fade off its $17.60 high. SRZN/APUS/BB/CRML all roughly flat/quiet vs the last read. Nothing materially new — no watchlist edit made.
+
+**Part B — S7 options screen:** Flat (no open position, confirmed via get_option_positions). Ran the full screen.
+- Track 1 (IV/HV sweep, scan 47f4f938): 397 matches, 200 returned. Sorted by Robinhood's own IV/HV ratio, top 10: ALMS 0.243, SDGR 0.480, GLND 0.509, DYN 0.519, VKTX 0.560, PCG 0.610, RARE 0.685, HDB 0.704, TENB 0.741, BULL 0.744.
+- OUTLIER CHECK (real daily bars, 59 trading days, since ~7/1): computed variance share of the single largest 1-day move for each of the top 10, then recomputed HV excluding that one day and re-ran iv_hv_ratio via option_math:
+  - ALMS: -56.6% day = 72% of variance. Ex-outlier ratio 0.405 (still genuinely cheap).
+  - SDGR: 44% variance share, ex-outlier ratio 0.707 (still cheap).
+  - GLND: 140% day (the Greenland-theme spike) = 64% of variance. Ex-outlier ratio 0.736 (still cheap, real).
+  - DYN: ex-outlier ratio 0.560 (still cheap).
+  - VKTX: ex-outlier ratio 0.760 (still cheap).
+  - PCG: ex-outlier ratio 1.089 — FLIPS ABOVE 1.0. The "cheapness" was entirely the single outlier day. Rejected as an artifact.
+  - RARE: ex-outlier ratio 1.106 — same artifact pattern. Rejected.
+  - HDB: ex-outlier ratio 0.688 (still cheap, but no catalyst found — see below).
+  - TENB: ex-outlier ratio 0.760 (cheap, not pursued further, no time to check catalyst).
+  - BULL: ex-outlier ratio 0.923 — fails the 0.90 cap after ex-outlier adjustment.
+- CATALYST CHECK on the real survivors:
+  - ALMS: no fresh catalyst. Latest news is a stale 9/10 insider buy and a 9/3 downgrade. GATED.
+  - DYN: bearish-only news (a competitor's trial readout hurt it 9/8-9/9), over 2 weeks stale, nothing today. GATED.
+  - HDB: no company-specific news at all, only generic ADR-sector roundups. GATED.
+  - **GLND: REAL, DATED, TODAY'S catalyst** — MT Newswires 9/25 7:02am ET: Greenland Energy signed a deed of variation/novation extending Jameson Land drilling deadlines to 2028, +15% premarket. Same underlying Greenland-security-pact theme driving GRML/CRML. IV/HV ex-outlier 0.736, genuinely cheap, not an artifact of the 140% spike day.
+- GLND OPTION CHAIN: nearest expiry 2026-10-16 (3 weeks). $6 call: delta 0.642, mark $0.88 ($88/contract) — clears both the $150 cap and the 0.30 delta floor comfortably. $7 call: delta 0.344, mark $0.43 ($43/contract) — also clears, cheaper, closer to the deep-OTM edge.
+- **NOT TRADED THIS CYCLE**: the option quotes pulled are frozen at Thursday's 4pm close (`extended_hours_state: disabled` for this chain — options don't trade premarket even though the stock does). GLND stock has moved from the low-$5s to $6.22+ since that close on today's news, so the real premium/delta once the option market opens at 9:30am will be materially different from what's quoted above — placing an order off this snapshot would be trading a stale price, the exact RULE ZERO failure this account guards against. GLND is a live, real candidate; it needs a fresh option quote after 9:30am before an order can be justified. No standing mechanism in this session re-checks mid-morning outside the scheduled triggers, so this is being logged for the next natural touchpoint (today's remaining momentum-scanner cycles, or tomorrow's S7 fire) rather than acted on now.

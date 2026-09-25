@@ -8569,3 +8569,16 @@ Ignition 84 / Warrior 17 / safety-net 20. SPY closed at 771.30 (19:59:59Z regula
 - AIB, SHMD, AVX: unchanged from 15:17 cycle - still unconfirmed, could not re-verify due to news-tool outage persisting all cycle.
 - New names not individually checked (SVRN, AIXC, CCIF, TDIC, AIFF, CNET, others) are either repeats already gated or below the size/quality bar; MSGY continues at $7.31, same no-catalyst status.
 Nothing alerted. This is the last scheduled fire for today (7am-4pm ET window); market closed at 4:00pm ET. Recommend a fresh get_equity_news health check tomorrow's first fire.
+
+## 2026-09-25 16:16 ET — growth sleeve daily check
+Market closed 4:00pm ET (SPY last regular trade 19:59:59Z @ 771.30). Positions: CRSR (9sh, entry $13.52, 2026-09-22), INSP (5sh, entry $68.65, 2026-09-25 -- today).
+
+**CRSR**: real peak since entry $13.96 (today's 12:15pm ET 5-min high, above prior $13.83). decide_profit_exit: not armed, peak +3.25% < 5.0% trigger. decide_stop_update: ratchet, 11.3400 -> 11.4472 (rounds to $11.45). Cancelled $11.34 stop (verified cancelled), placed new $11.45 GTC stop_market 9sh, verified queued (market closed). Technical: RSI(14) 61.35, ADX(10) 26.67 (real trend), MACD histogram +0.0202 (positive -- momentum with the long). NO SIGNAL.
+
+**INSP**: real peak since entry $70.98 (12:55pm ET 5-min high). decide_profit_exit: not armed, peak +3.39% < 5.0% trigger. NO STOP HAD EVER BEEN PLACED -- the planned 9:30am send_later follow-up was denied by the permission classifier (same known constraint flagged earlier this session), so the position sat unprotected from the 09:30:02 fill until this check, ~6h50m (24617s) gap. Placed first-ever stop at $58.20 (trailing_stop_price off the $70.98 peak -- the correct current level since it's already past entry-day), verified queued. Technical: RSI(14) 54.09, ADX(10) 46.80 (strong trend), MACD histogram -0.4554 (negative -- against the long) on latest finalized 09-24 daily bar -- a REAL SIGNAL per the 2026-09-06 rule (ADX>25 + MACD turning against). Checked for corroborating dated catalyst: SEC filing index since 09-18 empty; Stocktwits nothing negative, most recent substantive item (09-20) is bullish (raised 2026 revenue guidance $835-875M). No corroboration -> no full close. Per the rule a signal alone authorizes tightening ahead of schedule only; since this was the first-ever stop placement, the standard peak-based 18% trail ($58.20) already is the tightened level -- nothing further applied. Signal is read off yesterday's close, before today's own +3.15% session, so may already be stale -- re-read fresh tomorrow.
+
+get_equity_news (Robinhood/Benzinga) was down the entire session today (persistent "tool cannot be found" error, all four momentum-scanner cycles from 15:17 onward plus this check) -- all catalyst checks since 15:17 ET used Stocktwits + SEC filing index only, explicitly flagged rather than treated as "no catalyst exists." Recommend a fresh news-tool health check at tomorrow's first fire.
+
+Redeploy check: settled buying_power $41.53 (get_accounts unsettled_funds $0.00 on the Agentic account, confirmed nothing hiding in T+1) -- too small for any realistic whole-share growth candidate. No redeployment attempted.
+
+trades.csv row 21 added (INSP, open). CLAUDE.md S9 row updated: n=10, 2 open (CRSR stop $11.45, INSP stop $58.20).

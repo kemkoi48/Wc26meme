@@ -8506,3 +8506,15 @@ Holiday guard: SPY premarket print fresh (12:35:39Z). Market open normally.
 - GRML $16.37-16.42: still range-bound below the 7:17 high ($17.60), no re-alert.
 - INSP buy order (growth sleeve, queued 9/24 close) still unfilled/confirmed, market not yet open (9:17am ET) — will resolve at the 9:30 bell, next checked by the growth-sleeve trigger or a later cycle.
 - NCPL/IFBD/AIFF/SDEV/ONCO/JAGX/WHLR: no fresh catalysts since the 8:17 read, still gated.
+
+## 2026-09-25 10:00 ET — ad-hoc market scan (user request)
+Ignition 16 / Warrior 7 / safety-net 15. SPY live (769.66). No alerts. Nothing new cleared the catalyst gate.
+- JAGX $11.64 (+65%, float ~520K): igniting, new high in the 9:55 bar. The only fresh news is NEGATIVE: an 8-K on 9/24 issued 547,898 free-trading shares to Streeterville (+42.7% share count). No bullish catalyst. GATED.
+- CNET $2.40-2.48 (+77%, float 3.0M): halted ~9:40, wild 1.91-2.87 swings. Latest news is 8/18 (Nasdaq compliance). GATED.
+- MGLD $1.93 (+94%, float 13.7M): pinned at 1.93-1.96 since the open, which looks like a deal price. The 8-K filed 9/24 exists but its content isn't available (404). Unconfirmed. GATED; re-check.
+- ONCO $1.28 (+43%, float 4.4M): SRX Global investment + pending Realbotix acquisition (9/24). Real but stale. Peaked at 1.42 at 9:50 and faded. Already printed; not alerted.
+- AIFF $1.55 (+29%): fading from 1.77. Catalyst is from 9/17 (Radial). GATED.
+- WHLR $4.48 (+21%): reverse-split squeeze, fading. GATED.
+- INLF $5.24-5.30: fading. Opening bar 6.87 high, low of day 5.01. No re-alert.
+- APUS $7.12: fading from its 9.14 opening high. No re-alert.
+Stocklake guest limit was hit (25/day), so that news source is unavailable for the rest of today.
